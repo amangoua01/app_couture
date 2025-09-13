@@ -11,7 +11,7 @@ class EmptyDataWidget extends StatelessWidget {
   const EmptyDataWidget({
     this.onRefresh,
     this.message = "Aucune donnée trouvée",
-    this.image = "assets/lotties/empty_data.json",
+    this.image = "assets/images/deco3.png",
     super.key,
   });
 

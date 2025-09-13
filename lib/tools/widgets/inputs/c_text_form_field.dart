@@ -41,10 +41,12 @@ class CTextFormField extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final TextInputAction? textInputAction;
   final List<TextInputFormatter>? inputFormatters;
+  final String? externalLabel;
 
   const CTextFormField({
     this.margin = const EdgeInsets.only(bottom: 20),
     this.textInputAction,
+    this.externalLabel,
     this.suffixIcon,
     this.prefixIcon,
     this.label,
@@ -87,56 +89,72 @@ class CTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: margin,
-      child: TextFormField(
-        maxLines: maxLines,
-        controller: controller,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        maxLength: maxLength,
-        minLines: minLines,
-        enabled: enabled,
-        readOnly: readOnly,
-        initialValue: initialValue,
-        textCapitalization: textCapitalization,
-        onTap: onTap,
-        autofocus: autofocus,
-        textAlign: textAlign,
-        onChanged: onChanged,
-        inputFormatters: inputFormatters,
-        obscuringCharacter: obscuringCharacter,
-        textInputAction: textInputAction,
-        validator: (text) {
-          if (validator != null) return validator!(text);
-          if (require && text.value.isEmpty) return requireText;
-          return null;
-        },
-        style: style,
-        decoration: InputDecoration(
-          prefixIcon: prefixIcon,
-          suffixIcon: suffixIcon,
-          prefix: prefix,
-          hintText: hintText == null
-              ? null
-              : ((hintText.value.isEmpty)
-                  ? ""
-                  : hintText! + (require ? "*" : "")),
-          suffix: suffix,
-          counterText: counterText,
-          labelText: labelText == null
-              ? null
-              : (labelText.value.isEmpty
-                  ? ""
-                  : labelText! + (require ? "*" : "")),
-          label: label,
-          contentPadding: contentPadding,
-          border: border ?? FieldBorder.enabled,
-          enabledBorder: border ?? FieldBorder.enabled,
-          errorBorder: errorBorder ?? FieldBorder.error,
-          disabledBorder: disabledBorder ?? FieldBorder.disabled,
-          fillColor: fillColor,
-          filled: filled,
-          labelStyle: labelStyle,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Visibility(
+            visible: externalLabel != null,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 5),
+              child: Text(
+                externalLabel.value,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+              ),
+            ),
+          ),
+          TextFormField(
+            maxLines: maxLines,
+            controller: controller,
+            obscureText: obscureText,
+            keyboardType: keyboardType,
+            maxLength: maxLength,
+            minLines: minLines,
+            enabled: enabled,
+            readOnly: readOnly,
+            initialValue: initialValue,
+            textCapitalization: textCapitalization,
+            onTap: onTap,
+            autofocus: autofocus,
+            textAlign: textAlign,
+            onChanged: onChanged,
+            inputFormatters: inputFormatters,
+            obscuringCharacter: obscuringCharacter,
+            textInputAction: textInputAction,
+            validator: (text) {
+              if (validator != null) return validator!(text);
+              if (require && text.value.isEmpty) return requireText;
+              return null;
+            },
+            style: style,
+            decoration: InputDecoration(
+              prefixIcon: prefixIcon,
+              suffixIcon: suffixIcon,
+              prefix: prefix,
+              hintText: hintText == null
+                  ? null
+                  : ((hintText.value.isEmpty)
+                      ? ""
+                      : hintText! + (require ? "*" : "")),
+              suffix: suffix,
+              counterText: counterText,
+              labelText: labelText == null
+                  ? null
+                  : (labelText.value.isEmpty
+                      ? ""
+                      : labelText! + (require ? "*" : "")),
+              label: label,
+              contentPadding: contentPadding,
+              border: border ?? FieldBorder.enabled,
+              enabledBorder: border ?? FieldBorder.enabled,
+              errorBorder: errorBorder ?? FieldBorder.error,
+              disabledBorder: disabledBorder ?? FieldBorder.disabled,
+              fillColor: fillColor,
+              filled: filled,
+              labelStyle: labelStyle,
+            ),
+          ),
+        ],
       ),
     );
   }

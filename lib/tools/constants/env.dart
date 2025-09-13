@@ -39,4 +39,6 @@ abstract class Env {
 
   static String fullImageUrl(String path) =>
       "${baseUrl.url}/${path.replaceFirst("/", "")}";
+  static const sentryDNS =
+      'https://e8b5af4fb73d1690ad8dec93a4434db5@o4510011872051200.ingest.de.sentry.io/4510011873689680';
 }

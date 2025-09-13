@@ -12,15 +12,17 @@ class CButton extends StatelessWidget {
   final FontWeight fontWeight;
   final Widget? icon;
   final Color disabledColor;
+  final BorderSide border;
 
   const CButton({
     this.title = "Valider",
+    this.border = BorderSide.none,
     this.disabledColor = AppColors.primary,
     this.icon,
     this.enabled = true,
     this.color = AppColors.primary,
     this.textColor = Colors.white,
-    this.radius = 20,
+    this.radius = 10,
     this.height = 45,
     this.fontWeight = FontWeight.normal,
     this.highlightElevation = 0,
@@ -37,6 +39,7 @@ class CButton extends StatelessWidget {
       minWidth: double.infinity,
       color: color,
       shape: RoundedRectangleBorder(
+        side: border,
         borderRadius: BorderRadius.circular(radius),
       ),
       disabledColor: disabledColor.withAlpha(100),

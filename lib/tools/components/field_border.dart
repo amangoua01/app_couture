@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 abstract class FieldBorder {
   static final enabled = OutlineInputBorder(
     borderRadius: BorderRadius.circular(10),
-    borderSide: BorderSide.none,
+    borderSide: const BorderSide(color: AppColors.fieldBorder),
   );
 
   static final error = OutlineInputBorder(

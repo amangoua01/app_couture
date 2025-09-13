@@ -113,6 +113,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.2"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: "567c64b3cb4cf82397aac55f4f0cbd3ca20d77c6c03bedbc4ceaddc08904aef7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.7"
   fake_async:
     dependency: transitive
     description:
@@ -170,7 +178,7 @@ packages:
     source: hosted
     version: "0.9.3+4"
   firebase_core:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: firebase_core
       sha256: "967dae9a65f69377beb9f4ab292ea63ce5befa1ce24682cab1b69ca4b7a46927"
@@ -225,6 +233,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  fl_chart:
+    dependency: "direct main"
+    description:
+      name: fl_chart
+      sha256: d3f82f4a38e33ba23d05a08ff304d7d8b22d2a59a5503f20bd802966e915db89
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -286,6 +302,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.3"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -302,6 +323,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.3"
+  flutter_speed_dial:
+    dependency: "direct main"
+    description:
+      name: flutter_speed_dial
+      sha256: "698a037274a66dbae8697c265440e6acb6ab6cae9ac5f95c749e7944d8f28d41"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
   flutter_spinkit:
     dependency: "direct main"
     description:
@@ -310,6 +339,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.2.2"
+  flutter_stepindicator:
+    dependency: "direct main"
+    description:
+      name: flutter_stepindicator
+      sha256: f167786cae32b38a093eb3b7757ef359e8ba165e0fa3570015a45394d873daf9
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.7"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -468,10 +505,10 @@ packages:
     dependency: "direct main"
     description:
       name: intl
-      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
       url: "https://pub.dev"
     source: hosted
-    version: "0.20.2"
+    version: "0.19.0"
   jni:
     dependency: transitive
     description:
@@ -752,6 +789,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  simple_gesture_detector:
+    dependency: transitive
+    description:
+      name: simple_gesture_detector
+      sha256: ba2cd5af24ff20a0b8d609cec3f40e5b0744d2a71804a2616ae086b9c19d19a3
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -797,6 +842,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
+  table_calendar:
+    dependency: "direct main"
+    description:
+      name: table_calendar
+      sha256: b2896b7c86adf3a4d9c911d860120fe3dbe03c85db43b22fd61f14ee78cdbb63
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.3"
   term_glyph:
     dependency: transitive
     description:
@@ -821,6 +874,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.10.1"
+  toggle_switch:
+    dependency: "direct main"
+    description:
+      name: toggle_switch
+      sha256: dca04512d7c23ed320d6c5ede1211a404f177d54d353bf785b07d15546a86ce5
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.0"
   typed_data:
     dependency: transitive
     description:
