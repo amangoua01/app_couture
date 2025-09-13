@@ -1,0 +1,8 @@
+{
+  "java.compile.nullAnalysis.mode": "automatic",
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "dart.flutterSdkPath": ".fvm/versions/3.27.4",
+  "java.configuration.updateBuildConfiguration": "automatic"
+}
