@@ -10,7 +10,7 @@ class ForgotPasswordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text("Mot de passe oublié")),
       body: ListView(
         children: [
           Container(

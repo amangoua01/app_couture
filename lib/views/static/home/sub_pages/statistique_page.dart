@@ -12,10 +12,7 @@ class StatistiquePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Statistiques"),
-        backgroundColor: AppColors.primary,
-      ),
+      appBar: AppBar(title: const Text("Statistiques")),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [

@@ -1,7 +1,10 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
 import 'package:app_couture/tools/widgets/setting_tile.dart';
+import 'package:app_couture/views/static/categorie/categorie_list_page.dart';
+import 'package:app_couture/views/static/clients/client_liste_page.dart';
+import 'package:app_couture/views/static/type_mesure/type_mesure_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -9,10 +12,7 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        title: const Text("Paramètres"),
-      ),
+      appBar: AppBar(title: const Text("Paramètres")),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -33,7 +33,18 @@ class SettingPage extends StatelessWidget {
           const Text("Actions principales"),
           const SettingTile(title: "Mes informations"),
           const SettingTile(title: "Mes boutiques"),
-          const SettingTile(title: "Mes informations"),
+          SettingTile(
+            title: "Type de mesure",
+            onTap: () => Get.to(() => const TypeMesureListPage()),
+          ),
+          SettingTile(
+            title: "Catégories",
+            onTap: () => Get.to(() => const CategorieListPage()),
+          ),
+          SettingTile(
+            title: "Mes clients",
+            onTap: () => Get.to(() => const ClientListePage()),
+          ),
           const SettingTile(title: "Déconnexion"),
         ],
       ),

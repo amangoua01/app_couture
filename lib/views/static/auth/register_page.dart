@@ -16,10 +16,7 @@ class RegisterPage extends StatelessWidget {
       init: RegisterPageVctl(),
       builder: (ctl) {
         return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            title: const Text("Inscription"),
-          ),
+          appBar: AppBar(title: const Text("Inscription")),
           bottomNavigationBar: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),

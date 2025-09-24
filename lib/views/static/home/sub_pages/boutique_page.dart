@@ -1,4 +1,3 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
 import 'package:app_couture/tools/widgets/wrapper_gridview.dart';
 import 'package:app_couture/views/static/home/detail_boutique_item_page.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +9,7 @@ class BoutiquePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Boutiques"),
-        backgroundColor: AppColors.primary,
-      ),
+      appBar: AppBar(title: const Text("Boutiques")),
       body: WrapperGridview(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,

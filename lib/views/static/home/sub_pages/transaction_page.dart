@@ -15,7 +15,6 @@ class TransactionPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Transactions"),
-        backgroundColor: AppColors.primary,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(140),
           child: Padding(

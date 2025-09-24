@@ -3,6 +3,7 @@ import 'package:app_couture/tools/widgets/card_info.dart';
 import 'package:app_couture/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:app_couture/tools/widgets/solde_card.dart';
 import 'package:app_couture/views/static/home/sub_pages/transaction_bottom_page.dart';
+import 'package:app_couture/views/static/mesure/edition_mesure_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_svg/svg.dart';
@@ -40,7 +41,6 @@ class HomePage extends StatelessWidget {
             ),
           ),
           CircleAvatar(
-            // radius: 15,
             backgroundColor: AppColors.primary,
             child: IconButton(
               splashRadius: 25,
@@ -53,13 +53,11 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ],
-        foregroundColor: Colors.white,
-        backgroundColor: AppColors.primary,
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(65),
+          preferredSize: const Size.fromHeight(60),
           child: Container(
             height: 50,
-            margin: const EdgeInsets.only(bottom: 25),
+            margin: const EdgeInsets.only(bottom: 10),
             color: AppColors.primary,
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -87,7 +85,6 @@ class HomePage extends StatelessWidget {
       ),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
-        backgroundColor: AppColors.primary,
         children: [
           SpeedDialChild(
             label: "Créer une boutique",
@@ -121,6 +118,7 @@ class HomePage extends StatelessWidget {
                 BlendMode.srcIn,
               ),
             ),
+            onTap: () => Get.to(() => const EditionMesurePage()),
           ),
           SpeedDialChild(
             label: "Ajouter un atélier",
