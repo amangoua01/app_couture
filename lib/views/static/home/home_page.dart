@@ -137,7 +137,7 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.only(right: 20, left: 20),
         children: [
           Card(
-            elevation: 12,
+            elevation: 5,
             margin: const EdgeInsets.only(top: 20, bottom: 40),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),

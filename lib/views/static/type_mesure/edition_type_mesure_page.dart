@@ -1,9 +1,9 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
 import 'package:app_couture/tools/widgets/buttons/c_button.dart';
 import 'package:app_couture/tools/widgets/empty_data_widget.dart';
 import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:app_couture/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:app_couture/tools/widgets/placeholder_widget.dart';
+import 'package:app_couture/tools/widgets/text_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -20,30 +20,39 @@ class EditionTypeMesurePage extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                const CTextFormField(externalLabel: "Libellé"),
+                const TextDivider("Info type de mesure"),
+                const CTextFormField(externalLabel: "Nom du type"),
                 const Gap(20),
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    children: [
-                      Text("Type de mesure"),
-                      Gap(20),
-                      Expanded(child: Divider(color: AppColors.green)),
-                    ],
-                  ),
-                ),
+                const TextDivider("Catégories"),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton.icon(
                       icon: const Icon(Icons.add),
                       onPressed: () => CBottomSheet.show(
-                        child: ListView.builder(
-                          itemBuilder: (_, i) => CheckboxListTile(
-                            title: const Text("Tour de manche"),
-                            value: false,
-                            onChanged: (e) {},
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 20, left: 10),
+                              child: Text(
+                                "Sélectionnez une catégorie",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: ListView.builder(
+                                itemBuilder: (_, i) => CheckboxListTile(
+                                  title: const Text("Tour de manche"),
+                                  value: false,
+                                  onChanged: (e) {},
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       label: const Text("Ajouter catégorie"),
@@ -52,16 +61,25 @@ class EditionTypeMesurePage extends StatelessWidget {
                 ),
                 PlaceholderWidget(
                   condition: true,
-                  placeholder: const Padding(
-                    padding: EdgeInsets.only(top: 50),
-                    child: EmptyDataWidget(),
-                  ),
-                  child: Wrap(
-                    spacing: 10,
+                  placeholder: const EmptyDataWidget(),
+                  child: GridView(
+                    padding: const EdgeInsets.only(top: 10),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      childAspectRatio: 4,
+                    ),
                     // runSpacing: 10,
                     children: List.generate(
-                      10,
+                      17,
                       (i) => Chip(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         label: const Text("Tour de manche"),
                         onDeleted: () {},
                         deleteIconColor: Colors.red,

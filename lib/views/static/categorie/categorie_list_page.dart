@@ -16,12 +16,18 @@ class CategorieListPage extends StatelessWidget {
       body: ListView.builder(
         padding: const EdgeInsets.only(top: 10, bottom: 10),
         itemCount: 4,
-        itemBuilder: (_, i) => const ListTile(
-          leading: CircleAvatar(),
-          title: Text("Tour de manche"),
-          trailing: Icon(
-            Icons.arrow_forward_ios_rounded,
-            size: 15,
+        itemBuilder: (_, i) => Card(
+          margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const ListTile(
+            leading: CircleAvatar(),
+            title: Text("Tour de manche"),
+            trailing: Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 15,
+            ),
           ),
         ),
       ),

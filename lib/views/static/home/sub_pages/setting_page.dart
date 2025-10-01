@@ -1,4 +1,5 @@
 import 'package:app_couture/tools/widgets/setting_tile.dart';
+import 'package:app_couture/views/static/abonnements/abonnements_list_page.dart';
 import 'package:app_couture/views/static/categorie/categorie_list_page.dart';
 import 'package:app_couture/views/static/clients/client_liste_page.dart';
 import 'package:app_couture/views/static/type_mesure/type_mesure_list_page.dart';
@@ -44,6 +45,10 @@ class SettingPage extends StatelessWidget {
           SettingTile(
             title: "Mes clients",
             onTap: () => Get.to(() => const ClientListePage()),
+          ),
+          SettingTile(
+            title: "Abonnements",
+            onTap: () => Get.to(() => const AbonnementsListPage()),
           ),
           const SettingTile(title: "Déconnexion"),
         ],

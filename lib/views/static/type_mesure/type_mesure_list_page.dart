@@ -16,17 +16,23 @@ class TypeMesureListPage extends StatelessWidget {
       body: ListView.builder(
         padding: const EdgeInsets.only(top: 10, bottom: 10),
         itemCount: 4,
-        itemBuilder: (_, i) => const ListTile(
-          leading: CircleAvatar(),
-          title: Text("Veste"),
-          subtitle: Text(
-            "Tour de manche, Manche, Pantalon",
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+        itemBuilder: (_, i) => Card(
+          margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
-          trailing: Icon(
-            Icons.arrow_forward_ios_rounded,
-            size: 15,
+          child: const ListTile(
+            leading: CircleAvatar(),
+            title: Text("Veste"),
+            subtitle: Text(
+              "Tour de manche, Manche, Pantalon",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 15,
+            ),
           ),
         ),
       ),

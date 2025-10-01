@@ -8,6 +8,7 @@ import 'package:app_couture/views/controllers/mesure/edition_mesure_page_vctl.da
 import 'package:app_couture/views/static/clients/edition_client_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:signature/signature.dart';
 
 class EditionMesurePage extends StatelessWidget {
   const EditionMesurePage({super.key});
@@ -104,6 +105,17 @@ class EditionMesurePage extends StatelessWidget {
                         const CTextFormField(externalLabel: "Total"),
                         const CTextFormField(externalLabel: "Avance"),
                         const CTextFormField(externalLabel: "Remise"),
+                        SizedBox(
+                          height: 200,
+                          child: Signature(
+                            controller: ctl.signatureCtl,
+                          ),
+                        ),
+                        CButton(
+                          onPressed: () {
+                            ctl.signatureCtl.undo();
+                          },
+                        )
                       ],
                     ),
                   ],

@@ -28,6 +28,7 @@ class HomeWindows extends StatelessWidget {
         return Scaffold(
           body: pages[ctl.page],
           bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
             currentIndex: ctl.page,
             onTap: (i) {
               ctl.page = i;
@@ -43,35 +44,35 @@ class HomeWindows extends StatelessWidget {
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   "assets/images/svg/home.svg",
-                  width: 30,
+                  width: 25,
                 ),
                 label: "Accueil",
               ),
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   "assets/images/svg/stats.svg",
-                  width: 30,
+                  width: 25,
                 ),
                 label: "Statistiques",
               ),
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   "assets/images/svg/store.svg",
-                  width: 30,
+                  width: 25,
                 ),
                 label: "Boutiques",
               ),
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   "assets/images/svg/depenses.svg",
-                  width: 30,
+                  width: 25,
                 ),
                 label: "Transactions",
               ),
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
                   "assets/images/svg/setting.svg",
-                  width: 30,
+                  width: 25,
                 ),
                 label: "Paramètres",
               ),
