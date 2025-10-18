@@ -1,5 +1,7 @@
 import 'package:app_couture/tools/constants/app_colors.dart';
+import 'package:app_couture/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:app_couture/tools/widgets/wrapper_gridview.dart';
+import 'package:app_couture/views/static/boutiques/edition_entree_stock.dart';
 import 'package:app_couture/views/static/home/detail_boutique_item_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -69,6 +71,7 @@ class BoutiquePage extends StatelessWidget {
                           icon: const Icon(Icons.more_vert),
                           itemBuilder: (_) => [
                             "Entrer stock",
+                            "Sorti stock",
                             "Réserver",
                             "Payer",
                           ]
@@ -77,6 +80,28 @@ class BoutiquePage extends StatelessWidget {
                                   height: 40,
                                   value: e,
                                   child: Text(e),
+                                  onTap: () {
+                                    switch (e) {
+                                      case "Entrer stock":
+                                        CBottomSheet.show(
+                                          child: const EditionEntreeStock(
+                                            isEntreeStock: true,
+                                          ),
+                                        );
+                                        break;
+                                      case "Sorti stock":
+                                        CBottomSheet.show(
+                                          child: const EditionEntreeStock(
+                                            isEntreeStock: false,
+                                          ),
+                                        );
+                                        break;
+                                      case "Réserver":
+                                        break;
+                                      case "Payer":
+                                        break;
+                                    }
+                                  },
                                 ),
                               )
                               .toList(),

@@ -1,7 +1,11 @@
+import 'package:app_couture/tools/constants/app_colors.dart';
 import 'package:app_couture/tools/widgets/setting_tile.dart';
 import 'package:app_couture/views/static/abonnements/abonnements_list_page.dart';
+import 'package:app_couture/views/static/auth/profil_page.dart';
+import 'package:app_couture/views/static/boutiques/boutiques_list_page.dart';
 import 'package:app_couture/views/static/categorie/categorie_list_page.dart';
 import 'package:app_couture/views/static/clients/client_liste_page.dart';
+import 'package:app_couture/views/static/surcursales/surcursales_list_page.dart';
 import 'package:app_couture/views/static/type_mesure/type_mesure_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -21,10 +25,20 @@ class SettingPage extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 40),
             child: Column(
               children: [
-                Image.asset(
-                  "assets/images/user.png",
-                  width: 100,
-                  color: Colors.black,
+                Badge(
+                  padding: const EdgeInsets.all(5),
+                  alignment: const Alignment(.4, .7),
+                  label: const Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  backgroundColor: AppColors.primary,
+                  child: Image.asset(
+                    "assets/images/user.png",
+                    width: 100,
+                    color: Colors.black,
+                  ),
                 ),
                 const Gap(10),
                 const Text("PATRICK CYRILL"),
@@ -32,8 +46,18 @@ class SettingPage extends StatelessWidget {
             ),
           ),
           const Text("Actions principales"),
-          const SettingTile(title: "Mes informations"),
-          const SettingTile(title: "Mes boutiques"),
+          SettingTile(
+            title: "Mes informations",
+            onTap: () => Get.to(() => const ProfilPage()),
+          ),
+          SettingTile(
+            title: "Mes boutiques",
+            onTap: () => Get.to(() => const BoutiquesListPage()),
+          ),
+          SettingTile(
+            title: "Mes surcussales",
+            onTap: () => Get.to(() => const SurcursalesListPage()),
+          ),
           SettingTile(
             title: "Type de mesure",
             onTap: () => Get.to(() => const TypeMesureListPage()),

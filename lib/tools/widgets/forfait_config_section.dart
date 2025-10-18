@@ -1,3 +1,4 @@
+import 'package:app_couture/tools/constants/app_colors.dart';
 import 'package:app_couture/tools/widgets/text_divider.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,8 @@ class ForfaitConfigSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: AppColors.primary.withValues(alpha: 0.5
+      ),
         borderRadius: BorderRadius.circular(10),
       ),
       margin: const EdgeInsets.only(left: 10, right: 10, top: 10),

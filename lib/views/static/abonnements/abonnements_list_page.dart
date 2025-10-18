@@ -1,5 +1,7 @@
+import 'package:app_couture/tools/widgets/abonnement_tile.dart';
 import 'package:app_couture/views/static/abonnements/forfait_list_page.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class AbonnementsListPage extends StatelessWidget {
@@ -8,13 +10,19 @@ class AbonnementsListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Abonnements")),
+      appBar: AppBar(
+        title: const Text("Abonnements"),
+        foregroundColor: Colors.white,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.to(() => const ForfaitListPage()),
         child: const Icon(Icons.add),
       ),
-      body: const Center(
-        child: Text("Liste des abonnements"),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(20),
+        separatorBuilder: (context, index) => const Gap(10),
+        itemCount: 10,
+        itemBuilder: (context, index) => const AbonnementTile(),
       ),
     );
   }

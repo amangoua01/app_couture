@@ -1,8 +1,10 @@
 import 'package:app_couture/tools/constants/app_colors.dart';
 import 'package:app_couture/tools/widgets/buttons/c_button.dart';
 import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:app_couture/views/static/auth/forgot_password/forgot_pass_otp_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
   const ForgotPasswordPage({super.key});
@@ -53,7 +55,10 @@ class ForgotPasswordPage extends StatelessWidget {
                   hintText: "Email",
                 ),
                 const Gap(20),
-                CButton(title: "Envoyer le code", onPressed: () {})
+                CButton(
+                  title: "Envoyer le code",
+                  onPressed: () => Get.to(() => const ForgotPassOtpPage()),
+                ),
               ],
             ),
           ),

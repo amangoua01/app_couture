@@ -19,7 +19,7 @@ class RegisterPage extends StatelessWidget {
           appBar: AppBar(title: const Text("Inscription")),
           bottomNavigationBar: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
               child: Row(
                 children: [
                   MaterialButton(

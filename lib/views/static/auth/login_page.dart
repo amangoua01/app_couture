@@ -1,7 +1,7 @@
 import 'package:app_couture/tools/constants/app_colors.dart';
 import 'package:app_couture/tools/widgets/buttons/c_button.dart';
 import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:app_couture/views/static/auth/forgot_password_page.dart';
+import 'package:app_couture/views/static/auth/forgot_password/forgot_password_page.dart';
 import 'package:app_couture/views/static/home/home_windows.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';

@@ -1,9 +1,14 @@
 import 'package:app_couture/tools/constants/app_colors.dart';
 import 'package:app_couture/tools/widgets/card_info.dart';
+import 'package:app_couture/tools/widgets/command_tile.dart';
 import 'package:app_couture/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:app_couture/tools/widgets/solde_card.dart';
+import 'package:app_couture/views/static/clients/edition_client_page.dart';
+import 'package:app_couture/views/static/commandes/commande_list_page.dart';
 import 'package:app_couture/views/static/home/sub_pages/transaction_bottom_page.dart';
 import 'package:app_couture/views/static/mesure/edition_mesure_page.dart';
+import 'package:app_couture/views/static/notifs/notif_list_page.dart';
+import 'package:app_couture/views/static/ventes/edition_vente_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_svg/svg.dart';
@@ -34,10 +39,14 @@ class HomePage extends StatelessWidget {
         actionsPadding: const EdgeInsets.only(right: 10),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: Image.asset(
-              "assets/images/notif.png",
-              width: 22,
+            onPressed: () => Get.to(() => const NotifListPage()),
+            icon: SvgPicture.asset(
+              "assets/images/svg/notif.svg",
+              width: 30,
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
             ),
           ),
           CircleAvatar(
@@ -87,17 +96,6 @@ class HomePage extends StatelessWidget {
         icon: Icons.add,
         children: [
           SpeedDialChild(
-            label: "Créer une boutique",
-            child: SvgPicture.asset(
-              "assets/images/svg/store.svg",
-              width: 30,
-              colorFilter: const ColorFilter.mode(
-                AppColors.green,
-                BlendMode.srcIn,
-              ),
-            ),
-          ),
-          SpeedDialChild(
             label: "Créer un client",
             child: SvgPicture.asset(
               "assets/images/svg/client.svg",
@@ -107,6 +105,7 @@ class HomePage extends StatelessWidget {
                 BlendMode.srcIn,
               ),
             ),
+            onTap: () => Get.to(() => const EditionClientPage()),
           ),
           SpeedDialChild(
             label: "Créer une mesure",
@@ -121,7 +120,8 @@ class HomePage extends StatelessWidget {
             onTap: () => Get.to(() => const EditionMesurePage()),
           ),
           SpeedDialChild(
-            label: "Ajouter un atélier",
+            label: "Faire une vente",
+            onTap: () => Get.to(() => const EditionVentePage()),
             child: SvgPicture.asset(
               "assets/images/svg/atelier.svg",
               width: 30,
@@ -263,7 +263,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-          const Gap(40),
+          const Gap(30),
           Row(
             children: [
               const Expanded(
@@ -276,7 +276,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () => Get.to(() => const CommandeListPage()),
                 child: const Text(
                   "Voir plus",
                   style: TextStyle(
@@ -287,81 +287,14 @@ class HomePage extends StatelessWidget {
               )
             ],
           ),
-          const Gap(20),
-          Table(
-            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-            border: TableBorder(
-              borderRadius: BorderRadius.circular(10),
-              horizontalInside: const BorderSide(
-                width: .4,
-                color: AppColors.fieldBorder,
-              ),
-              top: const BorderSide(
-                width: .4,
-                color: AppColors.fieldBorder,
-              ),
-              bottom: const BorderSide(
-                width: .4,
-                color: AppColors.fieldBorder,
-              ),
-              left: const BorderSide(
-                width: .4,
-                color: AppColors.fieldBorder,
-              ),
-              right: const BorderSide(
-                width: .4,
-                color: AppColors.fieldBorder,
-              ),
-            ),
-            children: List.generate(
-              10,
-              (i) => const TableRow(
-                children: [
-                  TableCell(
-                    child: Text(
-                      "22/05/2025",
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(fontSize: 11),
-                    ),
-                  ),
-                  TableCell(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        "Konaté Hamed",
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: TextStyle(fontSize: 11),
-                      ),
-                    ),
-                  ),
-                  TableCell(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Chemise - pentalon",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 9,
-                        ),
-                      ),
-                      Text(
-                        "Lundi 1 sep. 08H00",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 8),
-                      ),
-                    ],
-                  )),
-                ],
-              ),
-            ),
+          const Gap(15),
+          ListView.separated(
+            shrinkWrap: true,
+            padding: const EdgeInsets.only(bottom: 100),
+            physics: const NeverScrollableScrollPhysics(),
+            separatorBuilder: (_, i) => const Divider(),
+            itemBuilder: (_, i) => const CommandTile(),
+            itemCount: 10,
           ),
         ],
       ),
