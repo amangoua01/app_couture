@@ -1,8 +1,10 @@
 import 'package:app_couture/tools/constants/app_colors.dart';
+import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:app_couture/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:app_couture/tools/widgets/wrapper_gridview.dart';
 import 'package:app_couture/views/static/boutiques/edition_entree_stock.dart';
 import 'package:app_couture/views/static/home/detail_boutique_item_page.dart';
+import 'package:app_couture/views/static/ventes/edition_vente_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,8 +14,35 @@ class BoutiquePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Boutiques")),
+      appBar: AppBar(
+        title: const Text("Boutiques"),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(90),
+          child: Padding(
+            padding: EdgeInsets.all(5),
+            child: CTextFormField(
+              hintText: 'Rechercher',
+              prefixIcon: Icon(
+                Icons.search,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {},
+          ),
+        ],
+      ),
       body: WrapperGridview(
+        padding: const EdgeInsets.only(
+          left: 10,
+          right: 10,
+          top: 10,
+          bottom: 100,
+        ),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
         ),
@@ -99,6 +128,9 @@ class BoutiquePage extends StatelessWidget {
                                       case "Réserver":
                                         break;
                                       case "Payer":
+                                        Get.to(
+                                          () => const EditionVentePage(),
+                                        );
                                         break;
                                     }
                                   },

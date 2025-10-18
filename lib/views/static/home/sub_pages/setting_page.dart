@@ -5,6 +5,7 @@ import 'package:app_couture/views/static/auth/profil_page.dart';
 import 'package:app_couture/views/static/boutiques/boutiques_list_page.dart';
 import 'package:app_couture/views/static/categorie/categorie_list_page.dart';
 import 'package:app_couture/views/static/clients/client_liste_page.dart';
+import 'package:app_couture/views/static/personnels/personnels_list_page.dart';
 import 'package:app_couture/views/static/surcursales/surcursales_list_page.dart';
 import 'package:app_couture/views/static/type_mesure/type_mesure_list_page.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,10 @@ class SettingPage extends StatelessWidget {
           SettingTile(
             title: "Mes boutiques",
             onTap: () => Get.to(() => const BoutiquesListPage()),
+          ),
+          SettingTile(
+            title: "Mon personnel",
+            onTap: () => Get.to(() => const PersonnelListPage()),
           ),
           SettingTile(
             title: "Mes surcussales",

@@ -4,6 +4,7 @@ import 'package:app_couture/views/static/commandes/detail_command_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:icofont_flutter/icofont_flutter.dart';
 
 class CommandTile extends StatelessWidget {
   const CommandTile({super.key});
@@ -48,11 +49,26 @@ class CommandTile extends StatelessWidget {
               ],
             ),
             const Gap(10),
-            const Text(
-              "Chemise, Pantalon, Cravate, Veste, Chapeau",
-              textAlign: TextAlign.start,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    "Chemise, Pantalon, Cravate, Veste, Chapeau",
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const Gap(20),
+                CircleAvatar(
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      IcoFontIcons.print,
+                    ),
+                  ),
+                )
+              ],
             ),
             const Gap(10),
             Text('${(50 * 0.5).toInt()} %'),

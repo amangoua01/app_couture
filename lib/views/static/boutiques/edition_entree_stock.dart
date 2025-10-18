@@ -1,6 +1,8 @@
+import 'package:app_couture/tools/widgets/buttons/c_button.dart';
 import 'package:app_couture/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 
 class EditionEntreeStock extends StatelessWidget {
   final bool isEntreeStock;
@@ -13,6 +15,8 @@ class EditionEntreeStock extends StatelessWidget {
       children: const [
         CDropDownFormField(externalLabel: 'Article'),
         CTextFormField(externalLabel: "Quantité"),
+        Gap(20),
+        CButton(),
       ],
     );
   }

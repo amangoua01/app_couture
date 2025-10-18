@@ -1,7 +1,7 @@
 import 'package:app_couture/data/models/avantage_abn.dart';
 import 'package:app_couture/tools/extensions/types/string.dart';
 import 'package:app_couture/tools/widgets/buttons/c_button.dart';
-import 'package:app_couture/views/static/abonnements/downgrade_selection_option_page.dart';
+import 'package:app_couture/views/static/abonnements/operator_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -68,7 +68,7 @@ class DetailForfaitSubPage extends StatelessWidget {
         ),
         CButton(
           title: "Je m'abonne",
-          onPressed: () => Get.to(() => const DowngradeSelectionOptionPage()),
+          onPressed: () => Get.to(() => const OperatorListPage()),
         ),
       ],
     );
