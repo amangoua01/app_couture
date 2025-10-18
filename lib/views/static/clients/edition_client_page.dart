@@ -27,6 +27,7 @@ class EditionClientPage extends StatelessWidget {
             ],
           ),
           const CTextFormField(externalLabel: "Nom"),
+          const CTextFormField(externalLabel: "Prénom(s)"),
           const CTextFormField(externalLabel: "Téléphone"),
           const Text("Client pour : "),
           CheckboxListTile(
