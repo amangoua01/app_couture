@@ -32,6 +32,7 @@ class HomeWindows extends StatelessWidget {
         return Scaffold(
           body: pages[ctl.page],
           floatingActionButton: FloatingActionButton(
+            heroTag: "boutique",
             onPressed: () {
               ctl.page = 4;
               ctl.update();

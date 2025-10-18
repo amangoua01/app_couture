@@ -93,6 +93,7 @@ class HomePage extends StatelessWidget {
         ),
       ),
       floatingActionButton: SpeedDial(
+        heroTag: 'option',
         icon: Icons.add,
         children: [
           SpeedDialChild(
