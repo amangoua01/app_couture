@@ -1,0 +1,2 @@
+/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/b6d5e392/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/b6d5e392/arm64-v8a/CMakeFiles/rebuild_cache.dir
