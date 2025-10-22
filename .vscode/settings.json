@@ -2,7 +2,5 @@
   "java.compile.nullAnalysis.mode": "automatic",
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
-  },
-  "dart.flutterSdkPath": "/Users/yvesamangoua/Library/dev/fvm/default/bin/",
-  "dart.sdkPath": "/Users/yvesamangoua/Library/dev/fvm/default/bin/cache/dart-sdk"
+  }
 }
