@@ -1,4 +1,5 @@
 import 'package:app_couture/tools/constants/app_colors.dart';
+import 'package:app_couture/tools/extensions/types/string.dart';
 import 'package:app_couture/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:app_couture/views/controllers/auth/register_page_vctl.dart';
@@ -88,29 +89,80 @@ class RegisterPage extends StatelessWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     controller: ctl.pageCtl,
                     children: [
-                      ListView(
-                        padding: const EdgeInsets.all(20),
-                        children: const [
-                          CDropDownFormField(externalLabel: "Pays"),
-                          CTextFormField(externalLabel: "Numéro de téléphone"),
-                          CTextFormField(externalLabel: "Mot de passe"),
-                          CTextFormField(
-                              externalLabel: "Confirmer le mot de passe"),
-                        ],
+                      Form(
+                        key: ctl.formKey1,
+                        child: ListView(
+                          padding: const EdgeInsets.all(20),
+                          children: [
+                            CDropDownFormField(
+                              externalLabel: "Pays",
+                              require: true,
+                              hintText: "Sélectionner le pays",
+                              selectedItem: ctl.selectedPays,
+                              items: (e, f) => ctl.fetchPays(),
+                              onChanged: (e) {
+                                ctl.selectedPays = e;
+                                ctl.update();
+                              },
+                              itemAsString: (e) => e.libelle.value,
+                            ),
+                            CTextFormField(
+                              controller: ctl.emailCtl,
+                              require: true,
+                              externalLabel: "Email",
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (e) {
+                                if (!e.value.isEmail) {
+                                  return "Veuillez entrer une adresse email valide";
+                                }
+                                return null;
+                              },
+                            ),
+                            CTextFormField(
+                              controller: ctl.passwordCtl,
+                              require: true,
+                              obscureText: true,
+                              externalLabel: "Mot de passe",
+                              hintText: "Mot de passe",
+                            ),
+                            CTextFormField(
+                              controller: ctl.confirmPasswordCtl,
+                              require: true,
+                              obscureText: true,
+                              externalLabel: "Confirmer le mot de passe",
+                              hintText: "Confirmer le mot de passe",
+                              validator: (value) {
+                                if (value != ctl.passwordCtl.text) {
+                                  return "Les mots de passe ne correspondent pas";
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                      ListView(
-                        padding: const EdgeInsets.all(20),
-                        children: const [
-                          CTextFormField(
-                            externalLabel: "Nom de l'entreprise",
-                          ),
-                          CTextFormField(
-                            externalLabel: "Email",
-                          ),
-                          CTextFormField(
-                            externalLabel: "Contact",
-                          ),
-                        ],
+                      Form(
+                        key: ctl.formKey2,
+                        child: ListView(
+                          padding: const EdgeInsets.all(20),
+                          children: [
+                            CTextFormField(
+                              controller: ctl.nomEntrepriseCtl,
+                              require: true,
+                              externalLabel: "Nom de l'entreprise",
+                            ),
+                            CTextFormField(
+                              controller: ctl.emailEntrepriseCtl,
+                              require: true,
+                              externalLabel: "Email",
+                            ),
+                            CTextFormField(
+                              controller: ctl.telEntrepriseCtl,
+                              require: true,
+                              externalLabel: "Contact",
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

@@ -3,6 +3,7 @@ import 'package:app_couture/tools/widgets/card_info.dart';
 import 'package:app_couture/tools/widgets/command_tile.dart';
 import 'package:app_couture/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:app_couture/tools/widgets/solde_card.dart';
+import 'package:app_couture/views/controllers/home/home_page_vctl.dart';
 import 'package:app_couture/views/static/clients/edition_client_page.dart';
 import 'package:app_couture/views/static/commandes/commande_list_page.dart';
 import 'package:app_couture/views/static/home/sub_pages/transaction_bottom_page.dart';
@@ -20,285 +21,289 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 40,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: CircleAvatar(
-            radius: 40,
-            backgroundColor: Colors.white,
-            child: Image.asset(
-              "assets/images/logo_ateliya.png",
-              fit: BoxFit.contain,
-              width: 25,
-              height: 25,
-            ),
-          ),
-        ),
-        actionsPadding: const EdgeInsets.only(right: 10),
-        actions: [
-          IconButton(
-            onPressed: () => Get.to(() => const NotifListPage()),
-            icon: SvgPicture.asset(
-              "assets/images/svg/notif.svg",
-              width: 30,
-              colorFilter: const ColorFilter.mode(
-                Colors.white,
-                BlendMode.srcIn,
-              ),
-            ),
-          ),
-          CircleAvatar(
-            backgroundColor: AppColors.primary,
-            child: IconButton(
-              splashRadius: 25,
-              onPressed: () {},
-              icon: Image.asset(
-                "assets/images/user.png",
-                width: 25,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: Container(
-            height: 50,
-            margin: const EdgeInsets.only(bottom: 10),
-            color: AppColors.primary,
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Bienvenue, Atelier angré",
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+    return GetBuilder(
+        init: HomePageVctl(),
+        builder: (ctl) {
+          return Scaffold(
+            appBar: AppBar(
+              leadingWidth: 40,
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: CircleAvatar(
+                  radius: 40,
+                  backgroundColor: Colors.white,
+                  child: Image.asset(
+                    "assets/images/logo_ateliya.png",
+                    fit: BoxFit.contain,
+                    width: 25,
+                    height: 25,
                   ),
                 ),
-                Icon(
-                  Icons.arrow_drop_down_sharp,
-                  color: AppColors.yellow,
-                  size: 35,
-                )
+              ),
+              actionsPadding: const EdgeInsets.only(right: 10),
+              actions: [
+                IconButton(
+                  onPressed: () => Get.to(() => const NotifListPage()),
+                  icon: SvgPicture.asset(
+                    "assets/images/svg/notif.svg",
+                    width: 30,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                CircleAvatar(
+                  backgroundColor: AppColors.primary,
+                  child: IconButton(
+                    splashRadius: 25,
+                    onPressed: () {},
+                    icon: Image.asset(
+                      "assets/images/user.png",
+                      width: 25,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(60),
+                child: Container(
+                  height: 50,
+                  margin: const EdgeInsets.only(bottom: 10),
+                  color: AppColors.primary,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Bienvenue, ${ctl.user.nom}",
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_drop_down_sharp,
+                        color: AppColors.yellow,
+                        size: 35,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            floatingActionButton: SpeedDial(
+              heroTag: 'option',
+              icon: Icons.add,
+              children: [
+                SpeedDialChild(
+                  label: "Créer un client",
+                  child: SvgPicture.asset(
+                    "assets/images/svg/client.svg",
+                    width: 30,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.green,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  onTap: () => Get.to(() => const EditionClientPage()),
+                ),
+                SpeedDialChild(
+                  label: "Créer une mesure",
+                  child: SvgPicture.asset(
+                    "assets/images/svg/mesure.svg",
+                    width: 30,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.green,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  onTap: () => Get.to(() => const EditionMesurePage()),
+                ),
+                SpeedDialChild(
+                  label: "Faire une vente",
+                  onTap: () => Get.to(() => const EditionVentePage()),
+                  child: SvgPicture.asset(
+                    "assets/images/svg/atelier.svg",
+                    width: 30,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.green,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
               ],
             ),
-          ),
-        ),
-      ),
-      floatingActionButton: SpeedDial(
-        heroTag: 'option',
-        icon: Icons.add,
-        children: [
-          SpeedDialChild(
-            label: "Créer un client",
-            child: SvgPicture.asset(
-              "assets/images/svg/client.svg",
-              width: 30,
-              colorFilter: const ColorFilter.mode(
-                AppColors.green,
-                BlendMode.srcIn,
-              ),
-            ),
-            onTap: () => Get.to(() => const EditionClientPage()),
-          ),
-          SpeedDialChild(
-            label: "Créer une mesure",
-            child: SvgPicture.asset(
-              "assets/images/svg/mesure.svg",
-              width: 30,
-              colorFilter: const ColorFilter.mode(
-                AppColors.green,
-                BlendMode.srcIn,
-              ),
-            ),
-            onTap: () => Get.to(() => const EditionMesurePage()),
-          ),
-          SpeedDialChild(
-            label: "Faire une vente",
-            onTap: () => Get.to(() => const EditionVentePage()),
-            child: SvgPicture.asset(
-              "assets/images/svg/atelier.svg",
-              width: 30,
-              colorFilter: const ColorFilter.mode(
-                AppColors.green,
-                BlendMode.srcIn,
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.only(right: 20, left: 20),
-        children: [
-          Card(
-            elevation: 5,
-            margin: const EdgeInsets.only(top: 20, bottom: 40),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              width: Get.width,
-              height: 150,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: double.infinity,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.greenLight2,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CardInfo(
-                            icon: "assets/images/svg/ticket.svg",
-                            value: "Découverte",
-                          ),
-                          CardInfo(
-                            icon: "assets/images/svg/sms.svg",
-                            value: "2 000 SMS",
-                          ),
-                          CardInfo(
-                            icon: "assets/images/svg/users.svg",
-                            value: "15 utilisateur(s)",
-                          ),
-                          CardInfo(
-                            icon: "assets/images/svg/store.svg",
-                            value: "5 atelier(s)",
-                          ),
-                        ],
-                      ),
-                    ),
+            body: ListView(
+              padding: const EdgeInsets.only(right: 20, left: 20),
+              children: [
+                Card(
+                  elevation: 5,
+                  margin: const EdgeInsets.only(top: 20, bottom: 40),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "ATELIER ANGRÉ",
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    width: Get.width,
+                    height: 150,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: double.infinity,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.greenLight2,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CardInfo(
+                                  icon: "assets/images/svg/ticket.svg",
+                                  value: "Découverte",
+                                ),
+                                CardInfo(
+                                  icon: "assets/images/svg/sms.svg",
+                                  value: "2 000 SMS",
+                                ),
+                                CardInfo(
+                                  icon: "assets/images/svg/users.svg",
+                                  value: "15 utilisateur(s)",
+                                ),
+                                CardInfo(
+                                  icon: "assets/images/svg/store.svg",
+                                  value: "5 atelier(s)",
+                                ),
+                              ],
                             ),
                           ),
-                          CardInfo(
-                            color: AppColors.primary,
-                            icon: "assets/images/svg/waiting.svg",
-                            value: "Cmd. en cours (12)",
-                            height: 15,
+                        ),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "ATELIER ANGRÉ",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                CardInfo(
+                                  color: AppColors.primary,
+                                  icon: "assets/images/svg/waiting.svg",
+                                  value: "Cmd. en cours (12)",
+                                  height: 15,
+                                ),
+                                CardInfo(
+                                  color: AppColors.primary,
+                                  icon: "assets/images/svg/check.svg",
+                                  value: "Cmd. terminé (2)",
+                                  height: 15,
+                                ),
+                                CardInfo(
+                                  color: AppColors.primary,
+                                  icon: "assets/images/svg/reservation.svg",
+                                  value: "Réservation (2)",
+                                  height: 15,
+                                ),
+                              ],
+                            ),
                           ),
-                          CardInfo(
-                            color: AppColors.primary,
-                            icon: "assets/images/svg/check.svg",
-                            value: "Cmd. terminé (2)",
-                            height: 15,
-                          ),
-                          CardInfo(
-                            color: AppColors.primary,
-                            icon: "assets/images/svg/reservation.svg",
-                            value: "Réservation (2)",
-                            height: 15,
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          const Text(
-            "Mon solde",
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Gap(10),
-          GestureDetector(
-            onTap: () => CBottomSheet.show(
-              child: const TransactionBottomPage(),
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.fieldBorder),
-              ),
-              padding: const EdgeInsets.all(10),
-              child: const Row(
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: SoldeCard(
-                        icon: "assets/images/svg/entrant.png",
-                        value: "10 000 FCFA",
-                      ),
-                    ),
-                  ),
-                  Gap(10),
-                  Expanded(
-                    child: Center(
-                      child: SoldeCard(
-                        icon: "assets/images/svg/sortant.png",
-                        value: "10 000 FCFA",
-                      ),
-                    ),
-                  ),
-                  Icon(Icons.arrow_forward_ios, size: 12)
-                ],
-              ),
-            ),
-          ),
-          const Gap(30),
-          Row(
-            children: [
-              const Expanded(
-                child: Text(
-                  "Mes commandes (10)",
+                ),
+                const Text(
+                  "Mon solde",
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-              OutlinedButton(
-                onPressed: () => Get.to(() => const CommandeListPage()),
-                child: const Text(
-                  "Voir plus",
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 12,
+                const Gap(10),
+                GestureDetector(
+                  onTap: () => CBottomSheet.show(
+                    child: const TransactionBottomPage(),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.fieldBorder),
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child: const Row(
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: SoldeCard(
+                              icon: "assets/images/svg/entrant.png",
+                              value: "10 000 FCFA",
+                            ),
+                          ),
+                        ),
+                        Gap(10),
+                        Expanded(
+                          child: Center(
+                            child: SoldeCard(
+                              icon: "assets/images/svg/sortant.png",
+                              value: "10 000 FCFA",
+                            ),
+                          ),
+                        ),
+                        Icon(Icons.arrow_forward_ios, size: 12)
+                      ],
+                    ),
                   ),
                 ),
-              )
-            ],
-          ),
-          const Gap(15),
-          ListView.separated(
-            shrinkWrap: true,
-            padding: const EdgeInsets.only(bottom: 100),
-            physics: const NeverScrollableScrollPhysics(),
-            separatorBuilder: (_, i) => const Divider(),
-            itemBuilder: (_, i) => const CommandTile(),
-            itemCount: 10,
-          ),
-        ],
-      ),
-    );
+                const Gap(30),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        "Mes commandes (10)",
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    OutlinedButton(
+                      onPressed: () => Get.to(() => const CommandeListPage()),
+                      child: const Text(
+                        "Voir plus",
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 12,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const Gap(15),
+                ListView.separated(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.only(bottom: 100),
+                  physics: const NeverScrollableScrollPhysics(),
+                  separatorBuilder: (_, i) => const Divider(),
+                  itemBuilder: (_, i) => const CommandTile(),
+                  itemCount: 10,
+                ),
+              ],
+            ),
+          );
+        });
   }
 }

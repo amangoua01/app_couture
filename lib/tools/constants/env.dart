@@ -15,8 +15,13 @@ abstract class Env {
 
   static const AppEnv env = AppEnv.dev;
 
-  static const _hostDev = NetwordConfig(host: "192.168.1.3", port: 8000);
-  static const _hostProd = NetwordConfig(host: "moomen.pro", scheme: "https");
+  static const _hostDev = NetwordConfig(
+    host: "backend.ateliya.com",
+  );
+  static const _hostProd = NetwordConfig(
+    host: "backend.ateliya.com",
+    scheme: "https",
+  );
 
   static NetwordConfig get baseUrl =>
       (env == AppEnv.dev) ? _hostDev : _hostProd;

@@ -9,10 +9,11 @@ abstract class WebController {
 
   final client = CustomHttpClient();
 
-  Uri urlBuilder({String? api, Json? params}) {
+  Uri urlBuilder({String? api, Json? params, String? module}) {
     if (api.value.startsWith("/")) api = api.value.substring(1);
     // var url = "${Env.baseUrl}/$module${api != null ? "/$api" : ""}";
 
+    module ??= this.module;
     return Env.baseUrl.build(module: module, api: api, params: params);
   }
 

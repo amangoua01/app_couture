@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app_couture/api/abstract/web_controller.dart';
+import 'package:app_couture/data/dto/user_register_dto.dart';
 import 'package:app_couture/data/models/user.dart';
 import 'package:app_couture/tools/components/session_manager_view_controller.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
@@ -10,55 +11,46 @@ class AuthApi extends WebController {
   @override
   String get module => "auth";
 
-  @override
   Future<DataResponse<User>> login(
-      {required String email, required String password}) async {
+      {required String login, required String password}) async {
     final response = await client.post(
-      urlBuilder(api: "login"),
+      urlBuilder(module: "", api: "login"),
       headers: headers,
-      body: {"email": email, "password": password}.parseToJson(),
+      body: {"login": login, "password": password}.parseToJson(),
     );
 
+    final json = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      final user = User().fromJson(json["user"]);
-      final token = json["token"] as String;
+      final data = json["data"];
+      final user = User.fromJson(data["user"]);
+      final token = data["token"] as String;
 
       SessionManagerViewController.jwt = token;
 
       return DataResponse<User>.success(data: user);
     } else {
-      return DataResponse<User>.error(
-          message: "Login failed with status code ${response.statusCode}");
+      return DataResponse<User>.error(message: json["error"]);
     }
   }
 
-  Future<DataResponse<User>> register(
-    User user,
-    String password,
-  ) async {
+  Future<DataResponse<User>> register(UserRegisterDto user) async {
     try {
       final response = await client.post(
-        urlBuilder(api: "register"),
+        urlBuilder(api: "create", module: 'user'),
         headers: headers,
         body: user.toJson().parseToJson(),
       );
 
+      final json = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
-        final user = User().fromJson(json["user"]);
-        final token = json["token"] as String;
-
-        SessionManagerViewController.jwt = token;
-
-        return DataResponse<User>.success(data: user);
+        final user = User().fromJson(json["data"]);
+        SessionManagerViewController.jwt = json["token"];
+        return DataResponse.success(data: user);
       } else {
-        return DataResponse<User>.error(
-            message:
-                "Registration failed with status code ${response.statusCode}");
+        return DataResponse.error(message: json["message"]);
       }
-    } catch (e) {
-      return DataResponse<User>.error(message: "Registration failed: $e");
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, systemtraceError: st);
     }
   }
 

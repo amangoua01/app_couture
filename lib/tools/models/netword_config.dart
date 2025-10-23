@@ -20,11 +20,20 @@ class NetwordConfig {
     Json? params,
   }) {
     String path;
-    if (api == null) {
-      path = "/$module";
+    if (module.isEmpty) {
+      if (api == null) {
+        path = "/";
+      } else {
+        if (api.value.startsWith("/")) api = api.value.substring(1);
+        path = "/$api";
+      }
     } else {
-      if (api.value.startsWith("/")) api = api.value.substring(1);
-      path = "/$module/$api";
+      if (api == null) {
+        path = "/$module";
+      } else {
+        if (api.value.startsWith("/")) api = api.value.substring(1);
+        path = "/$module/$api";
+      }
     }
     if (path.endsWith("/")) path = path.substring(0, path.length - 1);
     return Uri(
