@@ -1,5 +1,7 @@
-class Entreprise {
-  int? id;
+import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/tools/extensions/types/map.dart';
+
+class Entreprise extends Model {
   String? libelle;
   String? numero;
   String? logo;
@@ -7,7 +9,7 @@ class Entreprise {
   String? createdAt;
 
   Entreprise(
-      {this.id,
+      {super.id,
       this.libelle,
       this.numero,
       this.logo,
@@ -15,14 +17,10 @@ class Entreprise {
       this.createdAt});
 
   Entreprise.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    libelle = json['libelle'];
-    numero = json['numero'];
-    logo = json['logo'];
-    email = json['email'];
-    createdAt = json['createdAt'];
+    fromJson(json);
   }
 
+  @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
@@ -32,5 +30,15 @@ class Entreprise {
     data['email'] = email;
     data['createdAt'] = createdAt;
     return data;
+  }
+
+  @override
+  fromJson(Json json) {
+    id = json['id'];
+    libelle = json['libelle'];
+    numero = json['numero'];
+    logo = json['logo'];
+    email = json['email'];
+    createdAt = json['createdAt'];
   }
 }

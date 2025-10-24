@@ -1,4 +1,5 @@
 import 'package:app_couture/data/models/abstract/entite_entreprise.dart';
+import 'package:app_couture/data/models/entreprise_entities_response.dart';
 import 'package:app_couture/data/models/user.dart';
 import 'package:app_couture/tools/components/cache.dart';
 import 'package:app_couture/tools/components/session_manager_view_controller.dart';
@@ -43,19 +44,19 @@ abstract class AuthViewController extends SessionManagerViewController {
     }
   }
 
-  List<EntiteEntreprise> get entites {
-    if (Get.isRegistered<List<EntiteEntreprise>>()) {
-      return Get.find<List<EntiteEntreprise>>();
+  EntrepriseEntitiesResponse get entities {
+    if (Get.isRegistered<EntrepriseEntitiesResponse>()) {
+      return Get.find<EntrepriseEntitiesResponse>();
     } else {
-      return [];
+      return EntrepriseEntitiesResponse();
     }
   }
 
-  set entites(List<EntiteEntreprise> value) {
-    if (Get.isRegistered<List<EntiteEntreprise>>()) {
-      Get.replace<List<EntiteEntreprise>>(value);
+  set entities(EntrepriseEntitiesResponse value) {
+    if (Get.isRegistered<EntrepriseEntitiesResponse>()) {
+      Get.replace<EntrepriseEntitiesResponse>(value);
     } else {
-      Get.put<List<EntiteEntreprise>>(value, permanent: true);
+      Get.put<EntrepriseEntitiesResponse>(value, permanent: true);
     }
     update();
   }

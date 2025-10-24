@@ -1,4 +1,5 @@
 import 'package:app_couture/tools/constants/app_colors.dart';
+import 'package:app_couture/tools/extensions/types/string.dart';
 import 'package:app_couture/tools/widgets/wrapper_listview.dart';
 import 'package:app_couture/views/controllers/boutiques/boutiques_list_page_vctl.dart';
 import 'package:app_couture/views/static/boutiques/edition_boutique_page.dart';
@@ -21,8 +22,10 @@ class BoutiquesListPage extends StatelessWidget {
             child: const Icon(Icons.add),
           ),
           body: WrapperListview(
-            items: const [1, 2, 3, 4, 5],
-            itemBuilder: (_, i) => ListTile(
+            isLoading: ctl.isLoading,
+            onRefresh: ctl.getList,
+            items: ctl.data.items,
+            itemBuilder: (e, i) => ListTile(
               leading: CircleAvatar(
                 backgroundColor: AppColors.primary.withValues(alpha: 0.3),
                 child: SvgPicture.asset(
@@ -34,8 +37,8 @@ class BoutiquesListPage extends StatelessWidget {
                   ),
                 ),
               ),
-              title: Text("Boutique ${i + 1}"),
-              subtitle: const Text("0123456789"),
+              title: Text(e.libelle.value),
+              subtitle: Text(e.contact.value),
               trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 15),
               onTap: () => Get.to(() => const EditionBoutiquePage()),
             ),

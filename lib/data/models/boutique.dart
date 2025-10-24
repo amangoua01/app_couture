@@ -9,16 +9,14 @@ class Boutique extends EntiteEntreprise {
   Boutique({this.libelle, this.situation, this.contact});
 
   Boutique.fromJson(Map<String, dynamic> json) {
-    fromJson(json);
-  }
-
-  @override
-  fromJson(Json json) {
     super.fromJson(json);
     libelle = json['libelle'];
     situation = json['situation'];
     contact = json['contact'];
   }
+
+  @override
+  fromJson(Json json) => Boutique.fromJson(json);
 
   @override
   Map<String, dynamic> toJson() {
