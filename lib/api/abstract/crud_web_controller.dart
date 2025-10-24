@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:app_couture/api/abstract/web_controller.dart';
 import 'package:app_couture/data/models/abstract/model.dart';
-import 'package:app_couture/tools/constants/env.dart';
 import 'package:app_couture/tools/extensions/types/string.dart';
 import 'package:app_couture/tools/models/data_response.dart';
 import 'package:app_couture/tools/models/paginated_data.dart';
@@ -13,7 +12,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
   final String createApi, updateApi, deleteApi, listApi;
 
   CrudWebController({
-    this.listApi = "all",
+    this.listApi = "/",
     this.createApi = "create",
     this.updateApi = "update",
     this.deleteApi = "delete",
@@ -22,7 +21,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
   Future<DataResponse<PaginatedData<T>>> list({
     int? id,
     int? page,
-    int? perPage = Env.nbItemInListPage,
+    String? search,
   }) async {
     try {
       Uri url;
@@ -32,17 +31,10 @@ abstract class CrudWebController<T extends Model> extends WebController {
         url = urlBuilder(api: "$listApi/$id");
       }
 
-      if (page != null && perPage != null) {
+      if (page != null) {
         url = url.replace(queryParameters: {
           "page": "$page",
-          "per_page": "$perPage",
         });
-      } else {
-        if (page != null) {
-          url = url.replace(queryParameters: {"page": "$page"});
-        } else {
-          url = url.replace(queryParameters: {"per_page": "$perPage"});
-        }
       }
 
       final res = await client.get(url, headers: authHeaders);

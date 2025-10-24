@@ -26,7 +26,7 @@ abstract class Env {
   static NetwordConfig get baseUrl =>
       (env == AppEnv.dev) ? _hostDev : _hostProd;
 
-  static const nbItemInListPage = 15;
+  static const nbItemInListPage = 10;
   static const supportMail = "supports@moomen.pro";
   static const supportTel = "+2250500262848";
   static const supportWhatsApp = "+2250500262848";

@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:app_couture/data/models/abstract/model.dart';
 import 'package:app_couture/data/models/boutique.dart';
 import 'package:app_couture/data/models/settings.dart';
 import 'package:app_couture/data/models/subscriptions.dart';
 import 'package:app_couture/data/models/surcusale.dart';
 import 'package:app_couture/data/models/type_user.dart';
+import 'package:app_couture/tools/components/cache.dart';
+import 'package:app_couture/tools/components/session_manager_view_controller.dart';
+import 'package:app_couture/tools/constants/cache_key.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
+import 'package:app_couture/tools/extensions/types/string.dart';
 
 class User extends Model {
   String? login;
@@ -17,7 +23,7 @@ class User extends Model {
   bool? isActive;
   int? pays;
   Boutique? boutique;
-  Surcusale? succursale;
+  Surcursale? succursale;
   Settings? settings;
   Subscriptions? activeSubscriptions;
 
@@ -86,5 +92,31 @@ class User extends Model {
     activeSubscriptions = json['activeSubscriptions'] != null
         ? Subscriptions.fromJson(json['activeSubscriptions'])
         : null;
+  }
+
+  bool get isAdmin => type?.code == 'SADM';
+
+  Future<bool> saveInCache() async {
+    Cache.setString(CacheKey.user.name, toJson().parseToJson());
+    Cache.setString(CacheKey.jwt.name, SessionManagerViewController.jwt);
+    return true;
+  }
+
+  static Future<User?> getUserFromCache() async {
+    String? userString = await Cache.getString(CacheKey.user.name);
+    if (userString != null && userString.isJson) {
+      getJwtFromCache();
+      return User.fromJson(jsonDecode(userString));
+    }
+    return null;
+  }
+
+  static Future<String?> getJwtFromCache() async {
+    String? jwtString = await Cache.getString(CacheKey.jwt.name);
+    if (jwtString != null && jwtString.isNotEmpty) {
+      SessionManagerViewController.jwt = jwtString;
+      return jwtString;
+    }
+    return null;
   }
 }

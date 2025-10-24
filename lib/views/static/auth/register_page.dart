@@ -124,6 +124,15 @@ class RegisterPage extends StatelessWidget {
                               obscureText: true,
                               externalLabel: "Mot de passe",
                               hintText: "Mot de passe",
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Veuillez saisir le mot de passe";
+                                }
+                                if (value.length < 6) {
+                                  return "Le mot de passe doit contenir au moins 6 caractères";
+                                }
+                                return null;
+                              },
                             ),
                             CTextFormField(
                               controller: ctl.confirmPasswordCtl,

@@ -8,8 +8,10 @@ class EmptyDataWidget extends StatelessWidget {
   final VoidCallback? onRefresh;
   final String message;
   final String? image;
+  final String buttonTitle;
   const EmptyDataWidget({
     this.onRefresh,
+    this.buttonTitle = "Réessayer",
     this.message = "Aucune donnée trouvée",
     this.image = "assets/images/deco3.png",
     super.key,
@@ -40,7 +42,7 @@ class EmptyDataWidget extends StatelessWidget {
             condition: onRefresh != null,
             builder: () => TextButton(
               onPressed: onRefresh,
-              child: const Text("Réessayer"),
+              child: Text(buttonTitle),
             ),
           ),
         ],

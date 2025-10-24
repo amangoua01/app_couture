@@ -73,57 +73,6 @@ class HomeWindows extends StatelessWidget {
             },
             //other params
           ),
-          // bottomNavigationBar: BottomNavigationBar(
-          //   type: BottomNavigationBarType.fixed,
-          //   currentIndex: ctl.page,
-          //   onTap: (i) {
-          //     ctl.page = i;
-          //     ctl.update();
-          //   },
-          //   selectedItemColor: AppColors.primary,
-          //   unselectedItemColor: Colors.grey,
-          //   selectedLabelStyle: const TextStyle(
-          //     fontWeight: FontWeight.bold,
-          //     color: AppColors.primary,
-          //   ),
-          //   items: [
-          //     BottomNavigationBarItem(
-          //       icon: SvgPicture.asset(
-          //         "assets/images/svg/home.svg",
-          //         width: 25,
-          //       ),
-          //       label: "Accueil",
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: SvgPicture.asset(
-          //         "assets/images/svg/stats.svg",
-          //         width: 25,
-          //       ),
-          //       label: "Statistiques",
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: SvgPicture.asset(
-          //         "assets/images/svg/store.svg",
-          //         width: 25,
-          //       ),
-          //       label: "Boutiques",
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: SvgPicture.asset(
-          //         "assets/images/svg/depenses.svg",
-          //         width: 25,
-          //       ),
-          //       label: "Transactions",
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: SvgPicture.asset(
-          //         "assets/images/svg/setting.svg",
-          //         width: 25,
-          //       ),
-          //       label: "Paramètres",
-          //     ),
-          //   ],
-          // ),
         );
       },
     );

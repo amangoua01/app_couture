@@ -1,10 +1,10 @@
 import 'package:app_couture/api/abstract/crud_web_controller.dart';
 import 'package:app_couture/data/models/surcusale.dart';
 
-class SurcusaleApi extends CrudWebController<Surcusale> {
+class SurcursaleApi extends CrudWebController<Surcursale> {
   @override
-  Surcusale get item => Surcusale();
+  Surcursale get item => Surcursale();
 
   @override
-  String get module => "surcusale";
+  String get module => "surccursale";
 }

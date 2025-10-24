@@ -19,6 +19,7 @@ class LoginPageVctl extends SessionManagerViewController {
           .load();
       if (res.status) {
         user = res.data!;
+        await res.data!.saveInCache();
         Get.offAll(() => const HomeWindows());
       } else {
         CAlertDialog.show(message: res.message);

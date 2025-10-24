@@ -6,5 +6,5 @@ class BoutiqueApi extends CrudWebController<Boutique> {
   Boutique get item => Boutique();
 
   @override
-  String get module => "boutiques";
+  String get module => "boutique";
 }

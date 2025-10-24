@@ -92,4 +92,71 @@ class AuthApi extends WebController {
       return DataResponse<bool>.error(message: "Password reset failed: $e");
     }
   }
+
+  Future<DataResponse<bool>> initResetPassword(String email) async {
+    try {
+      final response = await client.post(
+        urlBuilder(api: "reset-password/request", module: ''),
+        headers: headers,
+        body: {"email": email}.parseToJson(),
+      );
+      final json = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        return DataResponse.success(data: true);
+      } else {
+        return DataResponse.error(message: json["message"] ?? "Unknown error");
+      }
+    } catch (e, st) {
+      return DataResponse<bool>.error(systemError: e, systemtraceError: st);
+    }
+  }
+
+  Future<DataResponse<bool>> checkOTPResetPassword(
+      {required String email, required String otp}) async {
+    try {
+      final response = await client.post(
+        urlBuilder(api: "reset-password/verify-token-expired", module: ''),
+        headers: headers,
+        body: {"email": email, "token": otp}.parseToJson(),
+      );
+      final json = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        bool expired = json['expired'];
+        if (!expired) {
+          return DataResponse.success(data: true);
+        } else {
+          return DataResponse.error(message: "Le code OTP a expiré.");
+        }
+      } else {
+        return DataResponse.error(message: json["message"] ?? "Unknown error");
+      }
+    } catch (e, st) {
+      return DataResponse<bool>.error(systemError: e, systemtraceError: st);
+    }
+  }
+
+  Future<DataResponse<bool>> finalizeResetPassword(
+      {required String email,
+      required String otp,
+      required String newPassword}) async {
+    try {
+      final response = await client.post(
+        urlBuilder(api: "reset-password/reset", module: ''),
+        headers: headers,
+        body: {
+          "email": email,
+          "token": otp,
+          "newPassword": newPassword,
+        }.parseToJson(),
+      );
+      final json = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        return DataResponse.success(data: true);
+      } else {
+        return DataResponse.error(message: json["message"] ?? "Unknown error");
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, systemtraceError: st);
+    }
+  }
 }

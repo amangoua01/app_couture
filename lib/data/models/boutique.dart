@@ -1,14 +1,31 @@
-import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/entite_entreprise.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
 
-class Boutique extends Model {
+class Boutique extends EntiteEntreprise {
+  String? libelle;
+  String? situation;
+  String? contact;
+
+  Boutique({this.libelle, this.situation, this.contact});
+
+  Boutique.fromJson(Map<String, dynamic> json) {
+    fromJson(json);
+  }
+
   @override
   fromJson(Json json) {
-    throw UnimplementedError();
+    super.fromJson(json);
+    libelle = json['libelle'];
+    situation = json['situation'];
+    contact = json['contact'];
   }
 
   @override
   Map<String, dynamic> toJson() {
-    throw UnimplementedError();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['libelle'] = libelle;
+    data['situation'] = situation;
+    data['contact'] = contact;
+    return data;
   }
 }
