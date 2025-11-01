@@ -1,8 +1,10 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/widgets/wrapper_listview.dart';
+import 'package:app_couture/tools/extensions/ternary_fn.dart';
+import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:app_couture/tools/widgets/body_list_view.dart';
+import 'package:app_couture/tools/widgets/list_item.dart';
+import 'package:app_couture/views/controllers/personnels/personnels_list_page_vctl.dart';
 import 'package:app_couture/views/static/personnels/edition_personnel_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class PersonnelListPage extends StatelessWidget {
@@ -10,31 +12,33 @@ class PersonnelListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Mon personnel")),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.to(() => const EditionPersonnelPage()),
-        child: const Icon(Icons.add),
-      ),
-      body: WrapperListview(
-        items: const [1, 2, 3, 4, 5],
-        itemBuilder: (_, i) => ListTile(
-          leading: CircleAvatar(
-            backgroundColor: AppColors.primary.withValues(alpha: 0.3),
-            child: SvgPicture.asset(
-              'assets/images/svg/client.svg',
-              colorFilter: const ColorFilter.mode(
-                AppColors.primary,
-                BlendMode.srcIn,
-              ),
+    return GetBuilder(
+      init: PersonnelsListPageVctl(),
+      builder: (ctl) {
+        return BodyListView(
+          ctl,
+          title: "Personnel",
+          createPage: const EditionPersonnelPage(),
+          itemBuilder: (_, i, selected) => ListItem(
+            ctl,
+            leadingImage:
+                ctl.data.items[i].photoProfil ?? "assets/images/svg/client.svg",
+            displayBadge: ctl.data.items[i].isActive == true,
+            backgroundColor: Colors.red,
+            badgeWidget: const Icon(Icons.lock, size: 10, color: Colors.white),
+            editionPage: EditionPersonnelPage(
+              item: ctl.data.items[i],
             ),
+            index: i,
+            title: ternaryFn(
+              condition: ctl.user.id == ctl.data.items[i].id,
+              ifTrue: "Vous-même",
+              ifFalse: ctl.data.items[i].nom.value,
+            ),
+            subtitle: ctl.data.items[i].login,
           ),
-          title: Text("Personnel ${i + 1}"),
-          subtitle: const Text("0123456789"),
-          trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 15),
-          onTap: () => Get.to(() => const EditionPersonnelPage()),
-        ),
-      ),
+        );
+      },
     );
   }
 }

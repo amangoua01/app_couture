@@ -1,7 +1,8 @@
 import 'package:app_couture/api/abstract/crud_web_controller.dart';
 import 'package:app_couture/data/models/type_mesure.dart';
 
-class CategorieMesureApi extends CrudWebController<TypeMesure> {
+class TypeMesureApi extends CrudWebController<TypeMesure> {
+  TypeMesureApi() : super(listApi: "entreprise");
   @override
   TypeMesure get item => TypeMesure();
 

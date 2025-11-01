@@ -1,103 +1,60 @@
-import 'package:app_couture/tools/widgets/buttons/c_button.dart';
-import 'package:app_couture/tools/widgets/empty_data_widget.dart';
+import 'package:app_couture/api/type_mesure_api.dart';
+import 'package:app_couture/data/models/type_mesure.dart';
+import 'package:app_couture/tools/widgets/body_edition_page.dart';
 import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:app_couture/tools/widgets/messages/c_bottom_sheet.dart';
-import 'package:app_couture/tools/widgets/placeholder_widget.dart';
-import 'package:app_couture/tools/widgets/text_divider.dart';
+import 'package:app_couture/tools/widgets/placeholder_builder.dart';
+import 'package:app_couture/views/controllers/type_mesure/edition_type_mesure_page_vctl.dart';
+import 'package:app_couture/views/static/type_mesure/categorie_type_mesure/categorie_type_mesure_list_page.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 class EditionTypeMesurePage extends StatelessWidget {
-  const EditionTypeMesurePage({super.key});
+  final TypeMesure? item;
+
+  const EditionTypeMesurePage({super.key, this.item});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Ajouter un type de mesure")),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                const TextDivider("Info type de mesure"),
-                const CTextFormField(externalLabel: "Nom du type"),
-                const Gap(20),
-                const TextDivider("Catégories"),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton.icon(
-                      icon: const Icon(Icons.add),
-                      onPressed: () => CBottomSheet.show(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 20, left: 10),
-                              child: Text(
-                                "Sélectionnez une catégorie",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                itemBuilder: (_, i) => CheckboxListTile(
-                                  title: const Text("Tour de manche"),
-                                  value: false,
-                                  onChanged: (e) {},
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      label: const Text("Ajouter catégorie"),
-                    )
-                  ],
-                ),
-                PlaceholderWidget(
-                  condition: true,
-                  placeholder: const EmptyDataWidget(),
-                  child: GridView(
-                    padding: const EdgeInsets.only(top: 10),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      childAspectRatio: 4,
-                    ),
-                    // runSpacing: 10,
-                    children: List.generate(
-                      17,
-                      (i) => Chip(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        label: const Text("Tour de manche"),
-                        onDeleted: () {},
-                        deleteIconColor: Colors.red,
+    return GetBuilder(
+      init: EditionTypeMesurePageVctl(item, api: TypeMesureApi()),
+      builder: (ctl) {
+        return BodyEditionPage(
+          ctl,
+          module: "type de mesure",
+          readOnly: item?.entreprise == null,
+          children: [
+            CTextFormField(
+              externalLabel: "Nom du type",
+              controller: ctl.libelleCtl,
+            ),
+            PlaceholderBuilder(
+              condition: item != null,
+              builder: () {
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: CircleAvatar(
+                    child: SvgPicture.asset(
+                      "assets/images/svg/categorie.svg",
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
                       ),
                     ),
                   ),
-                ),
-              ],
+                  title: const Text("Catégories de mesures"),
+                  subtitle: const Text("Modifier les catégories de "
+                      "mesures associés à ce type."),
+                  trailing: const Icon(Icons.arrow_forward),
+                  onTap: () => Get.to(
+                    () => CategorieTypeMesureListPage(item!),
+                  ),
+                );
+              },
             ),
-          ),
-          const SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: CButton(title: "Enregistrer"),
-            ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 }

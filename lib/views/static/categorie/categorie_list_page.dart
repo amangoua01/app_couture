@@ -1,3 +1,7 @@
+import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:app_couture/tools/widgets/body_list_view.dart';
+import 'package:app_couture/tools/widgets/list_item.dart';
+import 'package:app_couture/views/controllers/categorie/categorie_list_page_vctl.dart';
 import 'package:app_couture/views/static/categorie/edition_categorie_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,30 +11,18 @@ class CategorieListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Catégories")),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.to(() => const EditionCategoriePage()),
-        child: const Icon(Icons.add),
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        itemCount: 4,
-        itemBuilder: (_, i) => Card(
-          margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: const ListTile(
-            leading: CircleAvatar(),
-            title: Text("Tour de manche"),
-            trailing: Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 15,
-            ),
-          ),
-        ),
-      ),
+    return GetBuilder(
+      init: CategorieListPageVctl(),
+      builder: (ctl) {
+        return BodyListView(
+          ctl,
+          title: "Catégories",
+          itemBuilder: (_, i, selected) => ListItem(ctl,
+              editionPage: EditionCategoriePage(item: ctl.data.items[i]),
+              index: i,
+              title: ctl.data.items[i].libelle.value),
+        );
+      },
     );
   }
 }

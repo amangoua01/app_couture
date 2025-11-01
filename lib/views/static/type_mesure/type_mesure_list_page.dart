@@ -1,3 +1,7 @@
+import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:app_couture/tools/widgets/body_list_view.dart';
+import 'package:app_couture/tools/widgets/list_item.dart';
+import 'package:app_couture/views/controllers/type_mesure/type_mesure_list_page_vctl.dart';
 import 'package:app_couture/views/static/type_mesure/edition_type_mesure_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,35 +11,24 @@ class TypeMesureListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Types de mesure")),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.to(() => const EditionTypeMesurePage()),
-        child: const Icon(Icons.add),
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        itemCount: 4,
-        itemBuilder: (_, i) => Card(
-          margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+    return GetBuilder(
+      init: TypeMesureListPageVctl(),
+      builder: (ctl) {
+        return BodyListView(
+          ctl,
+          title: "Types de mesure",
+          createPage: const EditionTypeMesurePage(),
+          itemBuilder: (_, i, selected) => ListItem(
+            ctl,
+            leadingImage: "assets/images/svg/mesure.svg",
+            deletable: ctl.data.items[i].entreprise != null,
+            editionPage: EditionTypeMesurePage(item: ctl.data.items[i]),
+            index: i,
+            title: ctl.data.items[i].libelle.value,
+            subtitle: ctl.data.items[i].categoriesString,
           ),
-          child: const ListTile(
-            leading: CircleAvatar(),
-            title: Text("Veste"),
-            subtitle: Text(
-              "Tour de manche, Manche, Pantalon",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 15,
-            ),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

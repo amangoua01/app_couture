@@ -1,21 +1,21 @@
 import 'package:app_couture/data/models/abstract/entite_entreprise.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
 
-class Surcursale extends EntiteEntreprise {
+class Succursale extends EntiteEntreprise {
   String? libelle;
   String? contact;
 
-  Surcursale({this.libelle, this.contact});
+  Succursale({super.id, this.libelle, this.contact});
 
-  Surcursale.fromJson(Map<String, dynamic> json) {
-    fromJson(json);
-  }
-
-  @override
-  fromJson(Json json) {
+  Succursale.fromJson(Map<String, dynamic> json) {
     super.fromJson(json);
     libelle = json['libelle'];
     contact = json['contact'];
+  }
+
+  @override
+  Succursale fromJson(Json json) {
+    return Succursale.fromJson(json);
   }
 
   @override

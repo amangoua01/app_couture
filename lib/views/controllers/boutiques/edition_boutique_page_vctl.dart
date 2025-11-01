@@ -1,31 +1,36 @@
 import 'package:app_couture/api/boutique_api.dart';
 import 'package:app_couture/data/models/boutique.dart';
 import 'package:app_couture/tools/extensions/future.dart';
+import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:app_couture/tools/models/data_response.dart';
 import 'package:app_couture/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:app_couture/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class EditionBoutiquePageVctl extends GetxController {
+class EditionBoutiquePageVctl
+    extends EditionViewController<Boutique, BoutiqueApi> {
   final nomCtl = TextEditingController();
   final contactCtl = TextEditingController();
   final situationCtl = TextEditingController();
-  final formKey = GlobalKey<FormState>();
-  final api = BoutiqueApi();
 
-  Future<void> submit() async {
-    if (formKey.currentState!.validate()) {
-      final boutique = Boutique(
-        libelle: nomCtl.text,
-        contact: contactCtl.text,
-        situation: situationCtl.text,
-      );
-      final res = await api.create(boutique).load();
-      if (res.status) {
-        Get.back(result: res);
-      } else {
-        CAlertDialog.show(message: res.message);
-      }
-    }
+  EditionBoutiquePageVctl(super.item) : super(api: BoutiqueApi());
+
+  Future<DataResponse<Boutique>> updateItem(Boutique boutique) async {
+    boutique.libelle = nomCtl.text.value;
+    boutique.contact = contactCtl.text.value;
+    boutique.situation = situationCtl.text.value;
+    final res = await api.update(boutique).load();
+    return res;
+  }
+
+  Future<DataResponse<Boutique>> createItem() async {
+    final boutique = Boutique(
+      libelle: nomCtl.text.value,
+      contact: contactCtl.text.value,
+      situation: situationCtl.text.value,
+    );
+    final res = await api.create(boutique).load();
+    return res;
   }
 
   @override
@@ -34,5 +39,42 @@ class EditionBoutiquePageVctl extends GetxController {
     contactCtl.dispose();
     situationCtl.dispose();
     super.onClose();
+  }
+
+  @override
+  Future<Boutique?> onCreate() async {
+    final boutique = Boutique(
+      libelle: nomCtl.text.value,
+      contact: contactCtl.text.value,
+      situation: situationCtl.text.value,
+    );
+    final res = await api.create(boutique).load();
+    if (res.status) {
+      return res.data;
+    } else {
+      CAlertDialog.show(message: res.message);
+    }
+    return null;
+  }
+
+  @override
+  void onInitForm(Boutique item) {
+    nomCtl.text = item.libelle.value;
+    contactCtl.text = item.contact.value;
+    situationCtl.text = item.situation.value;
+  }
+
+  @override
+  Future<Boutique?> onUpdate(Boutique item) async {
+    item.libelle = nomCtl.text.value;
+    item.contact = contactCtl.text.value;
+    item.situation = situationCtl.text.value;
+    final res = await api.update(item).load();
+    if (res.status) {
+      return res.data;
+    } else {
+      CAlertDialog.show(message: res.message);
+    }
+    return null;
   }
 }

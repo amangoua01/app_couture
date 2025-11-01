@@ -1,32 +1,26 @@
-import 'package:app_couture/api/surcusale_api.dart';
-import 'package:app_couture/data/models/succursale.dart';
+import 'package:app_couture/api/type_mesure_api.dart';
+import 'package:app_couture/data/models/type_mesure.dart';
 import 'package:app_couture/tools/extensions/future.dart';
 import 'package:app_couture/tools/extensions/types/string.dart';
 import 'package:app_couture/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:app_couture/views/controllers/abstract/edition_view_controller.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-class EditionSurcusalePageVctl
-    extends EditionViewController<Succursale, SuccursaleApi> {
+class EditionTypeMesurePageVctl extends EditionViewController<TypeMesure, TypeMesureApi> {
   final libelleCtl = TextEditingController();
-  final contactCtl = TextEditingController();
 
-  EditionSurcusalePageVctl(super.item) : super(api: SuccursaleApi());
+  EditionTypeMesurePageVctl(super.item, {required super.api});
 
   @override
   void onClose() {
     libelleCtl.dispose();
-    contactCtl.dispose();
     super.onClose();
   }
 
   @override
-  Future<Succursale?> onCreate() async {
-    final succ = Succursale(
-      libelle: libelleCtl.text,
-      contact: contactCtl.text,
-    );
-    final res = await api.create(succ).load();
+  Future<TypeMesure?> onCreate() async {
+    final typeMesure = TypeMesure(libelle: libelleCtl.text.value);
+    final res = await api.create(typeMesure).load();
     if (res.status) {
       return res.data;
     } else {
@@ -36,15 +30,13 @@ class EditionSurcusalePageVctl
   }
 
   @override
-  void onInitForm(Succursale item) {
+  void onInitForm(TypeMesure item) {
     libelleCtl.text = item.libelle.value;
-    contactCtl.text = item.contact.value;
   }
 
   @override
-  Future<Succursale?> onUpdate(Succursale item) async {
-    item.libelle = libelleCtl.text;
-    item.contact = contactCtl.text;
+  Future<TypeMesure?> onUpdate(TypeMesure item) async {
+    item.libelle = libelleCtl.text.value;
     final res = await api.update(item).load();
     if (res.status) {
       return res.data;

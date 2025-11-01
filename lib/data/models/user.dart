@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:app_couture/data/models/abstract/model.dart';
 import 'package:app_couture/data/models/boutique.dart';
+import 'package:app_couture/data/models/fichier.dart';
 import 'package:app_couture/data/models/settings.dart';
 import 'package:app_couture/data/models/subscriptions.dart';
-import 'package:app_couture/data/models/surcusale.dart';
+import 'package:app_couture/data/models/succursale.dart';
 import 'package:app_couture/data/models/type_user.dart';
 import 'package:app_couture/tools/components/cache.dart';
 import 'package:app_couture/tools/components/session_manager_view_controller.dart';
@@ -18,14 +19,15 @@ class User extends Model {
   String? prenoms;
   String? fcmToken;
   TypeUser? type;
-  String? logo;
+  Fichier? _logo;
   List<String>? roles;
   bool? isActive;
   int? pays;
   Boutique? boutique;
-  Surcursale? succursale;
+  Succursale? succursale;
   Settings? settings;
   Subscriptions? activeSubscriptions;
+  String? password;
 
   User(
       {super.id,
@@ -34,17 +36,38 @@ class User extends Model {
       this.prenoms,
       this.fcmToken,
       this.type,
-      this.logo,
+      String? logo,
       this.roles,
       this.isActive,
       this.pays,
       this.boutique,
       this.succursale,
       this.settings,
-      this.activeSubscriptions});
+      this.activeSubscriptions,
+      this.password})
+      : _logo = logo != null ? Fichier(path: logo) : null;
 
   User.fromJson(Map<String, dynamic> json) {
-    fromJson(json);
+    id = json['id'];
+    login = json['login'];
+    nom = json['nom'];
+    prenoms = json['prenoms'];
+    fcmToken = json['fcm_token'];
+    type = json['type'] != null ? TypeUser.fromJson(json['type']) : null;
+    _logo = json['logo'] != null ? Fichier.fromJson(json['logo']) : null;
+    roles = json['roles'].cast<String>();
+    isActive = json['is_active'];
+    pays = json['pays'];
+    boutique =
+        json['boutique'] == null ? null : Boutique.fromJson(json['boutique']);
+    succursale = json['succursale'] == null
+        ? null
+        : Succursale.fromJson(json['succursale']);
+    settings =
+        json['settings'] != null ? Settings.fromJson(json['settings']) : null;
+    activeSubscriptions = json['activeSubscriptions'] != null
+        ? Subscriptions.fromJson(json['activeSubscriptions'])
+        : null;
   }
 
   @override
@@ -55,15 +78,16 @@ class User extends Model {
     data['nom'] = nom;
     data['prenoms'] = prenoms;
     data['fcm_token'] = fcmToken;
-    if (type != null) {
-      data['type'] = type!.toJson();
-    }
-    data['logo'] = logo;
+    data['type'] = type!.id;
+    data['logo'] = _logo;
     data['roles'] = roles;
     data['is_active'] = isActive;
     data['pays'] = pays;
-    data['boutique'] = boutique;
-    data['succursale'] = succursale;
+    if (password != null) {
+      data['password'] = password;
+    }
+    data['boutique'] = boutique?.id;
+    data['succursale'] = succursale?.id;
     if (settings != null) {
       data['settings'] = settings!.toJson();
     }
@@ -74,24 +98,8 @@ class User extends Model {
   }
 
   @override
-  fromJson(Json json) {
-    id = json['id'];
-    login = json['login'];
-    nom = json['nom'];
-    prenoms = json['prenoms'];
-    fcmToken = json['fcm_token'];
-    type = json['type'] != null ? TypeUser.fromJson(json['type']) : null;
-    logo = json['logo'];
-    roles = json['roles'].cast<String>();
-    isActive = json['is_active'];
-    pays = json['pays'];
-    boutique = json['boutique'];
-    succursale = json['succursale'];
-    settings =
-        json['settings'] != null ? Settings.fromJson(json['settings']) : null;
-    activeSubscriptions = json['activeSubscriptions'] != null
-        ? Subscriptions.fromJson(json['activeSubscriptions'])
-        : null;
+  User fromJson(Json json) {
+    return User.fromJson(json);
   }
 
   bool get isAdmin => type?.code == 'SADM';
@@ -119,4 +127,6 @@ class User extends Model {
     }
     return null;
   }
+
+  String? get photoProfil => _logo?.fullUrl;
 }

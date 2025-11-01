@@ -15,17 +15,25 @@ abstract class ListViewController<M extends Model>
 
   List<int>? selected;
   bool provideIdToListApi;
+  int? customId;
 
   ListViewController(
     this.api, {
     this.provideIdToListApi = true,
+    this.customId,
   });
 
   @override
   Future<void> getList({int page = 1, String? search}) async {
     startLoad(page);
+    int? finalId;
+    if (customId != null) {
+      finalId = customId;
+    } else {
+      finalId = entite.id;
+    }
     final res = await api.list(
-      id: provideIdToListApi ? entite.id : null,
+      id: provideIdToListApi ? finalId : null,
       page: page,
       search: search,
     );

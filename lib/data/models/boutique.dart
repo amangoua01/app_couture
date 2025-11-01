@@ -6,7 +6,7 @@ class Boutique extends EntiteEntreprise {
   String? situation;
   String? contact;
 
-  Boutique({this.libelle, this.situation, this.contact});
+  Boutique({super.id, this.libelle, this.situation, this.contact});
 
   Boutique.fromJson(Map<String, dynamic> json) {
     super.fromJson(json);
@@ -22,8 +22,8 @@ class Boutique extends EntiteEntreprise {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['libelle'] = libelle;
-    data['situation'] = situation;
     data['contact'] = contact;
+    data['situation'] = situation;
     return data;
   }
 }

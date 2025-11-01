@@ -1,10 +1,12 @@
+import 'package:app_couture/data/models/client.dart';
 import 'package:app_couture/tools/widgets/buttons/c_button.dart';
 import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class EditionClientPage extends StatelessWidget {
-  const EditionClientPage({super.key});
+  final Client? item;
+  const EditionClientPage({super.key, this.item});
 
   @override
   Widget build(BuildContext context) {

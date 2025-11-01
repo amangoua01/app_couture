@@ -1,6 +1,9 @@
+import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:app_couture/tools/widgets/body_list_view.dart';
+import 'package:app_couture/tools/widgets/list_item.dart';
+import 'package:app_couture/views/controllers/clients/client_liste_page_vctl.dart';
 import 'package:app_couture/views/static/clients/edition_client_page.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class ClientListePage extends StatelessWidget {
@@ -8,41 +11,22 @@ class ClientListePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Clients")),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.to(() => const EditionClientPage()),
-        child: const Icon(Icons.add),
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        itemCount: 10,
-        itemBuilder: (_, i) => Card(
-          margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+    return GetBuilder(
+      init: ClientListePageVctl(),
+      builder: (ctl) {
+        return BodyListView(
+          ctl,
+          title: "Clients",
+          itemBuilder: (_, i, selected) => ListItem(
+            ctl,
+            editionPage: EditionClientPage(item: ctl.data.items[i]),
+            index: i,
+            title: ctl.data.items[i].fullName,
+            subtitle: ctl.data.items[i].tel.value,
+            selected: selected,
           ),
-          child: const ListTile(
-            leading: CircleAvatar(),
-            title: Text("Parfait koné"),
-            subtitle: Row(
-              children: [
-                Icon(Icons.phone, size: 15),
-                Gap(5),
-                Text(
-                  "07 89 89 10 38",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 15,
-            ),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

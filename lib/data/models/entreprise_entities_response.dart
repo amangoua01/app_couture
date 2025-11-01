@@ -1,9 +1,9 @@
 import 'package:app_couture/data/models/boutique.dart';
-import 'package:app_couture/data/models/surcusale.dart';
+import 'package:app_couture/data/models/succursale.dart';
 
 class EntrepriseEntitiesResponse {
   List<Boutique> boutiques = [];
-  List<Surcursale> surcusales = [];
+  List<Succursale> surcusales = [];
 
   EntrepriseEntitiesResponse();
 
@@ -15,9 +15,9 @@ class EntrepriseEntitiesResponse {
       }
     }
     if (json['surccursales'] is List) {
-      surcusales = <Surcursale>[];
+      surcusales = <Succursale>[];
       for (var v in (json['surccursales'] as List)) {
-        surcusales.add(Surcursale.fromJson(v));
+        surcusales.add(Succursale.fromJson(v));
       }
     }
   }

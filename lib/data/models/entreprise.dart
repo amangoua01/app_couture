@@ -17,7 +17,12 @@ class Entreprise extends Model {
       this.createdAt});
 
   Entreprise.fromJson(Map<String, dynamic> json) {
-    fromJson(json);
+    id = json['id'];
+    libelle = json['libelle'];
+    numero = json['numero'];
+    logo = json['logo'];
+    email = json['email'];
+    createdAt = json['createdAt'];
   }
 
   @override
@@ -33,12 +38,7 @@ class Entreprise extends Model {
   }
 
   @override
-  fromJson(Json json) {
-    id = json['id'];
-    libelle = json['libelle'];
-    numero = json['numero'];
-    logo = json['logo'];
-    email = json['email'];
-    createdAt = json['createdAt'];
+  Entreprise fromJson(Json json) {
+    return Entreprise.fromJson(json);
   }
 }

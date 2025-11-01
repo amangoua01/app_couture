@@ -2,6 +2,8 @@ import 'package:app_couture/data/models/abstract/model.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
 
 class EntiteEntreprise extends Model {
+  EntiteEntreprise({super.id});
+
   @override
   fromJson(Json json) {
     id = json['id'];

@@ -9,13 +9,14 @@ import 'package:app_couture/tools/models/paginated_data.dart';
 abstract class CrudWebController<T extends Model> extends WebController {
   T get item;
 
-  final String createApi, updateApi, deleteApi, listApi;
+  final String createApi, updateApi, deleteApi, deleteMultipleApi, listApi;
 
   CrudWebController({
     this.listApi = "/",
     this.createApi = "create",
     this.updateApi = "update",
     this.deleteApi = "delete",
+    this.deleteMultipleApi = "delete/all/items",
   });
 
   Future<DataResponse<PaginatedData<T>>> list({
@@ -81,7 +82,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
   Future<DataResponse<T>> update(T item) async {
     try {
       final res = await client.put(
-        urlBuilder(api: updateApi),
+        urlBuilder(api: "$updateApi/${item.id}"),
         headers: authHeaders,
         body: jsonEncode(item.toJson()),
       );
@@ -120,7 +121,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
   Future<DataResponse<bool>> deleteMultiple(List<int> ids) async {
     try {
       final res = await client.post(
-        urlBuilder(api: deleteApi),
+        urlBuilder(api: deleteMultipleApi),
         headers: authHeaders,
         body: jsonEncode({"ids": ids}),
       );
