@@ -139,4 +139,8 @@ class User extends ModelJson {
     }
     return null;
   }
+
+  String get fullName {
+    return "${prenoms ?? ''} ${nom ?? ''}".trim();
+  }
 }

@@ -6,6 +6,7 @@ import 'package:app_couture/views/static/auth/profil_page.dart';
 import 'package:app_couture/views/static/boutiques/boutiques_list_page.dart';
 import 'package:app_couture/views/static/categorie/categorie_list_page.dart';
 import 'package:app_couture/views/static/clients/client_liste_page.dart';
+import 'package:app_couture/views/static/modele/modele_list_page.dart';
 import 'package:app_couture/views/static/personnels/personnels_list_page.dart';
 import 'package:app_couture/views/static/surcursales/succursales_list_page.dart';
 import 'package:app_couture/views/static/type_mesure/type_mesure_list_page.dart';
@@ -46,7 +47,7 @@ class SettingPage extends StatelessWidget {
                         ),
                       ),
                       const Gap(10),
-                      const Text("PATRICK CYRILL"),
+                      Text(ctl.user.fullName),
                     ],
                   ),
                 ),
@@ -77,6 +78,14 @@ class SettingPage extends StatelessWidget {
                 ),
                 SettingTile(
                   title: "Mes clients",
+                  onTap: () => Get.to(() => const ClientListePage()),
+                ),
+                SettingTile(
+                  title: "Mes modèles",
+                  onTap: () => Get.to(() => const ModeleListPage()),
+                ),
+                SettingTile(
+                  title: "Mes modèles boutiques",
                   onTap: () => Get.to(() => const ClientListePage()),
                 ),
                 SettingTile(

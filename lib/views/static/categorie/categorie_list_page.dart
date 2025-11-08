@@ -17,6 +17,7 @@ class CategorieListPage extends StatelessWidget {
         return BodyListView(
           ctl,
           title: "Catégories",
+          createPage: const EditionCategoriePage(),
           itemBuilder: (_, i, selected) => ListItem(ctl,
               leadingImage: "assets/images/svg/categorie.svg",
               editionPage: EditionCategoriePage(item: ctl.data.items[i]),
