@@ -1,4 +1,4 @@
-import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/model_json.dart';
 import 'package:app_couture/tools/widgets/buttons/c_button.dart';
 import 'package:app_couture/tools/widgets/placeholder_builder.dart';
 import 'package:app_couture/tools/widgets/placeholder_widget.dart';
@@ -6,7 +6,7 @@ import 'package:app_couture/views/controllers/abstract/edition_view_controller.d
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-class BodyEditionPage<M extends Model> extends StatelessWidget {
+class BodyEditionPage<M extends ModelJson> extends StatelessWidget {
   final M? item;
   final EditionViewController ctl;
   final String module;

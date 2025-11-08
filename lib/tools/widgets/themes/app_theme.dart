@@ -17,7 +17,7 @@ abstract class AppTheme {
       labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
       labelMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
     ),
-    tabBarTheme: const TabBarTheme(labelColor: Colors.white),
+    tabBarTheme: const TabBarThemeData(labelColor: Colors.white),
     buttonTheme: const ButtonThemeData(buttonColor: AppColors.primary),
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.primary,

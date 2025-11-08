@@ -30,12 +30,15 @@ abstract class EditionViewController<M extends Model,
   }
 
   void onInitForm(M item);
+  void onInitCreation() {}
 
   @override
   void onInit() {
     super.onInit();
     if (item != null) {
       onInitForm(item as M);
+    } else {
+      onInitCreation();
     }
   }
 }

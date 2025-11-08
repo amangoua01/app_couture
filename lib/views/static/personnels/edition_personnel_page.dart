@@ -1,4 +1,5 @@
 import 'package:app_couture/data/models/user.dart';
+import 'package:app_couture/tools/constants/type_user_enum.dart';
 import 'package:app_couture/tools/extensions/types/string.dart';
 import 'package:app_couture/tools/widgets/body_edition_page.dart';
 import 'package:app_couture/tools/widgets/field_set_container.dart';
@@ -88,17 +89,19 @@ class EditionPersonnelPage extends StatelessWidget {
                 ),
               ),
               Visibility(
-                visible: (item?.isAdmin == false || item == null) &&
-                    ["ADB", "ADS"].contains(ctl.typeUser?.code),
+                visible: (item?.isAdmin == false || item == null),
                 child: FieldSetContainer(
                   children: [
                     Visibility(
-                      visible: ctl.typeUser?.code == "ADB",
+                      visible: [TypeUserEnum.adb, TypeUserEnum.adsb]
+                          .contains(ctl.typeUser?.typeEnum),
                       child: CDropDownFormField(
                         externalLabel: "Boutique",
-                        enabled: ctl.typeUser?.code == "ADB" ||
+                        enabled: [TypeUserEnum.adb, TypeUserEnum.adsb]
+                                .contains(ctl.typeUser?.typeEnum) ||
                             item?.isAdmin == false,
-                        require: ctl.typeUser?.code == "ADB",
+                        require: [TypeUserEnum.adb, TypeUserEnum.adsb]
+                            .contains(ctl.typeUser?.typeEnum),
                         selectedItem: ctl.boutique,
                         items: (e, f) => ctl.getBoutiques(),
                         itemAsString: (e) => e.libelle.value,
@@ -109,10 +112,13 @@ class EditionPersonnelPage extends StatelessWidget {
                       ),
                     ),
                     Visibility(
-                      visible: ctl.typeUser?.code == "ADS",
+                      visible: [TypeUserEnum.ads, TypeUserEnum.adsb]
+                          .contains(ctl.typeUser?.typeEnum),
                       child: CDropDownFormField(
-                        enabled: ctl.typeUser?.code == "ADS",
-                        require: ctl.typeUser?.code == "ADS",
+                        enabled: [TypeUserEnum.ads, TypeUserEnum.adsb]
+                            .contains(ctl.typeUser?.typeEnum),
+                        require: [TypeUserEnum.ads, TypeUserEnum.adsb]
+                            .contains(ctl.typeUser?.typeEnum),
                         externalLabel: "Surcusale",
                         items: (e, f) => ctl.getSuccursales(),
                         selectedItem: ctl.succursale,

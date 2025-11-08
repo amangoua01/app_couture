@@ -1,12 +1,19 @@
-import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/model_json.dart';
 import 'package:app_couture/data/models/categorie_mesure.dart';
+import 'package:app_couture/data/models/type_mesure.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
 
-class CategorieTypeMesure extends Model<CategorieTypeMesure> {
+class CategorieTypeMesure extends ModelJson<CategorieTypeMesure> {
   CategorieMesure? categorieMesure;
   String? createdAt;
+  TypeMesure? typeMesure;
 
-  CategorieTypeMesure({super.id, this.categorieMesure, this.createdAt});
+  CategorieTypeMesure({
+    super.id,
+    this.categorieMesure,
+    this.createdAt,
+    this.typeMesure,
+  });
 
   CategorieTypeMesure.fromJson(Map<String, dynamic> json) {
     id = json['id'];

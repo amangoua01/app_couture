@@ -1,4 +1,4 @@
-import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/model_json.dart';
 import 'package:app_couture/tools/constants/app_colors.dart';
 import 'package:app_couture/tools/extensions/types/int.dart';
 import 'package:app_couture/tools/extensions/types/string.dart';
@@ -11,7 +11,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
-class ListItem<M extends Model> extends StatelessWidget {
+class ListItem<M extends ModelJson> extends StatelessWidget {
   final String title;
   final String? subtitle;
   final String? leadingImage;
@@ -71,8 +71,8 @@ class ListItem<M extends Model> extends StatelessWidget {
                 placeholder: ClipOval(
                   child: Image.network(
                     leadingImage.value,
-                    width: 40,
-                    height: 40,
+                    width: 30,
+                    height: 30,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return SvgPicture.asset(
@@ -132,7 +132,8 @@ class ListItem<M extends Model> extends StatelessWidget {
               backgroundColor: backgroundColor,
               isLabelVisible: displayBadge,
               child: Container(
-                padding: const EdgeInsets.all(5),
+                height: 40,
+                width: 40,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
                   shape: BoxShape.circle,
@@ -156,8 +157,8 @@ class ListItem<M extends Model> extends StatelessWidget {
                       placeholder: ClipOval(
                         child: Image.network(
                           leadingImage.value,
-                          width: 40,
-                          height: 40,
+                          width: 30,
+                          height: 30,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return SvgPicture.asset(

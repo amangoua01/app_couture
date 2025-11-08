@@ -1,6 +1,6 @@
 import 'package:app_couture/api/boutique_api.dart';
 import 'package:app_couture/api/personnel_api.dart';
-import 'package:app_couture/api/surcusale_api.dart';
+import 'package:app_couture/api/succursale_api.dart';
 import 'package:app_couture/api/type_user_api.dart';
 import 'package:app_couture/data/dto/update_user_dto.dart';
 import 'package:app_couture/data/models/boutique.dart';
@@ -95,5 +95,10 @@ class EditionPersonnelPageVctl
       return res.data!.items;
     }
     return [];
+  }
+
+  bool get isBoutiqueRequired {
+    if (typeUser == null) return false;
+    return typeUser!.code == 'BOUT' || typeUser!.code == 'EMP';
   }
 }

@@ -5,8 +5,6 @@ abstract class Model<T> {
 
   Model({this.id});
 
-  Map<String, dynamic> toJson();
-
   T fromJson(Json json);
 
   // @override

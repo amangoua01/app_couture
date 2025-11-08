@@ -18,6 +18,7 @@ class CategorieListPage extends StatelessWidget {
           ctl,
           title: "Catégories",
           itemBuilder: (_, i, selected) => ListItem(ctl,
+              leadingImage: "assets/images/svg/categorie.svg",
               editionPage: EditionCategoriePage(item: ctl.data.items[i]),
               index: i,
               title: ctl.data.items[i].libelle.value),

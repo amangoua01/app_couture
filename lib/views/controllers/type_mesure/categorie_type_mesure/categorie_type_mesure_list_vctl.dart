@@ -1,9 +1,13 @@
 import 'package:app_couture/api/categorie_mesure_api.dart';
 import 'package:app_couture/api/categorie_type_mesure_api.dart';
+import 'package:app_couture/data/dto/create_categorie_type_mesure_dto.dart';
 import 'package:app_couture/data/models/categorie_mesure.dart';
 import 'package:app_couture/data/models/categorie_type_mesure.dart';
 import 'package:app_couture/data/models/type_mesure.dart';
+import 'package:app_couture/tools/extensions/future.dart';
+import 'package:app_couture/tools/extensions/types/int.dart';
 import 'package:app_couture/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:app_couture/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:get/get.dart';
 
 class CategorieTypeMesureListVctl extends GetxController {
@@ -14,17 +18,11 @@ class CategorieTypeMesureListVctl extends GetxController {
   final categorieTypeMesureApi = CategorieTypeMesureApi();
   List<CategorieMesure> categories = [];
   List<CategorieTypeMesure> categoriesType = [];
-  List<CategorieTypeMesure> added = [];
-  List<CategorieTypeMesure> deleted = [];
 
   CategorieTypeMesureListVctl(this.typeMesure);
 
   Future<void> getCategories() async {
-    isLoading = true;
-    update();
-    final res = await categorieApi.list();
-    isLoading = false;
-    update();
+    final res = await categorieApi.list().load();
     if (res.status) {
       categories = res.data!.items;
       update();
@@ -47,26 +45,47 @@ class CategorieTypeMesureListVctl extends GetxController {
     }
   }
 
-  bool isSelected(int categorieId) {
-    var isPresent = categoriesType
-        .where((element) => element.categorieMesure?.id == categorieId)
-        .isNotEmpty;
-    if (!isPresent) {
-      isPresent = added
-          .where((element) => element.categorieMesure?.id == categorieId)
-          .isNotEmpty;
+  List<int> selected() => categoriesType
+      .where((e) => e.categorieMesure != null)
+      .map((e) => e.categorieMesure!.id.value)
+      .toList();
+
+  Future<void> submit(List<CategorieMesure> newCategories) async {
+    final res = await categorieTypeMesureApi
+        .createInTypeMesure(
+          CreateCategorieTypeMesureDto(
+            typeMesureId: typeMesure.id.value,
+            categories: newCategories.map((e) => e.id.value).toList(),
+          ),
+        )
+        .load();
+    if (res.status) {
+      categoriesType = res.data!;
+      update();
+      Get.back();
+    } else {
+      CAlertDialog.show(message: res.message);
     }
-    return isPresent;
+  }
+
+  Future<void> delete(int id) async {
+    final rep = await CChoiceMessageDialog.show(
+      message: "Voulez-vous vraiment supprimer cette catégorie de mesure ?",
+    );
+    if (rep == true) {
+      final res = await categorieTypeMesureApi.delete(id).load();
+      if (res.status) {
+        categoriesType.removeWhere((e) => e.id.value == id);
+        update();
+      } else {
+        CAlertDialog.show(message: res.message);
+      }
+    }
   }
 
   @override
   void onReady() {
-    loadData();
+    getList();
     super.onReady();
-  }
-
-  Future<void> loadData() async {
-    await getCategories();
-    await getList();
   }
 }

@@ -1,7 +1,8 @@
-import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/model_json.dart';
+import 'package:app_couture/tools/constants/type_user_enum.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
 
-class TypeUser extends Model<TypeUser> {
+class TypeUser extends ModelJson<TypeUser> {
   String? libelle;
   String? code;
   String? createdAt;
@@ -29,4 +30,6 @@ class TypeUser extends Model<TypeUser> {
   TypeUser fromJson(Json json) {
     return TypeUser.fromJson(json);
   }
+
+  TypeUserEnum get typeEnum => TypeUserEnum.fromCode(code);
 }

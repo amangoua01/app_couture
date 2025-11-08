@@ -1,9 +1,9 @@
-import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/model_json.dart';
 import 'package:app_couture/data/models/categorie_mesure.dart';
 import 'package:app_couture/data/models/entreprise.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
 
-class TypeMesure extends Model {
+class TypeMesure extends ModelJson {
   String? libelle;
   Entreprise? entreprise;
   List<CategorieMesure> categories = [];

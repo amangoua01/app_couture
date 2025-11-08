@@ -4,10 +4,9 @@ import 'package:app_couture/tools/widgets/themes/app_theme.dart';
 import 'package:app_couture/views/static/starting/splash_screen_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -47,17 +46,6 @@ void main() async {
         builder: EasyLoading.init(),
         debugShowCheckedModeBanner: false,
         home: const SplashScreenPage(),
-        locale: const Locale("fr", "FR"),
-        fallbackLocale: const Locale('en', 'US'),
-        localizationsDelegates: const [
-          GlobalCupertinoLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en', 'US'),
-          Locale('fr', 'FR'),
-        ],
       ),
     ),
   );

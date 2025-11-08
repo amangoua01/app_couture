@@ -1,8 +1,16 @@
 import 'package:app_couture/data/models/client.dart';
+import 'package:app_couture/data/models/fichier_local.dart';
+import 'package:app_couture/data/models/fichier_server.dart';
+import 'package:app_couture/tools/constants/type_user_enum.dart';
+import 'package:app_couture/tools/extensions/types/string.dart';
 import 'package:app_couture/tools/widgets/buttons/c_button.dart';
+import 'package:app_couture/tools/widgets/field_set_container.dart';
+import 'package:app_couture/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:app_couture/views/controllers/clients/edition_client_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 class EditionClientPage extends StatelessWidget {
   final Client? item;
@@ -10,53 +18,118 @@ class EditionClientPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Ajouter un client")),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          Row(
-            children: [
-              Container(
-                height: 100,
-                width: 100,
-                margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey, width: 1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
+    return GetBuilder(
+      init: EditionClientPageVctl(item),
+      builder: (ctl) {
+        return Scaffold(
+          appBar: AppBar(title: const Text("Ajouter un client")),
+          body: Form(
+            key: ctl.formKey,
+            child: ListView(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 100,
               ),
-            ],
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => ctl.pickPhoto(),
+                      child: CircleAvatar(
+                        radius: 70,
+                        backgroundColor: Colors.grey.shade300,
+                        backgroundImage: (ctl.photo == null)
+                            ? null
+                            : (ctl.photo is FichierServer)
+                                ? NetworkImage(
+                                    (ctl.photo as FichierServer).fullUrl!,
+                                  )
+                                : FileImage(
+                                    (ctl.photo as FichierLocal).file,
+                                  ) as ImageProvider,
+                        child: Visibility(
+                          visible: ctl.photo == null,
+                          child: const Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.camera_alt_outlined,
+                                    color: Colors.grey, size: 30),
+                                Text(
+                                  "Ajouter une photo",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Gap(20),
+                FieldSetContainer(children: [
+                  CTextFormField(
+                    externalLabel: "Nom",
+                    require: true,
+                    controller: ctl.nomCtl,
+                  ),
+                  CTextFormField(
+                    externalLabel: "Prénom(s)",
+                    require: true,
+                    controller: ctl.prenomCtl,
+                  ),
+                  CTextFormField(
+                    externalLabel: "Téléphone",
+                    require: true,
+                    controller: ctl.telCtl,
+                  ),
+                ]),
+                FieldSetContainer(children: [
+                  Visibility(
+                    visible: [TypeUserEnum.adb, TypeUserEnum.adsb]
+                            .contains(ctl.user.typeEnum) ||
+                        ctl.user.isAdmin,
+                    child: CDropDownFormField(
+                      selectedItem: ctl.boutique,
+                      items: (e, f) => ctl.fetchBoutiques(),
+                      externalLabel: "Boutique",
+                      itemAsString: (e) => e.libelle.value,
+                      onChanged: (e) {
+                        ctl.boutique = e;
+                        ctl.update();
+                      },
+                    ),
+                  ),
+                  Visibility(
+                    visible: [TypeUserEnum.adsb, TypeUserEnum.ads]
+                            .contains(ctl.user.typeEnum) ||
+                        ctl.user.isAdmin,
+                    child: CDropDownFormField(
+                      selectedItem: ctl.succursale,
+                      externalLabel: "Succursale",
+                      itemAsString: (e) => e.libelle.value,
+                      items: (e, f) => ctl.fetchSuccursales(),
+                      onChanged: (e) {
+                        ctl.succursale = e;
+                        ctl.update();
+                      },
+                    ),
+                  ),
+                ]),
+                const Gap(10),
+                CButton(onPressed: ctl.submit),
+              ],
+            ),
           ),
-          const CTextFormField(externalLabel: "Nom"),
-          const CTextFormField(externalLabel: "Prénom(s)"),
-          const CTextFormField(externalLabel: "Téléphone"),
-          const Text("Client pour : "),
-          CheckboxListTile(
-            value: false,
-            contentPadding: EdgeInsets.zero,
-            onChanged: (e) {},
-            controlAffinity: ListTileControlAffinity.leading,
-            title: const Text("Surcussale"),
-          ),
-          CheckboxListTile(
-            contentPadding: EdgeInsets.zero,
-            value: false,
-            onChanged: (e) {},
-            controlAffinity: ListTileControlAffinity.leading,
-            title: const Text("Boutique"),
-          ),
-          CheckboxListTile(
-            contentPadding: EdgeInsets.zero,
-            value: false,
-            onChanged: (e) {},
-            controlAffinity: ListTileControlAffinity.leading,
-            title: const Text("Les deux"),
-          ),
-          const Gap(10),
-          CButton(onPressed: () {}),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -7,4 +7,6 @@ class ClientApi extends CrudWebController<Client> {
 
   @override
   String get module => "client";
+
+  ClientApi() : super(listApi: 'entreprise');
 }

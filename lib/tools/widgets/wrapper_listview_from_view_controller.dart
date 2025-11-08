@@ -1,4 +1,4 @@
-import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/model_json.dart';
 import 'package:app_couture/tools/constants/app_colors.dart';
 import 'package:app_couture/tools/widgets/placeholder_builder.dart';
 import 'package:app_couture/tools/widgets/shimmer_listtile.dart';
@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class WrapperListviewFromViewController<M extends Model>
+class WrapperListviewFromViewController<M extends ModelJson>
     extends StatelessWidget {
   final Widget? Function(BuildContext, int) itemBuilder;
   final ListViewController ctl;

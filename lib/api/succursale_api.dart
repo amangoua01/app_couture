@@ -5,6 +5,8 @@ class SuccursaleApi extends CrudWebController<Succursale> {
   @override
   Succursale get item => Succursale();
 
+  SuccursaleApi() : super(listApi: "entreprise");
+
   @override
   String get module => "succursale";
 }

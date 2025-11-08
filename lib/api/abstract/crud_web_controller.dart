@@ -2,9 +2,13 @@ import 'dart:convert';
 
 import 'package:app_couture/api/abstract/web_controller.dart';
 import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/model_form_data.dart';
+import 'package:app_couture/data/models/abstract/model_json.dart';
+import 'package:app_couture/tools/extensions/types/int.dart';
 import 'package:app_couture/tools/extensions/types/string.dart';
 import 'package:app_couture/tools/models/data_response.dart';
 import 'package:app_couture/tools/models/paginated_data.dart';
+import 'package:http/http.dart' as http;
 
 abstract class CrudWebController<T extends Model> extends WebController {
   T get item;
@@ -61,11 +65,21 @@ abstract class CrudWebController<T extends Model> extends WebController {
 
   Future<DataResponse<T>> create(T item) async {
     try {
-      final res = await client.post(
-        urlBuilder(api: createApi),
-        body: jsonEncode(item.toJson()),
-        headers: authHeaders,
-      );
+      final http.Response res;
+      if (item is ModelJson) {
+        res = await client.post(
+          urlBuilder(api: createApi),
+          body: jsonEncode(item.toJson()),
+          headers: authHeaders,
+        );
+      } else {
+        res = await client.multiPart(
+          urlBuilder(api: createApi),
+          body: (item as ModelFormData).toFields(),
+          files: await item.toMultipartFile(),
+          headers: authHeaders,
+        );
+      }
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return DataResponse.success(data: item.fromJson(data["data"]));
@@ -81,11 +95,21 @@ abstract class CrudWebController<T extends Model> extends WebController {
 
   Future<DataResponse<T>> update(T item) async {
     try {
-      final res = await client.put(
-        urlBuilder(api: "$updateApi/${item.id}"),
-        headers: authHeaders,
-        body: jsonEncode(item.toJson()),
-      );
+      final http.Response res;
+      if (item is ModelJson) {
+        res = await client.put(
+          urlBuilder(api: "$updateApi/${item.id.value}"),
+          body: jsonEncode(item.toJson()),
+          headers: authHeaders,
+        );
+      } else {
+        res = await client.multiPart(
+          urlBuilder(api: "$updateApi/${item.id.value}"),
+          body: (item as ModelFormData).toFields(),
+          files: await item.toMultipartFile(),
+          headers: authHeaders,
+        );
+      }
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return DataResponse.success(data: item.fromJson(data["data"]));

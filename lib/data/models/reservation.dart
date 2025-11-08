@@ -1,7 +1,7 @@
-import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/model_json.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
 
-class Reservation extends Model {
+class Reservation extends ModelJson {
   @override
   fromJson(Json json) {
     // TODO: implement fromJson

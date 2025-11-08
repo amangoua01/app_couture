@@ -1,7 +1,7 @@
-import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/model_json.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
 
-class Pays extends Model {
+class Pays extends ModelJson {
   String? libelle;
   String? code;
   String? indicatif;

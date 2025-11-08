@@ -22,7 +22,7 @@ class EntrepriseApi extends CrudWebController<Entreprise> {
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return DataResponse.success(
-          data: EntrepriseEntitiesResponse.fromJson(data),
+          data: EntrepriseEntitiesResponse.fromJson(data['data']),
         );
       } else {
         return DataResponse.error(

@@ -1,8 +1,10 @@
 import 'dart:convert';
 
-import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/fichier.dart';
+import 'package:app_couture/data/models/abstract/model_json.dart';
 import 'package:app_couture/data/models/boutique.dart';
-import 'package:app_couture/data/models/fichier.dart';
+import 'package:app_couture/data/models/fichier_local.dart';
+import 'package:app_couture/data/models/fichier_server.dart';
 import 'package:app_couture/data/models/settings.dart';
 import 'package:app_couture/data/models/subscriptions.dart';
 import 'package:app_couture/data/models/succursale.dart';
@@ -10,10 +12,11 @@ import 'package:app_couture/data/models/type_user.dart';
 import 'package:app_couture/tools/components/cache.dart';
 import 'package:app_couture/tools/components/session_manager_view_controller.dart';
 import 'package:app_couture/tools/constants/cache_key.dart';
+import 'package:app_couture/tools/constants/type_user_enum.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
 import 'package:app_couture/tools/extensions/types/string.dart';
 
-class User extends Model {
+class User extends ModelJson {
   String? login;
   String? nom;
   String? prenoms;
@@ -45,7 +48,7 @@ class User extends Model {
       this.settings,
       this.activeSubscriptions,
       this.password})
-      : _logo = logo != null ? Fichier(path: logo) : null;
+      : _logo = logo != null ? FichierLocal(path: logo) : null;
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -54,7 +57,7 @@ class User extends Model {
     prenoms = json['prenoms'];
     fcmToken = json['fcm_token'];
     type = json['type'] != null ? TypeUser.fromJson(json['type']) : null;
-    _logo = json['logo'] != null ? Fichier.fromJson(json['logo']) : null;
+    _logo = json['logo'] != null ? FichierServer.fromJson(json['logo']) : null;
     roles = json['roles'].cast<String>();
     isActive = json['is_active'];
     pays = json['pays'];
@@ -102,7 +105,9 @@ class User extends Model {
     return User.fromJson(json);
   }
 
-  bool get isAdmin => type?.code == 'SADM';
+  TypeUserEnum get typeEnum => type?.typeEnum ?? TypeUserEnum.none;
+
+  bool get isAdmin => typeEnum.isAdmin;
 
   Future<bool> saveInCache() async {
     Cache.setString(CacheKey.user.name, toJson().parseToJson());
@@ -128,5 +133,10 @@ class User extends Model {
     return null;
   }
 
-  String? get photoProfil => _logo?.fullUrl;
+  String? get photoProfil {
+    if (_logo is FichierServer) {
+      return (_logo as FichierServer).fullUrl;
+    }
+    return null;
+  }
 }

@@ -1,7 +1,7 @@
-import 'package:app_couture/data/models/abstract/model.dart';
+import 'package:app_couture/data/models/abstract/model_json.dart';
 import 'package:app_couture/tools/extensions/types/map.dart';
 
-class EntiteEntreprise extends Model {
+class EntiteEntreprise extends ModelJson {
   EntiteEntreprise({super.id});
 
   @override

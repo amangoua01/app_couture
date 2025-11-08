@@ -40,7 +40,7 @@ class CustomHttpClient extends http.BaseClient {
     );
   }
 
-  Future<http.StreamedResponse> multiPart(
+  Future<http.Response> multiPart(
     Uri url, {
     Map<String, String> body = const {},
     Map<String, String> headers = const {},
@@ -51,6 +51,19 @@ class CustomHttpClient extends http.BaseClient {
     if (files.isNotEmpty) request.files.addAll(files);
     if (headers.isNotEmpty) request.headers.addAll(headers);
     final response = await _inner.send(request);
-    return response;
+    if (kDebugMode) {
+      // Logs de l'URL, des headers et du body
+      print("🚀 Method: ${request.method}");
+      print("🌍 URL: ${request.url}");
+      print("🔼 Headers: ${request.headers}");
+      print("📦 Body: $body");
+      print("📁 Files: ${files.length}");
+    }
+    final res = await http.Response.fromStream(response);
+    if (kDebugMode) {
+      print("⬇️ Status: ${response.statusCode}");
+      print("📥 Response: ${res.body}");
+    }
+    return res;
   }
 }
