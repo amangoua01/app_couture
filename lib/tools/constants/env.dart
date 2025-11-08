@@ -7,8 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 abstract class Env {
   static const String appName = 'Moomen Pro';
-  static const String appVersion = '1.0.31';
-  static const int buildVersion = 32;
+  static const String appVersion = '1.0.0';
+  static const int buildVersion = 2;
   static final fontFamily = GoogleFonts.poppins().fontFamily;
 
   static const defaultDevise = Currency("Fcfa", code: "XOF", decimalDigits: 0);

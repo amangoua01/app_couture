@@ -57,7 +57,7 @@ class AuthApi extends WebController {
   Future<DataResponse<bool>> logout() async {
     try {
       final response = await client.post(
-        urlBuilder(api: "logout"),
+        urlBuilder(api: "logout", module: ''),
         headers: authHeaders,
       );
 

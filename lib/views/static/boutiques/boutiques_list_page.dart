@@ -17,6 +17,7 @@ class BoutiquesListPage extends StatelessWidget {
         return BodyListView(
           ctl,
           title: "Boutiques",
+          createPage: const EditionBoutiquePage(),
           itemBuilder: (_, i, selected) => ListItem(
             ctl,
             leadingImage: "assets/images/svg/boutique.svg",
