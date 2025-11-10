@@ -1,4 +1,4 @@
-package com.example.app_couture
+package com.ateliya.app
 
 import io.flutter.embedding.android.FlutterActivity
 

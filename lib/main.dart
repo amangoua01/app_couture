@@ -1,7 +1,7 @@
-import 'package:app_couture/tools/constants/env.dart';
-import 'package:app_couture/tools/services/notification_service.dart';
-import 'package:app_couture/tools/widgets/themes/app_theme.dart';
-import 'package:app_couture/views/static/starting/splash_screen_page.dart';
+import 'package:ateliya/tools/constants/env.dart';
+import 'package:ateliya/tools/services/notification_service.dart';
+import 'package:ateliya/tools/widgets/themes/app_theme.dart';
+import 'package:ateliya/views/static/starting/splash_screen_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

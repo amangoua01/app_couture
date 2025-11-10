@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:app_couture/tools/constants/app_env.dart';
-import 'package:app_couture/tools/models/currency.dart';
-import 'package:app_couture/tools/models/netword_config.dart';
+import 'package:ateliya/tools/constants/app_env.dart';
+import 'package:ateliya/tools/models/currency.dart';
+import 'package:ateliya/tools/models/netword_config.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 abstract class Env {
