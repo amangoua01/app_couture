@@ -20,7 +20,7 @@ class TransactionPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, bottom: 5),
             child: TableCalendar(
-              locale: "fr",
+              // locale: "fr",
               calendarFormat: CalendarFormat.week,
               headerStyle: const HeaderStyle(
                 titleTextStyle: TextStyle(color: Colors.white),

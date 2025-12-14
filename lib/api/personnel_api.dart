@@ -4,7 +4,7 @@ import 'package:ateliya/data/models/user.dart';
 class PersonnelApi extends CrudWebController<User> {
   PersonnelApi()
       : super(
-          listApi: "actif/entreprise",
+          listApi: "entreprise",
           createApi: "create/membre",
           updateApi: "update/membre",
         );

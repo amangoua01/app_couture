@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
@@ -9,12 +6,14 @@ import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:ateliya/tools/widgets/wrapper_listview.dart';
+import 'package:ateliya/views/controllers/home/detail_boutique_item_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 
 class ReservationListSubPage extends StatelessWidget {
-  const ReservationListSubPage({super.key});
+  final DetailBoutiqueItemPageVctl ctl;
+  const ReservationListSubPage(this.ctl, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +49,8 @@ class ReservationListSubPage extends StatelessWidget {
       ),
       body: WrapperListview(
         padding: const EdgeInsets.all(10),
-        items: const [1, 2],
-        itemBuilder: (_, i) => Container(
+        items: ctl.modele.ligneReservations(ctl.filterVente),
+        itemBuilder: (e, i) => Container(
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
@@ -72,11 +71,13 @@ class ReservationListSubPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                title: const Text('Moustapha Cyrill'),
+                title: Text(
+                  e.reservation?.client?.fullName ?? 'Client inconnu',
+                ),
                 subtitle: Row(
                   children: [
                     Text(
-                      'Quantité : 2 • ${DateTime.now().toFrenchDateTime}',
+                      '${e.quantite} unité(s) • ${e.reservation?.createdAt.toFrenchDateTime}',
                     ),
                   ],
                 ),
@@ -88,8 +89,8 @@ class ReservationListSubPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const Text(
-                'Avance : 50%',
+              Text(
+                'Avance : ${(e.reservation!.evolution * 100).toStringAsFixed(0)}%',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.end,
@@ -97,7 +98,7 @@ class ReservationListSubPage extends StatelessWidget {
               const Gap(5),
               LinearProgressIndicator(
                 minHeight: 8,
-                value: Random().nextDouble(),
+                value: e.reservation!.evolution,
                 color: AppColors.yellow,
                 backgroundColor: AppColors.green.withAlpha(50),
                 borderRadius: BorderRadius.circular(10),
@@ -105,8 +106,10 @@ class ReservationListSubPage extends StatelessWidget {
               const Gap(10),
               Row(
                 children: [
-                  Expanded(child: Text('5000'.toAmount(unit: 'Fcfa'))),
-                  Text('10000'.toAmount(unit: 'Fcfa')),
+                  Expanded(
+                    child: Text(e.reservation!.avance.toAmount(unit: 'F')),
+                  ),
+                  Text(e.reservation!.montant.toAmount(unit: 'F')),
                 ],
               )
             ],

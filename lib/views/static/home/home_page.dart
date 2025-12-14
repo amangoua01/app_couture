@@ -79,7 +79,11 @@ class HomePage extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => CBottomSheet.show(
                     child: const SelectEntrepriseBottomPage(),
-                  ),
+                  ).then((e) {
+                    if (e != null) {
+                      ctl.update();
+                    }
+                  }),
                   child: Container(
                     width: double.infinity,
                     height: 35,
@@ -88,24 +92,28 @@ class HomePage extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        CircleAvatar(radius: 10),
-                        Gap(10),
+                        const CircleAvatar(radius: 10),
+                        const Gap(10),
                         Expanded(
                           child: Text(
-                            "Sélectionner une entreprise",
+                            ternaryFn(
+                              condition: ctl.entite.isEmpty,
+                              ifTrue: "Sélectionner une entreprise",
+                              ifFalse: ctl.entite.libelle.value,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppColors.primary,
                               fontSize: 13.5,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        Icon(
+                        const Icon(
                           Icons.keyboard_arrow_down,
                           color: AppColors.primary,
                         ),

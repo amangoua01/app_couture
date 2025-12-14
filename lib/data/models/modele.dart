@@ -8,17 +8,23 @@ import 'package:http/http.dart' as http;
 class Modele extends ModelFormData<Modele> {
   String? libelle;
   int? quantite;
+  int? quantiteGlobale;
   Fichier? photo;
+  String? createdAt;
+  bool? isActive;
 
-  Modele({this.libelle, this.quantite, this.photo});
+  Modele({this.libelle, this.quantite, this.quantiteGlobale, this.photo, this.createdAt, this.isActive});
 
   Modele.fromJson(Json json) {
     id = json["id"];
     libelle = json["libelle"];
     quantite = json["quantite"];
+    quantiteGlobale = json["quantiteGlobale"];
     if (json["photo"] != null) {
       photo = FichierServer.fromJson(json["photo"]);
     }
+    createdAt = json["createdAt"];
+    isActive = json["isActive"];
   }
   @override
   Modele fromJson(Json json) {
@@ -36,6 +42,9 @@ class Modele extends ModelFormData<Modele> {
     } else {
       map["quantite"] = "0";
     }
+    if (quantiteGlobale != null) {
+      map["quantiteGlobale"] = quantiteGlobale.toString();
+    }
     return map;
   }
 
@@ -51,5 +60,19 @@ class Modele extends ModelFormData<Modele> {
       );
     }
     return Future.value(files);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['libelle'] = libelle;
+    data['quantite'] = quantite;
+    data['quantiteGlobale'] = quantiteGlobale;
+    if (photo != null) {
+      data['photo'] = (photo as FichierServer).toJson();
+    }
+    data['createdAt'] = createdAt;
+    data['isActive'] = isActive;
+    return data;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,9 +16,11 @@ class CDateFormField extends StatelessWidget {
   final void Function(DateTime? date) onChange;
   final bool withTime;
   final bool enabled;
+  final void Function()? onClear;
 
   const CDateFormField({
     this.controller,
+    this.onClear,
     this.enabled = true,
     this.withTime = false,
     required this.onChange,
@@ -39,7 +42,19 @@ class CDateFormField extends StatelessWidget {
       readOnly: true,
       enabled: enabled,
       require: require,
-      suffixIcon: const Icon(Icons.calendar_month),
+      suffixIcon: PlaceholderBuilder(
+        condition: onClear != null,
+        placeholder: const Icon(Icons.calendar_month),
+        builder: () {
+          if (controller?.textController.text.isEmpty == false) {
+            return IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: onClear,
+            );
+          }
+          return const Icon(Icons.calendar_month);
+        },
+      ),
       onTap: () => showDatePicker(
         context: context,
         currentDate: controller?.date,

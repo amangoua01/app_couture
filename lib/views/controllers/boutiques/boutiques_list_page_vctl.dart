@@ -3,5 +3,5 @@ import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
 
 class BoutiquesListPageVctl extends ListViewController<Boutique> {
-  BoutiquesListPageVctl() : super(BoutiqueApi());
+  BoutiquesListPageVctl() : super(BoutiqueApi(), provideIdToListApi: false);
 }

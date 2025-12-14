@@ -58,7 +58,9 @@ class User extends ModelJson {
     fcmToken = json['fcm_token'];
     type = json['type'] != null ? TypeUser.fromJson(json['type']) : null;
     _logo = json['logo'] != null ? FichierServer.fromJson(json['logo']) : null;
-    roles = json['roles'].cast<String>();
+    if (json['roles'] != null) {
+      roles = json['roles'].cast<String>();
+    }
     isActive = json['is_active'];
     pays = json['pays'];
     boutique =
@@ -74,23 +76,31 @@ class User extends ModelJson {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({bool forCache = false}) {
     final Map<String, dynamic> data = <String, dynamic>{};
+    if (forCache) {
+      data['logo'] = (_logo as FichierServer?)?.toJson();
+      data['boutique'] = boutique?.toJson();
+      data['succursale'] = succursale?.toJson();
+      data['type'] = type!.toJson();
+    } else {
+      // data['logo'] =  (_logo is FichierServer) ? (_logo as FichierServer).toJson() : null;
+      data['type'] = type!.id;
+      data['boutique'] = boutique?.id;
+      data['succursale'] = succursale?.id;
+    }
     data['id'] = id;
     data['login'] = login;
     data['nom'] = nom;
     data['prenoms'] = prenoms;
     data['fcm_token'] = fcmToken;
-    data['type'] = type!.id;
-    data['logo'] = _logo;
+
     data['roles'] = roles;
     data['is_active'] = isActive;
     data['pays'] = pays;
     if (password != null) {
       data['password'] = password;
     }
-    data['boutique'] = boutique?.id;
-    data['succursale'] = succursale?.id;
     if (settings != null) {
       data['settings'] = settings!.toJson();
     }
@@ -101,16 +111,14 @@ class User extends ModelJson {
   }
 
   @override
-  User fromJson(Json json) {
-    return User.fromJson(json);
-  }
+  User fromJson(Json json) => User.fromJson(json);
 
   TypeUserEnum get typeEnum => type?.typeEnum ?? TypeUserEnum.none;
 
   bool get isAdmin => typeEnum.isAdmin;
 
   Future<bool> saveInCache() async {
-    Cache.setString(CacheKey.user.name, toJson().parseToJson());
+    Cache.setString(CacheKey.user.name, toJson(forCache: true).parseToJson());
     Cache.setString(CacheKey.jwt.name, SessionManagerViewController.jwt);
     return true;
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ateliya/api/abstract/web_controller.dart';
+import 'package:ateliya/data/dto/update_profil_dto.dart';
 import 'package:ateliya/data/dto/user_register_dto.dart';
 import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/tools/components/session_manager_view_controller.dart';
@@ -157,6 +158,26 @@ class AuthApi extends WebController {
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, systemtraceError: st);
+    }
+  }
+
+  Future<DataResponse<User>> updateProfile(UpdateProfilDto data) async {
+    try {
+      final response = await client.post(
+        urlBuilder(api: "update/profil/${data.id}", module: 'user'),
+        body: data.toJson().parseToJson(),
+        headers: authHeaders,
+      );
+
+      final json = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final user = User.fromJson(json["data"]);
+        return DataResponse<User>.success(data: user);
+      } else {
+        return DataResponse<User>.error(message: json["message"]);
+      }
+    } catch (e, st) {
+      return DataResponse<User>.error(systemError: e, systemtraceError: st);
     }
   }
 }

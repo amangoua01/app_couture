@@ -1,42 +1,74 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/extensions/types/datetime.dart';
+import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
-import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:ateliya/tools/widgets/wrapper_listview.dart';
+import 'package:ateliya/views/controllers/home/detail_boutique_item_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 class VenteListSubPage extends StatelessWidget {
-  const VenteListSubPage({super.key});
+  final DetailBoutiqueItemPageVctl ctl;
+  const VenteListSubPage(this.ctl, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => CBottomSheet.show(
-          child: ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              CDateFormField(
-                labelText: 'Date début',
-                onChange: (e) {},
-              ),
-              CDateFormField(
-                labelText: "Date fin",
-                onChange: (e) {},
-              ),
-              const CDropDownFormField(labelText: 'Client'),
-              const CTextFormField(labelText: "Numéro du client"),
-              const Gap(20),
-              const CButton(),
-            ],
-          ),
+          child: GetBuilder(
+              init: ctl,
+              builder: (_) {
+                return ListView(
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    CDateFormField(
+                      labelText: 'Date début',
+                      controller: ctl.filterVente.dateDebut,
+                      withTime: true,
+                      onClear: () {
+                        ctl.filterVente.dateDebut.clear();
+                        ctl.update();
+                      },
+                      onChange: (e) {
+                        ctl.filterVente.dateDebut.dateTime = e;
+                        ctl.update();
+                      },
+                    ),
+                    CDateFormField(
+                      labelText: "Date fin",
+                      withTime: true,
+                      controller: ctl.filterVente.dateFin,
+                      onClear: () {
+                        ctl.filterVente.dateDebut.clear();
+                        ctl.update();
+                      },
+                      onChange: (e) {
+                        ctl.filterVente.dateFin.dateTime = e;
+                        ctl.update();
+                      },
+                    ),
+                    CDropDownFormField(
+                      labelText: 'Client',
+                      items: (e, f) => ctl.modele.clients,
+                      selectedItem: ctl.filterVente.client,
+                      itemAsString: (e) => e.fullName,
+                      onChanged: (e) {
+                        ctl.filterVente.client = e;
+                        ctl.update();
+                      },
+                    ),
+                    const Gap(20),
+                    CButton(onPressed: Get.back),
+                  ],
+                );
+              }),
         ),
         child: SvgPicture.asset(
           'assets/images/svg/filter.svg',
@@ -48,7 +80,7 @@ class VenteListSubPage extends StatelessWidget {
         ),
       ),
       body: WrapperListview(
-        items: const [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        items: ctl.modele.paiementBoutiqueLignes(ctl.filterVente),
         itemBuilder: (_, i) => ListTile(
           leading: CircleAvatar(
             child: SvgPicture.asset(
@@ -60,13 +92,13 @@ class VenteListSubPage extends StatelessWidget {
             ),
           ),
           title: Text(
-            "${2.toAmount(unit: 'article')} X ${'2000'.toAmount(unit: 'Fcfa')}",
+            "${ctl.modele.paiementBoutiqueLignes(ctl.filterVente).length.toAmount(unit: 'article(s)')} X ${ctl.modele.paiementBoutiqueLignes(ctl.filterVente)[i].montant.toAmount(unit: 'F')}",
           ),
           subtitle: Row(
             children: [
               Expanded(
                 child: Text(
-                  '${'4000'.toAmount(unit: 'Fcfa')} • ${DateTime.now().toFrenchDateTime}',
+                  '${ctl.modele.paiementBoutiqueLignes(ctl.filterVente)[i].total.toAmount(unit: 'F')} • ${ctl.modele.paiementBoutiqueLignes(ctl.filterVente)[i].paiementBoutique?.createdAt.toFrenchDateTime}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

@@ -4,7 +4,6 @@ import 'package:ateliya/views/controllers/home/setting_page_vctl.dart';
 import 'package:ateliya/views/static/abonnements/abonnements_list_page.dart';
 import 'package:ateliya/views/static/auth/profil_page.dart';
 import 'package:ateliya/views/static/boutiques/boutiques_list_page.dart';
-import 'package:ateliya/views/static/categorie/categorie_list_page.dart';
 import 'package:ateliya/views/static/clients/client_liste_page.dart';
 import 'package:ateliya/views/static/modele/modele_list_page.dart';
 import 'package:ateliya/views/static/personnels/personnels_list_page.dart';
@@ -54,7 +53,9 @@ class SettingPage extends StatelessWidget {
                 const Text("Actions principales"),
                 SettingTile(
                   title: "Mes informations",
-                  onTap: () => Get.to(() => const ProfilPage()),
+                  onTap: () => Get.to(() => const ProfilPage())?.then(
+                    (e) => ctl.update(),
+                  ),
                 ),
                 SettingTile(
                   title: "Mes boutiques",
@@ -72,10 +73,10 @@ class SettingPage extends StatelessWidget {
                   title: "Type de mesure",
                   onTap: () => Get.to(() => const TypeMesureListPage()),
                 ),
-                SettingTile(
-                  title: "Catégories",
-                  onTap: () => Get.to(() => const CategorieListPage()),
-                ),
+                // SettingTile(
+                //   title: "Catégories",
+                //   onTap: () => Get.to(() => const CategorieListPage()),
+                // ),
                 SettingTile(
                   title: "Mes clients",
                   onTap: () => Get.to(() => const ClientListePage()),

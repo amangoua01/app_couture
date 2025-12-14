@@ -1,5 +1,6 @@
 import 'package:ateliya/data/models/abstract/fichier.dart';
 import 'package:ateliya/tools/constants/env.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 
 class FichierServer extends Fichier {
@@ -18,4 +19,11 @@ class FichierServer extends Fichier {
   String? get fullUrl {
     return Env.fullImageUrl("${path?.value}/${alt?.value}");
   }
+
+  @override
+  Json toJson() => {
+        'id': id,
+        'path': path,
+        'alt': alt,
+      };
 }

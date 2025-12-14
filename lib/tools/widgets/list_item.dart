@@ -27,9 +27,11 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
   final List<PopupMenuItem> actions;
   final void Function(M? item)? actionAfterEdit;
   final Color? backgroundColor;
+  final double leadingImageSize;
 
   const ListItem(
     this.ctl, {
+    this.leadingImageSize = 30.0,
     this.badgeWidget,
     this.selected = false,
     this.displayBadge = false,
@@ -71,19 +73,19 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
                 placeholder: ClipOval(
                   child: Image.network(
                     leadingImage.value,
-                    width: 30,
-                    height: 30,
-                    fit: BoxFit.cover,
+                    width: leadingImageSize,
+                    height: leadingImageSize,
+                    fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       return SvgPicture.asset(
-                        "assets/svg/image_broken.svg",
+                        "assets/images/svg/image_broken.svg",
                         colorFilter: const ColorFilter.mode(
                           Colors.white,
                           BlendMode.srcIn,
                         ),
                         fit: BoxFit.cover,
-                        width: 30,
-                        height: 30,
+                        width: leadingImageSize,
+                        height: leadingImageSize,
                       );
                     },
                   ),
@@ -92,7 +94,8 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
                   condition: !leadingImage.value.endsWith(".svg"),
                   placeholder: SvgPicture.asset(
                     leadingImage.value,
-                    width: 30,
+                    width: leadingImageSize,
+                    height: leadingImageSize,
                     colorFilter: const ColorFilter.mode(
                       Colors.white,
                       BlendMode.srcIn,
@@ -100,7 +103,8 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
                   ),
                   child: Image.asset(
                     leadingImage.value,
-                    width: 30,
+                    width: leadingImageSize,
+                    height: leadingImageSize,
                     color: Colors.white,
                   ),
                 ),
@@ -132,8 +136,7 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
               backgroundColor: backgroundColor,
               isLabelVisible: displayBadge,
               child: Container(
-                height: 40,
-                width: 40,
+                padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: AppColors.primary,
                   shape: BoxShape.circle,
@@ -146,7 +149,8 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
                     condition: !leadingImage.value.endsWith(".svg"),
                     placeholder: SvgPicture.asset(
                       leadingImage.value,
-                      width: 30,
+                      width: leadingImageSize,
+                      height: leadingImageSize,
                       colorFilter: const ColorFilter.mode(
                         Colors.white,
                         BlendMode.srcIn,
@@ -157,26 +161,27 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
                       placeholder: ClipOval(
                         child: Image.network(
                           leadingImage.value,
-                          width: 30,
-                          height: 30,
+                          width: leadingImageSize,
+                          height: leadingImageSize,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return SvgPicture.asset(
-                              "assets/svg/image_broken.svg",
+                              "assets/images/svg/image_broken.svg",
                               colorFilter: const ColorFilter.mode(
                                 Colors.white,
                                 BlendMode.srcIn,
                               ),
                               fit: BoxFit.cover,
-                              width: 30,
-                              height: 30,
+                              width: leadingImageSize,
+                              height: leadingImageSize,
                             );
                           },
                         ),
                       ),
                       child: Image.asset(
                         leadingImage.value,
-                        width: 30,
+                        width: leadingImageSize,
+                        height: leadingImageSize,
                         color: Colors.white,
                       ),
                     ),

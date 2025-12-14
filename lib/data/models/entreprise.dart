@@ -1,10 +1,12 @@
+import 'package:ateliya/data/models/abstract/fichier.dart';
 import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 
 class Entreprise extends ModelJson {
   String? libelle;
   String? numero;
-  Json? logo;
+  Fichier? logo;
   String? email;
   String? createdAt;
 
@@ -20,7 +22,7 @@ class Entreprise extends ModelJson {
     id = json['id'];
     libelle = json['libelle'];
     numero = json['numero'];
-    logo = json['logo'];
+    logo = FichierServer.fromJson(json['logo']);
     email = json['email'];
     createdAt = json['createdAt'];
   }
