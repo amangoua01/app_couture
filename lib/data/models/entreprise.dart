@@ -1,10 +1,10 @@
-import 'package:app_couture/data/models/abstract/model_json.dart';
-import 'package:app_couture/tools/extensions/types/map.dart';
+import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
 
 class Entreprise extends ModelJson {
   String? libelle;
   String? numero;
-  String? logo;
+  Json? logo;
   String? email;
   String? createdAt;
 

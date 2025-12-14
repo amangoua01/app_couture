@@ -37,7 +37,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake"
+			"path" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake"
 		},
 		{
 			"isExternal" : true,
@@ -303,7 +303,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
+			"path" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -537,7 +537,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
+			"path" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -688,7 +688,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
+			"path" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -782,13 +782,13 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
+			"path" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
 		}
 	],
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64",
+		"build" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64",
 		"source" : "/Users/yvesamangoua/Library/dev/fvm/versions/3.29.0/packages/flutter_tools/gradle/src/main/groovy"
 	},
 	"version" : 

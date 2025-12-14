@@ -1,8 +1,8 @@
-import 'package:app_couture/api/auth_api.dart';
-import 'package:app_couture/tools/components/session_manager_view_controller.dart';
-import 'package:app_couture/tools/extensions/future.dart';
-import 'package:app_couture/tools/widgets/messages/c_alert_dialog.dart';
-import 'package:app_couture/views/static/home/home_windows.dart';
+import 'package:ateliya/api/auth_api.dart';
+import 'package:ateliya/tools/components/session_manager_view_controller.dart';
+import 'package:ateliya/tools/extensions/future.dart';
+import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/views/static/home/home_windows.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

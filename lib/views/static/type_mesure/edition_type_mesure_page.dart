@@ -1,10 +1,10 @@
-import 'package:app_couture/api/type_mesure_api.dart';
-import 'package:app_couture/data/models/type_mesure.dart';
-import 'package:app_couture/tools/widgets/body_edition_page.dart';
-import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:app_couture/tools/widgets/placeholder_builder.dart';
-import 'package:app_couture/views/controllers/type_mesure/edition_type_mesure_page_vctl.dart';
-import 'package:app_couture/views/static/type_mesure/categorie_type_mesure/categorie_type_mesure_list_page.dart';
+import 'package:ateliya/api/type_mesure_api.dart';
+import 'package:ateliya/data/models/type_mesure.dart';
+import 'package:ateliya/tools/widgets/body_edition_page.dart';
+import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/tools/widgets/placeholder_builder.dart';
+import 'package:ateliya/views/controllers/type_mesure/edition_type_mesure_page_vctl.dart';
+import 'package:ateliya/views/static/type_mesure/categorie_type_mesure/categorie_type_mesure_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';

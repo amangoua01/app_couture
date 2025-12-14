@@ -1,4 +1,4 @@
-import 'package:app_couture/views/controllers/starting/splash_screen_page_vctl.dart';
+import 'package:ateliya/views/controllers/starting/splash_screen_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

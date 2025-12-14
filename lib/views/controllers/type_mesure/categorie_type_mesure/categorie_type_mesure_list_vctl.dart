@@ -1,13 +1,13 @@
-import 'package:app_couture/api/categorie_mesure_api.dart';
-import 'package:app_couture/api/categorie_type_mesure_api.dart';
-import 'package:app_couture/data/dto/create_categorie_type_mesure_dto.dart';
-import 'package:app_couture/data/models/categorie_mesure.dart';
-import 'package:app_couture/data/models/categorie_type_mesure.dart';
-import 'package:app_couture/data/models/type_mesure.dart';
-import 'package:app_couture/tools/extensions/future.dart';
-import 'package:app_couture/tools/extensions/types/int.dart';
-import 'package:app_couture/tools/widgets/messages/c_alert_dialog.dart';
-import 'package:app_couture/tools/widgets/messages/c_choice_message_dialog.dart';
+import 'package:ateliya/api/categorie_mesure_api.dart';
+import 'package:ateliya/api/categorie_type_mesure_api.dart';
+import 'package:ateliya/data/dto/create_categorie_type_mesure_dto.dart';
+import 'package:ateliya/data/models/categorie_mesure.dart';
+import 'package:ateliya/data/models/categorie_type_mesure.dart';
+import 'package:ateliya/data/models/type_mesure.dart';
+import 'package:ateliya/tools/extensions/future.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
+import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:get/get.dart';
 
 class CategorieTypeMesureListVctl extends GetxController {

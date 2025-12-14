@@ -1,7 +1,7 @@
-import 'package:app_couture/data/models/categorie_mesure.dart';
-import 'package:app_couture/tools/widgets/body_edition_page.dart';
-import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:app_couture/views/controllers/categorie/edition_categorie_page_vctl.dart';
+import 'package:ateliya/data/models/categorie_mesure.dart';
+import 'package:ateliya/tools/widgets/body_edition_page.dart';
+import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/views/controllers/categorie/edition_categorie_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

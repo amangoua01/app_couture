@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:app_couture/api/abstract/web_controller.dart';
-import 'package:app_couture/data/models/pays.dart';
-import 'package:app_couture/tools/models/data_response.dart';
+import 'package:ateliya/api/abstract/web_controller.dart';
+import 'package:ateliya/data/models/pays.dart';
+import 'package:ateliya/tools/models/data_response.dart';
 
 class PaysApi extends WebController {
   @override

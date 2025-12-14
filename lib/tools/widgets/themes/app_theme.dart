@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/constants/env.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/env.dart';
 import 'package:flutter/material.dart';
 
 abstract class AppTheme {

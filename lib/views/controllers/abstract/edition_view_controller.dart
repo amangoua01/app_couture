@@ -1,6 +1,6 @@
-import 'package:app_couture/api/abstract/crud_web_controller.dart';
-import 'package:app_couture/data/models/abstract/model.dart';
-import 'package:app_couture/views/controllers/abstract/auth_view_controller.dart';
+import 'package:ateliya/api/abstract/crud_web_controller.dart';
+import 'package:ateliya/data/models/abstract/model.dart';
+import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:app_couture/data/models/abstract/model_json.dart';
-import 'package:app_couture/data/models/notifs/notif_data.dart';
-import 'package:app_couture/tools/extensions/types/map.dart';
+import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/data/models/notifs/notif_data.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Notif extends ModelJson<Notif> {

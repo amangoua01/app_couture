@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/widgets/buttons/c_button.dart';
-import 'package:app_couture/views/controllers/auth/forgot_password/forgot_pass_otp_page_vctl.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/views/controllers/auth/forgot_password/forgot_pass_otp_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';

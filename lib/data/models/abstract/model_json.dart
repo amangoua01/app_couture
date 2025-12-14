@@ -1,5 +1,5 @@
-import 'package:app_couture/data/models/abstract/model.dart';
-import 'package:app_couture/tools/extensions/types/map.dart';
+import 'package:ateliya/data/models/abstract/model.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
 
 abstract class ModelJson<T> extends Model<T> {
   ModelJson({super.id});

@@ -1,4 +1,4 @@
-import 'package:app_couture/tools/extensions/types/datetime.dart';
+import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:flutter/material.dart';
 
 extension CustomDateTimeRange on DateTimeRange {

@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/widgets/command_tile.dart';
-import 'package:app_couture/tools/widgets/wrapper_listview.dart';
+import 'package:ateliya/tools/widgets/command_tile.dart';
+import 'package:ateliya/tools/widgets/wrapper_listview.dart';
 import 'package:flutter/material.dart';
 
 class CommandeListPage extends StatelessWidget {

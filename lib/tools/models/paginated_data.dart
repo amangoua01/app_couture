@@ -1,6 +1,6 @@
-import 'package:app_couture/data/models/abstract/model.dart';
-import 'package:app_couture/tools/constants/env.dart';
-import 'package:app_couture/tools/extensions/types/int.dart';
+import 'package:ateliya/data/models/abstract/model.dart';
+import 'package:ateliya/tools/constants/env.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
 
 class PaginatedData<M extends Model> {
   List<M> items;

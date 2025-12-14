@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:app_couture/data/models/abstract/fichier.dart';
+import 'package:ateliya/data/models/abstract/fichier.dart';
 
 class FichierLocal extends Fichier {
   String path;

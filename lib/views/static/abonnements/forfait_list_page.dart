@@ -1,6 +1,6 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/widgets/messages/c_bottom_sheet.dart';
-import 'package:app_couture/views/static/abonnements/detail_forfait_sub_page.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
+import 'package:ateliya/views/static/abonnements/detail_forfait_sub_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 

@@ -37,7 +37,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/44e1p44a/x86/CMakeFiles/3.18.1-g262b901/CMakeSystem.cmake"
+			"path" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/44e1p44a/x86/CMakeFiles/3.18.1-g262b901/CMakeSystem.cmake"
 		},
 		{
 			"isExternal" : true,
@@ -90,7 +90,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/44e1p44a/x86/CMakeFiles/3.18.1-g262b901/CMakeCCompiler.cmake"
+			"path" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/44e1p44a/x86/CMakeFiles/3.18.1-g262b901/CMakeCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -129,7 +129,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/44e1p44a/x86/CMakeFiles/3.18.1-g262b901/CMakeCXXCompiler.cmake"
+			"path" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/44e1p44a/x86/CMakeFiles/3.18.1-g262b901/CMakeCXXCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -273,7 +273,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/44e1p44a/x86/CMakeFiles/3.18.1-g262b901/CMakeCCompiler.cmake"
+			"path" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/44e1p44a/x86/CMakeFiles/3.18.1-g262b901/CMakeCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -362,13 +362,13 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/44e1p44a/x86/CMakeFiles/3.18.1-g262b901/CMakeCXXCompiler.cmake"
+			"path" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/44e1p44a/x86/CMakeFiles/3.18.1-g262b901/CMakeCXXCompiler.cmake"
 		}
 	],
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/44e1p44a/x86",
+		"build" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/44e1p44a/x86",
 		"source" : "/Users/yvesamangoua/fvm/versions/3.29.2/packages/flutter_tools/gradle/src/main/groovy"
 	},
 	"version" : 

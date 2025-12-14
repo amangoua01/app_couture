@@ -1,9 +1,9 @@
-import 'package:app_couture/data/models/boutique.dart';
-import 'package:app_couture/data/models/succursale.dart';
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/widgets/wrapper_listview.dart';
-import 'package:app_couture/views/controllers/home/select_entreprise_bottom_page_vctl.dart';
+import 'package:ateliya/data/models/boutique.dart';
+import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/wrapper_listview.dart';
+import 'package:ateliya/views/controllers/home/select_entreprise_bottom_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';

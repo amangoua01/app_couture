@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:app_couture/api/abstract/crud_web_controller.dart';
-import 'package:app_couture/data/dto/create_categorie_type_mesure_dto.dart';
-import 'package:app_couture/data/models/categorie_type_mesure.dart';
-import 'package:app_couture/tools/extensions/types/map.dart';
-import 'package:app_couture/tools/models/data_response.dart';
+import 'package:ateliya/api/abstract/crud_web_controller.dart';
+import 'package:ateliya/data/dto/create_categorie_type_mesure_dto.dart';
+import 'package:ateliya/data/models/categorie_type_mesure.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
+import 'package:ateliya/tools/models/data_response.dart';
 
 class CategorieTypeMesureApi extends CrudWebController<CategorieTypeMesure> {
   @override

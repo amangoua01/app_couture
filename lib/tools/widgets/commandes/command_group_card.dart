@@ -1,6 +1,6 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/widgets/placeholder_widget.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:flutter/material.dart';
 
 class CommandGroupCard extends StatelessWidget {

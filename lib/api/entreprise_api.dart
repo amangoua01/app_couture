@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:app_couture/api/abstract/crud_web_controller.dart';
-import 'package:app_couture/data/models/entreprise.dart';
-import 'package:app_couture/data/models/entreprise_entities_response.dart';
-import 'package:app_couture/tools/models/data_response.dart';
+import 'package:ateliya/api/abstract/crud_web_controller.dart';
+import 'package:ateliya/data/models/entreprise.dart';
+import 'package:ateliya/data/models/entreprise_entities_response.dart';
+import 'package:ateliya/tools/models/data_response.dart';
 
 class EntrepriseApi extends CrudWebController<Entreprise> {
   @override

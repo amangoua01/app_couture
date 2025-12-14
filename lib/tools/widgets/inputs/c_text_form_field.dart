@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/components/field_border.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/components/field_border.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

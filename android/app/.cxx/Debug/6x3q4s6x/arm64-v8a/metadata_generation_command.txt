@@ -9,10 +9,10 @@
 -DCMAKE_ANDROID_NDK=/Users/yvesamangoua/Library/Android/sdk/ndk/26.3.11579264
 -DCMAKE_TOOLCHAIN_FILE=/Users/yvesamangoua/Library/Android/sdk/ndk/26.3.11579264/build/cmake/android.toolchain.cmake
 -DCMAKE_MAKE_PROGRAM=/Users/yvesamangoua/Library/Android/sdk/cmake/3.22.1/bin/ninja
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/yvesamangoua/Documents/projects/app_couture/build/app/intermediates/cxx/Debug/6x3q4s6x/obj/arm64-v8a
--DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/Users/yvesamangoua/Documents/projects/app_couture/build/app/intermediates/cxx/Debug/6x3q4s6x/obj/arm64-v8a
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/yvesamangoua/Documents/projects/ateliya/build/app/intermediates/cxx/Debug/6x3q4s6x/obj/arm64-v8a
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/Users/yvesamangoua/Documents/projects/ateliya/build/app/intermediates/cxx/Debug/6x3q4s6x/obj/arm64-v8a
 -DCMAKE_BUILD_TYPE=Debug
--B/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/Debug/6x3q4s6x/arm64-v8a
+-B/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/Debug/6x3q4s6x/arm64-v8a
 -GNinja
 -Wno-dev
 --no-warn-unused-cli

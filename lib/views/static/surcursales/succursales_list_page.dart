@@ -1,8 +1,8 @@
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/widgets/body_list_view.dart';
-import 'package:app_couture/tools/widgets/list_item.dart';
-import 'package:app_couture/views/controllers/succursales/succursales_list_page_vctl.dart';
-import 'package:app_couture/views/static/surcursales/edition_surcusale_page.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/body_list_view.dart';
+import 'package:ateliya/tools/widgets/list_item.dart';
+import 'package:ateliya/views/controllers/succursales/succursales_list_page_vctl.dart';
+import 'package:ateliya/views/static/surcursales/edition_surcusale_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

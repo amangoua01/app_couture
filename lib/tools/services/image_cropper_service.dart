@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:app_couture/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 

@@ -1,10 +1,10 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:app_couture/tools/widgets/messages/c_bottom_sheet.dart';
-import 'package:app_couture/tools/widgets/wrapper_gridview.dart';
-import 'package:app_couture/views/static/boutiques/edition_entree_stock.dart';
-import 'package:app_couture/views/static/home/detail_boutique_item_page.dart';
-import 'package:app_couture/views/static/ventes/edition_vente_page.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
+import 'package:ateliya/tools/widgets/wrapper_gridview.dart';
+import 'package:ateliya/views/static/boutiques/edition_entree_stock.dart';
+import 'package:ateliya/views/static/home/detail_boutique_item_page.dart';
+import 'package:ateliya/views/static/ventes/edition_vente_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

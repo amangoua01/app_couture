@@ -1,4 +1,4 @@
-import 'package:app_couture/views/static/abonnements/downgrade_selection_option_page.dart';
+import 'package:ateliya/views/static/abonnements/downgrade_selection_option_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

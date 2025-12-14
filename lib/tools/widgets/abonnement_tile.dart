@@ -1,7 +1,7 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/models/abn_tile_item.dart';
-import 'package:app_couture/tools/widgets/messages/c_bottom_sheet.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/models/abn_tile_item.dart';
+import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';

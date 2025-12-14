@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/services/image_cropper_service.dart';
-import 'package:app_couture/tools/services/image_picker_service.dart';
-import 'package:app_couture/tools/widgets/messages/c_bottom_sheet.dart';
-import 'package:app_couture/tools/widgets/preview_image_page.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/services/image_cropper_service.dart';
+import 'package:ateliya/tools/services/image_picker_service.dart';
+import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
+import 'package:ateliya/tools/widgets/preview_image_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icofont_flutter/icofont_flutter.dart';

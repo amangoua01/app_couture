@@ -1,9 +1,9 @@
-import 'package:app_couture/data/models/categorie_mesure.dart';
-import 'package:app_couture/tools/extensions/types/int.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/widgets/buttons/c_button.dart';
-import 'package:app_couture/tools/widgets/info_title.dart';
-import 'package:app_couture/tools/widgets/wrapper_listview.dart';
+import 'package:ateliya/data/models/categorie_mesure.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/info_title.dart';
+import 'package:ateliya/tools/widgets/wrapper_listview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 

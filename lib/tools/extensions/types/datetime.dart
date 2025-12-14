@@ -1,4 +1,4 @@
-import 'package:app_couture/tools/components/functions.dart';
+import 'package:ateliya/tools/components/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

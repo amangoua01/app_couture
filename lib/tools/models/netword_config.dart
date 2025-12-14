@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/extensions/types/map.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 
 class NetwordConfig {
   final String host;

@@ -1,20 +1,20 @@
 import 'dart:convert';
 
-import 'package:app_couture/data/models/abstract/fichier.dart';
-import 'package:app_couture/data/models/abstract/model_json.dart';
-import 'package:app_couture/data/models/boutique.dart';
-import 'package:app_couture/data/models/fichier_local.dart';
-import 'package:app_couture/data/models/fichier_server.dart';
-import 'package:app_couture/data/models/settings.dart';
-import 'package:app_couture/data/models/subscriptions.dart';
-import 'package:app_couture/data/models/succursale.dart';
-import 'package:app_couture/data/models/type_user.dart';
-import 'package:app_couture/tools/components/cache.dart';
-import 'package:app_couture/tools/components/session_manager_view_controller.dart';
-import 'package:app_couture/tools/constants/cache_key.dart';
-import 'package:app_couture/tools/constants/type_user_enum.dart';
-import 'package:app_couture/tools/extensions/types/map.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:ateliya/data/models/abstract/fichier.dart';
+import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/data/models/boutique.dart';
+import 'package:ateliya/data/models/fichier_local.dart';
+import 'package:ateliya/data/models/fichier_server.dart';
+import 'package:ateliya/data/models/settings.dart';
+import 'package:ateliya/data/models/subscriptions.dart';
+import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/data/models/type_user.dart';
+import 'package:ateliya/tools/components/cache.dart';
+import 'package:ateliya/tools/components/session_manager_view_controller.dart';
+import 'package:ateliya/tools/constants/cache_key.dart';
+import 'package:ateliya/tools/constants/type_user_enum.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 
 class User extends ModelJson {
   String? login;

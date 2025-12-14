@@ -1,5 +1,5 @@
-import 'package:app_couture/api/abstract/crud_web_controller.dart';
-import 'package:app_couture/data/models/boutique.dart';
+import 'package:ateliya/api/abstract/crud_web_controller.dart';
+import 'package:ateliya/data/models/boutique.dart';
 
 class BoutiqueApi extends CrudWebController<Boutique> {
   BoutiqueApi() : super(listApi: "entreprise");

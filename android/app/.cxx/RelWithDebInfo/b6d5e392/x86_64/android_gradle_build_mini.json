@@ -6,14 +6,14 @@
     [
       "/Users/yvesamangoua/Library/Android/sdk/cmake/3.22.1/bin/ninja",
       "-C",
-      "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64",
+      "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
     "/Users/yvesamangoua/Library/Android/sdk/cmake/3.22.1/bin/ninja",
     "-C",
-    "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64",
+    "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/b6d5e392/x86_64",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {}

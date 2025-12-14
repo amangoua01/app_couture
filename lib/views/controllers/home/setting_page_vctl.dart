@@ -1,10 +1,10 @@
-import 'package:app_couture/api/auth_api.dart';
-import 'package:app_couture/tools/components/cache.dart';
-import 'package:app_couture/tools/extensions/future.dart';
-import 'package:app_couture/tools/widgets/messages/c_alert_dialog.dart';
-import 'package:app_couture/tools/widgets/messages/c_choice_message_dialog.dart';
-import 'package:app_couture/views/controllers/abstract/auth_view_controller.dart';
-import 'package:app_couture/views/static/auth/auth_home_page.dart';
+import 'package:ateliya/api/auth_api.dart';
+import 'package:ateliya/tools/components/cache.dart';
+import 'package:ateliya/tools/extensions/future.dart';
+import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
+import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
+import 'package:ateliya/views/static/auth/auth_home_page.dart';
 import 'package:get/get.dart';
 
 class SettingPageVctl extends AuthViewController {

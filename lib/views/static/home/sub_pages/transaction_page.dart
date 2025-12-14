@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/extensions/ternary_fn.dart';
-import 'package:app_couture/tools/extensions/types/int.dart';
-import 'package:app_couture/tools/widgets/transaction_resume_tile.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/ternary_fn.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
+import 'package:ateliya/tools/widgets/transaction_resume_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 

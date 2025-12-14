@@ -1,7 +1,7 @@
-import 'package:app_couture/data/models/abstract/entite_entreprise.dart';
-import 'package:app_couture/data/models/entreprise_entities_response.dart';
-import 'package:app_couture/data/models/user.dart';
-import 'package:app_couture/tools/components/session_manager_view_controller.dart';
+import 'package:ateliya/data/models/abstract/entite_entreprise.dart';
+import 'package:ateliya/data/models/entreprise_entities_response.dart';
+import 'package:ateliya/data/models/user.dart';
+import 'package:ateliya/tools/components/session_manager_view_controller.dart';
 import 'package:get/get.dart';
 
 abstract class AuthViewController extends SessionManagerViewController {

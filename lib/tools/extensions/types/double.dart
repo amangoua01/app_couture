@@ -1,6 +1,6 @@
-import 'package:app_couture/tools/components/functions.dart';
-import 'package:app_couture/tools/extensions/types/int.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/components/functions.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 
 extension DoubleExt on double? {
   double get value => this ?? 0.0;

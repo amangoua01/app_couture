@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/widgets/buttons/c_button.dart';
-import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 

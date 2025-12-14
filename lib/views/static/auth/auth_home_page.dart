@@ -1,7 +1,7 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/widgets/buttons/c_button.dart';
-import 'package:app_couture/views/static/auth/login_page.dart';
-import 'package:app_couture/views/static/auth/register_page.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/views/static/auth/login_page.dart';
+import 'package:ateliya/views/static/auth/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';

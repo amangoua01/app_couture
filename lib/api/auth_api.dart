@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:app_couture/api/abstract/web_controller.dart';
-import 'package:app_couture/data/dto/user_register_dto.dart';
-import 'package:app_couture/data/models/user.dart';
-import 'package:app_couture/tools/components/session_manager_view_controller.dart';
-import 'package:app_couture/tools/extensions/types/map.dart';
-import 'package:app_couture/tools/models/data_response.dart';
+import 'package:ateliya/api/abstract/web_controller.dart';
+import 'package:ateliya/data/dto/user_register_dto.dart';
+import 'package:ateliya/data/models/user.dart';
+import 'package:ateliya/tools/components/session_manager_view_controller.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
+import 'package:ateliya/tools/models/data_response.dart';
 
 class AuthApi extends WebController {
   @override

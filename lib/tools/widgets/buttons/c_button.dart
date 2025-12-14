@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/widgets/placeholder_builder.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 

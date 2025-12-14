@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/views/static/notifs/detail_notif_page.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/views/static/notifs/detail_notif_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';

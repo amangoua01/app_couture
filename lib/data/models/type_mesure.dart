@@ -1,7 +1,7 @@
-import 'package:app_couture/data/models/abstract/model_json.dart';
-import 'package:app_couture/data/models/categorie_mesure.dart';
-import 'package:app_couture/data/models/entreprise.dart';
-import 'package:app_couture/tools/extensions/types/map.dart';
+import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/data/models/categorie_mesure.dart';
+import 'package:ateliya/data/models/entreprise.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
 
 class TypeMesure extends ModelJson {
   String? libelle;

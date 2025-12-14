@@ -151,7 +151,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/Debug/6x3q4s6x/x86_64"
+			"value" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/Debug/6x3q4s6x/x86_64"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -763,7 +763,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/Users/yvesamangoua/Documents/projects/app_couture/build/app/intermediates/cxx/Debug/6x3q4s6x/obj/x86_64"
+			"value" : "/Users/yvesamangoua/Documents/projects/ateliya/build/app/intermediates/cxx/Debug/6x3q4s6x/obj/x86_64"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -1035,7 +1035,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/Users/yvesamangoua/Documents/projects/app_couture/build/app/intermediates/cxx/Debug/6x3q4s6x/obj/x86_64"
+			"value" : "/Users/yvesamangoua/Documents/projects/ateliya/build/app/intermediates/cxx/Debug/6x3q4s6x/obj/x86_64"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1355,7 +1355,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/Debug/6x3q4s6x/x86_64"
+			"value" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/Debug/6x3q4s6x/x86_64"
 		},
 		{
 			"name" : "Project_IS_TOP_LEVEL",

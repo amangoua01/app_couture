@@ -1,9 +1,9 @@
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/widgets/inputs/c_date_form_field.dart';
-import 'package:app_couture/tools/widgets/inputs/c_drop_down_form_field.dart';
-import 'package:app_couture/tools/widgets/wrapper_listview.dart';
-import 'package:app_couture/views/static/clients/edition_client_page.dart';
-import 'package:app_couture/views/static/ventes/edition_article_vente_page.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
+import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
+import 'package:ateliya/tools/widgets/wrapper_listview.dart';
+import 'package:ateliya/views/static/clients/edition_client_page.dart';
+import 'package:ateliya/views/static/ventes/edition_article_vente_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

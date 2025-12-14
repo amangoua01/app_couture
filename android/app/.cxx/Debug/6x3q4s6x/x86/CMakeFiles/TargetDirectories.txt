@@ -1,2 +1,2 @@
-/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/Debug/6x3q4s6x/x86/CMakeFiles/edit_cache.dir
-/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/Debug/6x3q4s6x/x86/CMakeFiles/rebuild_cache.dir
+/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/Debug/6x3q4s6x/x86/CMakeFiles/edit_cache.dir
+/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/Debug/6x3q4s6x/x86/CMakeFiles/rebuild_cache.dir

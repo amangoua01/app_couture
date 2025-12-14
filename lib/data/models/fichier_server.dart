@@ -1,6 +1,6 @@
-import 'package:app_couture/data/models/abstract/fichier.dart';
-import 'package:app_couture/tools/constants/env.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:ateliya/data/models/abstract/fichier.dart';
+import 'package:ateliya/tools/constants/env.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 
 class FichierServer extends Fichier {
   int? id;

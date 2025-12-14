@@ -1,6 +1,6 @@
-import 'package:app_couture/data/models/abstract/model_json.dart';
-import 'package:app_couture/tools/constants/type_user_enum.dart';
-import 'package:app_couture/tools/extensions/types/map.dart';
+import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/tools/constants/type_user_enum.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
 
 class TypeUser extends ModelJson<TypeUser> {
   String? libelle;

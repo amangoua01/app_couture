@@ -1,6 +1,6 @@
-import 'package:app_couture/data/models/user.dart';
-import 'package:app_couture/tools/components/cache.dart';
-import 'package:app_couture/tools/constants/cache_key.dart';
+import 'package:ateliya/data/models/user.dart';
+import 'package:ateliya/tools/components/cache.dart';
+import 'package:ateliya/tools/constants/cache_key.dart';
 import 'package:get/get.dart';
 
 abstract class SessionManagerViewController extends GetxController {

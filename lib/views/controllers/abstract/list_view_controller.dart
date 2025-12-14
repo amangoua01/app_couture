@@ -1,10 +1,10 @@
-import 'package:app_couture/api/abstract/crud_web_controller.dart';
-import 'package:app_couture/data/models/abstract/model.dart';
-import 'package:app_couture/tools/extensions/types/int.dart';
-import 'package:app_couture/tools/models/paginated_data.dart';
-import 'package:app_couture/tools/widgets/messages/c_alert_dialog.dart';
-import 'package:app_couture/tools/widgets/messages/c_choice_message_dialog.dart';
-import 'package:app_couture/views/controllers/abstract/paginable_view_controller.dart';
+import 'package:ateliya/api/abstract/crud_web_controller.dart';
+import 'package:ateliya/data/models/abstract/model.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
+import 'package:ateliya/tools/models/paginated_data.dart';
+import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
+import 'package:ateliya/views/controllers/abstract/paginable_view_controller.dart';
 
 abstract class ListViewController<M extends Model>
     extends PaginableViewController<M> {

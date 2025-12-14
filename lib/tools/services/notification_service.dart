@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:app_couture/data/models/notifs/notif.dart';
-import 'package:app_couture/tools/models/data_response.dart';
+import 'package:ateliya/data/models/notifs/notif.dart';
+import 'package:ateliya/tools/models/data_response.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 

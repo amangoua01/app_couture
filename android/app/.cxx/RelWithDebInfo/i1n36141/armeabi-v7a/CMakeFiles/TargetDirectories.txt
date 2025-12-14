@@ -1,2 +1,2 @@
-/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/i1n36141/armeabi-v7a/CMakeFiles/edit_cache.dir
-/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/i1n36141/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/i1n36141/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/i1n36141/armeabi-v7a/CMakeFiles/rebuild_cache.dir

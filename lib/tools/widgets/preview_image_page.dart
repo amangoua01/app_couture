@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:app_couture/tools/widgets/placeholder_widget.dart';
+import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

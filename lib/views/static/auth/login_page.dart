@@ -1,10 +1,10 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/extensions/ternary_fn.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/widgets/buttons/c_button.dart';
-import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:app_couture/views/controllers/auth/login_page_vctl.dart';
-import 'package:app_couture/views/static/auth/forgot_password/forgot_password_page.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/ternary_fn.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/views/controllers/auth/login_page_vctl.dart';
+import 'package:ateliya/views/static/auth/forgot_password/forgot_password_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';

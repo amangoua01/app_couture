@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/components/bottom_sheet_dot.dart';
-import 'package:app_couture/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/components/bottom_sheet_dot.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';

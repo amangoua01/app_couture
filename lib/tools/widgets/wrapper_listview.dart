@@ -1,7 +1,7 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/widgets/empty_data_widget.dart';
-import 'package:app_couture/tools/widgets/placeholder_builder.dart';
-import 'package:app_couture/tools/widgets/shimmer_listtile.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/widgets/empty_data_widget.dart';
+import 'package:ateliya/tools/widgets/placeholder_builder.dart';
+import 'package:ateliya/tools/widgets/shimmer_listtile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';

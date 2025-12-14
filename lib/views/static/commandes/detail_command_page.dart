@@ -1,8 +1,8 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/extensions/types/int.dart';
-import 'package:app_couture/tools/widgets/buttons/c_button.dart';
-import 'package:app_couture/tools/widgets/commandes/command_group_card.dart';
-import 'package:app_couture/tools/widgets/commandes/command_listtile.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/commandes/command_group_card.dart';
+import 'package:ateliya/tools/widgets/commandes/command_listtile.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 

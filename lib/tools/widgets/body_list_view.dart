@@ -1,10 +1,10 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/extensions/ternary_fn.dart';
-import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:app_couture/tools/widgets/list_item.dart';
-import 'package:app_couture/tools/widgets/placeholder_builder.dart';
-import 'package:app_couture/tools/widgets/wrapper_listview_from_view_controller.dart';
-import 'package:app_couture/views/controllers/abstract/list_view_controller.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/ternary_fn.dart';
+import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/tools/widgets/list_item.dart';
+import 'package:ateliya/tools/widgets/placeholder_builder.dart';
+import 'package:ateliya/tools/widgets/wrapper_listview_from_view_controller.dart';
+import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

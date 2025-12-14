@@ -1,5 +1,5 @@
-import 'package:app_couture/api/abstract/crud_web_controller.dart';
-import 'package:app_couture/data/models/facture.dart';
+import 'package:ateliya/api/abstract/crud_web_controller.dart';
+import 'package:ateliya/data/models/facture.dart';
 
 class FactureApi extends CrudWebController<Facture> {
   @override

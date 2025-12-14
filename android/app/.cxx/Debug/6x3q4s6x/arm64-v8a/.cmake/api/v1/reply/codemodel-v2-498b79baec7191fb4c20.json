@@ -32,7 +32,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/Debug/6x3q4s6x/arm64-v8a",
+		"build" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/Debug/6x3q4s6x/arm64-v8a",
 		"source" : "/Users/yvesamangoua/Library/dev/fvm/versions/3.29.0/packages/flutter_tools/gradle/src/main/groovy"
 	},
 	"version" : 

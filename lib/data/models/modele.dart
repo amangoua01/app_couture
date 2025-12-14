@@ -1,8 +1,8 @@
-import 'package:app_couture/data/models/abstract/fichier.dart';
-import 'package:app_couture/data/models/abstract/model_form_data.dart';
-import 'package:app_couture/data/models/fichier_local.dart';
-import 'package:app_couture/data/models/fichier_server.dart';
-import 'package:app_couture/tools/extensions/types/map.dart';
+import 'package:ateliya/data/models/abstract/fichier.dart';
+import 'package:ateliya/data/models/abstract/model_form_data.dart';
+import 'package:ateliya/data/models/fichier_local.dart';
+import 'package:ateliya/data/models/fichier_server.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:http/http.dart' as http;
 
 class Modele extends ModelFormData<Modele> {

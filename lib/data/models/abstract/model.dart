@@ -1,4 +1,4 @@
-import 'package:app_couture/tools/extensions/types/map.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
 
 abstract class Model<T> {
   int? id;

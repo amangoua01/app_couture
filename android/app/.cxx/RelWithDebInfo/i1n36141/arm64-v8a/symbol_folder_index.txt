@@ -1,1 +1,1 @@
-/Users/yvesamangoua/Documents/projects/app_couture/build/app/intermediates/cxx/RelWithDebInfo/i1n36141/obj/arm64-v8a
+/Users/yvesamangoua/Documents/projects/ateliya/build/app/intermediates/cxx/RelWithDebInfo/i1n36141/obj/arm64-v8a

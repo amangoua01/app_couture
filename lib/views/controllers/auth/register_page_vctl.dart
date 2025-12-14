@@ -1,12 +1,12 @@
-import 'package:app_couture/api/auth_api.dart';
-import 'package:app_couture/api/pays_api.dart';
-import 'package:app_couture/data/dto/user_register_dto.dart';
-import 'package:app_couture/data/models/pays.dart';
-import 'package:app_couture/tools/components/session_manager_view_controller.dart';
-import 'package:app_couture/tools/extensions/future.dart';
-import 'package:app_couture/tools/widgets/messages/c_alert_dialog.dart';
-import 'package:app_couture/tools/widgets/messages/c_choice_message_dialog.dart';
-import 'package:app_couture/views/static/home/home_windows.dart';
+import 'package:ateliya/api/auth_api.dart';
+import 'package:ateliya/api/pays_api.dart';
+import 'package:ateliya/data/dto/user_register_dto.dart';
+import 'package:ateliya/data/models/pays.dart';
+import 'package:ateliya/tools/components/session_manager_view_controller.dart';
+import 'package:ateliya/tools/extensions/future.dart';
+import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
+import 'package:ateliya/views/static/home/home_windows.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 

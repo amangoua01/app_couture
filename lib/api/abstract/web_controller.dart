@@ -1,8 +1,8 @@
-import 'package:app_couture/tools/components/custom_http_client.dart';
-import 'package:app_couture/tools/components/session_manager_view_controller.dart';
-import 'package:app_couture/tools/constants/env.dart';
-import 'package:app_couture/tools/extensions/types/map.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/components/custom_http_client.dart';
+import 'package:ateliya/tools/components/session_manager_view_controller.dart';
+import 'package:ateliya/tools/constants/env.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 
 abstract class WebController {
   String get module;

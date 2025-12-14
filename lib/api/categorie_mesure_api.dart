@@ -1,5 +1,5 @@
-import 'package:app_couture/api/abstract/crud_web_controller.dart';
-import 'package:app_couture/data/models/categorie_mesure.dart';
+import 'package:ateliya/api/abstract/crud_web_controller.dart';
+import 'package:ateliya/data/models/categorie_mesure.dart';
 
 class CategorieMesureApi extends CrudWebController<CategorieMesure> {
   @override

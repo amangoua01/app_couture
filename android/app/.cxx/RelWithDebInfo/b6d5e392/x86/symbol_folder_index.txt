@@ -1,1 +1,1 @@
-/Users/yvesamangoua/Documents/projects/app_couture/build/app/intermediates/cxx/RelWithDebInfo/b6d5e392/obj/x86
+/Users/yvesamangoua/Documents/projects/ateliya/build/app/intermediates/cxx/RelWithDebInfo/b6d5e392/obj/x86

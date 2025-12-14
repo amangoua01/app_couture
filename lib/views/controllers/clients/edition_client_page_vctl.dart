@@ -1,16 +1,16 @@
-import 'package:app_couture/api/boutique_api.dart';
-import 'package:app_couture/api/client_api.dart';
-import 'package:app_couture/api/succursale_api.dart';
-import 'package:app_couture/data/models/abstract/fichier.dart';
-import 'package:app_couture/data/models/boutique.dart';
-import 'package:app_couture/data/models/client.dart';
-import 'package:app_couture/data/models/fichier_local.dart';
-import 'package:app_couture/data/models/succursale.dart';
-import 'package:app_couture/tools/extensions/future.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/widgets/inputs/c_bottom_image_picker.dart';
-import 'package:app_couture/tools/widgets/messages/c_alert_dialog.dart';
-import 'package:app_couture/views/controllers/abstract/edition_view_controller.dart';
+import 'package:ateliya/api/boutique_api.dart';
+import 'package:ateliya/api/client_api.dart';
+import 'package:ateliya/api/succursale_api.dart';
+import 'package:ateliya/data/models/abstract/fichier.dart';
+import 'package:ateliya/data/models/boutique.dart';
+import 'package:ateliya/data/models/client.dart';
+import 'package:ateliya/data/models/fichier_local.dart';
+import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/tools/extensions/future.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/inputs/c_bottom_image_picker.dart';
+import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/material.dart';
 
 class EditionClientPageVctl extends EditionViewController<Client, ClientApi> {

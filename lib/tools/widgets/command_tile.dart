@@ -1,6 +1,6 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/extensions/types/datetime.dart';
-import 'package:app_couture/views/static/commandes/detail_command_page.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/types/datetime.dart';
+import 'package:ateliya/views/static/commandes/detail_command_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';

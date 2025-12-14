@@ -1,11 +1,11 @@
-import 'package:app_couture/data/models/user.dart';
-import 'package:app_couture/tools/constants/type_user_enum.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/widgets/body_edition_page.dart';
-import 'package:app_couture/tools/widgets/field_set_container.dart';
-import 'package:app_couture/tools/widgets/inputs/c_drop_down_form_field.dart';
-import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:app_couture/views/controllers/personnels/edition_personnel_page_vctl.dart';
+import 'package:ateliya/data/models/user.dart';
+import 'package:ateliya/tools/constants/type_user_enum.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/body_edition_page.dart';
+import 'package:ateliya/tools/widgets/field_set_container.dart';
+import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
+import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/views/controllers/personnels/edition_personnel_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

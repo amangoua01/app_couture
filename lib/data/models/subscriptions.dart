@@ -1,4 +1,4 @@
-import 'package:app_couture/data/models/entreprise.dart';
+import 'package:ateliya/data/models/entreprise.dart';
 
 class Subscriptions {
   int? id;

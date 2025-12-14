@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:app_couture/api/abstract/web_controller.dart';
-import 'package:app_couture/data/models/abstract/model.dart';
-import 'package:app_couture/data/models/abstract/model_form_data.dart';
-import 'package:app_couture/data/models/abstract/model_json.dart';
-import 'package:app_couture/tools/extensions/types/int.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/models/data_response.dart';
-import 'package:app_couture/tools/models/paginated_data.dart';
+import 'package:ateliya/api/abstract/web_controller.dart';
+import 'package:ateliya/data/models/abstract/model.dart';
+import 'package:ateliya/data/models/abstract/model_form_data.dart';
+import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/models/data_response.dart';
+import 'package:ateliya/tools/models/paginated_data.dart';
 import 'package:http/http.dart' as http;
 
 abstract class CrudWebController<T extends Model> extends WebController {

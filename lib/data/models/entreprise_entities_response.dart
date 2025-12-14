@@ -1,5 +1,5 @@
-import 'package:app_couture/data/models/boutique.dart';
-import 'package:app_couture/data/models/succursale.dart';
+import 'package:ateliya/data/models/boutique.dart';
+import 'package:ateliya/data/models/succursale.dart';
 
 class EntrepriseEntitiesResponse {
   List<Boutique> boutiques = [];

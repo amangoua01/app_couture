@@ -1,8 +1,8 @@
-import 'package:app_couture/data/models/boutique.dart';
-import 'package:app_couture/data/models/succursale.dart';
-import 'package:app_couture/data/models/type_user.dart';
-import 'package:app_couture/data/models/user.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:ateliya/data/models/boutique.dart';
+import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/data/models/type_user.dart';
+import 'package:ateliya/data/models/user.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 
 class UpdateUserDto {
   int? id;

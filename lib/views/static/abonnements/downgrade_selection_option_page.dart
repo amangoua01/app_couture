@@ -1,6 +1,6 @@
-import 'package:app_couture/tools/widgets/buttons/c_button.dart';
-import 'package:app_couture/tools/widgets/forfait_config_section.dart';
-import 'package:app_couture/views/static/abonnements/abonnement_payment_page.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/forfait_config_section.dart';
+import 'package:ateliya/views/static/abonnements/abonnement_payment_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -1,4 +1,4 @@
-import 'package:app_couture/data/dto/abstract/dto_model.dart';
+import 'package:ateliya/data/dto/abstract/dto_model.dart';
 
 class CreateCategorieTypeMesureDto extends DtoModel {
   final int typeMesureId;

@@ -31,7 +31,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/44e1p44a/x86",
+		"build" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/44e1p44a/x86",
 		"source" : "/Users/yvesamangoua/fvm/versions/3.29.2/packages/flutter_tools/gradle/src/main/groovy"
 	},
 	"version" : 

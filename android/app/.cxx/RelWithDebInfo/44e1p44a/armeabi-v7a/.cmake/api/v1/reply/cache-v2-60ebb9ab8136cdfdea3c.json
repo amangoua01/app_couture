@@ -151,7 +151,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/44e1p44a/armeabi-v7a"
+			"value" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/44e1p44a/armeabi-v7a"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -739,7 +739,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/Users/yvesamangoua/Documents/projects/app_couture/build/app/intermediates/cxx/RelWithDebInfo/44e1p44a/obj/armeabi-v7a"
+			"value" : "/Users/yvesamangoua/Documents/projects/ateliya/build/app/intermediates/cxx/RelWithDebInfo/44e1p44a/obj/armeabi-v7a"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -1011,7 +1011,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/Users/yvesamangoua/Documents/projects/app_couture/build/app/intermediates/cxx/RelWithDebInfo/44e1p44a/obj/armeabi-v7a"
+			"value" : "/Users/yvesamangoua/Documents/projects/ateliya/build/app/intermediates/cxx/RelWithDebInfo/44e1p44a/obj/armeabi-v7a"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1331,7 +1331,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/yvesamangoua/Documents/projects/app_couture/android/app/.cxx/RelWithDebInfo/44e1p44a/armeabi-v7a"
+			"value" : "/Users/yvesamangoua/Documents/projects/ateliya/android/app/.cxx/RelWithDebInfo/44e1p44a/armeabi-v7a"
 		},
 		{
 			"name" : "Project_SOURCE_DIR",

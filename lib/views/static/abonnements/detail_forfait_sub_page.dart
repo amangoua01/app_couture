@@ -1,7 +1,7 @@
-import 'package:app_couture/data/models/avantage_abn.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/widgets/buttons/c_button.dart';
-import 'package:app_couture/views/static/abonnements/operator_list_page.dart';
+import 'package:ateliya/data/models/avantage_abn.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/views/static/abonnements/operator_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

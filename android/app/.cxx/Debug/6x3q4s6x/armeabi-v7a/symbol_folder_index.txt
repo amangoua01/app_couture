@@ -1,1 +1,1 @@
-/Users/yvesamangoua/Documents/projects/app_couture/build/app/intermediates/cxx/Debug/6x3q4s6x/obj/armeabi-v7a
+/Users/yvesamangoua/Documents/projects/ateliya/build/app/intermediates/cxx/Debug/6x3q4s6x/obj/armeabi-v7a

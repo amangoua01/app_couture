@@ -1,8 +1,8 @@
-import 'package:app_couture/data/models/abstract/model.dart';
-import 'package:app_couture/tools/widgets/buttons/c_button.dart';
-import 'package:app_couture/tools/widgets/placeholder_builder.dart';
-import 'package:app_couture/tools/widgets/placeholder_widget.dart';
-import 'package:app_couture/views/controllers/abstract/edition_view_controller.dart';
+import 'package:ateliya/data/models/abstract/model.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/placeholder_builder.dart';
+import 'package:ateliya/tools/widgets/placeholder_widget.dart';
+import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 

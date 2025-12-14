@@ -1,9 +1,9 @@
-import 'package:app_couture/data/models/fichier_local.dart';
-import 'package:app_couture/data/models/fichier_server.dart';
-import 'package:app_couture/data/models/modele.dart';
-import 'package:app_couture/tools/widgets/body_edition_page.dart';
-import 'package:app_couture/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:app_couture/views/controllers/modele/edition_modele_page_vctl.dart';
+import 'package:ateliya/data/models/fichier_local.dart';
+import 'package:ateliya/data/models/fichier_server.dart';
+import 'package:ateliya/data/models/modele.dart';
+import 'package:ateliya/tools/widgets/body_edition_page.dart';
+import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/views/controllers/modele/edition_modele_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';

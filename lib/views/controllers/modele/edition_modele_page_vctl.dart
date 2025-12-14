@@ -1,12 +1,12 @@
-import 'package:app_couture/api/modele_api.dart';
-import 'package:app_couture/data/models/abstract/fichier.dart';
-import 'package:app_couture/data/models/fichier_local.dart';
-import 'package:app_couture/data/models/modele.dart';
-import 'package:app_couture/tools/extensions/future.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/widgets/inputs/c_bottom_image_picker.dart';
-import 'package:app_couture/tools/widgets/messages/c_alert_dialog.dart';
-import 'package:app_couture/views/controllers/abstract/edition_view_controller.dart';
+import 'package:ateliya/api/modele_api.dart';
+import 'package:ateliya/data/models/abstract/fichier.dart';
+import 'package:ateliya/data/models/fichier_local.dart';
+import 'package:ateliya/data/models/modele.dart';
+import 'package:ateliya/tools/extensions/future.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/inputs/c_bottom_image_picker.dart';
+import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/material.dart';
 
 class EditionModelePageVctl extends EditionViewController<Modele, ModeleApi> {

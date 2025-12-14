@@ -1,4 +1,4 @@
-import 'package:app_couture/tools/constants/cache_key.dart';
+import 'package:ateliya/tools/constants/cache_key.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class Cache {

@@ -1,4 +1,4 @@
-import 'package:app_couture/data/models/notifs/notif_action.dart';
+import 'package:ateliya/data/models/notifs/notif_action.dart';
 
 class NotifData {
   int unRead = 0;

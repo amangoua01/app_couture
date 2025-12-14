@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:app_couture/tools/components/functions.dart';
+import 'package:ateliya/tools/components/functions.dart';
 import 'package:get/get.dart';
 
 extension StringExt on String? {

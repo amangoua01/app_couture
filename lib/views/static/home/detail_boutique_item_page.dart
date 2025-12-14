@@ -1,7 +1,7 @@
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/views/static/modeles/entrees_stock_list_sub_page.dart';
-import 'package:app_couture/views/static/modeles/reservation_list_sub_page.dart';
-import 'package:app_couture/views/static/modeles/vente_list_sub_page.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/views/static/modeles/entrees_stock_list_sub_page.dart';
+import 'package:ateliya/views/static/modeles/reservation_list_sub_page.dart';
+import 'package:ateliya/views/static/modeles/vente_list_sub_page.dart';
 import 'package:flutter/material.dart';
 
 class DetailBoutiqueItemPage extends StatelessWidget {

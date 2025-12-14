@@ -1,4 +1,4 @@
-import 'package:app_couture/tools/components/functions.dart';
+import 'package:ateliya/tools/components/functions.dart';
 
 extension IntExt on int? {
   int get value => this ?? 0;

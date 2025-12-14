@@ -1,8 +1,8 @@
-import 'package:app_couture/data/models/abstract/model_json.dart';
-import 'package:app_couture/tools/constants/app_colors.dart';
-import 'package:app_couture/tools/widgets/placeholder_builder.dart';
-import 'package:app_couture/tools/widgets/shimmer_listtile.dart';
-import 'package:app_couture/views/controllers/abstract/list_view_controller.dart';
+import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/widgets/placeholder_builder.dart';
+import 'package:ateliya/tools/widgets/shimmer_listtile.dart';
+import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';

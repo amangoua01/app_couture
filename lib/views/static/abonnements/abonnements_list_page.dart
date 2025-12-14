@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/widgets/abonnement_tile.dart';
-import 'package:app_couture/views/static/abonnements/forfait_list_page.dart';
+import 'package:ateliya/tools/widgets/abonnement_tile.dart';
+import 'package:ateliya/views/static/abonnements/forfait_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';

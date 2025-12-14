@@ -1,6 +1,6 @@
-import 'package:app_couture/tools/extensions/types/string.dart';
-import 'package:app_couture/tools/widgets/placeholder_builder.dart';
-import 'package:app_couture/tools/widgets/placeholder_widget.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/placeholder_builder.dart';
+import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 

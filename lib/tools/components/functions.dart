@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/extensions/types/int.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:date_format/date_format.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';

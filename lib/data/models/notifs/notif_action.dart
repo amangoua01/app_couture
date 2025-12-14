@@ -1,5 +1,5 @@
-import 'package:app_couture/tools/extensions/types/int.dart';
-import 'package:app_couture/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class NotifAction {
