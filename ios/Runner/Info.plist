@@ -45,6 +45,8 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>MinimumOSVersion</key>
+	<string>15.0</string>
 	<!-- Permissions pour accéder à la caméra et à la galerie -->
 	<key>NSCameraUsageDescription</key>
 	<string>Cette application a besoin d'accéder à la caméra pour prendre des photos.</string>
