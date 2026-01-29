@@ -16,6 +16,7 @@ class CDateFormField extends StatelessWidget {
   final void Function(DateTime? date) onChange;
   final bool withTime;
   final bool enabled;
+  final String? externalLabel;
   final void Function()? onClear;
 
   const CDateFormField({
@@ -30,6 +31,7 @@ class CDateFormField extends StatelessWidget {
     this.textInputAction,
     this.require = false,
     this.labelText,
+    this.externalLabel,
     super.key,
   });
 
@@ -38,6 +40,7 @@ class CDateFormField extends StatelessWidget {
     return CTextFormField(
       controller: controller?.textController,
       labelText: labelText,
+      externalLabel: externalLabel,
       textInputAction: textInputAction,
       readOnly: true,
       enabled: enabled,

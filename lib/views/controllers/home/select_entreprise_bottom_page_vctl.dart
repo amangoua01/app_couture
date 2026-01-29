@@ -23,8 +23,7 @@ class SelectEntrepriseBottomPageVctl extends AuthViewController {
   }
 
   void onSelectEntity(EntiteEntreprise entite) {
-    this.entite = entite;
-    update();
+    setEntite(entite);
     Get.back(result: entite);
   }
 

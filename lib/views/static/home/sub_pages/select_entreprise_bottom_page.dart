@@ -50,8 +50,8 @@ class SelectEntrepriseBottomPage extends StatelessWidget {
                         title: Text(e.libelle.value),
                         subtitle: Text(e.contact.value),
                         trailing: Visibility(
-                          visible: (ctl.entite is Boutique) &&
-                              (ctl.entite as Boutique).id == e.id,
+                          visible: (ctl.setEntite is Boutique) &&
+                              (ctl.setEntite as Boutique).id == e.id,
                           child: SvgPicture.asset(
                             "assets/images/svg/pin.svg",
                             width: 25,
@@ -80,8 +80,8 @@ class SelectEntrepriseBottomPage extends StatelessWidget {
                         title: Text(e.libelle.value),
                         subtitle: Text(e.contact.value),
                         trailing: Visibility(
-                          visible: (ctl.entite is Succursale) &&
-                              (ctl.entite as Succursale).id == e.id,
+                          visible: (ctl.setEntite is Succursale) &&
+                              (ctl.setEntite as Succursale).id == e.id,
                           child: SvgPicture.asset(
                             "assets/images/svg/pin.svg",
                             width: 25,

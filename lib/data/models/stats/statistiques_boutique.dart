@@ -9,7 +9,7 @@ import 'package:ateliya/tools/extensions/types/map.dart';
 
 class StatistiquesBoutique extends ModelJson {
   Periode? periode;
-  Kpis? kpis;
+  Kpis kpis = Kpis();
   List<RevenusQuotidiens> revenusQuotidiens = [];
   List<RevenusParType> revenusParType = [];
   List<ActivitesBoutique>? activitesBoutique;
@@ -18,13 +18,13 @@ class StatistiquesBoutique extends ModelJson {
 
   StatistiquesBoutique({
     this.periode,
-    this.kpis,
+    Kpis? kpis,
     this.revenusQuotidiens = const [],
     this.revenusParType = const [],
     this.activitesBoutique,
     this.dernieresTransactions,
     this.boutiqueId,
-  });
+  }) : kpis = kpis ?? Kpis();
 
   @override
   StatistiquesBoutique fromJson(Json json) {
@@ -34,7 +34,7 @@ class StatistiquesBoutique extends ModelJson {
   StatistiquesBoutique.fromJson(Json json) {
     periode =
         json['periode'] != null ? Periode.fromJson(json['periode']) : null;
-    kpis = json['kpis'] != null ? Kpis.fromJson(json['kpis']) : null;
+    kpis = json['kpis'] != null ? Kpis.fromJson(json['kpis']) : Kpis();
 
     if (json['revenusQuotidiens'] != null) {
       revenusQuotidiens = <RevenusQuotidiens>[];
@@ -74,9 +74,7 @@ class StatistiquesBoutique extends ModelJson {
     if (periode != null) {
       data['periode'] = periode!.toJson();
     }
-    if (kpis != null) {
-      data['kpis'] = kpis!.toJson();
-    }
+    data['kpis'] = kpis.toJson();
     data['revenusQuotidiens'] =
         revenusQuotidiens.map((v) => v.toJson()).toList();
     data['revenusParType'] = revenusParType.map((v) => v.toJson()).toList();

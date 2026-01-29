@@ -66,15 +66,14 @@ class CDropDownFormField<T> extends StatelessWidget {
           Visibility(
             visible: externalLabel != null,
             child: Padding(
-              padding: const EdgeInsets.only(left: 5),
+              padding: const EdgeInsets.only(left: 5, bottom: 3),
               child: Text(
                 externalLabel == null
                     ? ''
                     : ((externalLabel.value.isEmpty)
                         ? ""
                         : externalLabel! + (require ? "*" : "")),
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ),

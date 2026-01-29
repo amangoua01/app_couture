@@ -1,4 +1,5 @@
 import 'package:ateliya/data/models/abstract/entite_entreprise.dart';
+import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 
 class Boutique extends EntiteEntreprise {
@@ -23,4 +24,7 @@ class Boutique extends EntiteEntreprise {
     data['situation'] = situation;
     return data;
   }
+
+  @override
+  EntiteEntrepriseType get type => EntiteEntrepriseType.boutique;
 }

@@ -51,7 +51,7 @@ class AuthApi extends WebController {
         return DataResponse.error(message: json["message"]);
       }
     } catch (e, st) {
-      return DataResponse.error(systemError: e, systemtraceError: st);
+      return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
 
@@ -108,7 +108,7 @@ class AuthApi extends WebController {
         return DataResponse.error(message: json["message"] ?? "Unknown error");
       }
     } catch (e, st) {
-      return DataResponse<bool>.error(systemError: e, systemtraceError: st);
+      return DataResponse<bool>.error(systemError: e, stackTrace: st);
     }
   }
 
@@ -132,7 +132,7 @@ class AuthApi extends WebController {
         return DataResponse.error(message: json["message"] ?? "Unknown error");
       }
     } catch (e, st) {
-      return DataResponse<bool>.error(systemError: e, systemtraceError: st);
+      return DataResponse<bool>.error(systemError: e, stackTrace: st);
     }
   }
 
@@ -157,7 +157,7 @@ class AuthApi extends WebController {
         return DataResponse.error(message: json["message"] ?? "Unknown error");
       }
     } catch (e, st) {
-      return DataResponse.error(systemError: e, systemtraceError: st);
+      return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
 
@@ -177,7 +177,7 @@ class AuthApi extends WebController {
         return DataResponse<User>.error(message: json["message"]);
       }
     } catch (e, st) {
-      return DataResponse<User>.error(systemError: e, systemtraceError: st);
+      return DataResponse<User>.error(systemError: e, stackTrace: st);
     }
   }
 }

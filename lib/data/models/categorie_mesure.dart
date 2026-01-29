@@ -7,8 +7,8 @@ class CategorieMesure extends ModelJson {
   CategorieMesure({super.id, this.libelle});
 
   CategorieMesure.fromJson(Json json) {
-    id = json["id"];
-    libelle = json["libelle"];
+    id = json["id"] ?? json["idCategorie"];
+    libelle = json["libelle"] ?? json["libelleCategorie"];
   }
 
   @override

@@ -17,7 +17,7 @@ class SplashScreenPageVctl extends SessionManagerViewController {
         Get.off(() => const AuthHomePage());
       }
     } catch (e, t) {
-      DataResponse.error(systemError: e, systemtraceError: t);
+      DataResponse.error(systemError: e, stackTrace: t);
       Get.off(() => const AuthHomePage());
     }
   }

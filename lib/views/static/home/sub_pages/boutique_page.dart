@@ -1,4 +1,5 @@
 import 'package:ateliya/data/models/fichier_server.dart';
+import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -128,7 +129,17 @@ class BoutiquePage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        trailing: const Icon(Icons.arrow_forward_ios, size: 15),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            PopupMenuButton(
+                              tooltip: "Options",
+                              splashRadius: 20,
+                              itemBuilder: (context) => getMenus(context, e),
+                            ),
+                            const Icon(Icons.arrow_forward_ios, size: 15),
+                          ],
+                        ),
                         onTap: () => Get.to(() => DetailBoutiqueItemPage(e)),
                       ),
                     ),
@@ -204,48 +215,8 @@ class BoutiquePage extends StatelessWidget {
                                         position: PopupMenuPosition.under,
                                         menuPadding: const EdgeInsets.all(5),
                                         icon: const Icon(Icons.more_vert),
-                                        itemBuilder: (_) => [
-                                          "Faire une vente",
-                                          "Voir les ventes",
-                                          "Plus de détails",
-                                          "Supprimer",
-                                        ]
-                                            .map(
-                                              (e) => PopupMenuItem(
-                                                height: 40,
-                                                value: e,
-                                                child: Text(e),
-                                                onTap: () {
-                                                  switch (e) {
-                                                    case "Entrer stock":
-                                                      CBottomSheet.show(
-                                                        child:
-                                                            const EditionEntreeStock(
-                                                          isEntreeStock: true,
-                                                        ),
-                                                      );
-                                                      break;
-                                                    case "Sorti stock":
-                                                      CBottomSheet.show(
-                                                        child:
-                                                            const EditionEntreeStock(
-                                                          isEntreeStock: false,
-                                                        ),
-                                                      );
-                                                      break;
-                                                    case "Réserver":
-                                                      break;
-                                                    case "Payer":
-                                                      Get.to(
-                                                        () =>
-                                                            const EditionVentePage(),
-                                                      );
-                                                      break;
-                                                  }
-                                                },
-                                              ),
-                                            )
-                                            .toList(),
+                                        itemBuilder: (context) =>
+                                            getMenus(context, e),
                                       ),
                                     ),
                                   ],
@@ -299,4 +270,46 @@ class BoutiquePage extends StatelessWidget {
           );
         });
   }
+
+  List<PopupMenuItem<String>> getMenus(
+          BuildContext _, ModeleBoutique modeleBoutique) =>
+      [
+        "Faire une vente",
+        "Voir les ventes",
+        "Supprimer",
+      ]
+          .map(
+            (e) => PopupMenuItem(
+              height: 40,
+              value: e,
+              child: Text(e),
+              onTap: () {
+                switch (e) {
+                  case "Faire une vente":
+                    Get.to(() => EditionVentePage(modeleBoutique));
+                    break;
+                  case "Entrer stock":
+                    CBottomSheet.show(
+                      child: const EditionEntreeStock(
+                        isEntreeStock: true,
+                      ),
+                    );
+                    break;
+                  case "Sorti stock":
+                    CBottomSheet.show(
+                      child: const EditionEntreeStock(
+                        isEntreeStock: false,
+                      ),
+                    );
+                    break;
+                  case "Réserver":
+                    break;
+                  case "Payer":
+                    Get.to(() => EditionVentePage(modeleBoutique));
+                    break;
+                }
+              },
+            ),
+          )
+          .toList();
 }

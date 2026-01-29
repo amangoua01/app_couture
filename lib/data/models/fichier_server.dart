@@ -17,6 +17,9 @@ class FichierServer extends Fichier {
   }
 
   String? get fullUrl {
+    if (path == null || alt == null) {
+      return null;
+    }
     return Env.fullImageUrl("${path?.value}/${alt?.value}");
   }
 

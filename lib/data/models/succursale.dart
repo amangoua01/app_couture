@@ -1,4 +1,5 @@
 import 'package:ateliya/data/models/abstract/entite_entreprise.dart';
+import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 
 class Succursale extends EntiteEntreprise {
@@ -22,4 +23,7 @@ class Succursale extends EntiteEntreprise {
     data['contact'] = contact;
     return data;
   }
+
+  @override
+  EntiteEntrepriseType get type => EntiteEntrepriseType.succursale;
 }

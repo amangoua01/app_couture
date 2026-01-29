@@ -16,11 +16,11 @@ class DataResponse<T> {
           "Désolé, une erreur est survenue. Veuillez réessayer SVP.",
       this.detailErrors = "",
       dynamic systemError,
-      dynamic systemtraceError}) {
+      dynamic stackTrace}) {
     if (kDebugMode && systemError != null) {
-      Sentry.captureException(systemError, stackTrace: systemtraceError);
+      Sentry.captureException(systemError, stackTrace: stackTrace);
       print(systemError);
-      print(systemtraceError);
+      print(stackTrace);
     }
   }
 }

@@ -68,6 +68,7 @@ dependencies:
   http: ^1.5.0
   calendar_date_picker2: ^2.0.1
   fl_chart: ^0.68.0
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1,9 +1,9 @@
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/views/controllers/home/detail_boutique_item_page_vctl.dart';
-import 'package:ateliya/views/static/modeles/entrees_stock_list_sub_page.dart';
-import 'package:ateliya/views/static/modeles/reservation_list_sub_page.dart';
-import 'package:ateliya/views/static/modeles/vente_list_sub_page.dart';
+import 'package:ateliya/views/static/modele/entrees_stock_list_sub_page.dart';
+import 'package:ateliya/views/static/modele/reservation_list_sub_page.dart';
+import 'package:ateliya/views/static/modele/vente_list_sub_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

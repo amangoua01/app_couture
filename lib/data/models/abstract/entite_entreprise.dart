@@ -1,4 +1,5 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 
 class EntiteEntreprise extends ModelJson {
@@ -13,7 +14,10 @@ class EntiteEntreprise extends ModelJson {
 
   @override
   Map<String, dynamic> toJson() => {'id': id, 'libelle': libelle};
+
   bool get isEmpty => id == null;
 
   bool get isNotEmpty => !isEmpty;
+
+  EntiteEntrepriseType get type => EntiteEntrepriseType.none;
 }

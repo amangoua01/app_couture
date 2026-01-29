@@ -30,7 +30,7 @@ class EntrepriseApi extends CrudWebController<Entreprise> {
         );
       }
     } catch (e, st) {
-      return DataResponse.error(systemError: e, systemtraceError: st);
+      return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
 }

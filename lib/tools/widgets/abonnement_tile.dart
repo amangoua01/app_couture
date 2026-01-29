@@ -1,3 +1,4 @@
+import 'package:ateliya/data/models/abonnement.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/abn_tile_item.dart';
@@ -8,7 +9,8 @@ import 'package:gap/gap.dart';
 import 'package:ticket_widget/ticket_widget.dart';
 
 class AbonnementTile extends StatelessWidget {
-  const AbonnementTile({super.key});
+  final Abonnement item;
+  const AbonnementTile(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class AbonnementTile extends StatelessWidget {
               GestureDetector(
                 onTap: () => CBottomSheet.show(
                   child: ListView.separated(
-                    itemCount: 5,
+                    itemCount: item.modules.length,
                     separatorBuilder: (_, __) => const Divider(),
                     itemBuilder: (_, i) => ListTile(
                       leading: CircleAvatar(
@@ -39,8 +41,11 @@ class AbonnementTile extends StatelessWidget {
                           ),
                         ),
                       ),
-                      title: Text("Module $i"),
-                      trailing: Text(i.toString()),
+                      title: Text(item.modules[i].libelle.value),
+                      subtitle: Text(item.modules[i].description.value),
+                      trailing: Text(
+                        item.modules[i].quantite.toAmount(unit: ""),
+                      ),
                     ),
                   ),
                 ),
@@ -80,7 +85,7 @@ class AbonnementTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  "Actif",
+                  item.etat.value.capitalize(),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: Colors.white,
@@ -96,17 +101,17 @@ class AbonnementTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  title: const Text(
-                    'PACK ATELIYA CLASSIQUE',
+                  title: Text(
+                    item.type.value.capitalize(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                   trailing: Text(
-                    "2000".toAmount(unit: ''),
+                    item.montant.toAmount(unit: "Fcfa"),
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
@@ -114,11 +119,11 @@ class AbonnementTile extends StatelessWidget {
                   children: [
                     AbnTileItem(
                       title: 'Date début',
-                      date: DateTime.now().toIso8601String(),
+                      date: item.dateDebut.value,
                     ),
                     AbnTileItem(
                       title: 'Date fin',
-                      date: DateTime.now().toIso8601String(),
+                      date: item.dateFin.value,
                     ),
                   ]
                       .map(

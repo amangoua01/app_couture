@@ -22,7 +22,7 @@ class Entreprise extends ModelJson {
     id = json['id'];
     libelle = json['libelle'];
     numero = json['numero'];
-    logo = FichierServer.fromJson(json['logo']);
+    logo = (json['logo'] != null) ? FichierServer.fromJson(json['logo']) : null;
     email = json['email'];
     createdAt = json['createdAt'];
   }

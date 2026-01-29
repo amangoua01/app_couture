@@ -97,7 +97,7 @@ abstract class NotificationService {
     try {
       return _messaging.getToken();
     } catch (e, st) {
-      DataResponse.error(systemError: e, systemtraceError: st);
+      DataResponse.error(systemError: e, stackTrace: st);
       return null;
     }
   }

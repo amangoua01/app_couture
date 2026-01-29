@@ -6,7 +6,7 @@ import 'package:ateliya/tools/models/netword_config.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 abstract class Env {
-  static const String appName = 'Moomen Pro';
+  static const String appName = 'Ateliya';
   static const String appVersion = '1.0.0';
   static const int buildVersion = 2;
   static final fontFamily = GoogleFonts.poppins().fontFamily;
@@ -19,6 +19,7 @@ abstract class Env {
     scheme: "https",
     host: "backend.ateliya.com",
   );
+
   static const _hostProd = NetwordConfig(
     host: "backend.ateliya.com",
     scheme: "https",

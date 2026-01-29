@@ -6,12 +6,14 @@ class NetwordConfig {
   final int? port;
   final String scheme;
   final String suffix;
+  final Json? params;
 
   const NetwordConfig({
     required this.host,
     this.port,
     this.scheme = "http",
     this.suffix = "api",
+    this.params,
   });
 
   Uri build({
@@ -36,6 +38,13 @@ class NetwordConfig {
       }
     }
     if (path.endsWith("/")) path = path.substring(0, path.length - 1);
+
+    if (params != null) {
+      params.addAll(this.params ?? {});
+    } else {
+      params = this.params;
+    }
+
     return Uri(
       scheme: scheme,
       host: host,

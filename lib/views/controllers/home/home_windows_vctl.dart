@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
+import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 
-class HomeWindowsVctl extends GetxController {
+class HomeWindowsVctl extends AuthViewController {
   int page = 0;
 }

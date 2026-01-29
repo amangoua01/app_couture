@@ -1,4 +1,5 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/ligne_entres.dart';
 import 'package:ateliya/data/models/ligne_reservations.dart';
@@ -10,7 +11,7 @@ import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/detail_model_filter_vente.dart';
 import 'package:ateliya/tools/models/detail_modele_entre_stock.dart';
 
-class ModeleBoutique extends ModelJson {
+class ModeleBoutique extends ModelJson<ModeleBoutique> {
   int? quantite;
   String? prix;
   Modele? modele;
@@ -20,6 +21,7 @@ class ModeleBoutique extends ModelJson {
   String? taille;
   String? createdAt;
   bool? isActive;
+  Boutique? boutique;
 
   ModeleBoutique({
     this.quantite,
@@ -31,6 +33,7 @@ class ModeleBoutique extends ModelJson {
     this.taille,
     this.createdAt,
     this.isActive,
+    this.boutique,
   })  : _ligneEntres = ligneEntres,
         _ligneReservations = ligneReservations,
         _paiementBoutiqueLignes = paiementBoutiqueLignes;
@@ -66,25 +69,18 @@ class ModeleBoutique extends ModelJson {
     taille = json['taille'];
     createdAt = json['createdAt'];
     isActive = json['isActive'];
+    boutique =
+        json['boutique'] != null ? Boutique.fromJson(json['boutique']) : null;
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
     data['quantite'] = quantite;
+    data['modele'] = modele?.id;
+    data['boutique'] = boutique?.id;
     data['prix'] = prix;
-    if (modele != null) {
-      data['modele'] = modele!.toJson();
-    }
-    data['ligneEntres'] = _ligneEntres.map((v) => v.toJson()).toList();
-    data['ligneReservations'] =
-        _ligneReservations.map((v) => v.toJson()).toList();
-    data['paiementBoutiqueLignes'] =
-        _paiementBoutiqueLignes.map((v) => v.toJson()).toList();
     data['taille'] = taille;
-    data['createdAt'] = createdAt;
-    data['isActive'] = isActive;
     return data;
   }
 

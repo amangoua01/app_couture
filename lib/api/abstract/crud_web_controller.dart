@@ -59,7 +59,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
         );
       }
     } catch (e, st) {
-      return DataResponse.error(systemError: e, systemtraceError: st);
+      return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
 
@@ -89,7 +89,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
         );
       }
     } catch (e, st) {
-      return DataResponse.error(systemError: e, systemtraceError: st);
+      return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
 
@@ -119,7 +119,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
         );
       }
     } catch (e, st) {
-      return DataResponse.error(systemError: e, systemtraceError: st);
+      return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
 
@@ -138,7 +138,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
         );
       }
     } catch (e, st) {
-      return DataResponse.error(systemError: e, systemtraceError: st);
+      return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
 
@@ -158,7 +158,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
         );
       }
     } catch (e, st) {
-      return DataResponse.error(systemError: e, systemtraceError: st);
+      return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
 
@@ -177,7 +177,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
         );
       }
     } catch (e, st) {
-      return DataResponse.error(systemError: e, systemtraceError: st);
+      return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
 }

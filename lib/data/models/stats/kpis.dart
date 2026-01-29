@@ -2,16 +2,16 @@ import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 
 class Kpis extends ModelJson {
-  int? chiffreAffaires;
-  int? reservationsActives;
-  int? clientsActifs;
-  int? commandesEnCours;
+  int chiffreAffaires = 0;
+  int reservationsActives = 0;
+  int clientsActifs = 0;
+  int commandesEnCours = 0;
 
   Kpis({
-    this.chiffreAffaires,
-    this.reservationsActives,
-    this.clientsActifs,
-    this.commandesEnCours,
+    this.chiffreAffaires = 0,
+    this.reservationsActives = 0,
+    this.clientsActifs = 0,
+    this.commandesEnCours = 0,
   });
 
   @override
@@ -20,10 +20,10 @@ class Kpis extends ModelJson {
   }
 
   Kpis.fromJson(Json json) {
-    chiffreAffaires = json['chiffreAffaires'];
-    reservationsActives = json['reservationsActives'];
-    clientsActifs = json['clientsActifs'];
-    commandesEnCours = json['commandesEnCours'];
+    chiffreAffaires = json['chiffreAffaires'] ?? 0;
+    reservationsActives = json['reservationsActives'] ?? 0;
+    clientsActifs = json['clientsActifs'] ?? 0;
+    commandesEnCours = json['commandesEnCours'] ?? 0;
   }
 
   @override

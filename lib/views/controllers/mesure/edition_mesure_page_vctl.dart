@@ -1,8 +1,16 @@
+import 'package:ateliya/api/client_api.dart';
+import 'package:ateliya/data/dto/mesure/mesure_dto.dart';
+import 'package:ateliya/data/models/client.dart';
+import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
+import 'package:ateliya/tools/models/prise_mesure_step.dart';
+import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
+import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:signature/signature.dart';
 
-class EditionMesurePageVctl extends GetxController {
+class EditionMesurePageVctl extends AuthViewController {
   int page = 0;
   final signatureCtl = SignatureController(
     penStrokeWidth: 5,
@@ -10,18 +18,111 @@ class EditionMesurePageVctl extends GetxController {
     strokeCap: StrokeCap.round,
     exportBackgroundColor: Colors.blue,
   );
-  List<Map<String, String>> pages = [
-    {
-      "title": "Faisons connaissance",
-      "subtitle": "Informations personnelles",
-    },
-    {
-      "title": "Donnez votre mesuration",
-      "subtitle": "Informations sur vos mesures"
-    },
-    {
-      "title": "INFORMATIONS GLOBALES",
-      "subtitle": "Gestion finale",
-    },
+  final dateRetraitCtl = DateTimeEditingController();
+  final pageCtl = PageController();
+  final avanceCtl = TextEditingController();
+  final remiseGlobaleCtl = TextEditingController();
+
+  List<PriseMesureStep> pages = [
+    PriseMesureStep(
+      title: "Faisons connaissance",
+      subtitle: "Informations personnelles",
+    ),
+    PriseMesureStep(
+        title: "Donnez votre mesuration",
+        subtitle: "Informations sur vos mesures"),
+    PriseMesureStep(
+      title: "INFORMATIONS GLOBALES",
+      subtitle: "Gestion finale",
+    ),
+    PriseMesureStep(
+      title: "Récapitulatif",
+      subtitle: "Informations finales",
+    ),
   ];
+
+  final mesure = MesureDto();
+
+  Client? client;
+  final clientApi = ClientApi();
+  final formKey1 = GlobalKey<FormState>();
+  final contactClientCtl = TextEditingController();
+
+  void nextPage() {
+    if (page < pages.length - 1) {
+      switch (page) {
+        case 0:
+          if (!formKey1.currentState!.validate()) {
+            return;
+          }
+          break;
+        case 1:
+          if (!mesure.isValide) {
+            CAlertDialog.show(
+              message: "Veuillez ajouter des pièces"
+                  " et leurs mensurations pour continuer.",
+            );
+            return;
+          } else {
+            if (!mesure.isMensurationValide) {
+              CAlertDialog.show(
+                message: "Veuillez completer toutes "
+                    "les mensurations pour continuer.",
+              );
+              return;
+            }
+          }
+          break;
+
+        default:
+      }
+      page++;
+      pageCtl.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      update();
+    } else {
+      submit();
+    }
+  }
+
+  void previousPage() {
+    if (page > 0) {
+      page--;
+      pageCtl.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      update();
+    }
+  }
+
+  Future<List<Client>> fetchClients() async {
+    final res = await clientApi.list();
+    if (res.status) {
+      return res.data!.items;
+    } else {
+      return [];
+    }
+  }
+
+  Future<void> submit() async {
+    if ((getEntite().value is Succursale)) {
+      mesure.client = client;
+      mesure.dateRetrait = dateRetraitCtl.dateTime;
+      mesure.succursale = (getEntite().value as Succursale);
+      mesure.avance = avanceCtl.toDouble();
+      mesure.remiseGlobale = remiseGlobaleCtl.toDouble();
+      mesure.dateRetrait = dateRetraitCtl.dateTime;
+      mesure.signature = await signatureCtl.toPngBytes();
+      // mesure.lignesMesures =
+      print(mesure.toJson());
+    } else {
+      CAlertDialog.show(
+        message: "Veuillez selectionner "
+            "une succursale pour effectuer cette action.",
+      );
+    }
+  }
 }

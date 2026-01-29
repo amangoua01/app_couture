@@ -6,6 +6,7 @@ import 'package:ateliya/views/static/auth/profil_page.dart';
 import 'package:ateliya/views/static/boutiques/boutiques_list_page.dart';
 import 'package:ateliya/views/static/clients/client_liste_page.dart';
 import 'package:ateliya/views/static/modele/modele_list_page.dart';
+import 'package:ateliya/views/static/modele_boutique/modele_list_boutique_page.dart';
 import 'package:ateliya/views/static/personnels/personnels_list_page.dart';
 import 'package:ateliya/views/static/surcursales/succursales_list_page.dart';
 import 'package:ateliya/views/static/type_mesure/type_mesure_list_page.dart';
@@ -66,7 +67,7 @@ class SettingPage extends StatelessWidget {
                   onTap: () => Get.to(() => const PersonnelListPage()),
                 ),
                 SettingTile(
-                  title: "Mes surcussales",
+                  title: "Mes succursales",
                   onTap: () => Get.to(() => const SuccursalesListPage()),
                 ),
                 SettingTile(
@@ -87,7 +88,7 @@ class SettingPage extends StatelessWidget {
                 ),
                 SettingTile(
                   title: "Mes modèles boutiques",
-                  onTap: () => Get.to(() => const ClientListePage()),
+                  onTap: () => Get.to(() => const ModeleListBoutiquePage()),
                 ),
                 SettingTile(
                   title: "Abonnements",

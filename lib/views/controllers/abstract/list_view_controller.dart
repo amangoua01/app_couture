@@ -19,7 +19,7 @@ abstract class ListViewController<M extends Model>
 
   ListViewController(
     this.api, {
-    this.provideIdToListApi = true,
+    this.provideIdToListApi = false,
     this.customId,
   });
 
@@ -30,7 +30,7 @@ abstract class ListViewController<M extends Model>
     if (customId != null) {
       finalId = customId;
     } else {
-      finalId = entite.id;
+      finalId = getEntite().value.id;
     }
     final res = await api.list(
       id: provideIdToListApi ? finalId : null,

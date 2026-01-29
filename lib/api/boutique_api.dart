@@ -1,8 +1,11 @@
 import 'dart:convert' show jsonDecode;
 
 import 'package:ateliya/api/abstract/crud_web_controller.dart';
+import 'package:ateliya/data/dto/paiement_boutique_dto.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
+import 'package:ateliya/data/models/paiement_boutique.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 
@@ -35,7 +38,31 @@ class BoutiqueApi extends CrudWebController<Boutique> {
         );
       }
     } catch (e, st) {
-      return DataResponse.error(systemError: e, systemtraceError: st);
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  Future<DataResponse<PaiementBoutique>> makePaiement(
+      PaiementBoutiqueDto data) async {
+    try {
+      final res = await client.post(
+        urlBuilder(
+          module: "paiement",
+          api: "boutique/multiple/${data.boutiqueId}",
+        ),
+        headers: authHeaders,
+        body: data.toJson().parseToJson(),
+      );
+      var resData = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(
+          data: PaiementBoutique.fromJson(resData["data"]),
+        );
+      } else {
+        return DataResponse.error(message: resData["message"]);
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
 }
