@@ -1,5 +1,6 @@
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
+import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
@@ -99,6 +100,19 @@ class EditionVentePage extends StatelessWidget {
                 controller: ctl.quantiteCtl,
                 externalLabel: "Quantité",
                 require: true,
+              ),
+              CDropDownFormField(
+                externalLabel: "Moyen de paiement",
+                require: true,
+                selectedItem: ctl.moyenPaiement,
+                items: (f, p) =>
+                    ModePaiementEnum.values.map((e) => e.label).toList(),
+                onChanged: (val) {
+                  if (val != null) {
+                    ctl.moyenPaiement = val;
+                    ctl.update();
+                  }
+                },
               ),
               const Gap(30),
               CButton(onPressed: ctl.submit),

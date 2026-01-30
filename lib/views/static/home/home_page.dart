@@ -1,11 +1,14 @@
+import 'package:ateliya/data/models/abonnement.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
+import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/card_info.dart';
 import 'package:ateliya/tools/widgets/command_tile.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
+import 'package:ateliya/tools/widgets/meilleure_vente_tile.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
@@ -20,6 +23,7 @@ import 'package:ateliya/views/static/mesure/edition_mesure_page.dart';
 import 'package:ateliya/views/static/notifs/notif_list_page.dart';
 import 'package:ateliya/views/static/surcursales/edition_surcusale_page.dart';
 import 'package:ateliya/views/static/ventes/edition_vente_multiple_page.dart';
+import 'package:ateliya/views/static/ventes/vente_boutique_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_svg/svg.dart';
@@ -240,22 +244,34 @@ class HomePage extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const CardInfo(
+                                    CardInfo(
                                       icon: "assets/images/svg/ticket.svg",
-                                      value: "Découverte",
+                                      value: ctl.data.abonnements
+                                              .firstWhere(
+                                                  (e) =>
+                                                      e.numero ==
+                                                      ctl.data.settings
+                                                          ?.numeroAbonnement,
+                                                  orElse: () => Abonnement(
+                                                      code: "Inconnu",
+                                                      description: "Inconnu"))
+                                              .code ??
+                                          "Découverte",
                                     ),
-                                    const CardInfo(
+                                    CardInfo(
                                       icon: "assets/images/svg/sms.svg",
-                                      value: "2 000 SMS",
+                                      value:
+                                          "${ctl.data.settings?.nombreSms ?? 0} SMS",
                                     ),
                                     CardInfo(
                                       icon: "assets/images/svg/users.svg",
                                       value:
-                                          "${ctl.data.kpis.clientsActifs} client(s)",
+                                          "${ctl.data.settings?.nombreUser ?? 0} client(s)",
                                     ),
-                                    const CardInfo(
+                                    CardInfo(
                                       icon: "assets/images/svg/store.svg",
-                                      value: "5 atelier(s)",
+                                      value:
+                                          "${ctl.data.settings?.nombreSuccursale ?? 0} atelier(s)",
                                     ),
                                   ],
                                 ),
@@ -280,19 +296,19 @@ class HomePage extends StatelessWidget {
                                       color: AppColors.primary,
                                       icon: "assets/images/svg/waiting.svg",
                                       value:
-                                          "Cmd. en cours (${ctl.data.kpis.commandesEnCours})",
+                                          "Cmd. en cours (${ctl.data.commandes.where((e) => e.isActive).length})",
                                       height: 15,
                                     ),
                                     const CardInfo(
                                       color: AppColors.primary,
                                       icon: "assets/images/svg/check.svg",
-                                      value: "Cmd. terminé (2)",
+                                      value: "Cmd. terminé (0)",
                                       height: 15,
                                     ),
                                     const CardInfo(
                                       color: AppColors.primary,
                                       icon: "assets/images/svg/reservation.svg",
-                                      value: "Réservation (2)",
+                                      value: "Réservation (0)",
                                       height: 15,
                                     ),
                                   ],
@@ -321,63 +337,90 @@ class HomePage extends StatelessWidget {
                           border: Border.all(color: AppColors.fieldBorder),
                         ),
                         padding: const EdgeInsets.all(10),
-                        child: const Row(
+                        child: Row(
                           children: [
                             Expanded(
                               child: Center(
                                 child: SoldeCard(
                                   icon: "assets/images/svg/entrant.png",
-                                  value: "10 000 FCFA",
+                                  value: ctl.data.caisse.toAmount(unit: "FCFA"),
                                 ),
                               ),
                             ),
-                            Gap(10),
+                            const Gap(10),
                             Expanded(
                               child: Center(
                                 child: SoldeCard(
                                   icon: "assets/images/svg/sortant.png",
-                                  value: "10 000 FCFA",
+                                  value:
+                                      ctl.data.depenses.toAmount(unit: "FCFA"),
                                 ),
                               ),
                             ),
-                            Icon(Icons.arrow_forward_ios, size: 12)
+                            const Icon(Icons.arrow_forward_ios, size: 12)
                           ],
                         ),
                       ),
                     ),
                     const Gap(30),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "Mes commandes (10)",
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
+                    Builder(
+                      builder: (context) {
+                        final showBestSales = ctl.data.commandes.isEmpty &&
+                            ctl.data.meilleuresVentes.isNotEmpty;
+                        return Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    showBestSales
+                                        ? "Meilleures ventes (${ctl.data.meilleuresVentes.length})"
+                                        : "Mes commandes (${ctl.data.commandes.length})",
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                OutlinedButton(
+                                  onPressed: () {
+                                    if (ctl.getEntite().value.type ==
+                                        EntiteEntrepriseType.boutique) {
+                                      Get.to(
+                                          () => const VenteBoutiqueListPage());
+                                    } else {
+                                      Get.to(() => const CommandeListPage());
+                                    }
+                                  },
+                                  child: const Text(
+                                    "Voir plus",
+                                    style: TextStyle(
+                                      color: AppColors.primary,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                          ),
-                        ),
-                        OutlinedButton(
-                          onPressed: () =>
-                              Get.to(() => const CommandeListPage()),
-                          child: const Text(
-                            "Voir plus",
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontSize: 12,
+                            const Gap(15),
+                            ListView.separated(
+                              shrinkWrap: true,
+                              padding: const EdgeInsets.only(bottom: 100),
+                              physics: const NeverScrollableScrollPhysics(),
+                              separatorBuilder: (_, i) => const Divider(),
+                              itemBuilder: (_, i) => showBestSales
+                                  ? MeilleureVenteTile(
+                                      item: ctl.data.meilleuresVentes[i])
+                                  : CommandTile(
+                                      mesure: ctl.data.commandes[i],
+                                    ),
+                              itemCount: showBestSales
+                                  ? ctl.data.meilleuresVentes.length
+                                  : ctl.data.commandes.length,
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-                    const Gap(15),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(bottom: 100),
-                      physics: const NeverScrollableScrollPhysics(),
-                      separatorBuilder: (_, i) => const Divider(),
-                      itemBuilder: (_, i) => const CommandTile(),
-                      itemCount: 10,
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),

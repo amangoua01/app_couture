@@ -15,6 +15,8 @@ class Client extends ModelFormData<Client> {
   Fichier? photo;
   Boutique? boutique;
   Succursale? succursale;
+  DateTime? createdAt;
+  bool isActive = true;
 
   Client(
       {this.nom,
@@ -22,7 +24,9 @@ class Client extends ModelFormData<Client> {
       this.tel,
       this.boutique,
       this.succursale,
-      this.photo});
+      this.photo,
+      this.createdAt,
+      this.isActive = true});
 
   Client.fromJson(Json json) {
     id = json["id"];
@@ -38,11 +42,29 @@ class Client extends ModelFormData<Client> {
     if (json["succursale"] != null) {
       succursale = Succursale.fromJson(json["succursale"]);
     }
+    createdAt = json["createdAt"].toString().toDateTime();
+    isActive = json["isActive"] ?? true;
   }
 
   @override
   Client fromJson(Json json) {
     return Client.fromJson(json);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "nom": nom,
+      "prenom": prenom,
+      "numero": tel,
+      // Assuming photo implements toJson or check type
+      "photo":
+          (photo is FichierServer) ? (photo as FichierServer).toJson() : null,
+      "boutique": boutique?.toJson(),
+      "succursale": succursale?.toJson(),
+      "createdAt": createdAt?.toIso8601String(),
+      "isActive": isActive,
+    };
   }
 
   String get fullName => "${nom.value} ${prenom.value}".trim();

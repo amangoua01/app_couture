@@ -80,6 +80,12 @@ class EditionModeleBoutiquePage extends StatelessWidget {
             require: true,
             keyboardType: TextInputType.number,
           ),
+          CTextFormField(
+            externalLabel: "Prix minimal",
+            controller: ctl.prixMinimalCtl,
+            require: true,
+            keyboardType: TextInputType.number,
+          ),
           Visibility(
             visible: ctl.item == null,
             child: CTextFormField(

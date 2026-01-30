@@ -33,14 +33,19 @@ class HomeWindows extends StatelessWidget {
       builder: (ctl) {
         return Obx(() {
           return Scaffold(
+            backgroundColor:
+                Colors.grey[50], // Light background for the app content
             body: pages[ctl.page],
             floatingActionButton: PlaceholderBuilder(
               condition: ctl.getEntite().value is Boutique,
               builder: () {
                 return FloatingActionButton(
                   heroTag: "boutique",
+                  backgroundColor: AppColors.primary,
+                  elevation: 4,
+                  shape: const CircleBorder(),
                   onPressed: () {
-                    if (ctl.getEntite() is Boutique) {
+                    if (ctl.getEntite().value is Boutique) {
                       ctl.page = 4;
                       ctl.update();
                     }
@@ -66,28 +71,35 @@ class HomeWindows extends StatelessWidget {
               ifFalse: FloatingActionButtonLocation.endFloat,
             ),
             bottomNavigationBar: AnimatedBottomNavigationBar(
-              backgroundColor: AppColors.primary,
+              backgroundColor: Colors.white,
               icons: const [
                 IcoFontIcons.uiHome,
                 FontAwesomeIcons.gauge,
                 IcoFontIcons.list,
                 IcoFontIcons.uiSettings,
               ],
-              iconSize: 30,
-              inactiveColor: Colors.white,
+              iconSize: 26,
+              inactiveColor: Colors.grey[400],
               activeIndex: ctl.page,
-              activeColor: AppColors.yellow,
+              activeColor: AppColors.primary,
               gapLocation: ternaryFn(
                 condition: ctl.getEntite().value is Boutique,
                 ifTrue: GapLocation.center,
                 ifFalse: GapLocation.none,
               ),
               notchSmoothness: NotchSmoothness.softEdge,
+              leftCornerRadius: 20,
+              rightCornerRadius: 20,
+              shadow: BoxShadow(
+                offset: const Offset(0, -4),
+                blurRadius: 12,
+                spreadRadius: 0,
+                color: Colors.black.withOpacity(0.05),
+              ),
               onTap: (index) {
                 ctl.page = index;
                 ctl.update();
               },
-              //other params
             ),
           );
         });

@@ -1,6 +1,8 @@
 import 'package:ateliya/tools/widgets/command_tile.dart';
-import 'package:ateliya/tools/widgets/wrapper_listview.dart';
+import 'package:ateliya/tools/widgets/wrapper_listview_from_view_controller.dart';
+import 'package:ateliya/views/controllers/commandes/commande_list_vctl.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CommandeListPage extends StatelessWidget {
   const CommandeListPage({super.key});
@@ -9,13 +11,22 @@ class CommandeListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Commandes")),
-      body: WrapperListview(
-        padding: const EdgeInsets.all(20),
-        items: const [1, 2, 3],
-        itemBuilder: (_, i) => const Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: CommandTile(),
-        ),
+      body: GetBuilder(
+        init: CommandeListVctl(),
+        builder: (ctl) {
+          return WrapperListviewFromViewController(
+            ctl: ctl,
+            itemBuilder: (_, i) => Padding(
+              padding: const EdgeInsets.only(
+                left: 15,
+                right: 15,
+                bottom: 10,
+                top: 19,
+              ),
+              child: CommandTile(mesure: ctl.data.items[i]),
+            ),
+          );
+        },
       ),
     );
   }

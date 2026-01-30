@@ -18,4 +18,7 @@ class FichierLocal extends Fichier {
   Json toJson() => {
         'path': path,
       };
+
+  @override
+  String toString() => path;
 }

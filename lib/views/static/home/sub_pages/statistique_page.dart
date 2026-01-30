@@ -1,6 +1,5 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/period_stat.dart';
-import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/stat_card_item.dart';
@@ -20,12 +19,25 @@ class StatistiquePage extends StatelessWidget {
   const StatistiquePage({super.key});
 
   @override
+  @override
   Widget build(BuildContext context) {
     return GetBuilder(
       init: StatistiquePageVctl(),
       builder: (ctl) {
         return Scaffold(
-          appBar: AppBar(title: const Text("Statistiques")),
+          backgroundColor: Colors.grey[50], // Light background
+          appBar: AppBar(
+            title: const Text("Statistiques"),
+            backgroundColor: Colors.white,
+            elevation: 0,
+            centerTitle: true,
+            titleTextStyle: const TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+            iconTheme: const IconThemeData(color: Colors.black87),
+          ),
           body: PlaceholderWidget(
             condition: ctl.getEntite().value.isNotEmpty,
             placeholder: const EmptyDataWidget(
@@ -36,23 +48,40 @@ class StatistiquePage extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(20),
                 children: [
+                  // Période Selector
                   Center(
-                    child: ToggleSwitch(
-                      initialLabelIndex: ctl.periodIndex,
-                      totalSwitches: 4,
-                      minWidth: Get.width,
-                      activeBgColor: const [AppColors.yellow],
-                      inactiveBgColor: AppColors.ligthGrey,
-                      activeFgColor: Colors.white,
-                      labels: PeriodStat.values.map((e) => e.libelle).toList(),
-                      onToggle: (index) {
-                        if (index == 3) {
-                          ctl.periodIndex = index ?? 0;
-                          ctl.update();
-                        } else {
-                          ctl.fetchStats(indexPeriod: index.value);
-                        }
-                      },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: ToggleSwitch(
+                        initialLabelIndex: ctl.periodIndex,
+                        totalSwitches: 4,
+                        minWidth: (Get.width - 60) / 4,
+                        cornerRadius: 25,
+                        activeBgColor: const [AppColors.primary],
+                        inactiveBgColor: Colors.white,
+                        activeFgColor: Colors.white,
+                        inactiveFgColor: Colors.grey[600],
+                        labels:
+                            PeriodStat.values.map((e) => e.libelle).toList(),
+                        onToggle: (index) {
+                          if (index == 3) {
+                            ctl.periodIndex = index ?? 0;
+                            ctl.update();
+                          } else {
+                            ctl.fetchStats(indexPeriod: index.value);
+                          }
+                        },
+                      ),
                     ),
                   ),
                   PlaceholderBuilder(
@@ -60,14 +89,8 @@ class StatistiquePage extends StatelessWidget {
                       builder: () {
                         return Column(
                           children: [
-                            const Gap(10),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.calendar_today,
-                                color: AppColors.green,
-                              ),
-                              title: Text(ctl.dateRange.toFrenchDate),
-                              trailing: const Icon(Icons.arrow_drop_down),
+                            const Gap(20),
+                            GestureDetector(
                               onTap: () => CBottomSheet.show(
                                 child: SelectDashPeriodSubPage(ctl.dateRange),
                               ).then((e) {
@@ -79,463 +102,297 @@ class StatistiquePage extends StatelessWidget {
                                   ctl.fetchStats(indexPeriod: ctl.periodIndex);
                                 }
                               }),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 15),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: AppColors.primary),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.calendar_today,
+                                            color: AppColors.primary, size: 20),
+                                        const Gap(10),
+                                        Text(
+                                          ctl.dateRange.toFrenchDate,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.primary),
+                                        ),
+                                      ],
+                                    ),
+                                    const Icon(Icons.arrow_drop_down,
+                                        color: AppColors.primary),
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
                         );
                       }),
-                  const Gap(20),
+                  const Gap(25),
+
+                  // KPIs Grid
                   GridView(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      childAspectRatio: 1.2,
+                      mainAxisSpacing: 15,
+                      crossAxisSpacing: 15,
+                      childAspectRatio: 1.3,
                     ),
                     children: [
-                      StatCardItem(
+                      _buildStatCard(
                         title: "Commandes en cours",
                         value: (ctl.data.kpis.commandesEnCours).toAmount(),
-                        isIncrease: false,
+                        icon: Icons.hourglass_empty,
+                        color: Colors.orange,
+                        item: StatCardItem(
+                            title: "",
+                            value: "",
+                            isIncrease: false), // Dummy for now if needed
                       ),
-                      StatCardItem(
-                        title: "Revenus en (FCFA)",
+                      _buildStatCard(
+                        title: "Revenus (FCFA)",
                         value: (ctl.data.kpis.chiffreAffaires).toAmount(),
-                        isIncrease: true,
+                        icon: Icons.attach_money,
+                        color: Colors.green,
+                        item: StatCardItem(
+                            title: "", value: "", isIncrease: true),
                       ),
-                      StatCardItem(
+                      _buildStatCard(
                         title: "Nouveaux clients",
                         value: (ctl.data.kpis.clientsActifs).toAmount(),
-                        isIncrease: true,
+                        icon: Icons.group_add,
+                        color: Colors.blue,
+                        item: StatCardItem(
+                            title: "", value: "", isIncrease: true),
                       ),
-                      StatCardItem(
-                        title: "Réservation",
+                      _buildStatCard(
+                        title: "Réservations",
                         value: (ctl.data.kpis.reservationsActives).toAmount(),
-                        isIncrease: true,
+                        icon: Icons.event,
+                        color: Colors.purple,
+                        item: StatCardItem(
+                            title: "", value: "", isIncrease: true),
                       ),
-                    ]
-                        .map(
-                          (e) => Stack(
-                            children: [
-                              Container(
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primary,
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                width: double.infinity,
-                                height: double.infinity,
-                                margin: const EdgeInsets.only(top: 3),
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                ),
-                                padding: const EdgeInsets.all(10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      e.value,
-                                      style: const TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      e.title,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 18, height: 1),
-                                    ),
-                                    const Gap(10),
-                                    PlaceholderBuilder(
-                                        condition: e.taux != null,
-                                        builder: () {
-                                          return Row(
-                                            children: [
-                                              Image.asset(
-                                                ternaryFn(
-                                                  condition: e.isIncrease,
-                                                  ifTrue:
-                                                      "assets/images/up.png",
-                                                  ifFalse:
-                                                      "assets/images/svg/entrant.png",
-                                                ),
-                                                width: 10,
-                                                color: ternaryFn(
-                                                  condition: e.isIncrease,
-                                                  ifTrue: AppColors.primary,
-                                                  ifFalse: Colors.red,
-                                                ),
-                                              ),
-                                              const Gap(2),
-                                              Text(
-                                                "${e.taux}%",
-                                                style: TextStyle(
-                                                  color: ternaryFn(
-                                                    condition: e.isIncrease,
-                                                    ifTrue: AppColors.primary,
-                                                    ifFalse: Colors.red,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        }),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                        .toList(),
+                    ],
                   ),
+                  const Gap(25),
+
+                  // Charts
                   Visibility(
                     visible: ctl.params.filtre != PeriodStat.jour,
                     child: Column(
                       children: [
-                        const Gap(20),
-                        const Text(
-                          "Évolution du chiffres d’affaires",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Gap(20),
-                        AspectRatio(
-                          aspectRatio: 1.32,
-                          child: LineChart(
-                            LineChartData(
-                              borderData: FlBorderData(
-                                show: true,
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              titlesData: const FlTitlesData(
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 50,
-                                  ),
-                                ),
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: false,
-                                  ),
-                                ),
-                                rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                              ),
-                              lineBarsData: [
-                                LineChartBarData(
-                                  spots: List.generate(
-                                    ctl.data.revenusQuotidiens.length,
-                                    (i) => FlSpot(
-                                      i.toDouble(),
-                                      ctl.data.revenusQuotidiens[i].revenus
-                                          .value
-                                          .toDouble(),
-                                    ),
-                                  ),
-                                  isCurved: true,
-                                  color: AppColors.primary,
-                                  barWidth: 3,
-                                  isStrokeCapRound: true,
-                                  dotData: const FlDotData(show: true),
-                                  belowBarData: BarAreaData(
-                                    show: true,
-                                    applyCutOffY: true,
-                                    color: AppColors.yellow.withOpacity(0.1),
-                                  ),
-                                ),
-                              ],
+                        _buildChartCard(
+                          title: "Évolution du Chiffre d'Affaires",
+                          color: AppColors.primary,
+                          spots: List.generate(
+                            ctl.data.revenusQuotidiens.length,
+                            (i) => FlSpot(
+                              i.toDouble(),
+                              ctl.data.revenusQuotidiens[i].revenus.value
+                                  .toDouble(),
                             ),
                           ),
                         ),
-                        const Divider(height: 40),
-                        const Text(
-                          "Évolution des ventes",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                         const Gap(20),
-                        AspectRatio(
-                          aspectRatio: 1.32,
-                          child: LineChart(
-                            LineChartData(
-                              borderData: FlBorderData(
-                                show: true,
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              titlesData: const FlTitlesData(
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 50,
-                                  ),
-                                ),
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: false,
-                                  ),
-                                ),
-                                rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                              ),
-                              lineBarsData: [
-                                LineChartBarData(
-                                  spots: List.generate(
-                                    ctl.data.revenusQuotidiens.length,
-                                    (i) => FlSpot(
-                                      i.toDouble(),
-                                      ctl.data.revenusQuotidiens[i].ventes.value
-                                          .toDouble(),
-                                    ),
-                                  ),
-                                  isCurved: true,
-                                  color: AppColors.yellow,
-                                  barWidth: 3,
-                                  isStrokeCapRound: true,
-                                  dotData: const FlDotData(show: true),
-                                  belowBarData: BarAreaData(
-                                    show: true,
-                                    applyCutOffY: true,
-                                    color: AppColors.yellow.withOpacity(0.1),
-                                  ),
-                                ),
-                              ],
+                        _buildChartCard(
+                          title: "Évolution des Ventes",
+                          color: AppColors.yellow,
+                          spots: List.generate(
+                            ctl.data.revenusQuotidiens.length,
+                            (i) => FlSpot(
+                              i.toDouble(),
+                              ctl.data.revenusQuotidiens[i].ventes.value
+                                  .toDouble(),
                             ),
                           ),
                         ),
-                        const Divider(height: 40),
-                        const Text(
-                          "Évolution des factures",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                         const Gap(20),
-                        AspectRatio(
-                          aspectRatio: 1.32,
-                          child: LineChart(
-                            LineChartData(
-                              borderData: FlBorderData(
-                                show: true,
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              titlesData: const FlTitlesData(
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 50,
-                                  ),
-                                ),
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: false,
-                                  ),
-                                ),
-                                rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                              ),
-                              lineBarsData: [
-                                LineChartBarData(
-                                  spots: List.generate(
-                                    ctl.data.revenusQuotidiens.length,
-                                    (i) => FlSpot(
-                                      i.toDouble(),
-                                      ctl.data.revenusQuotidiens[i].factures
-                                          .value
-                                          .toDouble(),
-                                    ),
-                                  ),
-                                  isCurved: true,
-                                  color: Colors.red,
-                                  barWidth: 3,
-                                  isStrokeCapRound: true,
-                                  dotData: const FlDotData(show: true),
-                                  belowBarData: BarAreaData(
-                                    show: true,
-                                    applyCutOffY: true,
-                                    color: Colors.red.withOpacity(0.1),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const Divider(height: 40),
-                        const Text(
-                          "Évolution des reservations",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Gap(20),
-                        AspectRatio(
-                          aspectRatio: 1.32,
-                          child: LineChart(
-                            LineChartData(
-                              borderData: FlBorderData(
-                                show: true,
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              titlesData: const FlTitlesData(
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 50,
-                                  ),
-                                ),
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: false,
-                                  ),
-                                ),
-                                rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                              ),
-                              lineBarsData: [
-                                LineChartBarData(
-                                  spots: List.generate(
-                                    ctl.data.revenusQuotidiens.length,
-                                    (i) => FlSpot(
-                                      i.toDouble(),
-                                      ctl.data.revenusQuotidiens[i].reservations
-                                          .value
-                                          .toDouble(),
-                                    ),
-                                  ),
-                                  isCurved: true,
-                                  color: Colors.green,
-                                  barWidth: 3,
-                                  isStrokeCapRound: true,
-                                  dotData: const FlDotData(show: true),
-                                  belowBarData: BarAreaData(
-                                    show: true,
-                                    applyCutOffY: true,
-                                    color: Colors.green.withOpacity(0.1),
-                                  ),
-                                ),
-                              ],
+                        _buildChartCard(
+                          title: "Évolution des Factures",
+                          color: Colors.red,
+                          spots: List.generate(
+                            ctl.data.revenusQuotidiens.length,
+                            (i) => FlSpot(
+                              i.toDouble(),
+                              ctl.data.revenusQuotidiens[i].factures.value
+                                  .toDouble(),
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  // LineChart(
-                  //   LineChartData(
-                  //     gridData: FlGridData(
-                  //       show: true,
-                  //       drawVerticalLine: true,
-                  //       horizontalInterval: 1,
-                  //       verticalInterval: 1,
-                  //       getDrawingHorizontalLine: (value) {
-                  //         return const FlLine(
-                  //           color: AppColors.primary,
-                  //           strokeWidth: 1,
-                  //         );
-                  //       },
-                  //       getDrawingVerticalLine: (value) {
-                  //         return const FlLine(
-                  //           color: AppColors.primary,
-                  //           strokeWidth: 1,
-                  //         );
-                  //       },
-                  //     ),
-                  //     titlesData: FlTitlesData(
-                  //       show: true,
-                  //       rightTitles: const AxisTitles(
-                  //         sideTitles: SideTitles(showTitles: false),
-                  //       ),
-                  //       topTitles: const AxisTitles(
-                  //         sideTitles: SideTitles(showTitles: false),
-                  //       ),
-                  //       bottomTitles: AxisTitles(
-                  //         sideTitles: SideTitles(
-                  //           showTitles: true,
-                  //           reservedSize: 30,
-                  //           interval: 1,
-                  //           getTitlesWidget: (a, v) => const Text("data"),
-                  //         ),
-                  //       ),
-                  //       leftTitles: AxisTitles(
-                  //         sideTitles: SideTitles(
-                  //           showTitles: true,
-                  //           interval: 1,
-                  //           getTitlesWidget: (a, v) => const Text("data"),
-                  //           reservedSize: 42,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     borderData: FlBorderData(
-                  //       show: true,
-                  //       border: Border.all(color: const Color(0xff37434d)),
-                  //     ),
-                  //     minX: 0,
-                  //     maxX: 11,
-                  //     minY: 0,
-                  //     maxY: 6,
-                  //     lineBarsData: [
-                  //       LineChartBarData(
-                  //         spots: const [
-                  //           FlSpot(0, 3),
-                  //           FlSpot(2.6, 2),
-                  //           FlSpot(4.9, 5),
-                  //           FlSpot(6.8, 3.1),
-                  //           FlSpot(8, 4),
-                  //           FlSpot(9.5, 3),
-                  //           FlSpot(11, 4),
-                  //         ],
-                  //         isCurved: true,
-                  //         gradient: const LinearGradient(
-                  //           colors: [
-                  //             AppColors.primary,
-                  //             AppColors.yellow,
-                  //           ],
-                  //         ),
-                  //         barWidth: 5,
-                  //         isStrokeCapRound: true,
-                  //         dotData: const FlDotData(
-                  //           show: false,
-                  //         ),
-                  //         belowBarData: BarAreaData(
-                  //           show: true,
-                  //           gradient: LinearGradient(
-                  //             colors: [
-                  //               AppColors.primary,
-                  //               AppColors.yellow,
-                  //             ].map((color) => color.withValues(alpha: 0.3)).toList(),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
+                  const Gap(40),
                 ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildStatCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+    required StatCardItem item, // Keep if we want to add trend later
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              // Trend indicator could go here
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const Gap(2),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChartCard({
+    required String title,
+    required Color color,
+    required List<FlSpot> spots,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const Gap(25),
+          AspectRatio(
+            aspectRatio: 1.5,
+            child: LineChart(
+              LineChartData(
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  getDrawingHorizontalLine: (value) {
+                    return FlLine(
+                      color: Colors.grey[200],
+                      strokeWidth: 1,
+                    );
+                  },
+                ),
+                titlesData: const FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 40,
+                    ),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                          showTitles: true, reservedSize: 30) // Show date/days?
+                      ),
+                ),
+                borderData: FlBorderData(show: false),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: spots,
+                    isCurved: true,
+                    color: color,
+                    barWidth: 3,
+                    isStrokeCapRound: true,
+                    dotData: const FlDotData(show: false),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: color.withOpacity(0.1),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

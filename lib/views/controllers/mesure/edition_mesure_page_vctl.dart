@@ -1,11 +1,14 @@
 import 'package:ateliya/api/client_api.dart';
+import 'package:ateliya/api/mesure_api.dart';
 import 'package:ateliya/data/dto/mesure/mesure_dto.dart';
 import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
 import 'package:ateliya/tools/models/prise_mesure_step.dart';
 import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
 import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
@@ -22,6 +25,7 @@ class EditionMesurePageVctl extends AuthViewController {
   final pageCtl = PageController();
   final avanceCtl = TextEditingController();
   final remiseGlobaleCtl = TextEditingController();
+  final formKeyPaiement = GlobalKey<FormState>();
 
   List<PriseMesureStep> pages = [
     PriseMesureStep(
@@ -32,8 +36,8 @@ class EditionMesurePageVctl extends AuthViewController {
         title: "Donnez votre mesuration",
         subtitle: "Informations sur vos mesures"),
     PriseMesureStep(
-      title: "INFORMATIONS GLOBALES",
-      subtitle: "Gestion finale",
+      title: "Informations de paiement",
+      subtitle: "Informations sur les paiements",
     ),
     PriseMesureStep(
       title: "Récapitulatif",
@@ -41,12 +45,13 @@ class EditionMesurePageVctl extends AuthViewController {
     ),
   ];
 
-  final mesure = MesureDto();
+  var mesure = MesureDto();
 
   Client? client;
   final clientApi = ClientApi();
   final formKey1 = GlobalKey<FormState>();
   final contactClientCtl = TextEditingController();
+  final mesureApi = MesureApi();
 
   void nextPage() {
     if (page < pages.length - 1) {
@@ -73,7 +78,11 @@ class EditionMesurePageVctl extends AuthViewController {
             }
           }
           break;
-
+        case 2:
+          if (!formKeyPaiement.currentState!.validate()) {
+            return;
+          }
+          break;
         default:
       }
       page++;
@@ -108,21 +117,47 @@ class EditionMesurePageVctl extends AuthViewController {
   }
 
   Future<void> submit() async {
-    if ((getEntite().value is Succursale)) {
-      mesure.client = client;
-      mesure.dateRetrait = dateRetraitCtl.dateTime;
-      mesure.succursale = (getEntite().value as Succursale);
-      mesure.avance = avanceCtl.toDouble();
-      mesure.remiseGlobale = remiseGlobaleCtl.toDouble();
-      mesure.dateRetrait = dateRetraitCtl.dateTime;
-      mesure.signature = await signatureCtl.toPngBytes();
-      // mesure.lignesMesures =
-      print(mesure.toJson());
-    } else {
-      CAlertDialog.show(
-        message: "Veuillez selectionner "
-            "une succursale pour effectuer cette action.",
-      );
+    final res = await CChoiceMessageDialog.show(
+        message: "Confirmez-vous la validation de cette mesure ?");
+
+    if (res == true) {
+      if ((getEntite().value is Succursale)) {
+        mesure.client = client;
+        mesure.dateRetrait = dateRetraitCtl.dateTime;
+        mesure.succursale = (getEntite().value as Succursale);
+        mesure.avance = avanceCtl.toDouble();
+        mesure.remiseGlobale = remiseGlobaleCtl.toDouble();
+        mesure.dateRetrait = dateRetraitCtl.dateTime;
+        mesure.signature = await signatureCtl.toPngBytes();
+        mesure.remiseGlobale = remiseGlobaleCtl.toDouble();
+        mesure.avance = avanceCtl.toDouble();
+        final res = await mesureApi.create(mesure).load();
+        if (res.status) {
+          CAlertDialog.show(message: "Mesure enregistrée avec succès.");
+          clearForm();
+        } else {
+          CAlertDialog.show(message: res.message);
+        }
+      } else {
+        CAlertDialog.show(
+          message: "Veuillez selectionner "
+              "une succursale pour effectuer cette action.",
+        );
+      }
     }
+  }
+
+  void clearForm() {
+    mesure = MesureDto();
+    page = 0;
+    pageCtl.jumpToPage(page);
+    dateRetraitCtl.clear();
+    avanceCtl.clear();
+    remiseGlobaleCtl.clear();
+    signatureCtl.clear();
+    remiseGlobaleCtl.clear();
+    client = null;
+    contactClientCtl.clear();
+    update();
   }
 }

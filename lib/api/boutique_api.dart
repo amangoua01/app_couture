@@ -65,4 +65,26 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+
+  Future<DataResponse<List<PaiementBoutique>>> getVentes(
+      int id, Map<String, dynamic> data) async {
+    try {
+      final res = await client.post(
+        urlBuilder(api: "boutique/$id", module: "vente"),
+        headers: authHeaders,
+        body: data.parseToJson(),
+      );
+      final json = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        final list = (json['data']['data'] as List)
+            .map((e) => PaiementBoutique.fromJson(e))
+            .toList();
+        return DataResponse.success(data: list);
+      } else {
+        return DataResponse.error(message: json['message']);
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 }

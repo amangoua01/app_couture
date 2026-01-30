@@ -29,4 +29,7 @@ class FichierServer extends Fichier {
         'path': path,
         'alt': alt,
       };
+
+  @override
+  String toString() => "${path?.value}/${alt?.value}";
 }

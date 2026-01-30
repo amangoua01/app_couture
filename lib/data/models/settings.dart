@@ -1,40 +1,51 @@
-class Settings {
-  int? id;
-  int? nombreUser;
-  int? nombreSms;
-  int? nombreSuccursale;
-  int? nombreJourRestantPourEnvoyerSms;
-  int? numeroAbonnement;
-  Null createdAt;
+import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 
-  Settings(
-      {this.id,
-      this.nombreUser,
-      this.nombreSms,
-      this.nombreSuccursale,
-      this.nombreJourRestantPourEnvoyerSms,
-      this.numeroAbonnement,
-      this.createdAt});
+class Settings extends ModelJson {
+  int nombreUser = 0;
+  int nombreSms = 0;
+  int nombreSuccursale = 0;
+  int nombreJourRestantPourEnvoyerSms = 0;
+  int numeroAbonnement = 0;
+  DateTime? createdAt;
+  bool isActive = false;
 
-  Settings.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    nombreUser = json['nombreUser'];
-    nombreSms = json['nombreSms'];
-    nombreSuccursale = json['nombreSuccursale'];
-    nombreJourRestantPourEnvoyerSms = json['nombreJourRestantPourEnvoyerSms'];
-    numeroAbonnement = json['numeroAbonnement'];
-    createdAt = json['createdAt'];
+  Settings({
+    super.id,
+    this.nombreUser = 0,
+    this.nombreSms = 0,
+    this.nombreSuccursale = 0,
+    this.nombreJourRestantPourEnvoyerSms = 0,
+    this.numeroAbonnement = 0,
+    this.createdAt,
+    this.isActive = false,
+  });
+
+  Settings.fromJson(Json json) {
+    id = json["id"];
+    nombreUser = json["nombreUser"] ?? 0;
+    nombreSms = json["nombreSms"] ?? 0;
+    nombreSuccursale = json["nombreSuccursale"] ?? 0;
+    nombreJourRestantPourEnvoyerSms =
+        json["nombreJourRestantPourEnvoyerSms"] ?? 0;
+    numeroAbonnement = json["numeroAbonnement"] ?? 0;
+    createdAt = json["createdAt"].toString().toDateTime();
+    isActive = json["isActive"] ?? false;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['nombreUser'] = nombreUser;
-    data['nombreSms'] = nombreSms;
-    data['nombreSuccursale'] = nombreSuccursale;
-    data['nombreJourRestantPourEnvoyerSms'] = nombreJourRestantPourEnvoyerSms;
-    data['numeroAbonnement'] = numeroAbonnement;
-    data['createdAt'] = createdAt;
-    return data;
-  }
+  @override
+  Settings fromJson(Json json) => Settings.fromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "nombreUser": nombreUser,
+        "nombreSms": nombreSms,
+        "nombreSuccursale": nombreSuccursale,
+        "nombreJourRestantPourEnvoyerSms": nombreJourRestantPourEnvoyerSms,
+        "numeroAbonnement": numeroAbonnement,
+        "createdAt": createdAt?.toIso8601String(),
+        "isActive": isActive,
+      };
 }

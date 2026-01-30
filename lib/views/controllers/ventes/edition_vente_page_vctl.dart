@@ -5,6 +5,7 @@ import 'package:ateliya/data/dto/paiement_boutique_dto.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
+import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
@@ -21,6 +22,7 @@ class EditionVentePageVctl extends AuthViewController {
   final quantiteCtl = TextEditingController(text: "1");
   Client? client;
   Boutique? boutique;
+  String moyenPaiement = ModePaiementEnum.especes.label;
   final dateVenteCtl = DateTimeEditingController.dateTime(DateTime.now());
   final clientApi = ClientApi();
   final boutiqueApi = BoutiqueApi();
@@ -63,6 +65,7 @@ class EditionVentePageVctl extends AuthViewController {
           ),
         ],
         boutiqueId: boutique!.id!,
+        moyenPaiement: moyenPaiement,
       );
       final res = await boutiqueApi.makePaiement(data).load();
       if (res.status) {

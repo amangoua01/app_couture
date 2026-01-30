@@ -17,6 +17,7 @@ class EditionModeleBoutiquePageVctl
   final quantiteCtl = TextEditingController(text: "0");
   final tailleCtl = TextEditingController();
   final prixCtl = TextEditingController(text: "0");
+  final prixMinimalCtl = TextEditingController(text: "0");
   final modeleApi = ModeleApi();
   final boutiqueApi = BoutiqueApi();
   Boutique? boutique;
@@ -32,6 +33,7 @@ class EditionModeleBoutiquePageVctl
       quantite: quantiteCtl.text.toInt().value,
       taille: tailleCtl.text,
       prix: prixCtl.text,
+      prixMinimal: prixMinimalCtl.text,
     );
     final res = await api.create(data).load();
     if (res.status) {
@@ -48,6 +50,7 @@ class EditionModeleBoutiquePageVctl
     boutique = item.boutique;
     tailleCtl.text = item.taille.value;
     prixCtl.text = item.prix.toDouble().value.toString();
+    prixMinimalCtl.text = item.prixMinimal?.toDouble().value.toString() ?? "0";
   }
 
   @override
@@ -55,6 +58,7 @@ class EditionModeleBoutiquePageVctl
     item.modele = modele;
     item.boutique = boutique;
     item.prix = prixCtl.text;
+    item.prixMinimal = prixMinimalCtl.text;
     item.taille = tailleCtl.text;
     final res = await api.update(item).load();
     if (res.status) {

@@ -23,81 +23,170 @@ class SettingPage extends StatelessWidget {
         init: SettingPageVctl(),
         builder: (ctl) {
           return Scaffold(
-            appBar: AppBar(title: const Text("Paramètres")),
+            backgroundColor: Colors.grey[50], // Light background
+            appBar: AppBar(
+              title: const Text(
+                "Paramètres",
+                style: TextStyle(color: Colors.white),
+              ),
+              elevation: 0,
+              centerTitle: true,
+            ),
             body: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 40),
+                // Profil Header
+                Center(
                   child: Column(
                     children: [
-                      Badge(
-                        padding: const EdgeInsets.all(5),
-                        alignment: const Alignment(.4, .7),
-                        label: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                          size: 20,
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border:
+                              Border.all(color: AppColors.primary, width: 2),
                         ),
-                        backgroundColor: AppColors.primary,
-                        child: Image.asset(
-                          "assets/images/user.png",
-                          width: 100,
-                          color: Colors.black,
+                        child: CircleAvatar(
+                          radius: 40,
+                          backgroundImage:
+                              const AssetImage("assets/images/user.png"),
+                          backgroundColor: Colors.grey[200],
                         ),
                       ),
                       const Gap(10),
-                      Text(ctl.user.fullName),
+                      Text(
+                        ctl.user.fullName,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      Text(
+                        "Compte Ateliya",
+                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                      ),
                     ],
                   ),
                 ),
-                const Text("Actions principales"),
-                SettingTile(
-                  title: "Mes informations",
-                  onTap: () => Get.to(() => const ProfilPage())?.then(
-                    (e) => ctl.update(),
+                const Gap(30),
+
+                // Section Gestion
+                const Padding(
+                  padding: EdgeInsets.only(left: 10, bottom: 8),
+                  child: Text("Gestion de compte",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.grey)),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.02), blurRadius: 10)
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      SettingTile(
+                        title: "Mes informations",
+                        icon: Icons.person_outline,
+                        onTap: () => Get.to(() => const ProfilPage())?.then(
+                          (e) => ctl.update(),
+                        ),
+                      ),
+                      const Divider(height: 1, indent: 50),
+                      SettingTile(
+                        title: "Mes boutiques",
+                        icon: Icons.storefront_outlined,
+                        onTap: () => Get.to(() => const BoutiquesListPage()),
+                      ),
+                      const Divider(height: 1, indent: 50),
+                      SettingTile(
+                        title: "Mes succursales",
+                        icon: Icons.business_outlined,
+                        onTap: () => Get.to(() => const SuccursalesListPage()),
+                      ),
+                      const Divider(height: 1, indent: 50),
+                      SettingTile(
+                        title: "Mon personnel",
+                        icon: Icons.people_outline,
+                        onTap: () => Get.to(() => const PersonnelListPage()),
+                      ),
+                      const Divider(height: 1, indent: 50),
+                      SettingTile(
+                        title: "Abonnements",
+                        icon: Icons.card_membership_outlined,
+                        onTap: () => Get.to(() => const AbonnementsListPage()),
+                      ),
+                    ],
                   ),
                 ),
-                SettingTile(
-                  title: "Mes boutiques",
-                  onTap: () => Get.to(() => const BoutiquesListPage()),
+                const Gap(20),
+
+                // Section Atelier
+                const Padding(
+                  padding: EdgeInsets.only(left: 10, bottom: 8),
+                  child: Text("Atelier & Catalogue",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.grey)),
                 ),
-                SettingTile(
-                  title: "Mon personnel",
-                  onTap: () => Get.to(() => const PersonnelListPage()),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.02), blurRadius: 10)
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      SettingTile(
+                        title: "Mes clients",
+                        icon: Icons.group_outlined,
+                        onTap: () => Get.to(() => const ClientListePage()),
+                      ),
+                      const Divider(height: 1, indent: 50),
+                      SettingTile(
+                        title: "Mes modèles",
+                        icon: Icons.style_outlined,
+                        onTap: () => Get.to(() => const ModeleListPage()),
+                      ),
+                      const Divider(height: 1, indent: 50),
+                      SettingTile(
+                        title: "Mes modèles boutiques",
+                        icon: Icons.shopping_bag_outlined,
+                        onTap: () =>
+                            Get.to(() => const ModeleListBoutiquePage()),
+                      ),
+                      const Divider(height: 1, indent: 50),
+                      SettingTile(
+                        title: "Type de mesure",
+                        icon: Icons.straighten_outlined,
+                        onTap: () => Get.to(() => const TypeMesureListPage()),
+                      ),
+                    ],
+                  ),
                 ),
-                SettingTile(
-                  title: "Mes succursales",
-                  onTap: () => Get.to(() => const SuccursalesListPage()),
+                const Gap(30),
+
+                // Déconnexion
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.02), blurRadius: 10)
+                    ],
+                  ),
+                  child: SettingTile(
+                    title: "Déconnexion",
+                    icon: Icons.logout,
+                    color: Colors.red,
+                    onTap: ctl.logoutUser,
+                  ),
                 ),
-                SettingTile(
-                  title: "Type de mesure",
-                  onTap: () => Get.to(() => const TypeMesureListPage()),
-                ),
-                // SettingTile(
-                //   title: "Catégories",
-                //   onTap: () => Get.to(() => const CategorieListPage()),
-                // ),
-                SettingTile(
-                  title: "Mes clients",
-                  onTap: () => Get.to(() => const ClientListePage()),
-                ),
-                SettingTile(
-                  title: "Mes modèles",
-                  onTap: () => Get.to(() => const ModeleListPage()),
-                ),
-                SettingTile(
-                  title: "Mes modèles boutiques",
-                  onTap: () => Get.to(() => const ModeleListBoutiquePage()),
-                ),
-                SettingTile(
-                  title: "Abonnements",
-                  onTap: () => Get.to(() => const AbonnementsListPage()),
-                ),
-                SettingTile(
-                  title: "Déconnexion",
-                  onTap: ctl.logoutUser,
-                ),
+                const Gap(30),
               ],
             ),
           );

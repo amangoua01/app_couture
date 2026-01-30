@@ -5,12 +5,14 @@ class PaiementBoutiqueDto extends DtoModel {
   final DateTime datePaiment;
   final int clientId, boutiqueId;
   final List<LignePaiementBoutiqueDto> lignes;
+  final String moyenPaiement;
 
   PaiementBoutiqueDto({
     required this.datePaiment,
     required this.clientId,
     required this.lignes,
     required this.boutiqueId,
+    this.moyenPaiement = "Espèces",
   });
 
   @override
@@ -18,5 +20,6 @@ class PaiementBoutiqueDto extends DtoModel {
         'datePaiment': datePaiment.toIso8601String(),
         'clientId': clientId,
         'lignes': lignes.map((e) => e.toJson()).toList(),
+        'moyenPaiement': moyenPaiement,
       };
 }

@@ -1,30 +1,47 @@
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class SettingTile extends StatelessWidget {
   final String title;
+  final IconData? icon;
+  final Color? color;
   final void Function()? onTap;
-  const SettingTile({required this.title, this.onTap, super.key});
+
+  const SettingTile({
+    required this.title,
+    this.icon,
+    this.color,
+    this.onTap,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return ListTile(
       onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(top: 10),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(10),
-          ),
-          border: Border.all(color: Colors.grey),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      leading: icon != null
+          ? Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: (color ?? AppColors.primary).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color ?? AppColors.primary, size: 20),
+            )
+          : null,
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: color ?? Colors.black87,
+          fontSize: 15,
         ),
-        child: ListTile(
-          dense: true,
-          title: Text(title),
-          trailing: const Icon(
-            Icons.arrow_forward_ios_rounded,
-            size: 15,
-          ),
-        ),
+      ),
+      trailing: const Icon(
+        Icons.arrow_forward_ios_rounded,
+        size: 16,
+        color: Colors.grey,
       ),
     );
   }

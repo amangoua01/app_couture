@@ -1,5 +1,7 @@
 import 'package:ateliya/data/models/abonnement.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/types/double.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/abn_tile_item.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
@@ -85,7 +87,7 @@ class AbonnementTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  item.etat.value.capitalize(),
+                  item.etat ? "Actif" : "Inactif",
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: Colors.white,
@@ -119,11 +121,11 @@ class AbonnementTile extends StatelessWidget {
                   children: [
                     AbnTileItem(
                       title: 'Date début',
-                      date: item.dateDebut.value,
+                      date: item.dateDebut?.toString() ?? "",
                     ),
                     AbnTileItem(
                       title: 'Date fin',
-                      date: item.dateFin.value,
+                      date: item.dateFin?.toString() ?? "",
                     ),
                   ]
                       .map(

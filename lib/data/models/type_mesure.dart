@@ -2,17 +2,22 @@ import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/data/models/categorie_mesure.dart';
 import 'package:ateliya/data/models/entreprise.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 
 class TypeMesure extends ModelJson {
   String? libelle;
   Entreprise? entreprise;
   List<CategorieMesure> categories = [];
+  DateTime? createdAt;
+  bool isActive = true;
 
   TypeMesure({
     super.id,
     this.libelle,
     this.entreprise,
     this.categories = const [],
+    this.createdAt,
+    this.isActive = true,
   });
 
   TypeMesure.fromJson(Json json) {
@@ -28,6 +33,8 @@ class TypeMesure extends ModelJson {
     } else {
       categories = [];
     }
+    createdAt = json["createdAt"].toString().toDateTime();
+    isActive = json["isActive"] ?? true;
   }
 
   @override
@@ -40,7 +47,9 @@ class TypeMesure extends ModelJson {
     return {
       "id": id,
       "libelle": libelle,
-      "entreprise": entreprise?.id,
+      "entreprise": entreprise?.toJson(),
+      "createdAt": createdAt?.toIso8601String(),
+      "isActive": isActive,
     };
   }
 
