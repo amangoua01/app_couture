@@ -14,7 +14,7 @@ import 'package:ateliya/tools/models/detail_modele_entre_stock.dart';
 class ModeleBoutique extends ModelJson<ModeleBoutique> {
   int? quantite;
   String? prix;
-  String? prixMinimal;
+  double? prixMinimal;
   Modele? modele;
   List<LigneEntres> _ligneEntres = [];
   List<LigneReservations> _ligneReservations = [];
@@ -49,7 +49,7 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
     id = json['id'];
     quantite = json['quantite'];
     prix = json['prix'];
-    prixMinimal = json['prixMinimal'];
+    prixMinimal = json['prixMinimal'].toString().toDouble();
     modele = json['modele'] != null ? Modele.fromJson(json['modele']) : null;
     if (json['ligneEntres'] != null) {
       _ligneEntres = <LigneEntres>[];

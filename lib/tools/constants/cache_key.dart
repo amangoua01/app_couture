@@ -3,6 +3,7 @@ enum CacheKey {
   jwt,
   dashboard,
   entite,
+  oldPrinters,
   firstTimeLaunch(deletable: false);
 
   final bool deletable;

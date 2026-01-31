@@ -8,6 +8,7 @@ import 'package:ateliya/views/static/clients/client_liste_page.dart';
 import 'package:ateliya/views/static/modele/modele_list_page.dart';
 import 'package:ateliya/views/static/modele_boutique/modele_list_boutique_page.dart';
 import 'package:ateliya/views/static/personnels/personnels_list_page.dart';
+import 'package:ateliya/views/static/printers/print_list_page.dart';
 import 'package:ateliya/views/static/surcursales/succursales_list_page.dart';
 import 'package:ateliya/views/static/type_mesure/type_mesure_list_page.dart';
 import 'package:flutter/material.dart';
@@ -116,6 +117,11 @@ class SettingPage extends StatelessWidget {
                         title: "Abonnements",
                         icon: Icons.card_membership_outlined,
                         onTap: () => Get.to(() => const AbonnementsListPage()),
+                      ),
+                      SettingTile(
+                        title: "Imprimantes",
+                        icon: Icons.print_outlined,
+                        onTap: () => Get.to(() => const PrintListPage()),
                       ),
                     ],
                   ),

@@ -12,7 +12,7 @@ class TextDivider extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         children: [
-          Text(title),
+          Text(title, style: Theme.of(context).textTheme.titleMedium),
           const Gap(20),
           const Expanded(child: Divider(color: AppColors.green)),
         ],

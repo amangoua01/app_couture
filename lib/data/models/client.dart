@@ -69,6 +69,8 @@ class Client extends ModelFormData<Client> {
 
   String get fullName => "${nom.value} ${prenom.value}".trim();
 
+  String get nomComplet => "${nom.value} ${prenom.value}".trim();
+
   @override
   Map<String, String> toFields() {
     var fields = <String, String>{};

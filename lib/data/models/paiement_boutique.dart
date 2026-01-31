@@ -42,6 +42,10 @@ class PaiementBoutique extends ModelJson {
       lignes = (json['paiementBoutiqueLignes'] as List)
           .map((e) => PaiementBoutiqueLignes.fromJson(e))
           .toList();
+    } else if (json['lignes'] != null) {
+      lignes = (json['lignes'] as List)
+          .map((e) => PaiementBoutiqueLignes.fromJson(e))
+          .toList();
     }
   }
 

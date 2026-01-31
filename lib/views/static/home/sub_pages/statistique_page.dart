@@ -54,6 +54,7 @@ class StatistiquePage extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: Colors.grey.shade200),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
@@ -256,6 +257,7 @@ class StatistiquePage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.03),
@@ -321,6 +323,7 @@ class StatistiquePage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.03),

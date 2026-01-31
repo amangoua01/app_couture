@@ -3,6 +3,7 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/widgets/paiement_dialog.dart';
+import 'package:ateliya/views/controllers/commandes/detail_command_page_vctl.dart';
 import 'package:ateliya/views/static/commandes/detail_command_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -153,12 +154,41 @@ class CommandTile extends StatelessWidget {
                         ),
                       ],
                     ),
+                    const Gap(10),
+                    GestureDetector(
+                      onTap: () {
+                        final ctl = Get.put(DetailCommandPageVctl());
+                        ctl.printReceipt(mesure!);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(8)),
+                        child: const Icon(Icons.print,
+                            color: Colors.black87, size: 20),
+                      ),
+                    ),
+                    const Gap(10),
+                    GestureDetector(
+                      onTap: () {
+                        final ctl = Get.put(DetailCommandPageVctl());
+                        ctl.exportPdf(mesure!);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8)),
+                        child: const Icon(Icons.picture_as_pdf,
+                            color: Colors.red, size: 20),
+                      ),
+                    ),
                     if (mesure!.resteArgent > 0) ...[
                       const Gap(10),
                       GestureDetector(
                         onTap: () async {
                           await Get.dialog(PaiementDialog(mesure: mesure!));
-                          // Refresh logic could be added here if parent controller is accessible
                         },
                         child: Container(
                           padding: const EdgeInsets.all(8),

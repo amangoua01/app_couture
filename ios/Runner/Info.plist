@@ -52,5 +52,9 @@
 	<string>Cette application a besoin d'accéder à la caméra pour prendre des photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Cette application a besoin d'accéder à la galerie pour sélectionner des photos.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Cette application utilise le Bluetooth pour se connecter aux imprimantes thermiques.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Cette application utilise le Bluetooth pour se connecter aux imprimantes thermiques.</string>
 </dict>
 </plist>

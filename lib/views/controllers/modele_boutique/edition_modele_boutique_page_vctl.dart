@@ -8,6 +8,7 @@ import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
 import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class EditionModeleBoutiquePageVctl
       quantite: quantiteCtl.text.toInt().value,
       taille: tailleCtl.text,
       prix: prixCtl.text,
-      prixMinimal: prixMinimalCtl.text,
+      prixMinimal: prixMinimalCtl.toDouble(),
     );
     final res = await api.create(data).load();
     if (res.status) {
@@ -58,7 +59,7 @@ class EditionModeleBoutiquePageVctl
     item.modele = modele;
     item.boutique = boutique;
     item.prix = prixCtl.text;
-    item.prixMinimal = prixMinimalCtl.text;
+    item.prixMinimal = prixMinimalCtl.toDouble();
     item.taille = tailleCtl.text;
     final res = await api.update(item).load();
     if (res.status) {

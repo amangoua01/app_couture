@@ -1,0 +1,2 @@
+/Users/yvesamangoua/Documents/projects/ateliya_mobile/android/app/.cxx/Debug/206x4lw4/x86_64/CMakeFiles/edit_cache.dir
+/Users/yvesamangoua/Documents/projects/ateliya_mobile/android/app/.cxx/Debug/206x4lw4/x86_64/CMakeFiles/rebuild_cache.dir

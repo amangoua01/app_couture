@@ -10,8 +10,8 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 void main() async {
-  SentryWidgetsFlutterBinding.ensureInitialized();
   try {
+    SentryWidgetsFlutterBinding.ensureInitialized();
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

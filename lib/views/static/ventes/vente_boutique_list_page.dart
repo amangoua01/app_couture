@@ -85,8 +85,8 @@ class VenteBoutiqueListPage extends StatelessWidget {
                               item.createdAt?.toDateTime()?.toFrenchDateTime ??
                                   item.createdAt ??
                                   "-"),
-                          trailing: const Icon(Icons.arrow_forward_ios,
-                              size: 16, color: Colors.grey),
+                          // trailing: const Icon(Icons.arrow_forward_ios,
+                          //     size: 16, color: Colors.grey),
                         ),
                       );
                     },

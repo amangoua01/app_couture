@@ -172,6 +172,8 @@ class HomePage extends StatelessWidget {
                   onTap: () => Get.to(() => const EditionMesurePage()),
                 ),
                 SpeedDialChild(
+                  visible: (ctl.getEntite().value.type ==
+                      EntiteEntrepriseType.boutique),
                   label: "Faire une vente",
                   onTap: () => Get.to(() => const EditionVenteMultiplePage()),
                   child: SvgPicture.asset(

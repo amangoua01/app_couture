@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/yvesamangoua/Library/dev/fvm/versions/3.29.0/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/yvesamangoua/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/yvesamangoua/Documents/projects/ateliya_mobile/android/app/.cxx/Debug/206x4lw4/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/yvesamangoua/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/yvesamangoua/Documents/projects/ateliya_mobile/android/app/.cxx/Debug/206x4lw4/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

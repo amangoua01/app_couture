@@ -1,4 +1,5 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/data/models/paiement_boutique.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
@@ -9,8 +10,14 @@ class PaiementBoutiqueLignes extends ModelJson {
   int? quantite;
   String? montant;
   PaiementBoutique? paiementBoutique;
+  ModeleBoutique? modeleBoutique;
 
-  PaiementBoutiqueLignes({this.quantite, this.montant, this.paiementBoutique});
+  PaiementBoutiqueLignes({
+    this.quantite,
+    this.montant,
+    this.paiementBoutique,
+    this.modeleBoutique,
+  });
 
   @override
   PaiementBoutiqueLignes fromJson(Json json) {
@@ -24,6 +31,11 @@ class PaiementBoutiqueLignes extends ModelJson {
     paiementBoutique = json['paiementBoutique'] != null
         ? PaiementBoutique.fromJson(json['paiementBoutique'])
         : null;
+    if (json['modeleBoutique'] != null) {
+      modeleBoutique = ModeleBoutique.fromJson(json['modeleBoutique']);
+    } else if (json['boutiqueModele'] != null) {
+      modeleBoutique = ModeleBoutique.fromJson(json['boutiqueModele']);
+    }
   }
 
   @override

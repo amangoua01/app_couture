@@ -7,11 +7,12 @@ import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/data/models/paiement_facture.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
-import 'package:ateliya/tools/pdf/command_receipt_pdf.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/paiement_dialog.dart';
+import 'package:ateliya/views/controllers/commandes/detail_command_page_vctl.dart'; // Added
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart'; // Added
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
@@ -36,238 +37,268 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _initDateFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
+    return GetBuilder<DetailCommandPageVctl>(
+      init: DetailCommandPageVctl(),
+      builder: (ctl) {
+        return FutureBuilder(
+          future: _initDateFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
 
-        if (_mesure == null) {
-          return Scaffold(
-            appBar: AppBar(title: const Text("Détail de la commande")),
-            body: const Center(child: Text("Aucune commande sélectionnée")),
-          );
-        }
+            if (_mesure == null) {
+              return Scaffold(
+                appBar: AppBar(title: const Text("Détail de la commande")),
+                body: const Center(child: Text("Aucune commande sélectionnée")),
+              );
+            }
 
-        final mesure = _mesure!;
-        final pourcentage = (mesure.montantTotal > 0)
-            ? (mesure.avance / mesure.montantTotal)
-            : 0.0;
-        final isPaid = pourcentage >= 1.0;
+            final mesure = _mesure!;
+            final pourcentage = (mesure.montantTotal > 0)
+                ? (mesure.avance / mesure.montantTotal)
+                : 0.0;
+            final isPaid = pourcentage >= 1.0;
 
-        return Scaffold(
-          backgroundColor: Colors.grey[50], // Light background
-          appBar: AppBar(
-            title: Text("Commande #${mesure.id ?? ''}"),
-            backgroundColor: Colors.white,
-            elevation: 0,
-            centerTitle: true,
-            titleTextStyle: const TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.bold,
-                fontSize: 18),
-            iconTheme: const IconThemeData(color: Colors.black87),
-            actions: [
-              if (mesure.resteArgent > 0)
-                IconButton(
-                  onPressed: () async {
-                    final res = await showDialog(
-                      context: context,
-                      builder: (context) => PaiementDialog(mesure: mesure),
-                    );
+            return Scaffold(
+              backgroundColor: Colors.grey[50],
+              appBar: AppBar(
+                title: Text("Commande #${mesure.id ?? ''}"),
+                backgroundColor: Colors.white,
+                elevation: 0,
+                centerTitle: true,
+                titleTextStyle: const TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
+                iconTheme: const IconThemeData(color: Colors.black87),
+                actions: [
+                  if (mesure.resteArgent > 0)
+                    IconButton(
+                      onPressed: () async {
+                        final res = await showDialog(
+                          context: context,
+                          builder: (context) => PaiementDialog(mesure: mesure),
+                        );
 
-                    if (res != null && res is Mesure) {
-                      setState(() {
-                        _mesure = res;
-                      });
-                    }
-                  },
-                  icon: const Icon(Icons.payment, color: AppColors.primary),
-                  tooltip: "Ajouter un paiement",
-                ),
-            ],
-          ),
-          body: ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              // Dates Section
-              _buildCard(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildDateColumn("Dépôt", mesure.dateDepot),
-                    Container(width: 1, height: 40, color: Colors.grey[200]),
-                    _buildDateColumn("Retrait prévu", mesure.dateRetrait,
-                        isHighlight: true),
-                  ],
-                ),
+                        if (res != null && res is Mesure) {
+                          setState(() {
+                            _mesure = res;
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.payment, color: AppColors.primary),
+                      tooltip: "Ajouter un paiement",
+                    ),
+                ],
               ),
-              const Gap(15),
-
-              // Status Card with financial summary
-              _buildCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              body: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  // Dates Section
+                  _buildCard(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Progression du paiement",
-                            style: TextStyle(
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.bold)),
+                        _buildDateColumn("Dépôt", mesure.dateDepot),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: (isPaid ? Colors.green : AppColors.primary)
-                                .withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            "${(pourcentage * 100).toInt()}%",
-                            style: TextStyle(
-                              color: isPaid ? Colors.green : AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                            width: 1, height: 40, color: Colors.grey[200]),
+                        _buildDateColumn("Retrait prévu", mesure.dateRetrait,
+                            isHighlight: true),
                       ],
                     ),
-                    const Gap(15),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: pourcentage,
-                        minHeight: 10,
-                        backgroundColor: Colors.grey[200],
-                        valueColor: AlwaysStoppedAnimation(
-                            isPaid ? Colors.green : AppColors.primary),
-                      ),
-                    ),
-                    const Gap(20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  ),
+                  const Gap(15),
+
+                  // Status Card with financial summary
+                  _buildCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildAmountColumn("Avance",
-                            mesure.avance.toAmount(unit: "F"), Colors.black87),
-                        _buildAmountColumn("Reste",
-                            mesure.resteArgent.toAmount(unit: "F"), Colors.red),
-                        _buildAmountColumn(
-                            "Total",
-                            mesure.montantTotal.toAmount(unit: "F"),
-                            AppColors.primary,
-                            isBold: true),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Progression du paiement",
+                                style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.bold)),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color:
+                                    (isPaid ? Colors.green : AppColors.primary)
+                                        .withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                "${(pourcentage * 100).toInt()}%",
+                                style: TextStyle(
+                                  color:
+                                      isPaid ? Colors.green : AppColors.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Gap(15),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: LinearProgressIndicator(
+                            value: pourcentage,
+                            minHeight: 10,
+                            backgroundColor: Colors.grey[200],
+                            valueColor: AlwaysStoppedAnimation(
+                                isPaid ? Colors.green : AppColors.primary),
+                          ),
+                        ),
+                        const Gap(20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildAmountColumn(
+                                "Avance",
+                                mesure.avance.toAmount(unit: "F"),
+                                Colors.black87),
+                            _buildAmountColumn(
+                                "Reste",
+                                mesure.resteArgent.toAmount(unit: "F"),
+                                Colors.red),
+                            _buildAmountColumn(
+                                "Total",
+                                mesure.montantTotal.toAmount(unit: "F"),
+                                AppColors.primary,
+                                isBold: true),
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              const Gap(15),
+                  ),
+                  const Gap(15),
 
-              // Client Card
-              _buildSectionTitle("Client"),
-              _buildCard(
-                child: Row(
-                  children: [
-                    Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: _buildClientAvatar(mesure.client?.photo)),
-                    const Gap(15),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(mesure.client?.fullName ?? "Inconnu",
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text(mesure.client?.tel ?? "Sans contact",
-                              style: TextStyle(color: Colors.grey[600])),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Gap(15),
-
-              // Articles Card
-              _buildSectionTitle("Articles"),
-              ...mesure.lignesMesures.map((lm) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: _buildCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Client Card
+                  _buildSectionTitle("Client"),
+                  _buildCard(
+                    child: Row(
+                      children: [
+                        Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: _buildClientAvatar(mesure.client?.photo)),
+                        const Gap(15),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(lm.typeMesure?.libelle ?? "Article",
+                              Text(mesure.client?.fullName ?? "Inconnu",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16)),
-                              Text(lm.montant.toAmount(unit: "F"),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primary)),
+                              Text(mesure.client?.tel ?? "Sans contact",
+                                  style: TextStyle(color: Colors.grey[600])),
                             ],
                           ),
-                          if (lm.photoModele != null ||
-                              lm.photoPagne != null) ...[
-                            const Gap(10),
-                            const Divider(),
-                            const Gap(10),
-                            Row(
-                              children: [
-                                if (lm.photoModele != null) ...[
-                                  _buildImageThumb(lm.photoModele, "Modèle"),
-                                  const Gap(10),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Gap(15),
+
+                  // Articles Card
+                  _buildSectionTitle("Articles"),
+                  ...mesure.lignesMesures.map((lm) => Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: _buildCard(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(lm.typeMesure?.libelle ?? "Article",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                  Text(lm.montant.toAmount(unit: "F"),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primary)),
                                 ],
-                                if (lm.photoPagne != null)
-                                  _buildImageThumb(lm.photoPagne, "Pagne"),
-                              ],
-                            )
-                          ]
+                              ),
+                              if (lm.photoModele != null ||
+                                  lm.photoPagne != null) ...[
+                                const Gap(10),
+                                const Divider(),
+                                const Gap(10),
+                                Row(
+                                  children: [
+                                    if (lm.photoModele != null) ...[
+                                      _buildImageThumb(
+                                          lm.photoModele, "Modèle"),
+                                      const Gap(10),
+                                    ],
+                                    if (lm.photoPagne != null)
+                                      _buildImageThumb(lm.photoPagne, "Pagne"),
+                                  ],
+                                )
+                              ]
+                            ],
+                          ),
+                        ),
+                      )),
+
+                  if (mesure.paiementFactures.isNotEmpty) ...[
+                    const Gap(15),
+                    _buildSectionTitle("Historique des paiements"),
+                    _buildCard(
+                      child: Column(
+                        children: [
+                          ...mesure.paiementFactures
+                              .map((p) => _buildPaymentRow(p)),
                         ],
                       ),
                     ),
-                  )),
+                  ],
 
-              if (mesure.paiementFactures.isNotEmpty) ...[
-                const Gap(15),
-                _buildSectionTitle("Historique des paiements"),
-                _buildCard(
-                  child: Column(
+                  const Gap(30),
+
+                  // Action Buttons (Print & PDF)
+                  Row(
                     children: [
-                      ...mesure.paiementFactures
-                          .map((p) => _buildPaymentRow(p)),
+                      Expanded(
+                        flex: 2,
+                        child: CButton(
+                          title: 'Imprimer (BT)',
+                          color: Colors.black87,
+                          icon: const Icon(Icons.print,
+                              color: Colors.white, size: 18),
+                          onPressed: () => ctl.printReceipt(mesure),
+                        ),
+                      ),
+                      const Gap(15),
+                      Expanded(
+                        child: CButton(
+                          title: 'PDF',
+                          icon: const Icon(Icons.picture_as_pdf,
+                              color: Colors.white, size: 18),
+                          onPressed: () => ctl.exportPdf(mesure),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-
-              const Gap(30),
-
-              // Action Button
-              CButton(
-                  title: 'Télécharger le reçu',
-                  onPressed: () {
-                    // ignore: unnecessary_null_comparison
-                    if (mesure != null) {
-                      CommandReceiptPdf.generate(mesure);
-                    }
-                  }),
-              const Gap(20),
-            ],
-          ),
+                  const Gap(20),
+                ],
+              ),
+            );
+          },
         );
       },
     );

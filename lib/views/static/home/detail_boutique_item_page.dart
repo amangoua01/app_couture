@@ -26,7 +26,7 @@ class DetailBoutiqueItemPage extends StatelessWidget {
                 tabs: [
                   Tab(text: "Ventes"),
                   Tab(text: "Réservations"),
-                  Tab(text: "Entrées stock"),
+                  Tab(text: "Mouvements"),
                 ],
               ),
             ),

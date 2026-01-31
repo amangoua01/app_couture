@@ -13,10 +13,12 @@ import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
 import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
+import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class EditionVentePageVctl extends AuthViewController {
+class EditionVentePageVctl extends AuthViewController
+    with PrinterManagerViewMixin {
   final ModeleBoutique modeleBoutique;
   final prixCtl = TextEditingController();
   final quantiteCtl = TextEditingController(text: "1");
@@ -26,11 +28,12 @@ class EditionVentePageVctl extends AuthViewController {
   final dateVenteCtl = DateTimeEditingController.dateTime(DateTime.now());
   final clientApi = ClientApi();
   final boutiqueApi = BoutiqueApi();
+  final formKey = GlobalKey<FormState>();
 
   EditionVentePageVctl(this.modeleBoutique) {
     prixCtl.text = modeleBoutique.prix.toDouble().value.toStringAsFixed(0);
-    if (setEntite is Boutique) {
-      boutique = setEntite as Boutique;
+    if (getEntite().value is Boutique) {
+      boutique = getEntite().value as Boutique;
     }
   }
 
@@ -53,7 +56,7 @@ class EditionVentePageVctl extends AuthViewController {
   }
 
   Future<void> submit() async {
-    if (boutique != null) {
+    if (formKey.currentState!.validate()) {
       final data = PaiementBoutiqueDto(
         datePaiment: dateVenteCtl.dateTime!,
         clientId: client!.id!,
@@ -69,7 +72,21 @@ class EditionVentePageVctl extends AuthViewController {
       );
       final res = await boutiqueApi.makePaiement(data).load();
       if (res.status) {
-        await CAlertDialog.show(message: "Vente créée avec succès !");
+        final wantPrint = await Get.defaultDialog<bool>(
+          title: "Succès",
+          middleText:
+              "Vente créée avec succès.\nVoulez-vous imprimer le reçu ?",
+          textConfirm: "Oui",
+          textCancel: "Non",
+          confirmTextColor: Colors.white,
+          onConfirm: () => Get.back(result: true),
+          onCancel: () => Get.back(result: false),
+        );
+
+        if (wantPrint == true && res.data != null) {
+          await printVenteReceipt(res.data!);
+        }
+
         Get.back(result: res.data!);
       } else {
         CAlertDialog.show(message: res.message);
