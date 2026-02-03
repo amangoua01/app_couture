@@ -38,7 +38,7 @@ class EditionMensurationPage extends StatelessWidget {
                                 require: true,
                                 enabled: e.isActive,
                                 initialValue: e.valeur.toString(),
-                                keyboardType: TextInputType.number,
+                                // keyboardType: TextInputType.number,
                                 onChanged: (value) {
                                   e.valeur = value.toDouble().value;
                                 },

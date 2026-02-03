@@ -30,7 +30,13 @@ class Abonnement extends ModelJson {
 
   Abonnement.fromJson(Json json) {
     id = json["id"];
-    etat = json["etat"] ?? false;
+    if (json["etat"] is String) {
+      etat = json["etat"] == "actif";
+    } else if (json["etat"] is bool) {
+      etat = json["etat"] ?? false;
+    } else {
+      etat = false;
+    }
     description = json["description"];
     montant = json["montant"].toString().toDouble().value;
     duree = json["duree"].toString().toInt() ?? 0;
@@ -51,7 +57,7 @@ class Abonnement extends ModelJson {
   @override
   Map<String, dynamic> toJson() => {
         "id": id,
-        "etat": etat,
+        "etat": etat ? "actif" : "inactif",
         "description": description,
         "montant": montant,
         "duree": duree,

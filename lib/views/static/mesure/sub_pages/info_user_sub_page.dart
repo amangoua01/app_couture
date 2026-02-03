@@ -1,3 +1,5 @@
+import 'package:ateliya/data/models/client.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
@@ -29,7 +31,7 @@ class InfoUserSubPage extends StatelessWidget {
               ctl.update();
             },
           ),
-          CDropDownFormField(
+          CDropDownFormField<Client>(
             selectedItem: ctl.client,
             require: true,
             items: (p0, p1) => ctl.fetchClients(),
