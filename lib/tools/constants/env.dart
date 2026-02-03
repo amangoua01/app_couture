@@ -13,7 +13,7 @@ abstract class Env {
 
   static const defaultDevise = Currency("Fcfa", code: "XOF", decimalDigits: 0);
 
-  static const AppEnv env = AppEnv.dev;
+  static const AppEnv env = AppEnv.prod;
 
   static const _hostDev = NetwordConfig(
     scheme: "https",
