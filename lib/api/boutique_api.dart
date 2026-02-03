@@ -1,13 +1,16 @@
-import 'dart:convert' show jsonDecode;
+import 'dart:convert' show jsonDecode, jsonEncode;
 
 import 'package:ateliya/api/abstract/crud_web_controller.dart';
 import 'package:ateliya/data/dto/paiement_boutique_dto.dart';
 import 'package:ateliya/data/models/boutique.dart';
+import 'package:ateliya/data/models/fichier_local.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/data/models/paiement_boutique.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/data_response.dart';
+import 'package:http/http.dart' as http;
 
 class BoutiqueApi extends CrudWebController<Boutique> {
   BoutiqueApi() : super(listApi: "entreprise");
@@ -16,6 +19,94 @@ class BoutiqueApi extends CrudWebController<Boutique> {
 
   @override
   String get module => "boutique";
+
+  @override
+  Future<DataResponse<Boutique>> create(Boutique item) async {
+    try {
+      final http.Response res;
+      if (item.logo is FichierLocal) {
+        // Upload avec fichier
+        final files = <http.MultipartFile>[];
+        files.add(
+          await http.MultipartFile.fromPath(
+            'logo',
+            (item.logo as FichierLocal).path,
+          ),
+        );
+        res = await client.multiPart(
+          urlBuilder(api: createApi),
+          body: {
+            'libelle': item.libelle.value,
+            'contact': item.contact.value,
+            'situation': item.situation.value,
+          },
+          files: files,
+          headers: authHeaders,
+        );
+      } else {
+        // Upload sans fichier (JSON)
+        res = await client.post(
+          urlBuilder(api: createApi),
+          body: jsonEncode(item.toJson()),
+          headers: authHeaders,
+        );
+      }
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: item.fromJson(data["data"]));
+      } else {
+        return DataResponse.error(
+          message: data["message"] ?? res.reasonPhrase.value,
+        );
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  @override
+  Future<DataResponse<Boutique>> update(Boutique item) async {
+    try {
+      final http.Response res;
+      if (item.logo is FichierLocal) {
+        // Upload avec fichier
+        final files = <http.MultipartFile>[];
+        files.add(
+          await http.MultipartFile.fromPath(
+            'logo',
+            (item.logo as FichierLocal).path,
+          ),
+        );
+        res = await client.multiPart(
+          urlBuilder(api: "$updateApi/${item.id.value}"),
+          body: {
+            'libelle': item.libelle.value,
+            'contact': item.contact.value,
+            'situation': item.situation.value,
+          },
+          files: files,
+          headers: authHeaders,
+        );
+      } else {
+        // Upload sans fichier (JSON)
+        res = await client.put(
+          urlBuilder(api: "$updateApi/${item.id.value}"),
+          body: jsonEncode(item.toJson()),
+          headers: authHeaders,
+        );
+      }
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: item.fromJson(data["data"]));
+      } else {
+        return DataResponse.error(
+          message: data["message"] ?? res.reasonPhrase.value,
+        );
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 
   // https://backend.ateliya.com/api/modeleBoutique/modele/by/boutique/1
 

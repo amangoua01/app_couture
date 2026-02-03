@@ -82,13 +82,15 @@ class SettingPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                          color: Colors.black.withOpacity(0.02), blurRadius: 10)
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 10,
+                      )
                     ],
                   ),
                   child: Column(
                     children: [
                       SettingTile(
-                        title: "Mes informations",
+                        title: "Mon profil",
                         icon: Icons.person_outline,
                         onTap: () => Get.to(() => const ProfilPage())?.then(
                           (e) => ctl.update(),

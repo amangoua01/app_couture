@@ -33,4 +33,48 @@ class EntrepriseApi extends CrudWebController<Entreprise> {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+
+  Future<DataResponse<Entreprise>> getEntrepriseInfo() async {
+    try {
+      final res = await client.get(
+        urlBuilder(api: 'info'),
+        headers: authHeaders,
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(
+          data: Entreprise.fromJson(data['data']),
+        );
+      } else {
+        return DataResponse.error(message: data['error']);
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  // Future<DataResponse<EntiteEntreprise>> updateLogo(
+  //   EntiteEntreprise entite, {
+  //   required File file,
+  // }) async {
+  //   try {
+  //     final res = await client.post(
+  //       urlBuilder(api: 'surccursale/boutique/logo'),
+  //       headers: authHeaders,
+  //       body: jsonEncode(entite.toJson()),
+  //     );
+  //     final data = jsonDecode(res.body);
+  //     if (res.statusCode == 200) {
+  //       return DataResponse.success(
+  //         data: EntiteEntreprise.fromJson(data['data']),
+  //       );
+  //     } else {
+  //       return DataResponse.error(
+  //         message: data['error'],
+  //       );
+  //     }
+  //   } catch (e, st) {
+  //     return DataResponse.error(systemError: e, stackTrace: st);
+  //   }
+  // }
 }

@@ -40,7 +40,5 @@ class Entreprise extends ModelJson {
   }
 
   @override
-  Entreprise fromJson(Json json) {
-    return Entreprise.fromJson(json);
-  }
+  Entreprise fromJson(Json json) => Entreprise.fromJson(json);
 }
