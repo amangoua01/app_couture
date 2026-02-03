@@ -13,7 +13,7 @@ abstract class Env {
 
   static const defaultDevise = Currency("Fcfa", code: "XOF", decimalDigits: 0);
 
-  static const AppEnv env = AppEnv.prod;
+  static const AppEnv env = AppEnv.dev;
 
   static const _hostDev = NetwordConfig(
     scheme: "https",
@@ -21,7 +21,7 @@ abstract class Env {
   );
 
   static const _hostProd = NetwordConfig(
-    host: "backend.ateliya.com",
+    host: "backendprod.ateliya.com",
     scheme: "https",
   );
 

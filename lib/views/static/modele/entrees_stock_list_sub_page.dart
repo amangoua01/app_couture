@@ -1,15 +1,13 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/extensions/ternary_fn.dart';
-import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
-import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
-import 'package:ateliya/tools/widgets/wrapper_listview.dart';
 import 'package:ateliya/views/controllers/home/detail_boutique_item_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 class EntreesStockListSubPage extends StatelessWidget {
   final DetailBoutiqueItemPageVctl ctl;
@@ -20,25 +18,49 @@ class EntreesStockListSubPage extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => CBottomSheet.show(
-          child: ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              CDateFormField(
-                labelText: 'Date début',
-                onChange: (e) {},
-              ),
-              CDateFormField(
-                labelText: "Date fin",
-                onChange: (e) {},
-              ),
-              CDropDownFormField(
-                labelText: 'Opérateur',
-                items: (e, f) => ctl.modele.operateurs,
-                itemAsString: (e) => e.fullName,
-              ),
-              const Gap(20),
-              const CButton(),
-            ],
+          child: GetBuilder(
+            init: ctl,
+            builder: (_) {
+              return ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  CDateFormField(
+                    labelText: 'Date début',
+                    controller: ctl.entreStockFilter.dateDebut,
+                    withTime: true,
+                    onClear: () {
+                      ctl.entreStockFilter.dateDebut.clear();
+                      ctl.update();
+                    },
+                    onChange: (e) {
+                      ctl.entreStockFilter.dateDebut.dateTime = e;
+                      ctl.update();
+                    },
+                  ),
+                  CDateFormField(
+                    labelText: "Date fin",
+                    controller: ctl.entreStockFilter.dateFin,
+                    withTime: true,
+                    onClear: () {
+                      ctl.entreStockFilter.dateFin.clear();
+                      ctl.update();
+                    },
+                    onChange: (e) {
+                      ctl.entreStockFilter.dateFin.dateTime = e;
+                      ctl.update();
+                    },
+                  ),
+                  const Gap(20),
+                  CButton(
+                    title: 'Appliquer',
+                    onPressed: () {
+                      ctl.update();
+                      Get.back();
+                    },
+                  ),
+                ],
+              );
+            },
           ),
         ),
         child: SvgPicture.asset(
@@ -50,64 +72,132 @@ class EntreesStockListSubPage extends StatelessWidget {
           ),
         ),
       ),
-      body: WrapperListview(
-        items: ctl.modele.ligneEntres(ctl.entreStockFilter),
-        itemBuilder: (e, i) => ListTile(
-          leading: CircleAvatar(
-            child: SvgPicture.asset(
-              'assets/images/svg/box.svg',
-              colorFilter: const ColorFilter.mode(
-                AppColors.yellow,
-                BlendMode.srcIn,
+      body: GetBuilder<DetailBoutiqueItemPageVctl>(
+        init: ctl,
+        builder: (_) {
+          if (ctl.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (ctl.details == null || ctl.filteredMouvements.isEmpty) {
+            return const Center(
+              child: Text(
+                'Aucun mouvement disponible',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-            ),
-          ),
-          title: Text(e.entreStock?.creator?.fullName ?? ''),
-          subtitle: Row(
-            children: [
-              Image.asset(
-                ternaryFn(
-                  condition: e.entreStock?.isEntree == false,
-                  ifTrue: "assets/images/svg/entrant.png",
-                  ifFalse: "assets/images/svg/sortant.png",
+            );
+          }
+
+          return ListView.builder(
+            itemCount: ctl.filteredMouvements.length,
+            itemBuilder: (context, i) {
+              final mouvement = ctl.filteredMouvements[i];
+              final entreStock = mouvement.entreStock;
+              final isEntree = entreStock?.type?.toLowerCase() == 'entree';
+
+              return ListTile(
+                leading: CircleAvatar(
+                  child: SvgPicture.asset(
+                    'assets/images/svg/box.svg',
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.yellow,
+                      BlendMode.srcIn,
+                    ),
+                  ),
                 ),
-                height: 15,
-                color: ternaryFn(
-                  condition: e.entreStock?.isEntree == true,
-                  ifTrue: Colors.green,
-                  ifFalse: Colors.red,
+                title: Text(
+                  isEntree ? 'Entrée de stock' : 'Sortie de stock',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isEntree ? Colors.green : Colors.red,
+                  ),
                 ),
-              ),
-              const Gap(5),
-              Expanded(
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text:
-                            '${e.entreStock?.isEntree == true ? '+' : '-'}${e.quantite} ',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: ternaryFn(
-                            condition: e.entreStock?.isEntree == true,
-                            ifTrue: Colors.green,
-                            ifFalse: Colors.red,
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(
+                          isEntree
+                              ? "assets/images/svg/entrant.png"
+                              : "assets/images/svg/sortant.png",
+                          height: 15,
+                          color: isEntree ? Colors.green : Colors.red,
+                        ),
+                        const Gap(5),
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text:
+                                      '${isEntree ? '+' : '-'}${mouvement.quantite ?? 0} ',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: isEntree ? Colors.green : Colors.red,
+                                  ),
+                                ),
+                                const TextSpan(text: ' • '),
+                                TextSpan(
+                                  text:
+                                      entreStock?.date?.toFrenchDateTime ?? '-',
+                                ),
+                              ],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (entreStock?.statut != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: entreStock?.statut == 'CONFIRME'
+                                ? Colors.green.withOpacity(0.2)
+                                : Colors.orange.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            entreStock?.statut ?? '',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: entreStock?.statut == 'CONFIRME'
+                                  ? Colors.green
+                                  : Colors.orange,
+                            ),
                           ),
                         ),
                       ),
-                      const TextSpan(text: ' • '),
-                      TextSpan(
-                          text: ' ${e.entreStock?.date.toFrenchDateTime} '),
-                    ],
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Total',
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                    Text(
+                      '${entreStock?.quantite ?? 0}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

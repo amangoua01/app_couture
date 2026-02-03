@@ -22,6 +22,13 @@ class CommandTile extends StatelessWidget {
         : 0.0;
     final bool isPaid = pourcentage >= 1.0;
 
+    // Récupérer les états uniques des lignes de mesure
+    final etats = mesure!.lignesMesures
+        .where((ligne) => ligne.etat != null && ligne.etat!.isNotEmpty)
+        .map((ligne) => ligne.etat!)
+        .toSet()
+        .toList();
+
     return GestureDetector(
       onTap: () => Get.to(() => DetailCommandPage(mesure: mesure)),
       child: Container(
@@ -45,17 +52,33 @@ class CommandTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Text(
-                    mesure!.client?.fullName ?? 'Client inconnu',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.black87,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        mesure!.client?.fullName ?? 'Client inconnu',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.black87,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (etats.isNotEmpty) ...[
+                        const Gap(4),
+                        Wrap(
+                          spacing: 4,
+                          runSpacing: 4,
+                          children: etats
+                              .map((etat) => _buildEtatBadge(etat))
+                              .toList(),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
+                const Gap(8),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -206,6 +229,54 @@ class CommandTile extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildEtatBadge(String etat) {
+    Color backgroundColor;
+    Color textColor;
+    IconData icon;
+
+    switch (etat) {
+      case 'Terminée':
+        backgroundColor = Colors.green.withOpacity(0.1);
+        textColor = Colors.green.shade700;
+        icon = Icons.check_circle_outline;
+        break;
+      case 'Livrée':
+        backgroundColor = Colors.blue.withOpacity(0.1);
+        textColor = Colors.blue.shade700;
+        icon = Icons.local_shipping_outlined;
+        break;
+      case 'En cours':
+      default:
+        backgroundColor = Colors.orange.withOpacity(0.1);
+        textColor = Colors.orange.shade700;
+        icon = Icons.access_time;
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: textColor),
+          const Gap(4),
+          Text(
+            etat,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

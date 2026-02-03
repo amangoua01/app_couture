@@ -1,12 +1,11 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
-import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
-import 'package:ateliya/tools/widgets/wrapper_listview.dart';
 import 'package:ateliya/views/controllers/home/detail_boutique_item_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -65,7 +64,13 @@ class VenteListSubPage extends StatelessWidget {
                       },
                     ),
                     const Gap(20),
-                    CButton(onPressed: Get.back),
+                    CButton(
+                      title: 'Appliquer',
+                      onPressed: () {
+                        ctl.update();
+                        Get.back();
+                      },
+                    ),
                   ],
                 );
               }),
@@ -79,48 +84,85 @@ class VenteListSubPage extends StatelessWidget {
           ),
         ),
       ),
-      body: WrapperListview(
-        items: ctl.modele.paiementBoutiqueLignes(ctl.filterVente),
-        itemBuilder: (_, i) => ListTile(
-          leading: CircleAvatar(
-            child: SvgPicture.asset(
-              'assets/images/svg/bag.svg',
-              colorFilter: const ColorFilter.mode(
-                AppColors.yellow,
-                BlendMode.srcIn,
+      body: GetBuilder<DetailBoutiqueItemPageVctl>(
+        init: ctl,
+        builder: (_) {
+          if (ctl.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (ctl.details == null || ctl.filteredVentes.isEmpty) {
+            return const Center(
+              child: Text(
+                'Aucune vente disponible',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-            ),
-          ),
-          title: Text(
-            "${ctl.modele.paiementBoutiqueLignes(ctl.filterVente).length.toAmount(unit: 'article(s)')} X ${ctl.modele.paiementBoutiqueLignes(ctl.filterVente)[i].montant.toAmount(unit: 'F')}",
-          ),
-          subtitle: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '${ctl.modele.paiementBoutiqueLignes(ctl.filterVente)[i].total.toAmount(unit: 'F')} • ${ctl.modele.paiementBoutiqueLignes(ctl.filterVente)[i].paiementBoutique?.createdAt.toFrenchDateTime}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+            );
+          }
+
+          return ListView.builder(
+            itemCount: ctl.filteredVentes.length,
+            itemBuilder: (context, i) {
+              final vente = ctl.filteredVentes[i];
+              final client = vente.paiementBoutique?.client;
+
+              return ListTile(
+                leading: CircleAvatar(
+                  child: SvgPicture.asset(
+                    'assets/images/svg/bag.svg',
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.yellow,
+                      BlendMode.srcIn,
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          trailing: CircleAvatar(
-            radius: 18,
-            backgroundColor: AppColors.green.withAlpha(180),
-            child: IconButton(
-              splashRadius: 20,
-              icon: SvgPicture.asset(
-                'assets/images/svg/client.svg',
-                colorFilter: const ColorFilter.mode(
-                  Colors.white,
-                  BlendMode.srcIn,
+                title: Text(
+                  "${vente.quantite ?? 0} article(s) X ${vente.montant?.toDouble().toAmount(unit: 'F') ?? '0 F'}",
                 ),
-              ),
-              onPressed: () => CBottomSheet.show(child: Container()),
-            ),
-          ),
-        ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total: ${vente.paiementBoutique?.montant?.toDouble().toAmount(unit: 'F') ?? '0 F'}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Réf: ${vente.paiementBoutique?.reference ?? '-'}',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    Text(
+                      vente.paiementBoutique?.createdAt?.toFrenchDateTime ??
+                          '-',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+                trailing: client != null
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            client.fullName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                          Text(
+                            client.tel ?? '',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      )
+                    : null,
+              );
+            },
+          );
+        },
       ),
     );
   }

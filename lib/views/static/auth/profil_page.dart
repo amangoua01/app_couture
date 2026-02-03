@@ -40,19 +40,22 @@ class ProfilPage extends StatelessWidget {
                         margin: const EdgeInsets.only(bottom: 40),
                         child: Column(
                           children: [
-                            Badge(
-                              padding: const EdgeInsets.all(5),
-                              alignment: const Alignment(.4, .7),
-                              label: const Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              backgroundColor: AppColors.primary,
-                              child: Image.asset(
-                                "assets/images/user.png",
-                                width: 100,
-                                color: Colors.black,
+                            GestureDetector(
+                              onTap: ctl.pickUserLogo,
+                              child: Badge(
+                                padding: const EdgeInsets.all(5),
+                                alignment: const Alignment(.4, .7),
+                                label: const Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                backgroundColor: AppColors.primary,
+                                child: Image.asset(
+                                  "assets/images/user.png",
+                                  width: 100,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                             const Gap(10),
@@ -105,45 +108,56 @@ class ProfilPage extends StatelessWidget {
                       child: ListView(
                         padding: const EdgeInsets.all(20),
                         children: [
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 40),
-                            child: Column(
-                              children: [
-                                Badge(
-                                  padding: const EdgeInsets.all(5),
-                                  alignment: const Alignment(.4, .7),
-                                  label: const Icon(
-                                    Icons.edit,
-                                    color: Colors.white,
-                                    size: 20,
+                          GestureDetector(
+                            onTap: () {
+                              if (ctl.user.isAdmin) {
+                                ctl.pickEntrepriseLogo();
+                              }
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 40),
+                              child: Column(
+                                children: [
+                                  Badge(
+                                    padding: const EdgeInsets.all(5),
+                                    alignment: const Alignment(.4, .7),
+                                    label: const Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    backgroundColor: AppColors.primary,
+                                    child: Image.asset(
+                                      "assets/images/user.png",
+                                      width: 100,
+                                      color: Colors.black,
+                                    ),
                                   ),
-                                  backgroundColor: AppColors.primary,
-                                  child: Image.asset(
-                                    "assets/images/user.png",
-                                    width: 100,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                           CTextFormField(
+                            enabled: ctl.user.isAdmin,
                             controller: ctl.nomEntrepriseCtl,
                             externalLabel: "Nom de l'entreprise",
                             require: true,
                           ),
                           CTextFormField(
+                            enabled: ctl.user.isAdmin,
                             controller: ctl.emailEntrepriseCtl,
                             externalLabel: 'Email',
                             require: true,
                           ),
                           CTextFormField(
+                            enabled: ctl.user.isAdmin,
                             controller: ctl.telephoneEntrepriseCtl,
                             externalLabel: 'Téléphone',
                             require: true,
                           ),
                           const Gap(10),
                           CButton(
+                            enabled: ctl.user.isAdmin,
                             title: 'Enregistrer',
                             onPressed: ctl.submitEntreprise,
                           ),

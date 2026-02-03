@@ -268,7 +268,7 @@ class HomePage extends StatelessWidget {
                                     CardInfo(
                                       icon: "assets/images/svg/users.svg",
                                       value:
-                                          "${ctl.data.settings?.nombreUser ?? 0} client(s)",
+                                          "${ctl.data.settings?.nombreUser ?? 0} utilisateur(s)",
                                     ),
                                     CardInfo(
                                       icon: "assets/images/svg/store.svg",
@@ -411,8 +411,8 @@ class HomePage extends StatelessWidget {
                               physics: const NeverScrollableScrollPhysics(),
                               separatorBuilder: (_, i) => const Divider(),
                               itemBuilder: (_, i) => showBestSales
-                                  ? MeilleureVenteTile(
-                                      item: ctl.data.meilleuresVentes[i])
+                                  ? MeilleureVenteTile.fromMeilleureVente(
+                                      ctl.data.meilleuresVentes[i])
                                   : CommandTile(
                                       mesure: ctl.data.commandes[i],
                                     ),

@@ -223,10 +223,24 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(lm.typeMesure?.libelle ?? "Article",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            lm.typeMesure?.libelle ?? "Article",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16)),
+                                        if (lm.etat != null &&
+                                            lm.etat!.isNotEmpty) ...[
+                                          const Gap(6),
+                                          _buildEtatBadge(lm.etat!),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
                                   Text(lm.montant.toAmount(unit: "F"),
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -434,6 +448,54 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
           Text(paiement.montant.toAmount(unit: "F"),
               style: const TextStyle(
                   fontWeight: FontWeight.bold, color: Colors.green)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEtatBadge(String etat) {
+    Color backgroundColor;
+    Color textColor;
+    IconData icon;
+
+    switch (etat) {
+      case 'Terminée':
+        backgroundColor = Colors.green.withOpacity(0.1);
+        textColor = Colors.green.shade700;
+        icon = Icons.check_circle_outline;
+        break;
+      case 'Livrée':
+        backgroundColor = Colors.blue.withOpacity(0.1);
+        textColor = Colors.blue.shade700;
+        icon = Icons.local_shipping_outlined;
+        break;
+      case 'En cours':
+      default:
+        backgroundColor = Colors.orange.withOpacity(0.1);
+        textColor = Colors.orange.shade700;
+        icon = Icons.access_time;
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: textColor),
+          const Gap(4),
+          Text(
+            etat,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );

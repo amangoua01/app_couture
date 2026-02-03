@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ateliya/data/models/abstract/fichier.dart';
 import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/data/models/boutique.dart';
+import 'package:ateliya/data/models/entreprise.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/settings.dart';
@@ -31,6 +32,7 @@ class User extends ModelJson {
   Settings? settings;
   Subscriptions? activeSubscriptions;
   String? password;
+  Entreprise? entreprise;
 
   User(
       {super.id,
@@ -47,7 +49,8 @@ class User extends ModelJson {
       this.succursale,
       this.settings,
       this.activeSubscriptions,
-      this.password})
+      this.password,
+      this.entreprise})
       : _logo = logo != null ? FichierLocal(path: logo) : null;
 
   User.fromJson(Map<String, dynamic> json) {
@@ -72,6 +75,9 @@ class User extends ModelJson {
         json['settings'] != null ? Settings.fromJson(json['settings']) : null;
     activeSubscriptions = json['activeSubscriptions'] != null
         ? Subscriptions.fromJson(json['activeSubscriptions'])
+        : null;
+    entreprise = json['entreprise'] != null
+        ? Entreprise.fromJson(json['entreprise'])
         : null;
   }
 

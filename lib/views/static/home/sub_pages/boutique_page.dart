@@ -4,13 +4,11 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/tools/widgets/wrapper_gridview.dart';
 import 'package:ateliya/tools/widgets/wrapper_listview.dart';
 import 'package:ateliya/views/controllers/home/boutique_page_vctl.dart';
-import 'package:ateliya/views/static/boutiques/edition_entree_stock.dart';
 import 'package:ateliya/views/static/home/detail_boutique_item_page.dart';
 import 'package:ateliya/views/static/ventes/edition_vente_page.dart';
 import 'package:flutter/material.dart';
@@ -363,8 +361,8 @@ class BoutiquePage extends StatelessWidget {
           ModeleBoutique modeleBoutique, BoutiquePageVctl ctl) =>
       [
         "Faire une vente",
-        "Voir les ventes",
-        "Supprimer",
+        // "Voir les ventes",
+        // "Supprimer",
       ]
           .map(
             (e) => PopupMenuItem(
@@ -380,25 +378,25 @@ class BoutiquePage extends StatelessWidget {
                       ctl.fetchData();
                     }
                     break;
-                  case "Entrer stock":
-                    CBottomSheet.show(
-                      child: const EditionEntreeStock(
-                        isEntreeStock: true,
-                      ),
-                    );
-                    break;
-                  case "Sorti stock":
-                    CBottomSheet.show(
-                      child: const EditionEntreeStock(
-                        isEntreeStock: false,
-                      ),
-                    );
-                    break;
-                  case "Réserver":
-                    break;
-                  case "Payer":
-                    Get.to(() => EditionVentePage(modeleBoutique));
-                    break;
+                  // case "Entrer stock":
+                  //   CBottomSheet.show(
+                  //     child: const EditionEntreeStock(
+                  //       isEntreeStock: true,
+                  //     ),
+                  //   );
+                  //   break;
+                  // case "Sorti stock":
+                  //   CBottomSheet.show(
+                  //     child: const EditionEntreeStock(
+                  //       isEntreeStock: false,
+                  //     ),
+                  //   );
+                  //   break;
+                  // case "Réserver":
+                  //   break;
+                  // case "Payer":
+                  //   Get.to(() => EditionVentePage(modeleBoutique));
+                  //   break;
                 }
               },
             ),

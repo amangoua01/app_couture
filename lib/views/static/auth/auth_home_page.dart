@@ -24,7 +24,7 @@ class AuthHomePage extends StatelessWidget {
           ),
           const Gap(20),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -32,6 +32,7 @@ class AuthHomePage extends StatelessWidget {
                   "assets/images/logo_text.png",
                   height: 40,
                 ),
+                const Gap(20),
                 const Text(
                   "Toute la gestion de  votre  Atelier en un seul endroit",
                   style: TextStyle(
@@ -40,7 +41,7 @@ class AuthHomePage extends StatelessWidget {
                 ),
                 const Gap(10),
                 const Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus velit quam, venenatis non sapien et,",
+                  "Une solution pensée pour les ateliers et petites entreprises : suivez vos activités, maîtrisez vos stocks et développez votre business en toute sérénité.",
                   style: TextStyle(
                     fontSize: 14,
                   ),

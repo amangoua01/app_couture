@@ -53,6 +53,32 @@ class EntrepriseApi extends CrudWebController<Entreprise> {
     }
   }
 
+  Future<DataResponse<Entreprise>> updateEntreprise(
+      Entreprise entreprise) async {
+    try {
+      final res = await client.multiPart(
+        urlBuilder(api: 'update'),
+        body: entreprise.toFields(),
+        files: await entreprise.toMultipartFile(),
+        headers: authHeaders,
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(
+          data: Entreprise.fromJson(data['data']),
+        );
+      } else {
+        return DataResponse.error(
+          message: data['message'] ??
+              data['error'] ??
+              'Erreur lors de la mise à jour',
+        );
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
   // Future<DataResponse<EntiteEntreprise>> updateLogo(
   //   EntiteEntreprise entite, {
   //   required File file,

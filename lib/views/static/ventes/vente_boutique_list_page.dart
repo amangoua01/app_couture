@@ -1,11 +1,8 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/extensions/types/datetime.dart';
-import 'package:ateliya/tools/extensions/types/double.dart';
-import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/meilleure_vente_tile.dart';
 import 'package:ateliya/tools/widgets/wrapper_listview_from_view_controller.dart';
 import 'package:ateliya/views/controllers/ventes/vente_list_vctl.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -63,31 +60,8 @@ class VenteBoutiqueListPage extends StatelessWidget {
                       final item = ctl.data.items[i];
                       return Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 0),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          leading: CircleAvatar(
-                            backgroundColor: AppColors.primary.withOpacity(0.1),
-                            child: SvgPicture.asset(
-                              'assets/images/svg/bag.svg',
-                              width: 20,
-                              colorFilter: const ColorFilter.mode(
-                                AppColors.primary,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                          ),
-                          title: Text(
-                            item.montant.toAmount(unit: 'F'),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                              item.createdAt?.toDateTime()?.toFrenchDateTime ??
-                                  item.createdAt ??
-                                  "-"),
-                          // trailing: const Icon(Icons.arrow_forward_ios,
-                          //     size: 16, color: Colors.grey),
-                        ),
+                            horizontal: 15, vertical: 5),
+                        child: MeilleureVenteTile.fromPaiementBoutique(item),
                       );
                     },
                   ),

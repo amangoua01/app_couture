@@ -32,7 +32,7 @@ class Client extends ModelFormData<Client> {
     id = json["id"];
     nom = json["nom"];
     prenom = json["prenom"];
-    tel = json["numero"];
+    tel = json["numero"] ?? json["telephone"];
     if (json["photo"] != null) {
       photo = FichierServer.fromJson(json["photo"]);
     }
