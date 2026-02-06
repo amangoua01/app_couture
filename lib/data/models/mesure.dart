@@ -39,6 +39,7 @@ class Mesure extends ModelFormData<Mesure> {
 
   bool isActive = true;
   DateTime? createdAt;
+  String? etatFacture;
 
   Mesure({
     this.dateRetrait,
@@ -54,6 +55,7 @@ class Mesure extends ModelFormData<Mesure> {
     this.paiementFactures = const [],
     this.createdAt,
     this.isActive = true,
+    this.etatFacture,
   });
 
   Mesure.fromJson(Json json) {
@@ -94,6 +96,7 @@ class Mesure extends ModelFormData<Mesure> {
     }
     createdAt = json['createdAt'].toString().toDateTime();
     isActive = json['isActive'] ?? true;
+    etatFacture = json['etatFacture'];
   }
 
   @override
@@ -152,6 +155,7 @@ class Mesure extends ModelFormData<Mesure> {
       "createdAt": createdAt?.toIso8601String(),
       "isActive": isActive,
       "paiementFactures": paiementFactures.map((e) => e.toJson()).toList(),
+      "etatFacture": etatFacture,
     };
   }
 

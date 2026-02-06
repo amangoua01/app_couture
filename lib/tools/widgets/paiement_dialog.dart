@@ -145,6 +145,8 @@ class _PaiementDialogState extends State<PaiementDialog> {
                 const Gap(25),
                 TextFormField(
                   controller: _montantCtrl,
+                  onChanged: (_) =>
+                      setState(() {}), // Pour rafraîchir le "Reste après"
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 18),
                   decoration: InputDecoration(
@@ -176,8 +178,52 @@ class _PaiementDialogState extends State<PaiementDialog> {
                   keyboardType: TextInputType.number,
                   validator: (v) {
                     if (v == null || v.isEmpty) return "Montant requis";
-                    if (double.tryParse(v) == null) return "Montant invalide";
+                    final montant = double.tryParse(v);
+                    if (montant == null) return "Montant invalide";
+                    if (montant <= 0)
+                      return "Le montant doit être supérieur à 0";
+                    if (montant > widget.mesure.resteArgent) {
+                      return "Le montant ne peut pas dépasser ${widget.mesure.resteArgent.toAmount(unit: "F")}";
+                    }
                     return null;
+                  },
+                ),
+                const Gap(8),
+                Builder(
+                  builder: (context) {
+                    final m = double.tryParse(_montantCtrl.text) ?? 0;
+                    final reste = widget.mesure.resteArgent - m;
+
+                    if (m == 0) return const SizedBox.shrink();
+
+                    if (reste < 0) {
+                      return Row(
+                        children: [
+                          const Icon(Icons.warning_amber_rounded,
+                              color: Colors.red, size: 16),
+                          const Gap(6),
+                          Expanded(
+                            child: Text(
+                              "Le montant dépasse le reste à payer de ${(-reste).toAmount(unit: "F")}",
+                              style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    return Text(
+                      "Nouveau reste à payer: ${reste.toAmount(unit: "F")}",
+                      style: TextStyle(
+                        color: reste == 0 ? Colors.green : Colors.grey[600],
+                        fontSize: 12,
+                        fontWeight:
+                            reste == 0 ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    );
                   },
                 ),
                 const Gap(16),

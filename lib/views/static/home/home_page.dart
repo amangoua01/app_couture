@@ -8,19 +8,18 @@ import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/card_info.dart';
 import 'package:ateliya/tools/widgets/command_tile.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
-import 'package:ateliya/tools/widgets/meilleure_vente_tile.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
+import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/tools/widgets/solde_card.dart';
+import 'package:ateliya/tools/widgets/vente_tile.dart';
 import 'package:ateliya/views/controllers/home/home_page_vctl.dart';
 import 'package:ateliya/views/static/boutiques/edition_boutique_page.dart';
 import 'package:ateliya/views/static/clients/edition_client_page.dart';
 import 'package:ateliya/views/static/commandes/commande_list_page.dart';
 import 'package:ateliya/views/static/home/sub_pages/select_entreprise_bottom_page.dart';
-import 'package:ateliya/views/static/home/sub_pages/transaction_bottom_page.dart';
 import 'package:ateliya/views/static/mesure/edition_mesure_page.dart';
-import 'package:ateliya/views/static/notifs/notif_list_page.dart';
 import 'package:ateliya/views/static/surcursales/edition_surcusale_page.dart';
 import 'package:ateliya/views/static/ventes/edition_vente_multiple_page.dart';
 import 'package:ateliya/views/static/ventes/vente_boutique_list_page.dart';
@@ -54,7 +53,6 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
-              actionsPadding: const EdgeInsets.only(right: 10),
               title: PlaceholderWidget(
                 condition: ctl.user.isAdmin,
                 placeholder: PlaceholderBuilder(
@@ -127,16 +125,9 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               actions: [
-                IconButton(
-                  onPressed: () => Get.to(() => const NotifListPage()),
-                  icon: SvgPicture.asset(
-                    "assets/images/svg/notif.svg",
-                    width: 30,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.srcIn,
-                    ),
-                  ),
+                NotifBadgeIcon(
+                  count: ctl.nbUnreadNotifs,
+                  onRefresh: () => ctl.loadUnreadCount(),
                 ),
               ],
             ),
@@ -330,9 +321,9 @@ class HomePage extends StatelessWidget {
                     ),
                     const Gap(10),
                     GestureDetector(
-                      onTap: () => CBottomSheet.show(
-                        child: const TransactionBottomPage(),
-                      ),
+                      // onTap: () => CBottomSheet.show(
+                      //   child: const TransactionBottomPage(),
+                      // ),
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
@@ -345,7 +336,7 @@ class HomePage extends StatelessWidget {
                               child: Center(
                                 child: SoldeCard(
                                   icon: "assets/images/svg/entrant.png",
-                                  value: ctl.data.caisse.toAmount(unit: "FCFA"),
+                                  value: ctl.data.caisse.toAmount(unit: "F"),
                                 ),
                               ),
                             ),
@@ -354,8 +345,7 @@ class HomePage extends StatelessWidget {
                               child: Center(
                                 child: SoldeCard(
                                   icon: "assets/images/svg/sortant.png",
-                                  value:
-                                      ctl.data.depenses.toAmount(unit: "FCFA"),
+                                  value: ctl.data.depenses.toAmount(unit: "F"),
                                 ),
                               ),
                             ),
@@ -409,10 +399,15 @@ class HomePage extends StatelessWidget {
                               shrinkWrap: true,
                               padding: const EdgeInsets.only(bottom: 100),
                               physics: const NeverScrollableScrollPhysics(),
-                              separatorBuilder: (_, i) => const Divider(),
+                              separatorBuilder: (_, i) => const Gap(10),
                               itemBuilder: (_, i) => showBestSales
-                                  ? MeilleureVenteTile.fromMeilleureVente(
-                                      ctl.data.meilleuresVentes[i])
+                                  ? VenteTile(
+                                      ctl.data.meilleuresVentes[i],
+                                      onPrint: () async {
+                                        await ctl.printVenteReceipt(
+                                            ctl.data.meilleuresVentes[i]);
+                                      },
+                                    )
                                   : CommandTile(
                                       mesure: ctl.data.commandes[i],
                                     ),

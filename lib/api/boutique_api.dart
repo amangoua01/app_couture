@@ -5,7 +5,7 @@ import 'package:ateliya/data/dto/paiement_boutique_dto.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
-import 'package:ateliya/data/models/paiement_boutique.dart';
+import 'package:ateliya/data/models/vente.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -133,8 +133,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
     }
   }
 
-  Future<DataResponse<PaiementBoutique>> makePaiement(
-      PaiementBoutiqueDto data) async {
+  Future<DataResponse<Vente>> makePaiement(PaiementBoutiqueDto data) async {
     try {
       final res = await client.post(
         urlBuilder(
@@ -147,7 +146,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       var resData = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return DataResponse.success(
-          data: PaiementBoutique.fromJson(resData["data"]),
+          data: Vente.fromJson(resData["data"]),
         );
       } else {
         return DataResponse.error(message: resData["message"]);
@@ -157,7 +156,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
     }
   }
 
-  Future<DataResponse<List<PaiementBoutique>>> getVentes(
+  Future<DataResponse<List<Vente>>> getVentes(
       int id, Map<String, dynamic> data) async {
     try {
       final res = await client.post(
@@ -168,7 +167,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       final json = jsonDecode(res.body);
       if (res.statusCode == 200) {
         final list = (json['data']['data'] as List)
-            .map((e) => PaiementBoutique.fromJson(e))
+            .map((e) => Vente.fromJson(e))
             .toList();
         return DataResponse.success(data: list);
       } else {

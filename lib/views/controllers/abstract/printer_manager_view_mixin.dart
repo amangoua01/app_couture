@@ -1,6 +1,6 @@
 import 'package:ateliya/data/models/mesure.dart';
-import 'package:ateliya/data/models/paiement_boutique.dart';
 import 'package:ateliya/data/models/paiement_facture.dart';
+import 'package:ateliya/data/models/vente.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/blue_device.dart';
@@ -37,7 +37,7 @@ mixin PrinterManagerViewMixin {
   }
 
   /// Imprimer le reçu d'une vente (Boutique)
-  Future<void> printVenteReceipt(PaiementBoutique vente) async {
+  Future<void> printVenteReceipt(Vente vente) async {
     await _printGenericReceipt(() => _generateVenteBytes(vente));
   }
 
@@ -45,6 +45,24 @@ mixin PrinterManagerViewMixin {
   Future<void> printPaiementReceipt(
       Mesure mesure, PaiementFacture paiement) async {
     await _printGenericReceipt(() => _generatePaiementBytes(mesure, paiement));
+  }
+
+  /// Imprimer les informations client et mensurations
+  Future<void> printClientMensurationsReceipt(Mesure mesure) async {
+    await _printGenericReceipt(() => _generateClientMensurationsBytes(mesure));
+  }
+
+  /// Vérifier si une imprimante est disponible et connectée
+  Future<bool> isPrinterAvailable() async {
+    try {
+      if (selectedPrinter.isNoEmpty) {
+        final bool isConnected = await PrintBluetoothThermal.connectionStatus;
+        return isConnected;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<void> _printGenericReceipt(
@@ -250,7 +268,7 @@ mixin PrinterManagerViewMixin {
     return bytes;
   }
 
-  Future<List<int>?> _generateVenteBytes(PaiementBoutique vente) async {
+  Future<List<int>?> _generateVenteBytes(Vente vente) async {
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = [];
@@ -312,7 +330,7 @@ mixin PrinterManagerViewMixin {
               align: PosAlign.right, bold: true, underline: true)),
     ]);
 
-    for (var item in vente.lignes) {
+    for (var item in vente.paiementBoutiqueLignes) {
       bytes += generator.row([
         PosColumn(
             text: _normalize(item.modeleBoutique?.modele?.libelle ?? "Article"),
@@ -429,6 +447,106 @@ mixin PrinterManagerViewMixin {
     bytes += generator.emptyLines(1);
     bytes += generator.text("Merci !",
         styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.emptyLines(3);
+
+    return bytes;
+  }
+
+  Future<List<int>?> _generateClientMensurationsBytes(Mesure mesure) async {
+    final profile = await CapabilityProfile.load();
+    final generator = Generator(PaperSize.mm58, profile);
+    List<int> bytes = [];
+
+    bytes += generator.reset();
+    bytes += generator.setGlobalCodeTable('CP1252');
+
+    // -- Header --
+    bytes += generator.text("FICHE CLIENT",
+        styles: const PosStyles(
+            align: PosAlign.center,
+            bold: true,
+            height: PosTextSize.size2,
+            width: PosTextSize.size2));
+    bytes += generator.hr();
+
+    // -- Client Info --
+    if (mesure.client != null) {
+      bytes += generator.text("INFORMATIONS CLIENT",
+          styles: const PosStyles(bold: true, underline: true));
+      bytes += generator.emptyLines(1);
+
+      bytes += generator.row([
+        PosColumn(text: "Nom", width: 4, styles: const PosStyles(bold: true)),
+        PosColumn(
+          text: _normalize(mesure.client!.fullName),
+          width: 8,
+          styles: const PosStyles(align: PosAlign.right),
+        ),
+      ]);
+
+      if (mesure.client!.tel != null) {
+        bytes += generator.row([
+          PosColumn(text: "Tel", width: 4, styles: const PosStyles(bold: true)),
+          PosColumn(
+            text: _normalize(mesure.client!.tel!),
+            width: 8,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
+      }
+
+      bytes += generator.hr();
+    }
+
+    // -- Mensurations par article --
+    bytes += generator.text("MENSURATIONS",
+        styles: const PosStyles(bold: true, underline: true));
+    bytes += generator.emptyLines(1);
+
+    for (var ligneMesure in mesure.lignesMesures) {
+      if (ligneMesure.mensurations.isNotEmpty) {
+        // Nom de l'article
+        bytes += generator.text(
+            _normalize(ligneMesure.typeMesure?.libelle?.value ?? "Article"),
+            styles: const PosStyles(bold: true, height: PosTextSize.size2));
+        bytes += generator.emptyLines(1);
+
+        // Liste des mensurations
+        for (var mensuration in ligneMesure.mensurations) {
+          if (mensuration.isActive) {
+            bytes += generator.row([
+              PosColumn(
+                text: _normalize(
+                    mensuration.categorieMesure?.libelle ?? "Mesure"),
+                width: 7,
+              ),
+              PosColumn(
+                text: "${mensuration.taille.toStringAsFixed(1)} cm",
+                width: 5,
+                styles: const PosStyles(align: PosAlign.right, bold: true),
+              ),
+            ]);
+          }
+        }
+
+        bytes += generator.emptyLines(1);
+        bytes += generator.hr();
+      }
+    }
+
+    // -- Footer --
+    bytes += generator.emptyLines(1);
+    final dateStr = mesure.createdAt != null
+        ? DateFormat('dd/MM/yyyy HH:mm').format(mesure.createdAt!)
+        : "--/--/----";
+    bytes += generator.text("Date: $dateStr",
+        styles: const PosStyles(align: PosAlign.center));
+
+    if (mesure.id != null) {
+      bytes += generator.text("Commande N°${mesure.id}",
+          styles: const PosStyles(align: PosAlign.center));
+    }
+
     bytes += generator.emptyLines(3);
 
     return bytes;

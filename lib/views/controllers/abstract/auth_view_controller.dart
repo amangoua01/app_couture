@@ -1,3 +1,4 @@
+import 'package:ateliya/api/notification_api.dart';
 import 'package:ateliya/data/models/abstract/entite_entreprise.dart';
 import 'package:ateliya/data/models/entreprise_entities_response.dart';
 import 'package:ateliya/data/models/user.dart';
@@ -55,5 +56,31 @@ abstract class AuthViewController extends SessionManagerViewController {
       Get.put<EntrepriseEntitiesResponse>(value, permanent: true);
     }
     update();
+  }
+
+  set nbUnreadNotifs(int value) {
+    if (Get.isRegistered<int>(tag: CacheKey.nbUnreadNotifs.name)) {
+      var nb = Get.find<int>(tag: CacheKey.nbUnreadNotifs.name);
+      nb = value;
+      Get.replace<int>(nb, tag: CacheKey.nbUnreadNotifs.name);
+    } else {
+      Get.put<int>(value, tag: CacheKey.nbUnreadNotifs.name, permanent: true);
+    }
+    update();
+  }
+
+  int get nbUnreadNotifs {
+    if (Get.isRegistered<int>(tag: CacheKey.nbUnreadNotifs.name)) {
+      return Get.find<int>(tag: CacheKey.nbUnreadNotifs.name);
+    } else {
+      return 0;
+    }
+  }
+
+  Future<void> loadUnreadCount() async {
+    final res = await NotificationApi().getUnreadCount();
+    if (res.status) {
+      nbUnreadNotifs = res.data ?? 0;
+    }
   }
 }

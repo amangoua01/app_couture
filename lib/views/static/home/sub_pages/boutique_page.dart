@@ -26,15 +26,14 @@ class BoutiquePage extends StatelessWidget {
           return Scaffold(
             backgroundColor: const Color(0xFFF5F7FA), // Fond moderne
             appBar: AppBar(
-              backgroundColor: Colors.white,
               elevation: 0,
               title: const Text(
                 "Boutiques",
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               centerTitle: true,
-              iconTheme: const IconThemeData(color: Colors.black),
               bottom: ternaryFn(
                 condition: ctl.isSearching,
                 ifTrue: PreferredSize(
@@ -66,7 +65,6 @@ class BoutiquePage extends StatelessWidget {
                     ctl.isGridView
                         ? Icons.view_list_rounded
                         : Icons.grid_view_rounded,
-                    color: AppColors.primary,
                   ),
                   onPressed: () {
                     ctl.isGridView = !ctl.isGridView;

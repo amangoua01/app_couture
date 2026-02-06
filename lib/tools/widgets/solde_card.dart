@@ -1,4 +1,5 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -27,11 +28,14 @@ class SoldeCard extends StatelessWidget {
         ),
         const Gap(10),
         Expanded(
-          child: Text(
+          child: AutoSizeText(
             value,
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            minFontSize: 10,
+            maxFontSize: 20,
             style: const TextStyle(
-              fontSize: 15,
               fontWeight: FontWeight.bold,
             ),
           ),

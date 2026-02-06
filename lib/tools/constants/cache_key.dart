@@ -4,6 +4,7 @@ enum CacheKey {
   dashboard,
   entite,
   oldPrinters,
+  nbUnreadNotifs,
   firstTimeLaunch(deletable: false);
 
   final bool deletable;

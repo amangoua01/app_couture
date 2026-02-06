@@ -1,5 +1,6 @@
 import 'package:ateliya/api/facture_api.dart';
 import 'package:ateliya/data/models/mesure.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/paginated_data.dart';
 import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
@@ -16,7 +17,9 @@ class CommandeListVctl extends ListViewController<Mesure> {
   @override
   Future<void> getList({int page = 1, String? search}) async {
     startLoad(page);
-    final res = await (api as FactureApi).getFacturesEntreprise();
+    final res = await (api as FactureApi).getFacturesEntreprise(
+      getEntite().value.id.value,
+    );
 
     endLoad(page);
 

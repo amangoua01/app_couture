@@ -42,10 +42,11 @@ class FactureApi extends CrudWebController<Facture> {
     }
   }
 
-  Future<DataResponse<List<Mesure>>> getFacturesEntreprise() async {
+  Future<DataResponse<List<Mesure>>> getFacturesEntreprise(
+      int succursaleId) async {
     try {
       final response = await client.get(
-        urlBuilder(api: "entreprise"),
+        urlBuilder(api: "entreprise/$succursaleId"),
         headers: authHeaders,
       );
 
@@ -63,6 +64,8 @@ class FactureApi extends CrudWebController<Facture> {
   }
 
   Future<DataResponse<TransactionResponse>> getTransactions({
+    required int entityId,
+    required String type,
     String? date,
     String? month,
     String? dateDebut,
@@ -75,8 +78,10 @@ class FactureApi extends CrudWebController<Facture> {
       if (dateDebut != null) query['date_debut'] = dateDebut;
       if (dateFin != null) query['date_fin'] = dateFin;
 
-      final url = urlBuilder(api: "transactions", module: "paiement")
-          .replace(queryParameters: query);
+      final url = urlBuilder(
+        api: "transactions/$entityId/$type",
+        module: "paiement",
+      ).replace(queryParameters: query);
 
       final response = await client.get(url, headers: authHeaders);
 

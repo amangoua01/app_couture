@@ -1,5 +1,6 @@
 import 'package:ateliya/api/facture_api.dart';
 import 'package:ateliya/data/models/transaction_response.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
@@ -41,11 +42,21 @@ class TransactionPageVctl extends AuthViewController {
     final monthStr =
         "${focusedDay.year}-${focusedDay.month.toString().padLeft(2, '0')}";
 
+    final entity = getEntite().value;
     if (isMonthMode) {
-      res = await factureApi.getTransactions(month: monthStr);
+      res = await factureApi.getTransactions(
+        entityId: entity.id.value,
+        type: entity.type.name,
+        month: monthStr,
+      );
     } else {
       final dateStr = selectedDay!.toIso8601String().split('T')[0];
-      res = await factureApi.getTransactions(date: dateStr, month: monthStr);
+      res = await factureApi.getTransactions(
+        entityId: entity.id.value,
+        type: entity.type.name,
+        date: dateStr,
+        month: monthStr,
+      );
     }
 
     isLoading = false;

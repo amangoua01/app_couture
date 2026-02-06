@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -39,6 +40,17 @@ void main() async {
       GetMaterialApp(
         title: Env.appName,
         theme: AppTheme.light,
+        locale: const Locale("fr", "FR"),
+        fallbackLocale: const Locale('en', 'US'),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('fr', 'FR'),
+          Locale('en', 'US'),
+        ],
         builder: EasyLoading.init(),
         debugShowCheckedModeBanner: false,
         home: const SplashScreenPage(),

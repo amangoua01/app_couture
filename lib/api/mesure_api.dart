@@ -28,4 +28,43 @@ class MesureApi extends WebController {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+
+  Future<DataResponse<Mesure>> changeEtatmesure(
+      int ligneMesureId, String etat) async {
+    try {
+      final res = await client.post(
+        urlBuilder(api: "etat/$ligneMesureId", module: "mesure"),
+        headers: authHeaders,
+        body: jsonEncode({"etat": etat}),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: Mesure.fromJson(data["data"]));
+      } else {
+        return DataResponse.error(
+            message: data["message"] ?? res.reasonPhrase ?? "Erreur inconnu");
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  Future<DataResponse<Mesure>> changeEtatFacture(int id, String etat) async {
+    try {
+      final res = await client.post(
+        urlBuilder(api: "facture/etat/$id", module: "mesure"),
+        headers: authHeaders,
+        body: jsonEncode({"etatFacture": etat}),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: Mesure.fromJson(data["data"]));
+      } else {
+        return DataResponse.error(
+            message: data["message"] ?? res.reasonPhrase ?? "Erreur inconnu");
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 }

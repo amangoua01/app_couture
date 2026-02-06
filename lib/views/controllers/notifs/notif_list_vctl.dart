@@ -51,4 +51,16 @@ class NotifListVctl extends PaginableViewController<Notification> {
       }
     }
   }
+
+  Future<bool> deleteNotification(int notificationId) async {
+    final res = await api.delete(notificationId).load();
+    if (res.status) {
+      data.items.removeWhere((n) => n.id == notificationId);
+      update();
+      return true;
+    } else {
+      CAlertDialog.show(message: res.message);
+      return false;
+    }
+  }
 }

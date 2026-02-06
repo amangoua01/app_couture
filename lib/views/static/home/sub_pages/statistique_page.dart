@@ -5,6 +5,7 @@ import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/stat_card_item.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
+import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/tools/widgets/select_dash_period_sub_page.dart';
@@ -25,18 +26,17 @@ class StatistiquePage extends StatelessWidget {
       init: StatistiquePageVctl(),
       builder: (ctl) {
         return Scaffold(
-          backgroundColor: Colors.grey[50], // Light background
+          backgroundColor: Colors.grey[50],
           appBar: AppBar(
             title: const Text("Statistiques"),
-            backgroundColor: Colors.white,
             elevation: 0,
             centerTitle: true,
-            titleTextStyle: const TextStyle(
-              color: Colors.black87,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-            iconTheme: const IconThemeData(color: Colors.black87),
+            actions: [
+              NotifBadgeIcon(
+                count: ctl.nbUnreadNotifs,
+                onRefresh: () => ctl.loadUnreadCount(),
+              ),
+            ],
           ),
           body: PlaceholderWidget(
             condition: ctl.getEntite().value.isNotEmpty,

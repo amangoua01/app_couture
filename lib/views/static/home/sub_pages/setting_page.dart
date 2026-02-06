@@ -1,4 +1,5 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
 import 'package:ateliya/tools/widgets/setting_tile.dart';
 import 'package:ateliya/views/controllers/home/setting_page_vctl.dart';
 import 'package:ateliya/views/static/abonnements/abonnements_list_page.dart';
@@ -32,6 +33,12 @@ class SettingPage extends StatelessWidget {
               ),
               elevation: 0,
               centerTitle: true,
+              actions: [
+                NotifBadgeIcon(
+                  count: ctl.nbUnreadNotifs,
+                  onRefresh: () => ctl.loadUnreadCount(),
+                ),
+              ],
             ),
             body: ListView(
               padding: const EdgeInsets.all(20),

@@ -22,6 +22,12 @@ class CommandTile extends StatelessWidget {
         : 0.0;
     final bool isPaid = pourcentage >= 1.0;
 
+    // Calculer les jours restants jusqu'à la date de retrait
+    final int? joursRestants =
+        mesure!.dateRetrait?.difference(DateTime.now()).inDays;
+    final bool isUrgent =
+        joursRestants != null && joursRestants <= 2 && joursRestants >= 0;
+
     // Récupérer les états uniques des lignes de mesure
     final etats = mesure!.lignesMesures
         .where((ligne) => ligne.etat != null && ligne.etat!.isNotEmpty)
@@ -95,6 +101,42 @@ class CommandTile extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (isUrgent) ...[
+                  const Gap(8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.warning_rounded,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                        const Gap(4),
+                        Text(
+                          joursRestants == 0
+                              ? "AUJOURD'HUI"
+                              : joursRestants == 1
+                                  ? "DEMAIN"
+                                  : "URGENT",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
             const Gap(8),

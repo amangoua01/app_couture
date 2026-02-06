@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:ateliya/data/models/notifs/notif.dart';
+import 'package:ateliya/firebase_options.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -18,8 +19,8 @@ abstract class NotificationService {
 
   static Future<void> _initializeFirebaseNotification() async {
     await Firebase.initializeApp(
-        // options: DefaultFirebaseOptions.currentPlatform,
-        );
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     var settings = await _messaging.requestPermission();
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ateliya/data/models/abstract/fichier.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
+import 'package:ateliya/data/models/ligne_mesure.dart';
 import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/data/models/paiement_facture.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
@@ -45,7 +46,9 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
               );
             }
 
@@ -66,14 +69,13 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
               backgroundColor: Colors.grey[50],
               appBar: AppBar(
                 title: Text("Commande #${mesure.id ?? ''}"),
-                backgroundColor: Colors.white,
                 elevation: 0,
                 centerTitle: true,
                 titleTextStyle: const TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18),
-                iconTheme: const IconThemeData(color: Colors.black87),
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
                 actions: [
                   if (mesure.resteArgent > 0)
                     IconButton(
@@ -89,7 +91,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                           });
                         }
                       },
-                      icon: const Icon(Icons.payment, color: AppColors.primary),
+                      icon: const Icon(Icons.payment, color: Colors.white),
                       tooltip: "Ajouter un paiement",
                     ),
                 ],
@@ -97,6 +99,33 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
               body: ListView(
                 padding: const EdgeInsets.all(20),
                 children: [
+                  // Status Header
+                  if (mesure.etatFacture != null &&
+                      mesure.etatFacture!.isNotEmpty) ...[
+                    Row(
+                      children: [
+                        _buildEtatBadge(mesure.etatFacture!),
+                        const Gap(10),
+                        InkWell(
+                          onTap: () => _showFactureEtatSelector(ctl, mesure),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Icon(
+                              Icons.edit_outlined,
+                              size: 16,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Gap(15),
+                  ],
+
                   // Dates Section
                   _buildCard(
                     child: Row(
@@ -241,10 +270,33 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                       ],
                                     ),
                                   ),
-                                  Text(lm.montant.toAmount(unit: "F"),
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.primary)),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(lm.montant.toAmount(unit: "F"),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.primary)),
+                                      const Gap(8),
+                                      InkWell(
+                                        onTap: () => _showEtatSelector(ctl, lm),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary
+                                                .withOpacity(0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: const Icon(
+                                            Icons.edit_outlined,
+                                            size: 16,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                               if (lm.photoModele != null ||
@@ -263,6 +315,89 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                       _buildImageThumb(lm.photoPagne, "Pagne"),
                                   ],
                                 )
+                              ],
+                              // Mensurations section
+                              if (lm.mensurations.isNotEmpty) ...[
+                                const Gap(10),
+                                const Divider(),
+                                const Gap(10),
+                                Row(
+                                  children: [
+                                    Icon(Icons.straighten,
+                                        size: 16, color: Colors.grey[600]),
+                                    const Gap(6),
+                                    Text(
+                                      "Mensurations",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Gap(10),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: lm.mensurations
+                                      .where((m) => m.isActive)
+                                      .map((mensuration) => Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 8,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.primary
+                                                  .withOpacity(0.08),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: AppColors.primary
+                                                    .withOpacity(0.2),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  mensuration.categorieMesure
+                                                          ?.libelle ??
+                                                      "Mesure",
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey[700],
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                const Gap(6),
+                                                Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 2,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.primary,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4),
+                                                  ),
+                                                  child: Text(
+                                                    "${mensuration.taille.toStringAsFixed(1)} cm",
+                                                    style: const TextStyle(
+                                                      fontSize: 11,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ))
+                                      .toList(),
+                                ),
                               ]
                             ],
                           ),
@@ -307,6 +442,16 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                         ),
                       ),
                     ],
+                  ),
+                  const Gap(15),
+
+                  // Bouton pour imprimer les mensurations
+                  CButton(
+                    title: 'Imprimer Mensurations (BT)',
+                    color: AppColors.green,
+                    icon: const Icon(Icons.straighten,
+                        color: Colors.white, size: 18),
+                    onPressed: () => ctl.printClientMensurations(mesure),
                   ),
                   const Gap(20),
                 ],
@@ -498,6 +643,106 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showEtatSelector(DetailCommandPageVctl ctl, LigneMesure lm) {
+    if (lm.id == null) return;
+
+    final etats = ['En cours', 'Terminée', 'Livrée'];
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Changer l'état",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const Gap(15),
+              ...etats.map((etat) {
+                final isSelected = lm.etat == etat;
+                return ListTile(
+                  leading: Icon(
+                    isSelected ? Icons.check_circle : Icons.circle_outlined,
+                    color: isSelected ? AppColors.primary : Colors.grey,
+                  ),
+                  title: Text(etat),
+                  onTap: () async {
+                    Get.back();
+                    final updatedMesure =
+                        await ctl.changeEtatMesure(lm.id!, etat);
+                    if (updatedMesure != null) {
+                      setState(() {
+                        _mesure = updatedMesure;
+                      });
+                    }
+                  },
+                );
+              }),
+              const Gap(20),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showFactureEtatSelector(DetailCommandPageVctl ctl, Mesure mesure) {
+    if (mesure.id == null) return;
+
+    final etats = ['En cours', 'Terminée', 'Livrée'];
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Changer l'état de la commande",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const Gap(15),
+              ...etats.map((etat) {
+                final isSelected = mesure.etatFacture == etat;
+                return ListTile(
+                  leading: Icon(
+                    isSelected ? Icons.check_circle : Icons.circle_outlined,
+                    color: isSelected ? AppColors.primary : Colors.grey,
+                  ),
+                  title: Text(etat),
+                  onTap: () async {
+                    Get.back();
+                    final updatedMesure =
+                        await ctl.changeEtatFacture(mesure.id!, etat);
+                    if (updatedMesure != null) {
+                      setState(() {
+                        _mesure = updatedMesure;
+                      });
+                    }
+                  },
+                );
+              }),
+              const Gap(20),
+            ],
+          ),
+        );
+      },
     );
   }
 }

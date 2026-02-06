@@ -1,23 +1,20 @@
 import 'package:ateliya/api/boutique_api.dart';
-import 'package:ateliya/data/models/paiement_boutique.dart';
+import 'package:ateliya/data/models/vente.dart';
+import 'package:ateliya/tools/constants/periode_vente_enum.dart';
 import 'package:ateliya/tools/models/paginated_data.dart';
 import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
+import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 
-class VenteListVctl extends ListViewController<PaiementBoutique> {
+class VenteListVctl extends ListViewController<Vente>
+    with PrinterManagerViewMixin {
   VenteListVctl() : super(BoutiqueApi());
 
-  String periode = "Aujourd'hui";
+  PeriodeVenteEnum periode = PeriodeVenteEnum.aujourdhui;
   DateTime? dateDebut;
   DateTime? dateFin;
 
-  final List<String> periodes = [
-    "Aujourd'hui",
-    "7 derniers jours",
-    "Tous",
-  ];
-
-  void changePeriode(String p) {
+  void changePeriode(PeriodeVenteEnum p) {
     periode = p;
     update();
     getList();
@@ -40,25 +37,18 @@ class VenteListVctl extends ListViewController<PaiementBoutique> {
 
     final Map<String, dynamic> filters = {};
 
-    if (periode == "Aujourd'hui") {
-      filters["periode"] = "aujourd_hui";
-    } else if (periode == "7 derniers jours") {
-      filters["periode"] = "7_derniers_jours";
-    } else {
-      // Cas "Tous" -> par défaut mois en cours (selon algo serveur)
-      var start = dateDebut;
-      var end = dateFin;
+    filters["periode"] = periode.code;
 
-      if (start == null || end == null) {
-        final now = DateTime.now();
-        start = DateTime(now.year, now.month, 1);
-        end = now;
-      }
-
-      filters["periode"] = "personnalisee";
-      filters["date_debut"] = start.toIso8601String().split('T')[0];
-      filters["date_fin"] = end.toIso8601String().split('T')[0];
+    // Cas "Tous" -> par défaut mois en cours (selon algo serveur)
+    var start = dateDebut;
+    var end = dateFin;
+    if (start == null || end == null) {
+      final now = DateTime.now();
+      start = DateTime(now.year, now.month, 1);
+      end = now;
     }
+    filters["date_debut"] = start.toIso8601String().split('T')[0];
+    filters["date_fin"] = end.toIso8601String().split('T')[0];
 
     final res = await (api as BoutiqueApi).getVentes(entiteId, filters);
 

@@ -19,7 +19,9 @@ class VenteListSubPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.primary,
         onPressed: () => CBottomSheet.show(
           child: GetBuilder(
               init: ctl,
@@ -27,6 +29,14 @@ class VenteListSubPage extends StatelessWidget {
                 return ListView(
                   padding: const EdgeInsets.all(20),
                   children: [
+                    const Text(
+                      "Filtrer les ventes",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Gap(20),
                     CDateFormField(
                       labelText: 'Date début',
                       controller: ctl.filterVente.dateDebut,
@@ -92,78 +102,273 @@ class VenteListSubPage extends StatelessWidget {
           }
 
           if (ctl.details == null || ctl.filteredVentes.isEmpty) {
-            return const Center(
-              child: Text(
-                'Aucune vente disponible',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.shopping_bag_outlined,
+                    size: 80,
+                    color: Colors.grey[300],
+                  ),
+                  const Gap(16),
+                  const Text(
+                    'Aucune vente disponible',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const Gap(8),
+                  Text(
+                    'Les ventes apparaîtront ici',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[400],
+                    ),
+                  ),
+                ],
               ),
             );
           }
 
-          return ListView.builder(
+          return ListView.separated(
+            padding: const EdgeInsets.all(16),
             itemCount: ctl.filteredVentes.length,
+            separatorBuilder: (_, __) => const Gap(12),
             itemBuilder: (context, i) {
               final vente = ctl.filteredVentes[i];
               final client = vente.paiementBoutique?.client;
+              final montantUnitaire = vente.montant?.toDouble().value ?? 0.0;
+              final quantite = vente.quantite ?? 0;
+              final montantTotal =
+                  vente.paiementBoutique?.montant?.toDouble().value ?? 0.0;
 
-              return ListTile(
-                leading: CircleAvatar(
-                  child: SvgPicture.asset(
-                    'assets/images/svg/bag.svg',
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.yellow,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                ),
-                title: Text(
-                  "${vente.quantite ?? 0} article(s) X ${vente.montant?.toDouble().toAmount(unit: 'F') ?? '0 F'}",
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Total: ${vente.paiementBoutique?.montant?.toDouble().toAmount(unit: 'F') ?? '0 F'}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'Réf: ${vente.paiementBoutique?.reference ?? '-'}',
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    Text(
-                      vente.paiementBoutique?.createdAt?.toFrenchDateTime ??
-                          '-',
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                trailing: client != null
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                child: Column(
+                  children: [
+                    // En-tête avec icône et référence
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.05),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                      ),
+                      child: Row(
                         children: [
-                          Text(
-                            client.fullName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: SvgPicture.asset(
+                              'assets/images/svg/bag.svg',
+                              width: 24,
+                              height: 24,
+                              colorFilter: const ColorFilter.mode(
+                                AppColors.primary,
+                                BlendMode.srcIn,
+                              ),
                             ),
                           ),
-                          Text(
-                            client.tel ?? '',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey,
+                          const Gap(12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  vente.paiementBoutique?.reference ?? 'N/A',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const Gap(2),
+                                Text(
+                                  vente.paiementBoutique?.createdAt
+                                          ?.toFrenchDateTime ??
+                                      '-',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.green.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              montantTotal.toAmount(unit: 'F'),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.green,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
                         ],
-                      )
-                    : null,
+                      ),
+                    ),
+
+                    // Détails de la vente
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          // Ligne quantité et prix unitaire
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildInfoRow(
+                                  icon: Icons.inventory_2_outlined,
+                                  label: 'Quantité',
+                                  value:
+                                      '$quantite article${quantite > 1 ? 's' : ''}',
+                                ),
+                              ),
+                              const Gap(16),
+                              Expanded(
+                                child: _buildInfoRow(
+                                  icon: Icons.attach_money,
+                                  label: 'Prix unitaire',
+                                  value: montantUnitaire.toAmount(unit: 'F'),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // Client si disponible
+                          if (client != null) ...[
+                            const Gap(12),
+                            const Divider(height: 1),
+                            const Gap(12),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.person_outline,
+                                    size: 20,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                                const Gap(12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        client.fullName,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      if (client.tel != null &&
+                                          client.tel!.isNotEmpty) ...[
+                                        const Gap(2),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.phone_outlined,
+                                              size: 14,
+                                              color: Colors.grey[600],
+                                            ),
+                                            const Gap(4),
+                                            Text(
+                                              client.tel!,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           );
         },
       ),
+    );
+  }
+
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 18,
+          color: Colors.grey[600],
+        ),
+        const Gap(8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey[600],
+                ),
+              ),
+              const Gap(2),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

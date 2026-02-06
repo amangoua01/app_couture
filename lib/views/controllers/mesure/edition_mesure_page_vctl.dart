@@ -2,6 +2,7 @@ import 'package:ateliya/api/client_api.dart';
 import 'package:ateliya/api/mesure_api.dart';
 import 'package:ateliya/data/dto/mesure/mesure_dto.dart';
 import 'package:ateliya/data/models/client.dart';
+import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/data/models/succursale.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
@@ -10,10 +11,12 @@ import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
 import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
+import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 
-class EditionMesurePageVctl extends AuthViewController {
+class EditionMesurePageVctl extends AuthViewController
+    with PrinterManagerViewMixin {
   int page = 0;
   final signatureCtl = SignatureController(
     penStrokeWidth: 5,
@@ -134,6 +137,24 @@ class EditionMesurePageVctl extends AuthViewController {
         final res = await mesureApi.create(mesure).load();
         if (res.status) {
           CAlertDialog.show(message: "Mesure enregistrée avec succès.");
+
+          // Vérifier si une imprimante est disponible
+          final printerAvailable = await isPrinterAvailable();
+
+          if (printerAvailable && res.data != null) {
+            // Proposer l'impression des mensurations
+            final printChoice = await CChoiceMessageDialog.show(
+              message:
+                  "Voulez-vous imprimer les informations du client et les mensurations ?",
+            );
+
+            if (printChoice == true) {
+              // Convertir le DTO en Mesure pour l'impression
+              final createdMesure = res.data as Mesure;
+              await printClientMensurationsReceipt(createdMesure);
+            }
+          }
+
           clearForm();
         } else {
           CAlertDialog.show(message: res.message);

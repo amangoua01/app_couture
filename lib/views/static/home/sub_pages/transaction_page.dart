@@ -3,6 +3,7 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
+import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/views/controllers/home/transaction_page_vctl.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
@@ -21,22 +22,18 @@ class TransactionPage extends StatelessWidget {
         return Scaffold(
           backgroundColor: const Color(0xFFF5F7FA), // Fond gris clair moderne
           appBar: AppBar(
-            backgroundColor: const Color(0xFFF5F7FA),
             elevation: 0,
             centerTitle: true,
-            title: const Text(
-              "Transactions",
-              style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-            ),
-            iconTheme: const IconThemeData(color: Colors.black),
+            title: const Text("Transactions"),
             actions: [
               IconButton(
                 onPressed: () => _showDatePicker(context),
-                icon:
-                    const Icon(Icons.filter_list_rounded, color: Colors.black),
+                icon: const Icon(Icons.filter_list_rounded),
               ),
-              const Gap(10),
+              NotifBadgeIcon(
+                count: ctl.nbUnreadNotifs,
+                onRefresh: () => ctl.loadUnreadCount(),
+              ),
             ],
           ),
           body: PlaceholderWidget(
@@ -151,11 +148,15 @@ class TransactionPage extends StatelessWidget {
                       borderRadius:
                           const BorderRadius.vertical(top: Radius.circular(30)),
                       child: ctl.data == null
-                          ? const EmptyDataWidget()
+                          ? EmptyDataWidget(
+                              onRefresh: ctl.fetchData,
+                            )
                           : ctl.data!.transactions.isEmpty
-                              ? const EmptyDataWidget(
+                              ? EmptyDataWidget(
                                   message:
-                                      "Aucune transaction pour cette période")
+                                      "Aucune transaction pour cette période",
+                                  onRefresh: ctl.fetchData,
+                                )
                               : ListView.builder(
                                   padding: const EdgeInsets.all(20),
                                   itemCount: ctl.data!.transactions.length,

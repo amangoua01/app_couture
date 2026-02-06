@@ -1,9 +1,9 @@
 import 'package:ateliya/data/models/abonnement.dart';
 import 'package:ateliya/data/models/abstract/model_json.dart';
-import 'package:ateliya/data/models/meilleure_vente.dart';
 import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/data/models/settings.dart';
 import 'package:ateliya/data/models/stats/kpis.dart';
+import 'package:ateliya/data/models/vente.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -14,7 +14,7 @@ class AccueilData extends ModelJson {
   Settings? settings;
   List<Abonnement> abonnements = [];
   List<Mesure> commandes = [];
-  List<MeilleureVente> meilleuresVentes = [];
+  List<Vente> meilleuresVentes = [];
 
   Kpis get kpis => Kpis(
         clientsActifs: settings?.nombreUser ?? 0,
@@ -49,7 +49,7 @@ class AccueilData extends ModelJson {
     }
     if (json["meilleuresVentes"] != null) {
       meilleuresVentes = (json["meilleuresVentes"] as List)
-          .map((e) => MeilleureVente.fromJson(e))
+          .map((e) => Vente.fromJson(e))
           .toList();
     }
   }

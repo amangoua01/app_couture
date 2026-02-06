@@ -45,8 +45,48 @@ class NotificationApi extends WebController {
 
   Future<DataResponse<bool>> markAsRead(int notificationId) async {
     try {
-      final res = await client.put(
-        urlBuilder(api: "$notificationId/mark-as-read"),
+      final res = await client.post(
+        urlBuilder(api: "$notificationId/read"),
+        headers: authHeaders,
+      );
+
+      final data = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: true);
+      } else {
+        return DataResponse.error(
+            message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue');
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  Future<DataResponse<int>> getUnreadCount() async {
+    try {
+      final res = await client.get(
+        urlBuilder(api: "count-unread"),
+        headers: authHeaders,
+      );
+
+      final data = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: data['data']["count"] ?? 0);
+      } else {
+        return DataResponse.error(
+            message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue');
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  Future<DataResponse<bool>> delete(int notificationId) async {
+    try {
+      final res = await client.delete(
+        urlBuilder(api: "$notificationId"),
         headers: authHeaders,
       );
 
