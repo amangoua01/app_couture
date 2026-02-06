@@ -15,4 +15,10 @@
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+    
+    <style name="UCropTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#53B0B7</item>
+        <item name="colorPrimaryDark">#408C91</item>
+        <item name="colorAccent">#D4AF37</item>
+    </style>
 </resources>
