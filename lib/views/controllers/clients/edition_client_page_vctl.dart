@@ -109,7 +109,7 @@ class EditionClientPageVctl extends EditionViewController<Client, ClientApi> {
   }
 
   Future<void> pickPhoto() async {
-    final file = await CBottomImagePicker.show();
+    final file = await CBottomImagePicker.show(cropImage: true);
     if (file != null) {
       photo = FichierLocal.fromFile(file);
       update();

@@ -367,7 +367,7 @@ class HomePage extends StatelessWidget {
                                   child: Text(
                                     showBestSales
                                         ? "Meilleures ventes (${ctl.data.meilleuresVentes.length})"
-                                        : "Mes commandes (${ctl.data.commandes.length})",
+                                        : "Mes mesures (${ctl.data.commandes.length})",
                                     style: const TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,

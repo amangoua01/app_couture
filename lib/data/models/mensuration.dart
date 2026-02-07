@@ -35,7 +35,7 @@ class Mensuration extends ModelJson {
   Map<String, dynamic> toJson() => {
         "id": id,
         "taille": taille,
-        "categorieMesure": categorieMesure?.toJson(),
+        "categorieId": categorieMesure?.id,
         "createdAt": createdAt?.toIso8601String(),
         "isActive": isActive,
       };

@@ -13,14 +13,14 @@ abstract class ImageCropperService {
         AndroidUiSettings(
           toolbarTitle: 'Redimension',
           toolbarColor: AppColors.primary,
-          toolbarWidgetColor: Colors.black,
-          aspectRatioPresets: [
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.square,
-          ],
+          toolbarWidgetColor: Colors.white,
+          statusBarColor: AppColors.primary,
+          activeControlsWidgetColor: AppColors.primary,
         ),
         IOSUiSettings(
           title: 'Redimension',
+          doneButtonTitle: 'Valider',
+          cancelButtonTitle: 'Annuler',
           aspectRatioPresets: [
             CropAspectRatioPreset.original,
             CropAspectRatioPreset.square,
