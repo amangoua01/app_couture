@@ -20,5 +20,9 @@
         <item name="colorPrimary">#53B0B7</item>
         <item name="colorPrimaryDark">#408C91</item>
         <item name="colorAccent">#D4AF37</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">#408C91</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 </resources>
