@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:ateliya/api/abstract/web_controller.dart';
 import 'package:ateliya/data/dto/update_profil_dto.dart';
@@ -17,7 +18,11 @@ class AuthApi extends WebController {
     final response = await client.post(
       urlBuilder(module: "", api: "login"),
       headers: headers,
-      body: {"login": login, "password": password}.parseToJson(),
+      body: {
+        "login": login,
+        "password": password,
+        "device": Platform.operatingSystem,
+      }.parseToJson(),
     );
 
     final json = jsonDecode(response.body);
