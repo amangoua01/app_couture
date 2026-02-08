@@ -76,7 +76,10 @@ class VenteBoutiqueListPage extends StatelessWidget {
                         child: VenteTile(
                           item,
                           onPrint: () async {
-                            await ctl.printVenteReceipt(item);
+                            await ctl.printVenteReceipt(
+                              item,
+                              ctl.user.entreprise?.libelle ?? "Boutique",
+                            );
                           },
                         ),
                       );

@@ -166,7 +166,10 @@ class PrintListPageVctl extends GetxController with PrinterManagerViewMixin {
       selectedPrinter = device;
       update();
 
-      CAlertDialog.show(message: "Connecté avec succès à ${device.name}");
+      CAlertDialog.show(
+        message: "Connecté avec succès à ${device.name}",
+        isSuccess: true,
+      );
       await SoundService.playBeep();
 
       // Ajout historique
@@ -178,8 +181,9 @@ class PrintListPageVctl extends GetxController with PrinterManagerViewMixin {
     } else {
       await SoundService.playError();
       CAlertDialog.show(
-          message:
-              "Échec de la connexion à ${device.name}.\nVérifiez qu'elle est allumée.");
+        message:
+            "Échec de la connexion à ${device.name}.\nVérifiez qu'elle est allumée.",
+      );
     }
   }
 

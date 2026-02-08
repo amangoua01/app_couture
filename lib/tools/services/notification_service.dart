@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:ateliya/data/models/notifs/notif.dart';
+import 'package:ateliya/data/models/notification.dart';
 import 'package:ateliya/firebase_options.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,7 +38,7 @@ abstract class NotificationService {
     }
   }
 
-  static Future<void> showNotif(Notif notif) async {
+  static Future<void> showNotif(Notification notif) async {
     var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       'moomen_channel',
       'Moomen channel',
@@ -60,8 +60,8 @@ abstract class NotificationService {
 
     await _localNotifPlugin.show(
       notif.idOrRandom,
-      notif.title,
-      notif.body,
+      notif.titre,
+      notif.libelle,
       platformChannelSpecifics,
     );
   }
@@ -82,12 +82,12 @@ abstract class NotificationService {
   static Future<void> onListen({
     void Function(
       RemoteMessage? message,
-      Notif notif,
+      Notification notif,
     )? handler,
   }) async {
     FirebaseMessaging.onMessage.listen(
       (message) {
-        final notif = Notif.fromRemonteMessage(message);
+        final notif = Notification.fromRemonteMessage(message);
         if (Platform.isAndroid) showNotif(notif);
         if (handler != null) handler(message, notif);
       },
@@ -107,10 +107,7 @@ abstract class NotificationService {
 @pragma('vm:entry-point')
 Future<void> onBackgroundMessage(RemoteMessage message) async {
   if (message.data.isNotEmpty) {
-    var notif = Notif(
-      title: message.data["title"],
-      body: message.data["body"],
-    );
+    var notif = Notification.fromRemonteMessage(message);
     NotificationService.showNotif(notif);
   }
 }

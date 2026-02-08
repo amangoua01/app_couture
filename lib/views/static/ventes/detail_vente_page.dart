@@ -293,7 +293,8 @@ class DetailVentePage extends StatelessWidget {
                   title: 'Imprimer (BT)',
                   color: Colors.black87,
                   icon: const Icon(Icons.print, color: Colors.white, size: 18),
-                  onPressed: () => ctl.printReceipt(vente),
+                  onPressed: () => ctl.printReceipt(
+                      vente, ctl.user.entreprise?.libelle ?? "Boutique"),
                 ),
                 const Gap(20),
               ],

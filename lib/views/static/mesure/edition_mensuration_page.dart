@@ -38,10 +38,14 @@ class EditionMensurationPage extends StatelessWidget {
                                 require: true,
                                 enabled: e.isActive,
                                 initialValue: e.valeur.toString(),
-                                // keyboardType: TextInputType.number,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                  decimal: true,
+                                ),
                                 onChanged: (value) {
                                   e.valeur = value.toDouble().value;
                                 },
+                                suffix: const Text("CM"),
                               ),
                             ),
                             Checkbox(

@@ -186,24 +186,23 @@ class AuthApi extends WebController {
     }
   }
 
-  Future<DataResponse<User>> updateFcmToken(
+  Future<DataResponse<int>> updateFcmToken(
       {required String fcmToken, required String login}) async {
     try {
       final response = await client.post(
-        urlBuilder(api: "device-token"),
+        urlBuilder(api: "device-token", module: ""),
         body: {"login": login, "token": fcmToken}.parseToJson(),
         headers: authHeaders,
       );
 
       final json = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        final user = User.fromJson(json["data"]);
-        return DataResponse<User>.success(data: user);
+        return DataResponse<int>.success(data: json["user_id"]);
       } else {
-        return DataResponse<User>.error(message: json["message"]);
+        return DataResponse<int>.error(message: json["message"]);
       }
     } catch (e, st) {
-      return DataResponse<User>.error(systemError: e, stackTrace: st);
+      return DataResponse<int>.error(systemError: e, stackTrace: st);
     }
   }
 }

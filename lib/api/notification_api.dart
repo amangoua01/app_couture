@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ateliya/api/abstract/web_controller.dart';
 import 'package:ateliya/data/models/notification.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 
 class NotificationApi extends WebController {
@@ -56,7 +57,11 @@ class NotificationApi extends WebController {
         return DataResponse.success(data: true);
       } else {
         return DataResponse.error(
-            message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue');
+          message: data['message'] ??
+              res.reasonPhrase.defaultValue(
+                'Erreur inconnue',
+              ),
+        );
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -76,7 +81,11 @@ class NotificationApi extends WebController {
         return DataResponse.success(data: data['data']["count"] ?? 0);
       } else {
         return DataResponse.error(
-            message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue');
+          message: data['message'] ??
+              res.reasonPhrase.defaultValue(
+                'Erreur inconnue',
+              ),
+        );
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -96,7 +105,11 @@ class NotificationApi extends WebController {
         return DataResponse.success(data: true);
       } else {
         return DataResponse.error(
-            message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue');
+          message: data['message'] ??
+              res.reasonPhrase.defaultValue(
+                'Erreur inconnue',
+              ),
+        );
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);

@@ -1,10 +1,13 @@
+import 'dart:math';
+
 import 'package:ateliya/data/models/abstract/model.dart';
 import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Notification extends Model<Notification> {
-  bool? etat;
+  bool isRead = false;
   String? titre;
   String? libelle;
   String? createdAt;
@@ -12,7 +15,7 @@ class Notification extends Model<Notification> {
 
   Notification({
     super.id,
-    this.etat,
+    this.isRead = false,
     this.titre,
     this.libelle,
     this.createdAt,
@@ -21,7 +24,7 @@ class Notification extends Model<Notification> {
 
   Notification.fromJson(Json json) {
     id = json['id'];
-    etat = json['etat'];
+    isRead = json['etat'] ?? false;
     titre = json['titre'];
     libelle = json['libelle'];
     createdAt = json['createdAt'];
@@ -34,7 +37,7 @@ class Notification extends Model<Notification> {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'etat': etat,
+      'etat': isRead,
       'titre': titre,
       'libelle': libelle,
       'createdAt': createdAt,
@@ -67,4 +70,18 @@ class Notification extends Model<Notification> {
       return date.toFrenchDateTime;
     }
   }
+
+  Notification.fromRemonteMessage(RemoteMessage message) {
+    if (message.notification != null) {
+      titre = message.notification!.title;
+      libelle = message.notification!.body;
+    } else {
+      titre = message.data["title"];
+      libelle = message.data["body"];
+    }
+  }
+
+  int get idOrRandom => Random().nextInt(9999);
+
+  String get initial => (titre != null) ? titre!.substring(0, 1) : "N";
 }

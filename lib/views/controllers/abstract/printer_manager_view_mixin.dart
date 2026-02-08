@@ -37,8 +37,9 @@ mixin PrinterManagerViewMixin {
   }
 
   /// Imprimer le reçu d'une vente (Boutique)
-  Future<void> printVenteReceipt(Vente vente) async {
-    await _printGenericReceipt(() => _generateVenteBytes(vente));
+  Future<void> printVenteReceipt(Vente vente, String entrepriseName) async {
+    await _printGenericReceipt(
+        () => _generateVenteBytes(vente, entrepriseName));
   }
 
   /// Imprimer le reçu d'un paiement spécifique
@@ -96,11 +97,11 @@ mixin PrinterManagerViewMixin {
     }
   }
 
-  void _promptConnection() {
-    CAlertDialog.show(
+  void _promptConnection() async {
+    await CAlertDialog.show(
       message: "Aucune imprimante connectée. Veuillez en sélectionner une.",
-      onConfirm: () => Get.to(() => const PrintListPage()),
     );
+    Get.to(() => const PrintListPage());
   }
 
   String _normalize(String text) {
@@ -268,7 +269,8 @@ mixin PrinterManagerViewMixin {
     return bytes;
   }
 
-  Future<List<int>?> _generateVenteBytes(Vente vente) async {
+  Future<List<int>?> _generateVenteBytes(
+      Vente vente, String entrepriseName) async {
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = [];
@@ -276,7 +278,7 @@ mixin PrinterManagerViewMixin {
     bytes += generator.reset();
     bytes += generator.setGlobalCodeTable('CP1252');
 
-    bytes += generator.text("BOUTIQUE",
+    bytes += generator.text(entrepriseName,
         styles: const PosStyles(
             align: PosAlign.center, bold: true, height: PosTextSize.size2));
     bytes += generator.hr();
@@ -336,13 +338,15 @@ mixin PrinterManagerViewMixin {
             text: _normalize(item.modeleBoutique?.modele?.libelle ?? "Article"),
             width: 5),
         PosColumn(
-            text: item.quantite?.toString() ?? "1",
-            width: 2,
-            styles: const PosStyles(align: PosAlign.center)),
+          text: item.quantite?.toString() ?? "1",
+          width: 2,
+          styles: const PosStyles(align: PosAlign.center),
+        ),
         PosColumn(
-            text: _normalize((item.total).toInt().toString()),
-            width: 5,
-            styles: const PosStyles(align: PosAlign.right)),
+          text: _normalize((item.total).toInt().toString()),
+          width: 5,
+          styles: const PosStyles(align: PosAlign.right),
+        ),
       ]);
     }
     bytes += generator.hr();

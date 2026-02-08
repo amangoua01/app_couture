@@ -21,18 +21,18 @@ class TypeMesureDto extends DtoModel {
         id: model.id.value,
         libelle: model.libelle.value,
         mensurations: model.categories
-            .map((e) => MensurationDto(categorieMesure: e, valeur: 0))
+            .map((e) => MensurationDto(categorieMesure: e))
             .toList(),
       );
 
   set model(TypeMesure model) {
-    id = model.id.value;
-    libelle = model.libelle.value;
     if (id != model.id) {
       mensurations = model.categories
-          .map((e) => MensurationDto(categorieMesure: e, valeur: 0))
+          .map((e) => MensurationDto(categorieMesure: e))
           .toList();
     }
+    id = model.id.value;
+    libelle = model.libelle.value;
   }
 
   @override

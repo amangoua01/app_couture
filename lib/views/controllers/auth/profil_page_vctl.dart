@@ -30,11 +30,15 @@ class ProfilPageVctl extends AuthViewController {
       logoUserPath = FichierLocal(path: user.photoProfil.value);
     }
 
-    if (user.entreprise != null &&
-        (user.entreprise?.logo is FichierServer?) &&
-        (user.entreprise?.logo as FichierServer).path?.isNotEmpty == false) {
-      logoEntreprisePath =
-          FichierLocal(path: (user.entreprise?.logo as FichierServer).path!);
+    if (user.entreprise != null) {
+      if ((user.entreprise?.logo is FichierServer?) &&
+          (user.entreprise?.logo as FichierServer).path?.isNotEmpty == false) {
+        logoEntreprisePath =
+            FichierLocal(path: (user.entreprise?.logo as FichierServer).path!);
+      }
+      nomEntrepriseCtl.text = user.entreprise!.libelle.value;
+      telephoneEntrepriseCtl.text = user.entreprise!.numero.value;
+      emailEntrepriseCtl.text = user.entreprise!.email.value;
     }
   }
 
@@ -53,8 +57,10 @@ class ProfilPageVctl extends AuthViewController {
         user.prenoms = dto.prenom;
         user = user;
         update();
-        CAlertDialog.show(message: "Profil mis à jour avec succès");
-        update();
+        CAlertDialog.show(
+          message: "Profil mis à jour avec succès",
+          isSuccess: true,
+        );
       } else {
         CAlertDialog.show(message: res.message);
       }
@@ -84,7 +90,10 @@ class ProfilPageVctl extends AuthViewController {
         user = user;
         logoEntreprisePath = null; // Réinitialiser le chemin du logo
         update();
-        CAlertDialog.show(message: "Entreprise mise à jour avec succès");
+        CAlertDialog.show(
+          message: "Entreprise mise à jour avec succès",
+          isSuccess: true,
+        );
       } else {
         CAlertDialog.show(message: res.message);
       }

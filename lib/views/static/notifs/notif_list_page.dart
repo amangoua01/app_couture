@@ -43,13 +43,14 @@ class NotifListPage extends StatelessWidget {
                     )
                   : RefreshIndicator(
                       onRefresh: () => ctl.getList(),
-                      child: ListView.builder(
+                      child: ListView.separated(
+                        separatorBuilder: (context, index) => const Gap(10),
                         padding: const EdgeInsets.all(10),
                         controller: ctl.scrollCtl,
                         itemCount: ctl.data.length,
                         itemBuilder: (context, index) {
                           final notification = ctl.data.items[index];
-                          final isUnread = notification.etat == false;
+                          final isUnread = notification.isRead;
 
                           return Dismissible(
                             key: Key(notification.id.toString()),
@@ -191,7 +192,7 @@ class NotifListPage extends StatelessWidget {
                                 ),
                                 onTap: () {
                                   if (isUnread && notification.id != null) {
-                                    ctl.markAsRead(notification.id!);
+                                    ctl.markAsRead(notification);
                                   }
                                   Get.to(() => DetailNotifPage(
                                       notification: notification));

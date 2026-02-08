@@ -27,6 +27,7 @@ class EditionTypeMesurePage extends StatelessWidget {
             CTextFormField(
               externalLabel: "Nom du type",
               controller: ctl.libelleCtl,
+              readOnly: true,
             ),
             PlaceholderBuilder(
               condition: item != null,

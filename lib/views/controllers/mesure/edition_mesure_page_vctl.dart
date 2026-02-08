@@ -30,7 +30,7 @@ class EditionMesurePageVctl extends AuthViewController
   final remiseGlobaleCtl = TextEditingController();
   final formKeyPaiement = GlobalKey<FormState>();
 
-  List<PriseMesureStep> pages = [
+  final pages = const [
     PriseMesureStep(
       title: "Faisons connaissance",
       subtitle: "Informations personnelles",
@@ -136,7 +136,10 @@ class EditionMesurePageVctl extends AuthViewController
         mesure.avance = avanceCtl.toDouble();
         final res = await mesureApi.create(mesure).load();
         if (res.status) {
-          CAlertDialog.show(message: "Mesure enregistrée avec succès.");
+          CAlertDialog.show(
+            message: "Mesure enregistrée avec succès.",
+            isSuccess: true,
+          );
 
           // Vérifier si une imprimante est disponible
           final printerAvailable = await isPrinterAvailable();

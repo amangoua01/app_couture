@@ -45,30 +45,57 @@ class EditionPieceCouturePage extends StatelessWidget {
                   externalLabel: "Nom tenantier",
                   textCapitalization: TextCapitalization.words,
                 ),
-                CTextFormField(
-                  controller: ctl.montantCtl,
-                  keyboardType: TextInputType.number,
-                  externalLabel: 'Montant',
-                  require: true,
+                Row(
+                  children: [
+                    Expanded(
+                      child: CTextFormField(
+                        controller: ctl.montantCtl,
+                        keyboardType: TextInputType.number,
+                        externalLabel: 'Montant',
+                        require: true,
+                      ),
+                    ),
+                    const Gap(10),
+                    Expanded(
+                      child: CTextFormField(
+                        controller: ctl.remiseCtl,
+                        externalLabel: 'Remise',
+                        keyboardType: TextInputType.number,
+                        validator: (e) {
+                          if (e != null && e.isNotEmpty) {
+                            final val = double.tryParse(e);
+                            if (val == null) {
+                              return "Veuillez entrer un nombre valide";
+                            } else {
+                              if (val > ctl.montantCtl.text.toDouble().value) {
+                                return "La remise ne peut pas être supérieure au montant";
+                              }
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                CTextFormField(
-                  controller: ctl.remiseCtl,
-                  externalLabel: 'Remise',
-                  keyboardType: TextInputType.number,
-                  validator: (e) {
-                    if (e != null && e.isNotEmpty) {
-                      final val = double.tryParse(e);
-                      if (val == null) {
-                        return "Veuillez entrer un nombre valide";
-                      } else {
-                        if (val > ctl.montantCtl.text.toDouble().value) {
-                          return "La remise ne peut pas être supérieure au montant";
-                        }
-                      }
+                const Gap(10),
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text("Le client a un tissu/pagne"),
+                  subtitle: const Text(
+                    "Cochez cette case si le client a un tissu/pagne",
+                  ),
+                  value: ctl.hasImagePagne,
+                  onChanged: (e) {
+                    if (e == false) {
+                      ctl.pagneImageFile = null;
+                      ctl.modeleImageFile = null;
                     }
-                    return null;
+                    ctl.hasImagePagne = e ?? false;
+                    ctl.update();
                   },
                 ),
+                const Gap(20),
                 Container(
                   margin: const EdgeInsets.only(bottom: 20),
                   height: 150,
@@ -105,6 +132,11 @@ class EditionPieceCouturePage extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+                CTextFormField(
+                  controller: ctl.descriptionCtl,
+                  externalLabel: "Description",
+                  maxLines: 3,
                 ),
                 CButton(onPressed: ctl.submit),
               ],

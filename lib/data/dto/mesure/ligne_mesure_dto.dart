@@ -11,6 +11,8 @@ class LigneMesureDto extends DtoModel {
   String? pagneImagePath;
   String? modeleImagePath;
   TypeMesureDto? typeMesureDto;
+  bool withOutTissu = true;
+  String? description;
 
   LigneMesureDto({
     this.modeleImagePath,
@@ -20,6 +22,8 @@ class LigneMesureDto extends DtoModel {
     this.nomClient,
     this.mensurationDto,
     this.typeMesureDto,
+    this.withOutTissu = true,
+    this.description,
   });
 
   @override
@@ -29,6 +33,8 @@ class LigneMesureDto extends DtoModel {
         "nomClient": nomClient,
         "mensurationDto": mensurationDto,
         "typeMesure": typeMesureDto,
+        "withOutTissu": withOutTissu,
+        "description": description,
       };
 
   double get total => montant - remise;

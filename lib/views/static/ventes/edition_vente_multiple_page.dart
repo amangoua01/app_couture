@@ -291,7 +291,7 @@ class EditionVenteMultiplePage extends StatelessWidget {
         TextEditingController(text: (itemToEdit?.quantite ?? 1).toString());
 
     CBottomSheet.show(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,

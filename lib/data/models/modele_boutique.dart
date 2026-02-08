@@ -23,6 +23,7 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
   String? createdAt;
   bool? isActive;
   Boutique? boutique;
+  User? creator;
 
   ModeleBoutique({
     this.quantite,
@@ -74,6 +75,8 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
     isActive = json['isActive'];
     boutique =
         json['boutique'] != null ? Boutique.fromJson(json['boutique']) : null;
+    creator =
+        json['createdBy'] != null ? User.fromJson(json['createdBy']) : null;
   }
 
   @override
