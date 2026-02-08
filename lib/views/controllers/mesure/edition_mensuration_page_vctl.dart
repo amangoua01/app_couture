@@ -6,11 +6,13 @@ import 'package:get/get.dart';
 class EditionMensurationPageVctl extends GetxController {
   LigneMesureDto ligne;
   final formKey = GlobalKey<FormState>();
-  List<MensurationDto> mensurations;
+  List<MensurationDto> mensurations = const [];
 
-  EditionMensurationPageVctl(this.ligne)
-      : mensurations =
-            ligne.typeMesureDto!.mensurations.map((e) => e.clone()).toList();
+  EditionMensurationPageVctl(this.ligne) {
+    mensurations =
+        ligne.typeMesureDto!.mensurations.map((e) => e.clone()).toList();
+    print(mensurations.map((e) => e.categorieMesure.libelle).toList());
+  }
 
   Future<void> submit() async {
     if (formKey.currentState!.validate()) {

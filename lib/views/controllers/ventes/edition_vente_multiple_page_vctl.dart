@@ -136,7 +136,10 @@ class EditionVenteMultiplePageVctl extends AuthViewController
       );
 
       if (wantPrint == true && res.data != null) {
-        await printVenteReceipt(res.data!);
+        await printVenteReceipt(
+          res.data!,
+          user.entreprise?.libelle ?? "Boutique",
+        );
       }
       Get.back(result: true);
     } else {

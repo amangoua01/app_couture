@@ -124,9 +124,29 @@ class User extends ModelJson {
   bool get isAdmin => typeEnum.isAdmin;
 
   Future<bool> saveInCache() async {
-    Cache.setString(CacheKey.user.name, toJson(forCache: true).parseToJson());
+    Cache.setString(CacheKey.user.name, _toCache());
     Cache.setString(CacheKey.jwt.name, SessionManagerViewController.jwt);
     return true;
+  }
+
+  String _toCache() {
+    return jsonEncode({
+      'id': id,
+      'login': login,
+      'nom': nom,
+      'prenoms': prenoms,
+      'fcm_token': fcmToken,
+      'type': type!.toJson(),
+      'logo': (_logo as FichierServer?)?.toJson(),
+      'roles': roles,
+      'is_active': isActive,
+      'pays': pays,
+      'boutique': boutique?.toJson(),
+      'succursale': succursale?.toJson(),
+      'settings': settings!.toJson(),
+      'activeSubscriptions': activeSubscriptions!.toJson(),
+      'entreprise': entreprise!.toJson(),
+    });
   }
 
   static Future<User?> getUserFromCache() async {

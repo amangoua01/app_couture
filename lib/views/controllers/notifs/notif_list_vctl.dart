@@ -1,6 +1,7 @@
 import 'package:ateliya/api/notification_api.dart';
 import 'package:ateliya/data/models/notification.dart';
 import 'package:ateliya/tools/extensions/future.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/paginated_data.dart';
 import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/paginable_view_controller.dart';
@@ -40,15 +41,11 @@ class NotifListVctl extends PaginableViewController<Notification> {
     }
   }
 
-  Future<void> markAsRead(int notificationId) async {
-    final res = await api.markAsRead(notificationId);
+  Future<void> markAsRead(Notification notification) async {
+    final res = await api.markAsRead(notification.id.value);
     if (res.status) {
-      // Mettre à jour l'état de la notification localement
-      final index = data.items.indexWhere((n) => n.id == notificationId);
-      if (index != -1) {
-        data.items[index].etat = true;
-        update();
-      }
+      notification.isRead = false;
+      update();
     }
   }
 

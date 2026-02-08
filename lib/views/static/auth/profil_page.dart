@@ -70,11 +70,13 @@ class ProfilPage extends StatelessWidget {
                       CTextFormField(
                         controller: ctl.nomCtl,
                         externalLabel: 'Nom',
+                        textCapitalization: TextCapitalization.words,
                       ),
                       CTextFormField(
                         controller: ctl.prenomCtl,
                         externalLabel: 'Prémom(s)',
                         require: true,
+                        textCapitalization: TextCapitalization.words,
                       ),
                       CTextFormField(
                         initialValue: ctl.user.login.value,

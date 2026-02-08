@@ -9,11 +9,14 @@ class HomeWindowsVctl extends AuthViewController {
 
   void updateFcmToken() async {
     final fcmToken = await NotificationService.getFcmToken();
-    if (fcmToken != null && user.fcmToken != fcmToken) {
-      await authApi.updateFcmToken(
-        fcmToken: fcmToken,
-        login: user.login.value,
-      );
+    if (fcmToken != null) {
+      NotificationService.onListen();
+      if (user.fcmToken != fcmToken) {
+        await authApi.updateFcmToken(
+          fcmToken: fcmToken,
+          login: user.login.value,
+        );
+      }
     }
   }
 

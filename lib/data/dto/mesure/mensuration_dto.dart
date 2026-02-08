@@ -8,7 +8,7 @@ class MensurationDto extends DtoModel {
 
   MensurationDto({
     required this.categorieMesure,
-    required this.valeur,
+    this.valeur = 0,
     this.isActive = true,
   });
 

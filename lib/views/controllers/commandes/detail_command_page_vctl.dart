@@ -28,6 +28,7 @@ class DetailCommandPageVctl extends GetxController
     if (res.status) {
       CAlertDialog.show(
         message: "État modifié avec succès",
+        isSuccess: true,
       );
       return res.data;
     } else {
@@ -41,6 +42,7 @@ class DetailCommandPageVctl extends GetxController
     if (res.status) {
       CAlertDialog.show(
         message: "État de la commande modifié avec succès",
+        isSuccess: true,
       );
       return res.data;
     } else {

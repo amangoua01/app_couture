@@ -20,6 +20,8 @@ class EditionPieceCouturePageVctl extends AuthViewController {
   File? modeleImageFile;
   final remiseCtl = TextEditingController(text: "0");
   final typeMesureApi = TypeMesureApi();
+  final descriptionCtl = TextEditingController();
+  bool hasImagePagne = false;
 
   EditionPieceCouturePageVctl(this.ligne) {
     if (ligne != null) {
@@ -48,6 +50,7 @@ class EditionPieceCouturePageVctl extends AuthViewController {
       ligne!.remise = remiseCtl.toDouble();
       ligne!.pagneImagePath = pagneImageFile?.path;
       ligne!.modeleImagePath = modeleImageFile?.path;
+      ligne!.withOutTissu = !hasImagePagne;
 
       Get.back(result: ligne!);
     }
@@ -56,7 +59,7 @@ class EditionPieceCouturePageVctl extends AuthViewController {
   Future<List<TypeMesure>> fetchTypeMesures() async {
     final res = await typeMesureApi.list();
     if (res.status) {
-      return res.data!.items;
+      return res.data!.items.where((e) => e.categories.isNotEmpty).toList();
     }
     return [];
   }

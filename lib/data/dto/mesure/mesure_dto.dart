@@ -30,6 +30,8 @@ class MesureDto extends MultiPartDtoModel {
               "nom": m.nomClient,
               "montant": m.montant,
               "remise": m.remise,
+              "withOutTissu": m.withOutTissu,
+              "description": m.description,
               "ligneMesures": m.typeMesureDto?.mensurations
                   .map((l) => {
                         "categorieId": l.categorieMesure.id,

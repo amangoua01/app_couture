@@ -46,7 +46,10 @@ class AddPrinterFromAdressePageVctl extends GetxController {
         // Sauvegarde dans l'historique
         await _saveToHistory(printer);
 
-        CAlertDialog.show(message: "Connexion réussie !");
+        CAlertDialog.show(
+          message: "Connexion réussie !",
+          isSuccess: true,
+        );
         Get.back();
       } else {
         await SoundService.playError();

@@ -17,7 +17,7 @@ class UpdateProfilDto extends DtoModel {
   Map<String, dynamic> toJson() {
     return {
       'nom': nom,
-      'prenom': prenom,
+      'prenoms': prenom,
       'email': email,
     };
   }

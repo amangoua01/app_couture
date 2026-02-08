@@ -18,7 +18,7 @@ class CategorieMesure extends ModelJson {
   });
 
   CategorieMesure.fromJson(Json json) {
-    id = json["id"] ?? json["idCategorie"];
+    id = json["id"];
     libelle = json["libelle"] ?? json["libelleCategorie"];
     if (json["entreprise"] != null) {
       entreprise = Entreprise.fromJson(json["entreprise"]);

@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/widgets/inputs/c_bottom_image_picker.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,6 +16,7 @@ class CImagePickerField extends StatelessWidget {
   final void Function(File)? onChanged;
   final bool readOnly;
   final void Function()? onDelete;
+  final double? height;
 
   const CImagePickerField({
     super.key,
@@ -22,6 +25,7 @@ class CImagePickerField extends StatelessWidget {
     this.path,
     this.onChanged,
     this.onDelete,
+    this.height,
   });
 
   @override
@@ -30,8 +34,16 @@ class CImagePickerField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Text(label),
+          padding: const EdgeInsets.only(left: 5, bottom: 7),
+          child: AutoSizeText(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            minFontSize: 10,
+            stepGranularity: 1,
+            maxFontSize: 13,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
         Expanded(
           child: Stack(
@@ -55,17 +67,41 @@ class CImagePickerField extends StatelessWidget {
                 ),
                 child: Container(
                   width: double.infinity,
+                  height: height,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.white,
+                    border: Border.all(color: AppColors.fieldBorder),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: PlaceholderBuilder(
-                    condition: path != null,
-                    placeholder: const Icon(Icons.image, color: Colors.grey),
-                    builder: () => PlaceholderWidget(
-                      condition: path!.isURL,
-                      placeholder: Image.file(File(path!)),
-                      child: Image.network(path!),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: PlaceholderBuilder(
+                      condition: path != null,
+                      placeholder: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_photo_alternate_outlined,
+                              color: Colors.grey.shade400,
+                              size: 40,
+                            ),
+                          ],
+                        ),
+                      ),
+                      builder: () => PlaceholderWidget(
+                        condition: path!.isURL,
+                        placeholder: Image.file(
+                          File(path!),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                        child: Image.network(
+                          path!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -73,18 +109,14 @@ class CImagePickerField extends StatelessWidget {
               Visibility(
                 visible: !readOnly && onDelete != null && path != null,
                 child: Positioned(
-                  top: 7,
-                  right: 7,
-                  child: CircleAvatar(
-                    radius: 15,
-                    backgroundColor: Colors.white,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                        size: 15,
-                      ),
-                      onPressed: () async {
+                  top: 5,
+                  right: 5,
+                  child: Material(
+                    color: Colors.white.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(20),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () async {
                         if (onDelete != null) {
                           final rep = await CChoiceMessageDialog.show(
                             message:
@@ -95,6 +127,14 @@ class CImagePickerField extends StatelessWidget {
                           }
                         }
                       },
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: Colors.red,
+                          size: 20,
+                        ),
+                      ),
                     ),
                   ),
                 ),

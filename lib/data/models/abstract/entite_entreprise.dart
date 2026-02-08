@@ -1,4 +1,6 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/data/models/boutique.dart';
+import 'package:ateliya/data/models/succursale.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -21,6 +23,14 @@ class EntiteEntreprise extends ModelJson {
     libelle = json['libelle'];
     createdAt = json['createdAt'].toString().toDateTime();
     isActive = json['isActive'] ?? true;
+  }
+
+  static EntiteEntreprise fromJsonToChild(Map<String, dynamic> json) {
+    if (json["boutique"] != null) {
+      return Boutique.fromJson(json);
+    } else {
+      return Succursale.fromJson(json);
+    }
   }
 
   @override
