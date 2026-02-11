@@ -40,8 +40,8 @@ abstract class NotificationService {
 
   static Future<void> showNotif(Notification notif) async {
     var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
-      'moomen_channel',
-      'Moomen channel',
+      'ateliya_channel',
+      'Ateliya channel',
       importance: Importance.max,
       priority: Priority.high,
     );
