@@ -11,8 +11,6 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
   var data = AccueilData();
   final api = AccueilApi();
 
-  Timer? _notifTimer;
-
   Future<void> loadData() async {
     final entite = getEntite().value;
     loadUnreadCount();
@@ -30,16 +28,6 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
   @override
   void onReady() {
     loadData();
-    // Rafraîchir le compteur de notifications toutes les 2 minutes
-    _notifTimer = Timer.periodic(const Duration(minutes: 2), (timer) {
-      loadUnreadCount();
-    });
     super.onReady();
-  }
-
-  @override
-  void onClose() {
-    _notifTimer?.cancel();
-    super.onClose();
   }
 }
