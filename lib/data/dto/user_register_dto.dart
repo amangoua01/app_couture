@@ -8,15 +8,18 @@ class UserRegisterDto extends DtoModel {
   String emailEntreprise;
   String numeroEntreprise;
   int pays;
+  String device;
 
-  UserRegisterDto(
-      {required this.email,
-      required this.password,
-      required this.confirmPassword,
-      required this.denominationEntreprise,
-      required this.emailEntreprise,
-      required this.numeroEntreprise,
-      required this.pays});
+  UserRegisterDto({
+    required this.email,
+    required this.password,
+    required this.confirmPassword,
+    required this.denominationEntreprise,
+    required this.emailEntreprise,
+    required this.numeroEntreprise,
+    required this.pays,
+    required this.device,
+  });
 
   @override
   Map<String, dynamic> toJson() {
@@ -28,6 +31,7 @@ class UserRegisterDto extends DtoModel {
     data['emailEntreprise'] = emailEntreprise;
     data['numeroEntreprise'] = numeroEntreprise;
     data['pays'] = pays;
+    data['device'] = device;
     return data;
   }
 }

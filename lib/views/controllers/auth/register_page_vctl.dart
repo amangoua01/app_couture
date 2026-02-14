@@ -3,6 +3,7 @@ import 'package:ateliya/api/pays_api.dart';
 import 'package:ateliya/data/dto/user_register_dto.dart';
 import 'package:ateliya/data/models/pays.dart';
 import 'package:ateliya/tools/components/session_manager_view_controller.dart';
+import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
@@ -77,6 +78,7 @@ class RegisterPageVctl extends SessionManagerViewController {
           emailEntreprise: emailEntrepriseCtl.text,
           numeroEntreprise: telEntrepriseCtl.text,
           pays: selectedPays!.id!,
+          device: Env.deviceType,
         );
         final res = await api.register(data).load();
         if (res.status) {
