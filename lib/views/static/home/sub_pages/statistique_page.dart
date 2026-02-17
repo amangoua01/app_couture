@@ -1,7 +1,6 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/period_stat.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
-import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/stat_card_item.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
