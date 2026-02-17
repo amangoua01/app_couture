@@ -100,6 +100,8 @@ class Client extends ModelFormData<Client> {
           (photo as FichierLocal).path,
         ),
       );
+    } else {
+      files.add(http.MultipartFile.fromString("photo", ""));
     }
     return Future.value(files);
   }

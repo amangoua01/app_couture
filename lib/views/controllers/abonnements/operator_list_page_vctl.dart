@@ -1,6 +1,6 @@
 import 'package:ateliya/api/operateur_api.dart';
 import 'package:ateliya/data/models/operateur.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 class OperatorListPageVctl extends GetxController {
@@ -18,7 +18,7 @@ class OperatorListPageVctl extends GetxController {
       operateurs = res.data!.map((e) => Operateur.fromJson(e)).toList();
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 

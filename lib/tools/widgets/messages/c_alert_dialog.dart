@@ -1,35 +1,24 @@
 import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart' show EasyLoading;
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 abstract class CAlertDialog {
-  static Future<void> show({
-    required String? message,
-    bool isSuccess = false,
+  static Future<T?> show<T>({
+    required String title,
+    String? message,
+    required List<Widget> actions,
+    Widget? content,
   }) {
-    if (isSuccess) {
-      return EasyLoading.showSuccess(message.value);
-    } else {
-      return EasyLoading.showError(message.value);
-    }
+    return Get.dialog<T>(
+      AlertDialog(
+        title: Text(title),
+        content: content ?? Text(message.value),
+        actions: actions,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Get.theme.primaryColor),
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
   }
-
-  // Get.defaultDialog(
-  //   textConfirm: "OK",
-  //   buttonColor: primaryColor,
-  //   confirmTextColor: Colors.white,
-  //   title: title ?? "Message",
-  //   titleStyle: titleStyle,
-  //   confirm: confirm,
-  //   content: Padding(
-  //     padding: const EdgeInsets.all(10),
-  //     child: Text(
-  //       message ?? "Erreur",
-  //       textAlign: TextAlign.center,
-  //     ),
-  //   ),
-  //   radius: radius,
-  //   actions: actions,
-  //   onConfirm: () => Get.back(),
-  //   barrierDismissible: barrierDismissible,
-  // );
 }

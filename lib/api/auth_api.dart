@@ -50,7 +50,7 @@ class AuthApi extends WebController {
       final json = jsonDecode(response.body);
       if (response.statusCode == 200) {
         final data = json["data"];
-        final user = User().fromJson(data["user"]);
+        final user = User.fromJson(data["user"]);
         SessionManagerViewController.jwt = data["token"];
         return DataResponse.success(data: user);
       } else {

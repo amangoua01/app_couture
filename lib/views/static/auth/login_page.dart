@@ -115,7 +115,13 @@ class LoginPage extends StatelessWidget {
                                   onTap: () => Get.to(
                                     () => const ForgotPasswordPage(),
                                   ),
-                                  child: const Text("Mot de passe oublé ?"),
+                                  child: const Text(
+                                    "Mot de passe oublié ?",
+                                    style: TextStyle(
+                                      color: AppColors.primary,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

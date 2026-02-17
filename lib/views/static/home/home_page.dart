@@ -10,10 +10,10 @@ import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
-import 'package:ateliya/tools/widgets/solde_card.dart';
 import 'package:ateliya/tools/widgets/vente_tile.dart';
 import 'package:ateliya/views/controllers/home/home_page_vctl.dart';
 import 'package:ateliya/views/static/boutiques/edition_boutique_page.dart';
+import 'package:ateliya/views/static/caisse/edition_mouvement_page.dart';
 import 'package:ateliya/views/static/clients/edition_client_page.dart';
 import 'package:ateliya/views/static/commandes/commande_list_page.dart';
 import 'package:ateliya/views/static/depense/edition_depense_page.dart';
@@ -23,6 +23,7 @@ import 'package:ateliya/views/static/printers/print_list_page.dart';
 import 'package:ateliya/views/static/surcursales/edition_surcusale_page.dart';
 import 'package:ateliya/views/static/ventes/edition_vente_multiple_page.dart';
 import 'package:ateliya/views/static/ventes/vente_boutique_list_page.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_svg/svg.dart';
@@ -76,10 +77,7 @@ class HomePage extends StatelessWidget {
                         onTap: () => Get.to(() => const PrintListPage()),
                         child: const CircleAvatar(
                           radius: 15,
-                          child: Icon(
-                            Icons.print,
-                            size: 15,
-                          ),
+                          child: Icon(Icons.print, size: 15),
                         ),
                       ),
                       const Gap(10),
@@ -144,13 +142,24 @@ class HomePage extends StatelessWidget {
                       BlendMode.srcIn,
                     ),
                   ),
-                  onTap: () => Get.to(() => const EditionMesurePage()),
+                  onTap: () async {
+                    final res = await Get.to(() => const EditionMesurePage());
+                    if (res != null) {
+                      ctl.loadData();
+                    }
+                  },
                 ),
                 SpeedDialChild(
                   visible: (ctl.getEntite().value.type ==
                       EntiteEntrepriseType.boutique),
                   label: "Faire une vente",
-                  onTap: () => Get.to(() => const EditionVenteMultiplePage()),
+                  onTap: () async {
+                    final res =
+                        await Get.to(() => const EditionVenteMultiplePage());
+                    if (res != null) {
+                      ctl.loadData();
+                    }
+                  },
                   child: SvgPicture.asset(
                     "assets/images/svg/atelier.svg",
                     width: 30,
@@ -162,9 +171,28 @@ class HomePage extends StatelessWidget {
                 ),
                 SpeedDialChild(
                   label: "Créer une dépense",
+                  visible: ctl.user.isAdmin,
                   child: const Icon(Icons.money_off, color: Colors.white),
                   backgroundColor: Colors.red,
-                  onTap: () => Get.to(() => const EditionDepensePage()),
+                  onTap: () async {
+                    final res = await Get.to(() => const EditionDepensePage());
+                    if (res != null) {
+                      ctl.loadData();
+                    }
+                  },
+                ),
+                SpeedDialChild(
+                  visible: ctl.user.isAdmin,
+                  label: "Approvisionner caisse",
+                  child: const Icon(Icons.wallet, color: Colors.white),
+                  backgroundColor: AppColors.primary,
+                  onTap: () async {
+                    final res =
+                        await Get.to(() => const ApprovisionnerCaissePage());
+                    if (res != null) {
+                      ctl.loadData();
+                    }
+                  },
                 ),
               ],
             ),
@@ -174,8 +202,8 @@ class HomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   EmptyDataWidget(
-                    message:
-                        "Aucune boutique ou surcussale ?\nCréez-en une pour continuer.",
+                    message: "Aucune boutique ou surcussale ?"
+                        "\nCréez-en une pour continuer.",
                     onRefresh: ternaryFn(
                       condition: ctl.user.isAdmin,
                       ifTrue: () => Get.to(() => const EditionBoutiquePage()),
@@ -267,7 +295,15 @@ class HomePage extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        "Atélier ${ctl.getEntite().value.libelle.value}",
+                                        "${ternaryFn(
+                                          condition: ctl
+                                                  .getEntite()
+                                                  .value
+                                                  .type ==
+                                              EntiteEntrepriseType.succursale,
+                                          ifTrue: "Atélier",
+                                          ifFalse: "Boutique",
+                                        )} ${ctl.getEntite().value.libelle.value}",
                                         style: const TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
@@ -321,44 +357,55 @@ class HomePage extends StatelessWidget {
                           border: Border.all(color: AppColors.fieldBorder),
                         ),
                         padding: const EdgeInsets.all(10),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Center(
-                                child: SoldeCard(
-                                  icon: "assets/images/svg/entrant.png",
-                                  value: ctl.data.caisse.toAmount(unit: "F"),
-                                ),
-                              ),
+                        child: ListTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            const Gap(10),
-                            Expanded(
-                              child: Center(
-                                child: SoldeCard(
-                                  icon: "assets/images/svg/sortant.png",
-                                  value: ctl.data.depenses.toAmount(unit: "F"),
-                                ),
-                              ),
+                            child: Image.asset(
+                              "assets/images/svg/entrant.png",
+                              height: 20,
                             ),
-                            const Icon(Icons.arrow_forward_ios, size: 12)
-                          ],
+                          ),
+                          title: AutoSizeText(
+                            ctl.data.caisse.toAmount(unit: "F"),
+                            minFontSize: 15,
+                            maxFontSize: 20,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          // trailing: const Icon(
+                          //   Icons.arrow_forward_ios,
+                          //   size: 12,
+                          // ),
                         ),
+                        // child: SoldeCard(
+                        //   icon: "assets/images/svg/entrant.png",
+                        //   value: ctl.data.caisse.toAmount(unit: "F"),
+                        // ),
                       ),
                     ),
                     const Gap(30),
                     Builder(
                       builder: (context) {
-                        final showBestSales = ctl.data.commandes.isEmpty &&
-                            ctl.data.meilleuresVentes.isNotEmpty;
                         return Column(
                           children: [
                             Row(
                               children: [
                                 Expanded(
                                   child: Text(
-                                    showBestSales
-                                        ? "Meilleures ventes (${ctl.data.meilleuresVentes.length})"
-                                        : "Mes mesures (${ctl.data.commandes.length})",
+                                    ternaryFn(
+                                      condition: ctl.getEntite().value.type ==
+                                          EntiteEntrepriseType.boutique,
+                                      ifTrue:
+                                          "Meilleures ventes (${ctl.data.meilleuresVentes.length})",
+                                      ifFalse:
+                                          "Mes mesures (${ctl.data.commandes.length})",
+                                    ),
                                     style: const TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,
@@ -391,23 +438,29 @@ class HomePage extends StatelessWidget {
                               padding: const EdgeInsets.only(bottom: 100),
                               physics: const NeverScrollableScrollPhysics(),
                               separatorBuilder: (_, i) => const Gap(10),
-                              itemBuilder: (_, i) => showBestSales
-                                  ? VenteTile(
+                              itemBuilder: (_, i) => ternaryBuilder(
+                                condition: ctl.getEntite().value.type ==
+                                    EntiteEntrepriseType.boutique,
+                                ifTrue: VenteTile(
+                                  ctl.data.meilleuresVentes[i],
+                                  onPrint: () async {
+                                    await ctl.printVenteReceipt(
                                       ctl.data.meilleuresVentes[i],
-                                      onPrint: () async {
-                                        await ctl.printVenteReceipt(
-                                          ctl.data.meilleuresVentes[i],
-                                          ctl.user.entreprise?.libelle ??
-                                              "Boutique",
-                                        );
-                                      },
-                                    )
-                                  : CommandTile(
-                                      mesure: ctl.data.commandes[i],
-                                    ),
-                              itemCount: showBestSales
-                                  ? ctl.data.meilleuresVentes.length
-                                  : ctl.data.commandes.length,
+                                      ctl.user.entreprise?.libelle ??
+                                          "Boutique",
+                                    );
+                                  },
+                                ),
+                                ifFalse: () => CommandTile(
+                                  mesure: ctl.data.commandes[i],
+                                ),
+                              ),
+                              itemCount: ternaryFn(
+                                condition: ctl.getEntite().value.type ==
+                                    EntiteEntrepriseType.boutique,
+                                ifTrue: ctl.data.meilleuresVentes.length,
+                                ifFalse: ctl.data.commandes.length,
+                              ),
                             ),
                           ],
                         );

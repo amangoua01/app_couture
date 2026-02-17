@@ -1,5 +1,5 @@
 import 'package:ateliya/tools/extensions/types/datetime.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -32,7 +32,7 @@ class SelectDashPeriodSubPageVctl extends GetxController {
       }
       Get.back(result: date);
     } else {
-      CAlertDialog.show(
+      CMessageDialog.show(
         message: "Veuillez choisir une plage de dates correcte.",
       );
     }

@@ -2,7 +2,7 @@ import 'package:ateliya/api/categorie_mesure_api.dart';
 import 'package:ateliya/data/models/categorie_mesure.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +20,7 @@ class EditionCategoriePageVctl
     if (res.status) {
       return res.data;
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
     return null;
   }
@@ -37,7 +37,7 @@ class EditionCategoriePageVctl
     if (res.status) {
       return res.data;
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
     return null;
   }

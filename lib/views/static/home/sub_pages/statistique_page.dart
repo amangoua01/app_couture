@@ -1,6 +1,7 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/period_stat.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
+import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/stat_card_item.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
@@ -182,6 +183,22 @@ class StatistiquePage extends StatelessWidget {
                         value: (ctl.data.kpis.reservationsActives).toAmount(),
                         icon: Icons.event,
                         color: Colors.purple,
+                        item: StatCardItem(
+                            title: "", value: "", isIncrease: true),
+                      ),
+                      _buildStatCard(
+                        title: "Total Dépenses",
+                        value: (ctl.data.kpis.totalDepenses).toAmount(),
+                        icon: Icons.trending_down,
+                        color: Colors.red,
+                        item: StatCardItem(
+                            title: "", value: "", isIncrease: false),
+                      ),
+                      _buildStatCard(
+                        title: "Total Mouvements",
+                        value: (ctl.data.kpis.totalMouvements).toAmount(),
+                        icon: Icons.sync_alt,
+                        color: Colors.teal,
                         item: StatCardItem(
                             title: "", value: "", isIncrease: true),
                       ),

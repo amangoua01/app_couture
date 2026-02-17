@@ -9,8 +9,8 @@ import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/tools/widgets/wrapper_listview.dart';
 import 'package:ateliya/views/controllers/ventes/edition_vente_multiple_page_vctl.dart';
@@ -381,7 +381,7 @@ class EditionVenteMultiplePage extends StatelessWidget {
                   final qte = int.tryParse(qteCtl.text) ?? 1;
 
                   if (qte > (selectedModele!.quantite ?? 0)) {
-                    CAlertDialog.show(
+                    CMessageDialog.show(
                         message:
                             "Stock insuffisant. Disponible : ${selectedModele!.quantite ?? 0}");
                     return;
@@ -389,7 +389,7 @@ class EditionVenteMultiplePage extends StatelessWidget {
 
                   if (selectedModele!.prixMinimal != null &&
                       prix < selectedModele!.prixMinimal!) {
-                    CAlertDialog.show(
+                    CMessageDialog.show(
                         message:
                             "Le prix ne peut être inférieur à ${selectedModele!.prixMinimal!.toAmount(unit: 'F')}");
                     return;
@@ -402,7 +402,7 @@ class EditionVenteMultiplePage extends StatelessWidget {
                   }
                   Get.back();
                 } else {
-                  CAlertDialog.show(
+                  CMessageDialog.show(
                       message: "Veuillez sélectionner un article");
                 }
               },

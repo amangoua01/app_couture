@@ -8,8 +8,8 @@ import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
 import 'package:ateliya/tools/models/prise_mesure_step.dart';
 import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 import 'package:flutter/material.dart';
@@ -66,14 +66,14 @@ class EditionMesurePageVctl extends AuthViewController
           break;
         case 1:
           if (!mesure.isValide) {
-            CAlertDialog.show(
+            CMessageDialog.show(
               message: "Veuillez ajouter des pièces"
                   " et leurs mensurations pour continuer.",
             );
             return;
           } else {
             if (!mesure.isMensurationValide) {
-              CAlertDialog.show(
+              CMessageDialog.show(
                 message: "Veuillez completer toutes "
                     "les mensurations pour continuer.",
               );
@@ -136,7 +136,7 @@ class EditionMesurePageVctl extends AuthViewController
         mesure.avance = avanceCtl.toDouble();
         final res = await mesureApi.create(mesure).load();
         if (res.status) {
-          CAlertDialog.show(
+          CMessageDialog.show(
             message: "Mesure enregistrée avec succès.",
             isSuccess: true,
           );
@@ -160,10 +160,10 @@ class EditionMesurePageVctl extends AuthViewController
 
           clearForm();
         } else {
-          CAlertDialog.show(message: res.message);
+          CMessageDialog.show(message: res.message);
         }
       } else {
-        CAlertDialog.show(
+        CMessageDialog.show(
           message: "Veuillez selectionner "
               "une succursale pour effectuer cette action.",
         );

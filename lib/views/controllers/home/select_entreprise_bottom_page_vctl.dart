@@ -1,6 +1,6 @@
 import 'package:ateliya/api/entreprise_api.dart';
 import 'package:ateliya/data/models/abstract/entite_entreprise.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:get/get.dart';
 
@@ -18,7 +18,7 @@ class SelectEntrepriseBottomPageVctl extends AuthViewController {
       entities = res.data!;
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 

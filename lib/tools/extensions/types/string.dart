@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:ateliya/tools/components/functions.dart';
 import 'package:get/get.dart';
@@ -82,5 +83,14 @@ extension StringExt on String? {
 
   String capitalize() {
     return value.capitalizeFirst.value;
+  }
+
+  Color? get toColor {
+    if (this == null) return null;
+    try {
+      return Color(int.parse(this!, radix: 16));
+    } catch (e) {
+      return null;
+    }
   }
 }

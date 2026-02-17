@@ -5,7 +5,7 @@ import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/blue_device.dart';
 import 'package:ateliya/tools/services/sound_service.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/static/printers/print_list_page.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -76,14 +76,14 @@ mixin PrinterManagerViewMixin {
           if (bytes != null) {
             final res = await PrintBluetoothThermal.writeBytes(bytes);
             if (!res) {
-              CAlertDialog.show(
+              CMessageDialog.show(
                   message:
                       "Erreur lors de l'envoi des données à l'imprimante.");
             } else {
               SoundService.playBeep();
             }
           } else {
-            CAlertDialog.show(message: "Erreur de génération du ticket.");
+            CMessageDialog.show(message: "Erreur de génération du ticket.");
           }
         } else {
           _promptConnection();
@@ -93,12 +93,12 @@ mixin PrinterManagerViewMixin {
       }
     } catch (e, st) {
       debugPrint("Print Error: $e\n$st");
-      CAlertDialog.show(message: "Erreur d'impression: $e");
+      CMessageDialog.show(message: "Erreur d'impression: $e");
     }
   }
 
   void _promptConnection() async {
-    await CAlertDialog.show(
+    await CMessageDialog.show(
       message: "Aucune imprimante connectée. Veuillez en sélectionner une.",
     );
     Get.to(() => const PrintListPage());

@@ -6,8 +6,8 @@ import 'package:ateliya/data/models/categorie_type_mesure.dart';
 import 'package:ateliya/data/models/type_mesure.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:get/get.dart';
 
 class CategorieTypeMesureListVctl extends GetxController {
@@ -27,7 +27,7 @@ class CategorieTypeMesureListVctl extends GetxController {
       categories = res.data!.items;
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 
@@ -41,7 +41,7 @@ class CategorieTypeMesureListVctl extends GetxController {
       categoriesType = res.data!.items;
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 
@@ -64,7 +64,7 @@ class CategorieTypeMesureListVctl extends GetxController {
       update();
       Get.back();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 
@@ -78,7 +78,7 @@ class CategorieTypeMesureListVctl extends GetxController {
         categoriesType.removeWhere((e) => e.id.value == id);
         update();
       } else {
-        CAlertDialog.show(message: res.message);
+        CMessageDialog.show(message: res.message);
       }
     }
   }

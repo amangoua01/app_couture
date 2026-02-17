@@ -2,7 +2,7 @@ import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/data/models/vente.dart';
 import 'package:ateliya/tools/constants/periode_vente_enum.dart';
 import 'package:ateliya/tools/models/paginated_data.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 
@@ -65,7 +65,7 @@ class VenteListVctl extends ListViewController<Vente>
       }
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 }

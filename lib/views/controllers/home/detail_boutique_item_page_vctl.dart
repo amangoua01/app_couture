@@ -5,7 +5,7 @@ import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/models/detail_model_filter_vente.dart';
 import 'package:ateliya/tools/models/detail_modele_entre_stock.dart';
 import 'package:ateliya/tools/models/detail_modele_reservation_filter.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:get/get.dart';
 
 class DetailBoutiqueItemPageVctl extends GetxController {
@@ -35,7 +35,7 @@ class DetailBoutiqueItemPageVctl extends GetxController {
       details = res.data;
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 

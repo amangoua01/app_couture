@@ -2,7 +2,7 @@ import 'package:ateliya/api/succursale_api.dart';
 import 'package:ateliya/data/models/succursale.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -30,7 +30,7 @@ class EditionSurcusalePageVctl
     if (res.status) {
       return res.data;
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
     return null;
   }
@@ -49,7 +49,7 @@ class EditionSurcusalePageVctl
     if (res.status) {
       return res.data;
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
     return null;
   }

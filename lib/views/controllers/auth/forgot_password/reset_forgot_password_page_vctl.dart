@@ -1,7 +1,7 @@
 import 'package:ateliya/api/auth_api.dart';
 import 'package:ateliya/tools/extensions/future.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
-import 'package:ateliya/views/static/auth/auth_home_page.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
+import 'package:ateliya/views/static/auth/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +11,8 @@ class ResetForgotPasswordPageVctl extends GetxController {
   final String email;
   final String otp;
   final api = AuthApi();
+  bool passwordHide = true;
+  bool confirmPasswordHide = true;
   final formKey = GlobalKey<FormState>();
 
   ResetForgotPasswordPageVctl(this.email, this.otp);
@@ -25,9 +27,9 @@ class ResetForgotPasswordPageVctl extends GetxController {
           )
           .load();
       if (res.status) {
-        Get.offAll(() => const AuthHomePage());
+        Get.offAll(() => const LoginPage());
       } else {
-        CAlertDialog.show(message: res.message);
+        CMessageDialog.show(message: res.message);
       }
     }
   }

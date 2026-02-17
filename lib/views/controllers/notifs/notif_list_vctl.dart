@@ -3,7 +3,7 @@ import 'package:ateliya/data/models/notification.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/paginated_data.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/paginable_view_controller.dart';
 
 class NotifListVctl extends PaginableViewController<Notification> {
@@ -37,7 +37,7 @@ class NotifListVctl extends PaginableViewController<Notification> {
       }
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 
@@ -56,7 +56,7 @@ class NotifListVctl extends PaginableViewController<Notification> {
       update();
       return true;
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
       return false;
     }
   }
