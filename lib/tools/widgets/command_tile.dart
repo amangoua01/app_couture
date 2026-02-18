@@ -71,72 +71,77 @@ class CommandTile extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (etats.isNotEmpty) ...[
-                        const Gap(4),
-                        Wrap(
-                          spacing: 4,
-                          runSpacing: 4,
-                          children: etats
-                              .map((etat) => _buildEtatBadge(etat))
-                              .toList(),
-                        ),
-                      ],
                     ],
                   ),
                 ),
                 const Gap(8),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    mesure!.dateRetrait?.toFrenchDateTime ?? "N/A",
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        mesure!.dateRetrait?.toFrenchDateTime ?? "N/A",
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
-                  ),
+                    if (isUrgent) ...[
+                      const Gap(4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.warning_rounded,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                            const Gap(4),
+                            Text(
+                              joursRestants == 0
+                                  ? "AUJOURD'HUI"
+                                  : joursRestants == 1
+                                      ? "DEMAIN"
+                                      : "URGENT",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    if (etats.isNotEmpty) ...[
+                      const Gap(4),
+                      Wrap(
+                        spacing: 4,
+                        runSpacing: 4,
+                        alignment: WrapAlignment.end,
+                        children:
+                            etats.map((etat) => _buildEtatBadge(etat)).toList(),
+                      ),
+                    ],
+                  ],
                 ),
-                if (isUrgent) ...[
-                  const Gap(8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.warning_rounded,
-                          color: Colors.white,
-                          size: 14,
-                        ),
-                        const Gap(4),
-                        Text(
-                          joursRestants == 0
-                              ? "AUJOURD'HUI"
-                              : joursRestants == 1
-                                  ? "DEMAIN"
-                                  : "URGENT",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
               ],
             ),
             const Gap(8),
@@ -310,12 +315,16 @@ class CommandTile extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: textColor),
           const Gap(4),
-          Text(
-            etat,
-            style: TextStyle(
-              color: textColor,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
+          Flexible(
+            child: Text(
+              etat,
+              style: TextStyle(
+                color: textColor,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

@@ -132,35 +132,34 @@ class EditionMesurePageVctl extends AuthViewController
         mesure.remiseGlobale = remiseGlobaleCtl.toDouble();
         mesure.dateRetrait = dateRetraitCtl.dateTime;
         mesure.signature = await signatureCtl.toPngBytes();
-        mesure.remiseGlobale = remiseGlobaleCtl.toDouble();
-        mesure.avance = avanceCtl.toDouble();
-        final res = await mesureApi.create(mesure).load();
-        if (res.status) {
-          CMessageDialog.show(
-            message: "Mesure enregistrée avec succès.",
-            isSuccess: true,
-          );
 
+        final response = await mesureApi.create(mesure).load();
+        if (response.status) {
           // Vérifier si une imprimante est disponible
           final printerAvailable = await isPrinterAvailable();
 
-          if (printerAvailable && res.data != null) {
-            // Proposer l'impression des mensurations
+          if (printerAvailable && response.data != null) {
+            // Proposer l'impression du reçu
             final printChoice = await CChoiceMessageDialog.show(
-              message:
-                  "Voulez-vous imprimer les informations du client et les mensurations ?",
+              title: "Succès",
+              message: "Mesure enregistrée.\nVoulez-vous imprimer le reçu ?",
             );
 
             if (printChoice == true) {
-              // Convertir le DTO en Mesure pour l'impression
-              final createdMesure = res.data as Mesure;
-              await printClientMensurationsReceipt(createdMesure);
+              if (response.data is Mesure) {
+                await printMesureReceipt(response.data as Mesure);
+              }
             }
+          } else {
+            CMessageDialog.show(
+              message: "Mesure enregistrée avec succès.",
+              isSuccess: true,
+            );
           }
 
           clearForm();
         } else {
-          CMessageDialog.show(message: res.message);
+          CMessageDialog.show(message: response.message);
         }
       } else {
         CMessageDialog.show(

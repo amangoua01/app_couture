@@ -20,8 +20,9 @@ class _PaiementDialogState extends State<PaiementDialog> {
   final _formKey = GlobalKey<FormState>();
   final _montantCtrl = TextEditingController();
 
-  String? _selectedMode;
+  String _selectedMode = "Espèces";
   bool _isLoading = false;
+  final api = FactureApi();
 
   @override
   void initState() {
@@ -43,9 +44,9 @@ class _PaiementDialogState extends State<PaiementDialog> {
 
     setState(() => _isLoading = true);
     final montant = double.tryParse(_montantCtrl.text) ?? 0;
-    final ref = _selectedMode ?? "Espèces";
+    final ref = _selectedMode;
 
-    final res = await FactureApi().ajouterPaiement(
+    final res = await api.ajouterPaiement(
       widget.mesure.id!,
       montant,
       ref,
@@ -57,11 +58,19 @@ class _PaiementDialogState extends State<PaiementDialog> {
 
     if (res.status) {
       Get.back(result: res.data); // Renvoie la Mesure mise à jour
-      Get.snackbar("Succès", "Paiement enregistré",
-          backgroundColor: Colors.green, colorText: Colors.white);
+      Get.snackbar(
+        "Succès",
+        "Paiement enregistré",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     } else {
-      Get.snackbar("Erreur", res.message,
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        "Erreur",
+        res.message,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
@@ -236,7 +245,7 @@ class _PaiementDialogState extends State<PaiementDialog> {
                       ModePaiementEnum.values.map((e) => e.label).toList(),
                   onChanged: (val) {
                     setState(() {
-                      _selectedMode = val;
+                      _selectedMode = val ?? "Espèces";
                     });
                   },
                   require: false,

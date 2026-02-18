@@ -438,23 +438,25 @@ class HomePage extends StatelessWidget {
                               padding: const EdgeInsets.only(bottom: 100),
                               physics: const NeverScrollableScrollPhysics(),
                               separatorBuilder: (_, i) => const Gap(10),
-                              itemBuilder: (_, i) => ternaryBuilder(
-                                condition: ctl.getEntite().value.type ==
-                                    EntiteEntrepriseType.boutique,
-                                ifTrue: VenteTile(
-                                  ctl.data.meilleuresVentes[i],
-                                  onPrint: () async {
-                                    await ctl.printVenteReceipt(
-                                      ctl.data.meilleuresVentes[i],
-                                      ctl.user.entreprise?.libelle ??
-                                          "Boutique",
-                                    );
-                                  },
-                                ),
-                                ifFalse: () => CommandTile(
-                                  mesure: ctl.data.commandes[i],
-                                ),
-                              ),
+                              itemBuilder: (_, i) {
+                                if (ctl.getEntite().value.type ==
+                                    EntiteEntrepriseType.boutique) {
+                                  return VenteTile(
+                                    ctl.data.meilleuresVentes[i],
+                                    onPrint: () async {
+                                      await ctl.printVenteReceipt(
+                                        ctl.data.meilleuresVentes[i],
+                                        ctl.user.entreprise?.libelle ??
+                                            "Boutique",
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  return CommandTile(
+                                    mesure: ctl.data.commandes[i],
+                                  );
+                                }
+                              },
                               itemCount: ternaryFn(
                                 condition: ctl.getEntite().value.type ==
                                     EntiteEntrepriseType.boutique,
