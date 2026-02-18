@@ -5,8 +5,8 @@ import 'package:ateliya/data/models/pays.dart';
 import 'package:ateliya/tools/components/session_manager_view_controller.dart';
 import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/extensions/future.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/static/home/home_windows.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -85,7 +85,7 @@ class RegisterPageVctl extends SessionManagerViewController {
           user = res.data!;
           Get.to(() => const HomeWindows());
         } else {
-          CAlertDialog.show(message: res.message);
+          CMessageDialog.show(message: res.message);
         }
       }
     }

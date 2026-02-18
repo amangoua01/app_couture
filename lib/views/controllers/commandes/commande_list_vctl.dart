@@ -2,7 +2,7 @@ import 'package:ateliya/api/facture_api.dart';
 import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/paginated_data.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
 
 class CommandeListVctl extends ListViewController<Mesure> {
@@ -34,7 +34,7 @@ class CommandeListVctl extends ListViewController<Mesure> {
       }
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 }

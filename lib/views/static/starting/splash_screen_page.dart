@@ -11,25 +11,27 @@ class SplashScreenPage extends StatelessWidget {
       init: SplashScreenPageVctl(),
       builder: (ctl) {
         return Scaffold(
-          body: Center(
-            child: Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Image.asset(
-                      "assets/images/logo_ateliya.png",
-                      width: 100,
+          body: SafeArea(
+            child: Center(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Image.asset(
+                        "assets/images/logo_ateliya.png",
+                        width: 100,
+                      ),
                     ),
                   ),
-                ),
-                const ListTile(
-                  title: Text(
-                    "Ateliya © 2025",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 10),
+                  const ListTile(
+                    title: Text(
+                      "Ateliya © 2025",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 10),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

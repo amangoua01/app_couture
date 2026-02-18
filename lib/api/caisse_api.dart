@@ -39,4 +39,24 @@ class CaisseApi extends WebController {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+
+  Future<DataResponse> addMouvement(Map<String, dynamic> data) async {
+    try {
+      final res = await client.post(
+        urlBuilder(module: "mouvement-caisse", api: "create"),
+        body: jsonEncode(data),
+        headers: authHeaders,
+      );
+      final json = jsonDecode(res.body);
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        return DataResponse.success(data: json);
+      } else {
+        return DataResponse.error(
+          message: json["message"] ?? res.reasonPhrase,
+        );
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 }

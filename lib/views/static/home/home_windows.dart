@@ -96,6 +96,7 @@ class HomeWindows extends StatelessWidget {
                 spreadRadius: 0,
                 color: Colors.black.withOpacity(0.05),
               ),
+              safeAreaValues: const SafeAreaValues(bottom: true),
               onTap: (index) {
                 ctl.page = index;
                 ctl.update();

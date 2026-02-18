@@ -2,8 +2,8 @@ import 'package:ateliya/api/abstract/crud_web_controller.dart';
 import 'package:ateliya/data/models/abstract/model.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/paginated_data.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/paginable_view_controller.dart';
 
 abstract class ListViewController<M extends Model>
@@ -42,7 +42,7 @@ abstract class ListViewController<M extends Model>
       data = (res.data! as PaginatedData<M>);
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 
@@ -88,11 +88,11 @@ abstract class ListViewController<M extends Model>
             }
             update();
           } else {
-            CAlertDialog.show(message: res.message);
+            CMessageDialog.show(message: res.message);
           }
         }
       } else {
-        CAlertDialog.show(message: "Aucun élément sélectionné");
+        CMessageDialog.show(message: "Aucun élément sélectionné");
       }
     }
   }

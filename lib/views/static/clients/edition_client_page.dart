@@ -79,11 +79,13 @@ class EditionClientPage extends StatelessWidget {
                     externalLabel: "Nom",
                     require: true,
                     controller: ctl.nomCtl,
+                    textCapitalization: TextCapitalization.words,
                   ),
                   CTextFormField(
                     externalLabel: "Prénom(s)",
                     require: true,
                     controller: ctl.prenomCtl,
+                    textCapitalization: TextCapitalization.words,
                   ),
                   CTextFormField(
                     externalLabel: "Téléphone",

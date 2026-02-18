@@ -9,7 +9,7 @@ import 'package:ateliya/data/models/succursale.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_bottom_image_picker.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +39,7 @@ class EditionClientPageVctl extends EditionViewController<Client, ClientApi> {
     if (res.status) {
       return res.data;
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
     return null;
   }
@@ -76,7 +76,7 @@ class EditionClientPageVctl extends EditionViewController<Client, ClientApi> {
     if (res.status) {
       return res.data;
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
     return null;
   }
@@ -102,7 +102,7 @@ class EditionClientPageVctl extends EditionViewController<Client, ClientApi> {
     if (boutique != null || succursale != null) {
       return super.submit();
     } else {
-      return CAlertDialog.show(
+      return CMessageDialog.show(
         message: "Veuillez sélectionner une boutique et/ou une succursale",
       );
     }

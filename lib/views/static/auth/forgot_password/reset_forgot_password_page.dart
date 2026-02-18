@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/views/controllers/auth/forgot_password/reset_forgot_password_page_vctl.dart';
@@ -25,8 +26,21 @@ class ResetForgotPasswordPage extends StatelessWidget {
                 children: [
                   CTextFormField(
                     controller: ctl.newPasswordCtl,
-                    obscureText: true,
+                    obscureText: ctl.passwordHide,
                     externalLabel: 'Nouveau mot de passe',
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        ctl.passwordHide = !ctl.passwordHide;
+                        ctl.update();
+                      },
+                      icon: Icon(
+                        ternaryFn(
+                          condition: ctl.passwordHide,
+                          ifTrue: Icons.visibility,
+                          ifFalse: Icons.visibility_off,
+                        ),
+                      ),
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Veuillez saisir le nouveau mot de passe";
@@ -39,8 +53,21 @@ class ResetForgotPasswordPage extends StatelessWidget {
                   ),
                   CTextFormField(
                     controller: ctl.confirmPasswordCtl,
-                    obscureText: true,
+                    obscureText: ctl.confirmPasswordHide,
                     externalLabel: 'Confirmer le nouveau mot de passe',
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        ctl.confirmPasswordHide = !ctl.confirmPasswordHide;
+                        ctl.update();
+                      },
+                      icon: Icon(
+                        ternaryFn(
+                          condition: ctl.confirmPasswordHide,
+                          ifTrue: Icons.visibility,
+                          ifFalse: Icons.visibility_off,
+                        ),
+                      ),
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Veuillez confirmer le nouveau mot de passe";

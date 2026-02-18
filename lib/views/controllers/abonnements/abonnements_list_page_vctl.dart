@@ -1,6 +1,6 @@
 import 'package:ateliya/api/abonnement_api.dart';
 import 'package:ateliya/data/models/abonnement.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:get/get.dart';
 
 class AbonnementsListPageVctl extends GetxController {
@@ -18,7 +18,7 @@ class AbonnementsListPageVctl extends GetxController {
       abonnements = res.data!;
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 

@@ -2,11 +2,12 @@ import 'package:ateliya/api/type_mesure_api.dart';
 import 'package:ateliya/data/models/type_mesure.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/material.dart';
 
-class EditionTypeMesurePageVctl extends EditionViewController<TypeMesure, TypeMesureApi> {
+class EditionTypeMesurePageVctl
+    extends EditionViewController<TypeMesure, TypeMesureApi> {
   final libelleCtl = TextEditingController();
 
   EditionTypeMesurePageVctl(super.item, {required super.api});
@@ -24,7 +25,7 @@ class EditionTypeMesurePageVctl extends EditionViewController<TypeMesure, TypeMe
     if (res.status) {
       return res.data;
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
     return null;
   }
@@ -41,7 +42,7 @@ class EditionTypeMesurePageVctl extends EditionViewController<TypeMesure, TypeMe
     if (res.status) {
       return res.data;
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
     return null;
   }

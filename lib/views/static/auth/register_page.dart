@@ -162,12 +162,10 @@ class RegisterPage extends StatelessWidget {
                             ),
                             CTextFormField(
                               controller: ctl.emailEntrepriseCtl,
-                              require: true,
                               externalLabel: "Email",
                             ),
                             CTextFormField(
                               controller: ctl.telEntrepriseCtl,
-                              require: true,
                               externalLabel: "Contact",
                             ),
                           ],

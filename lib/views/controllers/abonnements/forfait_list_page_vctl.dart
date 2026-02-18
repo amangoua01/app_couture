@@ -1,6 +1,6 @@
 import 'package:ateliya/api/abonnement_api.dart';
 import 'package:ateliya/data/models/module_abonnement.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 class ForfaitListPageVctl extends GetxController {
@@ -18,7 +18,7 @@ class ForfaitListPageVctl extends GetxController {
       forfaits = res.data!;
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 

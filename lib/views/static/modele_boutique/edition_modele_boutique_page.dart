@@ -5,9 +5,12 @@ import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/body_edition_page.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
+import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/views/controllers/modele_boutique/edition_modele_boutique_page_vctl.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -95,6 +98,62 @@ class EditionModeleBoutiquePage extends StatelessWidget {
             enabled: ctl.user.isAdmin,
             require: true,
           ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const CircleAvatar(
+              child: Icon(Icons.color_lens),
+            ),
+            title: const Text("Couleur"),
+            trailing: const Icon(Icons.arrow_drop_down),
+            subtitle: PlaceholderWidget(
+              condition: ctl.pickerColor != null,
+              placeholder: const Text("Aucune couleur sélectionnée"),
+              child: Container(
+                height: 20,
+                margin: const EdgeInsets.only(top: 5),
+                decoration: BoxDecoration(
+                  color: ctl.pickerColor != null
+                      ? Color(ctl.pickerColor!)
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+            ),
+            onTap: () async {
+              int? colorCode = ctl.pickerColor;
+              await CAlertDialog.show(
+                title: "Couleur",
+                content: SingleChildScrollView(
+                  child: ColorPicker(
+                    pickerColor:
+                        colorCode != null ? Color(colorCode) : Colors.white,
+                    onColorChanged: (color) {
+                      colorCode = color.toARGB32();
+                      ctl.update();
+                    },
+                    enableAlpha: false,
+                    displayThumbColor: true,
+                    paletteType: PaletteType.hsvWithHue,
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Get.back(),
+                    child: const Text("Annuler"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      ctl.pickerColor = colorCode;
+                      ctl.update();
+                      Get.back();
+                    },
+                    child: const Text("OK"),
+                  ),
+                ],
+              );
+            },
+          ),
+          const Gap(10),
           CTextFormField(
             externalLabel: "Prix",
             controller: ctl.prixCtl,

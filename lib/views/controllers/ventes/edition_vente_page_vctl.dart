@@ -11,7 +11,7 @@ import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +92,7 @@ class EditionVentePageVctl extends AuthViewController
 
         Get.back(result: res.data!);
       } else {
-        CAlertDialog.show(message: res.message);
+        CMessageDialog.show(message: res.message);
       }
     }
   }

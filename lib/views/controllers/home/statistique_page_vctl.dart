@@ -5,7 +5,7 @@ import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/period_stat_req.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 
 class StatistiquePageVctl extends AuthViewController {
@@ -25,7 +25,7 @@ class StatistiquePageVctl extends AuthViewController {
       data = res.data!;
       update();
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 

@@ -58,6 +58,11 @@ class CustomHttpClient extends http.BaseClient {
       print("🔼 Headers: ${request.headers}");
       print("📦 Body: $body");
       print("📁 Files: ${files.length}");
+      if (files.isNotEmpty) {
+        for (int i = 0; i < files.length; i++) {
+          print("📁 -> File #$i: ${files[i].field} | ${files[i].filename}");
+        }
+      }
     }
     final res = await http.Response.fromStream(response);
     if (kDebugMode) {

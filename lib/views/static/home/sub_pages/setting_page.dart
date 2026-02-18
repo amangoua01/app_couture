@@ -173,6 +173,7 @@ class SettingPage extends StatelessWidget {
                       onTap: () => Get.to(() => const ModeleListPage()),
                     ),
                     SettingTile(
+                      visible: ctl.user.isAdmin,
                       title: "Mes modèles boutiques",
                       icon: Icons.shopping_bag_outlined,
                       onTap: () => Get.to(() => const ModeleListBoutiquePage()),

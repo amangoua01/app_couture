@@ -6,8 +6,8 @@ import 'package:ateliya/tools/constants/cache_key.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/blue_device.dart';
 import 'package:ateliya/tools/services/sound_service.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 import 'package:flutter_thermal_printer/flutter_thermal_printer.dart';
 import 'package:flutter_thermal_printer/utils/printer.dart';
@@ -166,7 +166,7 @@ class PrintListPageVctl extends GetxController with PrinterManagerViewMixin {
       selectedPrinter = device;
       update();
 
-      CAlertDialog.show(
+      CMessageDialog.show(
         message: "Connecté avec succès à ${device.name}",
         isSuccess: true,
       );
@@ -180,7 +180,7 @@ class PrintListPageVctl extends GetxController with PrinterManagerViewMixin {
       update();
     } else {
       await SoundService.playError();
-      CAlertDialog.show(
+      CMessageDialog.show(
         message:
             "Échec de la connexion à ${device.name}.\nVérifiez qu'elle est allumée.",
       );

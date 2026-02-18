@@ -6,8 +6,8 @@ import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/blue_device.dart';
 import 'package:ateliya/tools/services/sound_service.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
@@ -17,7 +17,7 @@ class AddPrinterFromAdressePageVctl extends GetxController {
 
   Future<void> connect() async {
     if (adresseCtl.text.isEmpty) {
-      CAlertDialog.show(message: "Veuillez renseigner une adresse MAC.");
+      CMessageDialog.show(message: "Veuillez renseigner une adresse MAC.");
       return;
     }
 
@@ -46,14 +46,14 @@ class AddPrinterFromAdressePageVctl extends GetxController {
         // Sauvegarde dans l'historique
         await _saveToHistory(printer);
 
-        CAlertDialog.show(
+        CMessageDialog.show(
           message: "Connexion réussie !",
           isSuccess: true,
         );
         Get.back();
       } else {
         await SoundService.playError();
-        CAlertDialog.show(
+        CMessageDialog.show(
           message:
               "Impossible de se connecter à l'adresse $address.\nVérifiez qu'elle est correcte et que l'imprimante est allumée.",
         );

@@ -6,7 +6,7 @@ import 'package:ateliya/data/dto/ligne_depense_dto.dart';
 import 'package:ateliya/data/models/caisse.dart';
 import 'package:ateliya/data/models/famille_depense.dart';
 import 'package:ateliya/tools/extensions/future.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -166,12 +166,12 @@ class EditionDepensePageVctl extends GetxController {
       final res = await depenseApi.createOne(dto).load();
       if (res.status) {
         Get.back(result: true);
-        CAlertDialog.show(
+        CMessageDialog.show(
           message: "Dépense enregistrée avec succès",
           isSuccess: true,
         );
       } else {
-        CAlertDialog.show(message: res.message);
+        CMessageDialog.show(message: res.message);
       }
     }
   }

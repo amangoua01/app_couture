@@ -24,6 +24,7 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
   bool? isActive;
   Boutique? boutique;
   User? creator;
+  int? color;
 
   ModeleBoutique({
     this.quantite,
@@ -37,6 +38,7 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
     this.createdAt,
     this.isActive,
     this.boutique,
+    this.color,
   })  : _ligneEntres = ligneEntres,
         _ligneReservations = ligneReservations,
         _paiementBoutiqueLignes = paiementBoutiqueLignes;
@@ -77,6 +79,7 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
         json['boutique'] != null ? Boutique.fromJson(json['boutique']) : null;
     creator =
         json['createdBy'] != null ? User.fromJson(json['createdBy']) : null;
+    color = json['color'] is int ? json['color'] : null;
   }
 
   @override
@@ -88,6 +91,7 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
     data['prix'] = prix;
     data['prixMinimal'] = prixMinimal;
     data['taille'] = taille;
+    data['color'] = color;
     return data;
   }
 

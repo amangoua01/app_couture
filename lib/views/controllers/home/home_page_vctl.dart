@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:ateliya/api/accueil_api.dart';
 import 'package:ateliya/data/models/accueil_data.dart';
 import 'package:ateliya/tools/extensions/future.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 
@@ -20,7 +20,7 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
         data = res.data!;
         update();
       } else {
-        CAlertDialog.show(message: res.message);
+        CMessageDialog.show(message: res.message);
       }
     }
   }

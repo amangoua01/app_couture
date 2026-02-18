@@ -8,7 +8,7 @@ import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 import 'package:flutter/material.dart';
@@ -100,12 +100,12 @@ class EditionVenteMultiplePageVctl extends AuthViewController
 
   Future<void> submit() async {
     if (client == null) {
-      CAlertDialog.show(message: "Veuillez sélectionner un client.");
+      CMessageDialog.show(message: "Veuillez sélectionner un client.");
       return;
     }
     if (panier.isEmpty) {
       // On pourrait autoriser vide ? Non, pas de sens.
-      CAlertDialog.show(message: "Le panier est vide.");
+      CMessageDialog.show(message: "Le panier est vide.");
       return;
     }
 
@@ -125,25 +125,27 @@ class EditionVenteMultiplePageVctl extends AuthViewController
 
     final res = await boutiqueApi.makePaiement(dto).load();
     if (res.status) {
-      final wantPrint = await Get.defaultDialog<bool>(
-        title: "Succès",
-        middleText: "Vente enregistrée.\nVoulez-vous imprimer le reçu ?",
-        textConfirm: "Oui",
-        textCancel: "Non",
-        confirmTextColor: Colors.white,
-        onConfirm: () => Get.back(result: true),
-        onCancel: () => Get.back(result: false),
-      );
-
-      if (wantPrint == true && res.data != null) {
-        await printVenteReceipt(
-          res.data!,
-          user.entreprise?.libelle ?? "Boutique",
+      if (selectedPrinter.isConnected) {
+        final wantPrint = await Get.defaultDialog<bool>(
+          title: "Succès",
+          middleText: "Vente enregistrée.\nVoulez-vous imprimer le reçu ?",
+          textConfirm: "Oui",
+          textCancel: "Non",
+          confirmTextColor: Colors.white,
+          onConfirm: () => Get.back(result: true),
+          onCancel: () => Get.back(result: false),
         );
+        if (wantPrint == true && res.data != null) {
+          await printVenteReceipt(
+            res.data!,
+            user.entreprise?.libelle ?? "Boutique",
+          );
+        }
       }
+
       Get.back(result: true);
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
   }
 }

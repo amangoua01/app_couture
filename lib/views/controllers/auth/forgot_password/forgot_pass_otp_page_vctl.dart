@@ -1,6 +1,6 @@
 import 'package:ateliya/api/auth_api.dart';
 import 'package:ateliya/tools/extensions/future.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/static/auth/forgot_password/reset_forgot_password_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,10 +24,10 @@ class ForgotPassOtpPageVctl extends GetxController {
       if (res.status) {
         Get.off(() => ResetForgotPasswordPage(email, otp));
       } else {
-        CAlertDialog.show(message: res.message);
+        CMessageDialog.show(message: res.message);
       }
     } else {
-      CAlertDialog.show(
+      CMessageDialog.show(
         message: "Veuillez saisir le code OTP reçu par e-mail.",
       );
     }

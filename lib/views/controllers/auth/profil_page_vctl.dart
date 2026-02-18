@@ -9,7 +9,7 @@ import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_bottom_image_picker.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/widgets.dart';
 
@@ -31,10 +31,12 @@ class ProfilPageVctl extends AuthViewController {
     }
 
     if (user.entreprise != null) {
-      if ((user.entreprise?.logo is FichierServer?) &&
-          (user.entreprise?.logo as FichierServer).path?.isNotEmpty == false) {
-        logoEntreprisePath =
-            FichierLocal(path: (user.entreprise?.logo as FichierServer).path!);
+      if ((user.entreprise?.logo is FichierServer)) {
+        if ((user.entreprise?.logo as FichierServer).path?.isNotEmpty ==
+            false) {
+          logoEntreprisePath = FichierLocal(
+              path: (user.entreprise?.logo as FichierServer).path!);
+        }
       }
       nomEntrepriseCtl.text = user.entreprise!.libelle.value;
       telephoneEntrepriseCtl.text = user.entreprise!.numero.value;
@@ -57,12 +59,12 @@ class ProfilPageVctl extends AuthViewController {
         user.prenoms = dto.prenom;
         user = user;
         update();
-        CAlertDialog.show(
+        CMessageDialog.show(
           message: "Profil mis à jour avec succès",
           isSuccess: true,
         );
       } else {
-        CAlertDialog.show(message: res.message);
+        CMessageDialog.show(message: res.message);
       }
     }
   }
@@ -90,12 +92,12 @@ class ProfilPageVctl extends AuthViewController {
         user = user;
         logoEntreprisePath = null; // Réinitialiser le chemin du logo
         update();
-        CAlertDialog.show(
+        CMessageDialog.show(
           message: "Entreprise mise à jour avec succès",
           isSuccess: true,
         );
       } else {
-        CAlertDialog.show(message: res.message);
+        CMessageDialog.show(message: res.message);
       }
     }
   }
@@ -108,7 +110,7 @@ class ProfilPageVctl extends AuthViewController {
         update();
       }
     } catch (e) {
-      CAlertDialog.show(message: "Erreur lors de la sélection du logo: $e");
+      CMessageDialog.show(message: "Erreur lors de la sélection du logo: $e");
     }
   }
 
@@ -120,7 +122,7 @@ class ProfilPageVctl extends AuthViewController {
         update();
       }
     } catch (e) {
-      CAlertDialog.show(message: "Erreur lors de la sélection du logo: $e");
+      CMessageDialog.show(message: "Erreur lors de la sélection du logo: $e");
     }
   }
 

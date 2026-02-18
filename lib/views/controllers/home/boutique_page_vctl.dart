@@ -1,7 +1,7 @@
 import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 
 class BoutiquePageVctl extends AuthViewController {
@@ -23,7 +23,7 @@ class BoutiquePageVctl extends AuthViewController {
       if (res.status) {
         data = res.data!;
       } else {
-        CAlertDialog.show(message: res.message);
+        CMessageDialog.show(message: res.message);
       }
     }
   }

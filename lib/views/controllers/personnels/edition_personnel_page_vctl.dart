@@ -9,7 +9,7 @@ import 'package:ateliya/data/models/type_user.dart';
 import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -44,7 +44,7 @@ class EditionPersonnelPageVctl
     if (res.status) {
       return res.data!;
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
     return null;
   }
@@ -68,7 +68,7 @@ class EditionPersonnelPageVctl
     if (res.status) {
       return res.data!;
     } else {
-      CAlertDialog.show(message: res.message);
+      CMessageDialog.show(message: res.message);
     }
     return null;
   }
