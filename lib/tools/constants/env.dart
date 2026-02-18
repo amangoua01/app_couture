@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ateliya/tools/constants/app_env.dart';
 import 'package:ateliya/tools/models/currency.dart';
 import 'package:ateliya/tools/models/netword_config.dart';
+import 'package:flutter_in_store_app_version_checker/flutter_in_store_app_version_checker.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 abstract class Env {
@@ -47,4 +48,10 @@ abstract class Env {
   static String fullImageUrl(String path) => "${baseUrl.url}/uploads/$path";
   static const sentryDNS =
       'https://e8b5af4fb73d1690ad8dec93a4434db5@o4510011872051200.ingest.de.sentry.io/4510011873689680';
+
+  static final versionChecker = InStoreAppVersionChecker(
+    appId: 'com.ateliya.app',
+    androidStore: AndroidStore.googlePlayStore,
+    currentVersion: Env.appVersion,
+  );
 }

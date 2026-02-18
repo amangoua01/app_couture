@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ateliya/api/auth_api.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/services/app_review_service.dart';
 import 'package:ateliya/tools/services/notification_service.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 
@@ -31,6 +32,7 @@ class HomeWindowsVctl extends AuthViewController {
     _notifTimer = Timer.periodic(const Duration(minutes: 2), (timer) {
       loadUnreadCount();
     });
+    AppReviewService.checkForUpdate();
     super.onReady();
   }
 
