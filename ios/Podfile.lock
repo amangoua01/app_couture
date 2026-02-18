@@ -35,6 +35,8 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 8.1)
     - nanopb (~> 3.30910.0)
   - Flutter (1.0.0)
+  - flutter_in_store_app_version_checker (1.4.0):
+    - Flutter
   - flutter_local_notifications (0.0.1):
     - Flutter
   - flutter_thermal_printer (0.0.1):
@@ -108,6 +110,7 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
+  - flutter_in_store_app_version_checker (from `.symlinks/plugins/flutter_in_store_app_version_checker/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_thermal_printer (from `.symlinks/plugins/flutter_thermal_printer/ios`)
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
@@ -145,6 +148,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
     :path: Flutter
+  flutter_in_store_app_version_checker:
+    :path: ".symlinks/plugins/flutter_in_store_app_version_checker/ios"
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_thermal_printer:
@@ -182,6 +187,7 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 3e884b01feabdf67582a80f3250425a00979b4ed
   FirebaseMessaging: 43ec73bbfedd0c385a849bb91593ab4ad4b9e48e
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_in_store_app_version_checker: bd02c79ed3d56971d4b1ce28b03dd58aaeda06c8
   flutter_local_notifications: a5a732f069baa862e728d839dd2ebb904737effb
   flutter_thermal_printer: 56e0926d5ac26e5f407cdf760013313dee05a318
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7

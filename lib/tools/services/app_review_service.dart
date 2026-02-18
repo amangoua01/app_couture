@@ -2,6 +2,7 @@ import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_in_store_app_version_checker/flutter_in_store_app_version_checker.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,13 @@ class AppReviewService {
         result = await Env.versionChecker.checkUpdate().load();
       } else {
         result = await Env.versionChecker.checkUpdate();
+      }
+
+      if (kDebugMode) {
+        print("🔍 Mise à jour dispo ? ${result.canUpdate}");
+        print("📱 Version actuelle : ${result.currentVersion}");
+        print("🌍 Version store : ${result.newVersion}");
+        print("🔗 Lien store : ${result.appURL}");
       }
 
       if (result.canUpdate) {
