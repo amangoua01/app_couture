@@ -2,7 +2,6 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
-import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/views/controllers/home/home_windows_vctl.dart';
 import 'package:ateliya/views/static/home/home_page.dart';
 import 'package:ateliya/views/static/home/sub_pages/boutique_page.dart';
@@ -36,40 +35,32 @@ class HomeWindows extends StatelessWidget {
             backgroundColor:
                 Colors.grey[50], // Light background for the app content
             body: pages[ctl.page],
-            floatingActionButton: PlaceholderBuilder(
-              condition: ctl.getEntite().value is Boutique,
-              builder: () {
-                return FloatingActionButton(
-                  heroTag: "boutique",
-                  backgroundColor: AppColors.primary,
-                  elevation: 4,
-                  shape: const CircleBorder(),
-                  onPressed: () {
-                    if (ctl.getEntite().value is Boutique) {
+            floatingActionButton: ctl.getEntite().value is Boutique
+                ? FloatingActionButton(
+                    heroTag: "boutique",
+                    backgroundColor: AppColors.primary,
+                    elevation: 4,
+                    shape: const CircleBorder(),
+                    onPressed: () {
                       ctl.page = 4;
                       ctl.update();
-                    }
-                  },
-                  child: SvgPicture.asset(
-                    "assets/images/svg/store.svg",
-                    width: 25,
-                    colorFilter: ColorFilter.mode(
-                      ternaryFn(
-                        condition: ctl.page == 4,
-                        ifTrue: AppColors.yellow,
-                        ifFalse: Colors.white,
+                    },
+                    child: SvgPicture.asset(
+                      "assets/images/svg/store.svg",
+                      width: 25,
+                      colorFilter: ColorFilter.mode(
+                        ternaryFn(
+                          condition: ctl.page == 4,
+                          ifTrue: AppColors.yellow,
+                          ifFalse: Colors.white,
+                        ),
+                        BlendMode.srcIn,
                       ),
-                      BlendMode.srcIn,
                     ),
-                  ),
-                );
-              },
-            ),
-            floatingActionButtonLocation: ternaryFn(
-              condition: ctl.getEntite().value is Boutique,
-              ifTrue: FloatingActionButtonLocation.centerDocked,
-              ifFalse: FloatingActionButtonLocation.endFloat,
-            ),
+                  )
+                : null,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: AnimatedBottomNavigationBar(
               backgroundColor: Colors.white,
               icons: const [
@@ -82,11 +73,9 @@ class HomeWindows extends StatelessWidget {
               inactiveColor: Colors.grey[400],
               activeIndex: ctl.page,
               activeColor: AppColors.primary,
-              gapLocation: ternaryFn(
-                condition: ctl.getEntite().value is Boutique,
-                ifTrue: GapLocation.center,
-                ifFalse: GapLocation.none,
-              ),
+              gapLocation: ctl.getEntite().value is Boutique
+                  ? GapLocation.center
+                  : GapLocation.none,
               notchSmoothness: NotchSmoothness.softEdge,
               leftCornerRadius: 20,
               rightCornerRadius: 20,

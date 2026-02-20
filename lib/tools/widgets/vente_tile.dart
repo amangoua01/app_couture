@@ -1,7 +1,6 @@
 import 'package:ateliya/data/models/vente.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
-import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/views/static/ventes/detail_vente_page.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +76,7 @@ class VenteTile extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          "${vente.quantite.value} article${vente.quantite.value > 1 ? 's' : ''}",
+                          "${vente.quantite} article${vente.quantite > 1 ? 's' : ''}",
                           style: const TextStyle(
                             color: AppColors.primary,
                             fontSize: 11,

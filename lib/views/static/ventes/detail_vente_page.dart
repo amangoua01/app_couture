@@ -270,7 +270,7 @@ class DetailVentePage extends StatelessWidget {
                       const Gap(10),
                       _buildSummaryRow(
                         "Quantité totale",
-                        "${vente.quantite ?? vente.paiementBoutiqueLignes.fold<int>(0, (sum, ligne) => sum + (ligne.quantite ?? 0))}",
+                        "${vente.quantite}",
                         isBold: false,
                       ),
                       const Gap(10),
@@ -278,7 +278,7 @@ class DetailVentePage extends StatelessWidget {
                       const Gap(10),
                       _buildSummaryRow(
                         "Montant Total",
-                        (vente.montant ?? 0).toAmount(unit: "F"),
+                        vente.montant.toAmount(unit: "F"),
                         isBold: true,
                         valueColor: AppColors.primary,
                       ),

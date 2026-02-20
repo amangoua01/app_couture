@@ -1,3 +1,4 @@
+import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
 import 'package:ateliya/tools/widgets/setting_tile.dart';
@@ -11,6 +12,7 @@ import 'package:ateliya/views/static/modele/modele_list_page.dart';
 import 'package:ateliya/views/static/modele_boutique/modele_list_boutique_page.dart';
 import 'package:ateliya/views/static/personnels/personnels_list_page.dart';
 import 'package:ateliya/views/static/printers/print_list_page.dart';
+import 'package:ateliya/views/static/ravitaillement/ravitaillement_list_page.dart';
 import 'package:ateliya/views/static/surcursales/succursales_list_page.dart';
 import 'package:ateliya/views/static/type_mesure/type_mesure_list_page.dart';
 import 'package:flutter/material.dart';
@@ -183,6 +185,12 @@ class SettingPage extends StatelessWidget {
                       title: "Type de mesure",
                       icon: Icons.straighten_outlined,
                       onTap: () => Get.to(() => const TypeMesureListPage()),
+                    ),
+                    SettingTile(
+                      visible: ctl.getEntite().value is Boutique,
+                      title: "Ravitaillements",
+                      icon: Icons.inventory_2_outlined,
+                      onTap: () => Get.to(() => const RavitaillementListPage()),
                     ),
                   ],
                 ),

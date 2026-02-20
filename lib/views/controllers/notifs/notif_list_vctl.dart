@@ -9,6 +9,38 @@ import 'package:ateliya/views/controllers/abstract/paginable_view_controller.dar
 class NotifListVctl extends PaginableViewController<Notification> {
   final NotificationApi api = NotificationApi();
 
+  /// IDs sélectionnés pour suppression multiple
+  final Set<int> selectedIds = {};
+
+  bool get isSelectionMode => selectedIds.isNotEmpty;
+
+  // ── Sélection ──────────────────────────────────────────────────────────────
+
+  void toggleSelect(int id) {
+    if (selectedIds.contains(id)) {
+      selectedIds.remove(id);
+    } else {
+      selectedIds.add(id);
+    }
+    update();
+  }
+
+  void selectAll() {
+    for (final n in data.items) {
+      if (n.id != null) selectedIds.add(n.id!);
+    }
+    update();
+  }
+
+  void clearSelection() {
+    selectedIds.clear();
+    update();
+  }
+
+  bool isSelected(int id) => selectedIds.contains(id);
+
+  // ── Chargement ─────────────────────────────────────────────────────────────
+
   @override
   void onInit() {
     super.onInit();
@@ -18,9 +50,7 @@ class NotifListVctl extends PaginableViewController<Notification> {
   @override
   Future<void> getList({int page = 1, String? search}) async {
     startLoad(page);
-
     final res = await api.getNotifications(page: page).load();
-
     endLoad(page);
 
     if (res.status) {
@@ -41,6 +71,8 @@ class NotifListVctl extends PaginableViewController<Notification> {
     }
   }
 
+  // ── Actions ────────────────────────────────────────────────────────────────
+
   Future<void> markAsRead(Notification notification) async {
     final res = await api.markAsRead(notification.id.value);
     if (res.status) {
@@ -53,11 +85,29 @@ class NotifListVctl extends PaginableViewController<Notification> {
     final res = await api.delete(notificationId).load();
     if (res.status) {
       data.items.removeWhere((n) => n.id == notificationId);
+      selectedIds.remove(notificationId);
       update();
       return true;
     } else {
       CMessageDialog.show(message: res.message);
       return false;
+    }
+  }
+
+  /// Supprime toutes les notifications sélectionnées via un seul appel API.
+  Future<void> deleteSelected() async {
+    if (selectedIds.isEmpty) return;
+
+    final idsToDelete = List<int>.from(selectedIds);
+
+    final res = await api.deleteMultiple(idsToDelete).load();
+
+    if (res.status) {
+      data.items.removeWhere((n) => n.id != null && idsToDelete.contains(n.id));
+      selectedIds.clear();
+      update();
+    } else {
+      CMessageDialog.show(message: res.message);
     }
   }
 }

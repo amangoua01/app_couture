@@ -13,7 +13,13 @@ class Modele extends ModelFormData<Modele> {
   String? createdAt;
   bool? isActive;
 
-  Modele({this.libelle, this.quantite, this.quantiteGlobale, this.photo, this.createdAt, this.isActive});
+  Modele(
+      {this.libelle,
+      this.quantite,
+      this.quantiteGlobale,
+      this.photo,
+      this.createdAt,
+      this.isActive});
 
   Modele.fromJson(Json json) {
     id = json["id"];

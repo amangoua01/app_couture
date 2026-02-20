@@ -25,6 +25,7 @@ class ModeleListPage extends StatelessWidget {
                   : (ctl.data.items[i].photo is FichierServer)
                       ? (ctl.data.items[i].photo as FichierServer).fullUrl!
                       : null,
+              subtitle: "Quantité: ${ctl.data.items[i].quantiteGlobale}",
               editionPage: EditionModelePage(item: ctl.data.items[i]),
               index: i,
               title: ctl.data.items[i].libelle.value),

@@ -129,10 +129,33 @@ class EditionVentePage extends StatelessWidget {
                     }
                   },
                 ),
-                CTextFormField(
-                  controller: ctl.quantiteCtl,
-                  externalLabel: "Quantité",
-                  require: true,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CTextFormField(
+                      controller: ctl.quantiteCtl,
+                      externalLabel: "Quantité",
+                      require: true,
+                      hintText:
+                          'Stock disponible : ${modeleBoutique.quantite ?? 0}',
+                      keyboardType: TextInputType.number,
+                      margin: const EdgeInsets.only(bottom: 4),
+                      validator: (e) {
+                        if (e == null || e.isEmpty) {
+                          return 'La quantité est requise';
+                        }
+                        final qty = int.tryParse(e);
+                        if (qty == null || qty <= 0) {
+                          return 'Veuillez saisir une quantité valide';
+                        }
+                        final stock = modeleBoutique.quantite ?? 0;
+                        if (qty > stock) {
+                          return 'Stock insuffisant — disponible : $stock';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
                 ),
                 CDropDownFormField(
                   externalLabel: "Moyen de paiement",

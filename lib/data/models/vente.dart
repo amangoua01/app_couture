@@ -3,12 +3,12 @@ import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/paiement_boutique_lignes.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 
 class Vente extends ModelJson<Vente> {
   Boutique? boutique;
-  int? quantite;
   Client? client;
   List<PaiementBoutiqueLignes> paiementBoutiqueLignes = [];
 
@@ -19,7 +19,6 @@ class Vente extends ModelJson<Vente> {
 
   Vente(
       {this.boutique,
-      this.quantite,
       this.client,
       this.paiementBoutiqueLignes = const [],
       super.id,
@@ -31,7 +30,6 @@ class Vente extends ModelJson<Vente> {
   Vente.fromJson(Map<String, dynamic> json) {
     boutique =
         json['boutique'] != null ? Boutique.fromJson(json['boutique']) : null;
-    quantite = json['quantite'];
     client = json['client'] != null ? Client.fromJson(json['client']) : null;
     if (json['paiementBoutiqueLignes'] is List) {
       paiementBoutiqueLignes = (json['paiementBoutiqueLignes'] as List)
@@ -51,7 +49,6 @@ class Vente extends ModelJson<Vente> {
     if (boutique != null) {
       data['boutique'] = boutique!.toJson();
     }
-    data['quantite'] = quantite;
     if (client != null) {
       data['client'] = client!.toJson();
     }
@@ -67,4 +64,7 @@ class Vente extends ModelJson<Vente> {
 
   @override
   Vente fromJson(Json json) => Vente.fromJson(json);
+
+  int get quantite =>
+      paiementBoutiqueLignes.fold(0, (a, b) => a + (b.quantite.value));
 }

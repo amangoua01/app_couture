@@ -3,7 +3,6 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
-import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -58,59 +57,7 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
         enabled: deletable,
         secondary: PlaceholderBuilder(
           condition: leadingImage != null,
-          builder: () => Container(
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primary,
-              border: Border.all(color: AppColors.primary, width: 2),
-            ),
-            child: PlaceholderWidget(
-              condition: !leadingImage.value.endsWith(".json"),
-              placeholder: Lottie.asset(leadingImage.value),
-              child: PlaceholderWidget(
-                condition: !leadingImage.value.startsWith("http"),
-                placeholder: ClipOval(
-                  child: Image.network(
-                    leadingImage.value,
-                    width: leadingImageSize,
-                    height: leadingImageSize,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return SvgPicture.asset(
-                        "assets/images/svg/image_broken.svg",
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
-                        fit: BoxFit.cover,
-                        width: leadingImageSize,
-                        height: leadingImageSize,
-                      );
-                    },
-                  ),
-                ),
-                child: PlaceholderWidget(
-                  condition: !leadingImage.value.endsWith(".svg"),
-                  placeholder: SvgPicture.asset(
-                    leadingImage.value,
-                    width: leadingImageSize,
-                    height: leadingImageSize,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  child: Image.asset(
-                    leadingImage.value,
-                    width: leadingImageSize,
-                    height: leadingImageSize,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          builder: () => _buildLeadingCircle(),
         ),
         onChanged: (e) {
           if (deletable) ctl.onSelect(ctl.data.items[index].id.value);
@@ -135,59 +82,7 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
               label: badgeWidget,
               backgroundColor: backgroundColor,
               isLabelVisible: displayBadge,
-              child: Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.primary, width: 1),
-                ),
-                child: PlaceholderWidget(
-                  condition: !leadingImage.value.endsWith(".json"),
-                  placeholder: Lottie.asset(leadingImage.value),
-                  child: PlaceholderWidget(
-                    condition: !leadingImage.value.endsWith(".svg"),
-                    placeholder: SvgPicture.asset(
-                      leadingImage.value,
-                      width: leadingImageSize,
-                      height: leadingImageSize,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    child: PlaceholderWidget(
-                      condition: !leadingImage.value.startsWith("http"),
-                      placeholder: ClipOval(
-                        child: Image.network(
-                          leadingImage.value,
-                          width: leadingImageSize,
-                          height: leadingImageSize,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return SvgPicture.asset(
-                              "assets/images/svg/image_broken.svg",
-                              colorFilter: const ColorFilter.mode(
-                                Colors.white,
-                                BlendMode.srcIn,
-                              ),
-                              fit: BoxFit.cover,
-                              width: leadingImageSize,
-                              height: leadingImageSize,
-                            );
-                          },
-                        ),
-                      ),
-                      child: Image.asset(
-                        leadingImage.value,
-                        width: leadingImageSize,
-                        height: leadingImageSize,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child: _buildLeadingCircle(),
             ),
           ),
           onLongPress: () {
@@ -235,7 +130,6 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       position: PopupMenuPosition.under,
-                      // child: Icon(Icons.more_vert_rounded),
                       itemBuilder: (_) => actions,
                     ),
                     const Gap(10),
@@ -253,6 +147,63 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  /// Cercle leading unifié, utilisé dans ListTile et CheckboxListTile.
+  Widget _buildLeadingCircle() {
+    final src = leadingImage.value;
+    return Container(
+      width: 45,
+      height: 45,
+      padding: EdgeInsets.zero,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColors.primary,
+        border: Border.all(color: AppColors.primary, width: 1),
+      ),
+      child: ClipOval(child: _buildLeadingContent(src)),
+    );
+  }
+
+  Widget _buildLeadingContent(String src) {
+    // 1. Lottie (.json)
+    if (src.endsWith('.json')) {
+      return Lottie.asset(src);
+    }
+    // 2. Image réseau (http / https)
+    if (src.startsWith('http')) {
+      return Image.network(
+        src,
+        width: leadingImageSize,
+        height: leadingImageSize,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+          'assets/images/svg/image_broken.svg',
+          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          fit: BoxFit.cover,
+          width: leadingImageSize,
+          height: leadingImageSize,
+        ),
+      );
+    }
+    // 3. SVG asset
+    if (src.endsWith('.svg')) {
+      return SvgPicture.asset(
+        src,
+        width: leadingImageSize,
+        height: leadingImageSize,
+        colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+        fit: BoxFit.contain,
+      );
+    }
+    // 4. Image asset classique (png, jpg…)
+    return Image.asset(
+      src,
+      width: leadingImageSize,
+      height: leadingImageSize,
+      color: Colors.white,
+      fit: BoxFit.contain,
     );
   }
 }

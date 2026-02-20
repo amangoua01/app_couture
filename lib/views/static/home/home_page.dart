@@ -448,6 +448,8 @@ class HomePage extends StatelessWidget {
                                         ctl.data.meilleuresVentes[i],
                                         ctl.user.entreprise?.libelle ??
                                             "Boutique",
+                                        footerMessage: ctl.user.settings
+                                            ?.messageFactureBoutique,
                                       );
                                     },
                                   );

@@ -4,7 +4,7 @@ import 'package:ateliya/api/abstract/crud_web_controller.dart';
 import 'package:ateliya/data/dto/paiement_boutique_dto.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
-import 'package:ateliya/data/models/modele_boutique.dart';
+import 'package:ateliya/data/models/stock_modele_item.dart';
 import 'package:ateliya/data/models/vente.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
@@ -110,7 +110,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
 
   // https://backend.ateliya.com/api/modeleBoutique/modele/by/boutique/1
 
-  Future<DataResponse<List<ModeleBoutique>>> getModeleBoutiqueByBoutiqueId(
+  Future<DataResponse<List<StockModeleItem>>> getModeleBoutiqueByBoutiqueId(
       int id) async {
     try {
       final res = await client.get(
@@ -121,7 +121,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       if (res.statusCode == 200) {
         return DataResponse.success(
             data: (data["data"] as List).map((e) {
-          return ModeleBoutique.fromJson(e);
+          return StockModeleItem.fromJson(e);
         }).toList());
       } else {
         return DataResponse.error(

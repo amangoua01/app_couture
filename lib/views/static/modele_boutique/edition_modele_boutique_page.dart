@@ -30,39 +30,34 @@ class EditionModeleBoutiquePage extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                width: 145,
-                height: 145,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
+              ClipOval(
+                child: Container(
+                  width: 145,
+                  height: 145,
                   color: Colors.grey.shade300,
-                  border: Border.all(
-                    color: Colors.grey.shade300,
-                    width: 1,
+                  child: PlaceholderBuilder(
+                    placeholder: const Icon(
+                      Icons.image,
+                      color: Colors.grey,
+                      size: 30,
+                    ),
+                    condition: ctl.modele?.photo != null,
+                    builder: () {
+                      return Image.network(
+                        (ctl.modele!.photo as FichierServer).fullUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(
+                            child: Icon(
+                              Icons.broken_image_outlined,
+                              color: Colors.grey,
+                              size: 60,
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
-                ),
-                child: PlaceholderBuilder(
-                  placeholder: const Icon(
-                    Icons.image,
-                    color: Colors.grey,
-                    size: 30,
-                  ),
-                  condition: ctl.modele?.photo != null,
-                  builder: () {
-                    return Image.network(
-                      (ctl.modele!.photo as FichierServer).fullUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(
-                          child: Icon(
-                            Icons.broken_image_outlined,
-                            color: Colors.grey,
-                            size: 60,
-                          ),
-                        );
-                      },
-                    );
-                  },
                 ),
               ),
             ],

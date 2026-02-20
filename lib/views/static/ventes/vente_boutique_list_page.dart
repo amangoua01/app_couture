@@ -79,6 +79,8 @@ class VenteBoutiqueListPage extends StatelessWidget {
                             await ctl.printVenteReceipt(
                               item,
                               ctl.user.entreprise?.libelle ?? "Boutique",
+                              footerMessage:
+                                  ctl.user.settings?.messageFactureBoutique,
                             );
                           },
                         ),
