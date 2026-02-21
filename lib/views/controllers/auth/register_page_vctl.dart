@@ -25,6 +25,9 @@ class RegisterPageVctl extends SessionManagerViewController {
   final telEntrepriseCtl = TextEditingController();
   final emailEntrepriseCtl = TextEditingController();
   final api = AuthApi();
+  bool showPassword = false;
+  bool showConfirmPassword = false;
+
   void onNext() {
     if (currentPage < 1) {
       if (formKey1.currentState!.validate()) {

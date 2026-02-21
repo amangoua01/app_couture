@@ -28,14 +28,12 @@ class Mesure extends ModelFormData<Mesure> {
   FichierServer? signatureUrl;
   List<UploadFileDto> files = const [];
   List<PaiementFacture> paiementFactures = [];
+  double resteArgent = 0;
 
   double? _montantTotal;
-  double? _resteArgent;
 
   double get montantTotal =>
       _montantTotal ?? lignesMesures.fold(0, (a, b) => a + b.total);
-  double get resteArgent =>
-      _resteArgent ?? (montantTotal - avance - remiseGlobale);
 
   bool isActive = true;
   DateTime? createdAt;
@@ -73,7 +71,7 @@ class Mesure extends ModelFormData<Mesure> {
         .toString()
         .toDouble()
         .value;
-    _resteArgent = (json['ResteArgent'] ?? json['resteArgent'])
+    resteArgent = (json['ResteArgent'] ?? json['resteArgent'])
         .toString()
         .toDouble()
         .value;
@@ -96,6 +94,7 @@ class Mesure extends ModelFormData<Mesure> {
     }
     createdAt = json['createdAt'].toString().toDateTime();
     isActive = json['isActive'] ?? true;
+    etatFacture = json['etatFacture'];
     etatFacture = json['etatFacture'];
   }
 
@@ -225,4 +224,10 @@ class Mesure extends ModelFormData<Mesure> {
 
     return files;
   }
+
+  double get pourcentage => montantPaye / montantTotal;
+
+  bool get isPaid => pourcentage >= 1.0;
+
+  double get montantPaye => montantTotal - resteArgent;
 }

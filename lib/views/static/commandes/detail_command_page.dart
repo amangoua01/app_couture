@@ -59,16 +59,10 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
               );
             }
 
-            final mesure = _mesure!;
-            final pourcentage = (mesure.montantTotal > 0)
-                ? (mesure.avance / mesure.montantTotal)
-                : 0.0;
-            final isPaid = pourcentage >= 1.0;
-
             return Scaffold(
               backgroundColor: Colors.grey[50],
               appBar: AppBar(
-                title: Text("Commande #${mesure.id ?? ''}"),
+                title: Text("Commande #${_mesure!.id ?? ''}"),
                 elevation: 0,
                 centerTitle: true,
                 titleTextStyle: const TextStyle(
@@ -77,12 +71,13 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                   fontSize: 18,
                 ),
                 actions: [
-                  if (mesure.resteArgent > 0)
+                  if (_mesure!.resteArgent > 0)
                     IconButton(
                       onPressed: () async {
                         final res = await showDialog(
                           context: context,
-                          builder: (context) => PaiementDialog(mesure: mesure),
+                          builder: (context) =>
+                              PaiementDialog(mesure: _mesure!),
                         );
 
                         if (res != null && res is Mesure) {
@@ -100,14 +95,14 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                 padding: const EdgeInsets.all(20),
                 children: [
                   // Status Header
-                  if (mesure.etatFacture != null &&
-                      mesure.etatFacture!.isNotEmpty) ...[
+                  if (_mesure!.etatFacture != null &&
+                      _mesure!.etatFacture!.isNotEmpty) ...[
                     Row(
                       children: [
-                        _buildEtatBadge(mesure.etatFacture!),
+                        _buildEtatBadge(_mesure!.etatFacture!),
                         const Gap(10),
                         InkWell(
-                          onTap: () => _showFactureEtatSelector(ctl, mesure),
+                          onTap: () => _showFactureEtatSelector(ctl, _mesure!),
                           child: Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
@@ -131,10 +126,10 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildDateColumn("Dépôt", mesure.dateDepot),
+                        _buildDateColumn("Dépôt", _mesure!.dateDepot),
                         Container(
                             width: 1, height: 40, color: Colors.grey[200]),
-                        _buildDateColumn("Retrait prévu", mesure.dateRetrait,
+                        _buildDateColumn("Retrait prévu", _mesure!.dateRetrait,
                             isHighlight: true),
                       ],
                     ),
@@ -157,16 +152,18 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color:
-                                    (isPaid ? Colors.green : AppColors.primary)
-                                        .withValues(alpha: 0.1),
+                                color: (_mesure!.isPaid
+                                        ? Colors.green
+                                        : AppColors.primary)
+                                    .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                "${(pourcentage * 100).toInt()}%",
+                                "${(_mesure!.pourcentage * 100).toInt()}%",
                                 style: TextStyle(
-                                  color:
-                                      isPaid ? Colors.green : AppColors.primary,
+                                  color: _mesure!.isPaid
+                                      ? Colors.green
+                                      : AppColors.primary,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -177,11 +174,12 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: LinearProgressIndicator(
-                            value: pourcentage,
+                            value: _mesure!.pourcentage,
                             minHeight: 10,
                             backgroundColor: Colors.grey[200],
-                            valueColor: AlwaysStoppedAnimation(
-                                isPaid ? Colors.green : AppColors.primary),
+                            valueColor: AlwaysStoppedAnimation(_mesure!.isPaid
+                                ? Colors.green
+                                : AppColors.primary),
                           ),
                         ),
                         const Gap(20),
@@ -189,16 +187,16 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             _buildAmountColumn(
-                                "Avance",
-                                mesure.avance.toAmount(unit: "F"),
+                                "Payé",
+                                _mesure!.montantPaye.toAmount(unit: "F"),
                                 Colors.black87),
                             _buildAmountColumn(
                                 "Reste",
-                                mesure.resteArgent.toAmount(unit: "F"),
+                                _mesure!.resteArgent.toAmount(unit: "F"),
                                 Colors.red),
                             _buildAmountColumn(
                                 "Total",
-                                mesure.montantTotal.toAmount(unit: "F"),
+                                _mesure!.montantTotal.toAmount(unit: "F"),
                                 AppColors.primary,
                                 isBold: true),
                           ],
@@ -220,17 +218,17 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                               color: AppColors.primary.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
-                            child: _buildClientAvatar(mesure.client?.photo)),
+                            child: _buildClientAvatar(_mesure!.client?.photo)),
                         const Gap(15),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(mesure.client?.fullName ?? "Inconnu",
+                              Text(_mesure!.client?.fullName ?? "Inconnu",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16)),
-                              Text(mesure.client?.tel ?? "Sans contact",
+                              Text(_mesure!.client?.tel ?? "Sans contact",
                                   style: TextStyle(color: Colors.grey[600])),
                             ],
                           ),
@@ -242,7 +240,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
 
                   // Articles Card
                   _buildSectionTitle("Articles"),
-                  ...mesure.lignesMesures.map((lm) => Padding(
+                  ..._mesure!.lignesMesures.map((lm) => Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: _buildCard(
                           child: Column(
@@ -404,13 +402,13 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                         ),
                       )),
 
-                  if (mesure.paiementFactures.isNotEmpty) ...[
+                  if (_mesure!.paiementFactures.isNotEmpty) ...[
                     const Gap(15),
                     _buildSectionTitle("Historique des paiements"),
                     _buildCard(
                       child: Column(
                         children: [
-                          ...mesure.paiementFactures
+                          ..._mesure!.paiementFactures
                               .map((p) => _buildPaymentRow(p)),
                         ],
                       ),
@@ -429,7 +427,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                           color: Colors.black87,
                           icon: const Icon(Icons.print,
                               color: Colors.white, size: 18),
-                          onPressed: () => ctl.printReceipt(mesure),
+                          onPressed: () => ctl.printReceipt(_mesure!),
                         ),
                       ),
                       const Gap(15),
@@ -438,7 +436,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                           title: 'PDF',
                           icon: const Icon(Icons.picture_as_pdf,
                               color: Colors.white, size: 18),
-                          onPressed: () => ctl.exportPdf(mesure),
+                          onPressed: () => ctl.exportPdf(_mesure!),
                         ),
                       ),
                     ],
@@ -451,7 +449,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                     color: AppColors.green,
                     icon: const Icon(Icons.straighten,
                         color: Colors.white, size: 18),
-                    onPressed: () => ctl.printClientMensurations(mesure),
+                    onPressed: () => ctl.printClientMensurations(_mesure!),
                   ),
                   const Gap(20),
                 ],

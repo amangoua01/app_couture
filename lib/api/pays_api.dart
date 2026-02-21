@@ -10,7 +10,7 @@ class PaysApi extends WebController {
 
   Future<DataResponse<List<Pays>>> getAllPays() async {
     final response = await client.get(
-      urlBuilder(api: "/"),
+      urlBuilder(api: "actif"),
       headers: headers,
     );
     final json = jsonDecode(response.body);

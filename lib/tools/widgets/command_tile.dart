@@ -17,16 +17,19 @@ class CommandTile extends StatelessWidget {
   Widget build(BuildContext context) {
     if (mesure == null) return const SizedBox.shrink();
 
-    final pourcentage = (mesure!.montantTotal > 0)
-        ? (mesure!.avance / mesure!.montantTotal)
-        : 0.0;
-    final bool isPaid = pourcentage >= 1.0;
-
     // Calculer les jours restants jusqu'à la date de retrait
     final int? joursRestants =
         mesure!.dateRetrait?.difference(DateTime.now()).inDays;
-    final bool isUrgent =
-        joursRestants != null && joursRestants <= 2 && joursRestants >= 0;
+
+    final bool isCompleted = mesure!.etatFacture == 'Terminée' ||
+        mesure!.etatFacture == 'Livrée' ||
+        mesure!.etatFacture == 'TERMINE' ||
+        mesure!.etatFacture == 'SOLDE';
+
+    final bool isUrgent = !isCompleted &&
+        joursRestants != null &&
+        joursRestants <= 2 &&
+        joursRestants >= 0;
 
     // Récupérer les états uniques des lignes de mesure
     final etats = mesure!.lignesMesures
@@ -163,10 +166,10 @@ class CommandTile extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
-                      value: pourcentage,
+                      value: mesure!.pourcentage,
                       backgroundColor: Colors.grey[200],
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        isPaid ? Colors.green : AppColors.primary,
+                        mesure!.isPaid ? Colors.green : AppColors.primary,
                       ),
                       minHeight: 6,
                     ),
@@ -174,11 +177,11 @@ class CommandTile extends StatelessWidget {
                 ),
                 const Gap(10),
                 Text(
-                  '${(pourcentage * 100).toInt()}%',
+                  '${(mesure!.pourcentage * 100).toInt()}%',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
-                    color: isPaid ? Colors.green : AppColors.primary,
+                    color: mesure!.isPaid ? Colors.green : AppColors.primary,
                   ),
                 ),
               ],
@@ -191,11 +194,11 @@ class CommandTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Avance",
+                      "Payé",
                       style: TextStyle(fontSize: 10, color: Colors.grey[500]),
                     ),
                     Text(
-                      mesure!.avance.toAmount(unit: "F"),
+                      mesure!.montantPaye.toAmount(unit: "F"),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
