@@ -1,4 +1,5 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
@@ -121,7 +122,7 @@ class RegisterPage extends StatelessWidget {
                             CTextFormField(
                               controller: ctl.passwordCtl,
                               require: true,
-                              obscureText: true,
+                              obscureText: ctl.showPassword,
                               externalLabel: "Mot de passe",
                               hintText: "Mot de passe",
                               validator: (value) {
@@ -133,11 +134,24 @@ class RegisterPage extends StatelessWidget {
                                 }
                                 return null;
                               },
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  ctl.showPassword = !ctl.showPassword;
+                                  ctl.update();
+                                },
+                                icon: Icon(
+                                  ternaryFn(
+                                    condition: ctl.showPassword,
+                                    ifTrue: Icons.remove_red_eye,
+                                    ifFalse: Icons.visibility_off,
+                                  ),
+                                ),
+                              ),
                             ),
                             CTextFormField(
                               controller: ctl.confirmPasswordCtl,
                               require: true,
-                              obscureText: true,
+                              obscureText: ctl.showConfirmPassword,
                               externalLabel: "Confirmer le mot de passe",
                               hintText: "Confirmer le mot de passe",
                               validator: (value) {
@@ -146,6 +160,20 @@ class RegisterPage extends StatelessWidget {
                                 }
                                 return null;
                               },
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  ctl.showConfirmPassword =
+                                      !ctl.showConfirmPassword;
+                                  ctl.update();
+                                },
+                                icon: Icon(
+                                  ternaryFn(
+                                    condition: ctl.showConfirmPassword,
+                                    ifTrue: Icons.remove_red_eye,
+                                    ifFalse: Icons.visibility_off,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
