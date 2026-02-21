@@ -16,18 +16,7 @@ abstract class Env {
 
   static const AppEnv env = AppEnv.prod;
 
-  static const _hostDev = NetwordConfig(
-    scheme: "https",
-    host: "backend.ateliya.com",
-  );
-
-  static const _hostProd = NetwordConfig(
-    host: "backendprod.ateliya.com",
-    scheme: "https",
-  );
-
-  static NetwordConfig get baseUrl =>
-      (env == AppEnv.dev) ? _hostDev : _hostProd;
+  static NetwordConfig get baseUrl => env.networdConfig;
 
   static const nbItemInListPage = 10;
   static const supportMail = "supports@moomen.pro";
