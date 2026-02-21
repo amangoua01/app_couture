@@ -159,9 +159,9 @@ class _StatChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.18)),
+        border: Border.all(color: color.withValues(alpha: 0.18)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,7 +172,7 @@ class _StatChip extends StatelessWidget {
               const Gap(4),
               Text(label,
                   style:
-                      TextStyle(fontSize: 11, color: color.withOpacity(0.8))),
+                      TextStyle(fontSize: 11, color: color.withValues(alpha: 0.8))),
             ],
           ),
           const Gap(4),
@@ -229,7 +229,7 @@ class _MouvementCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade100),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -263,7 +263,7 @@ class _MouvementCard extends StatelessWidget {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: accentColor.withOpacity(0.1),
+                        color: accentColor.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -365,15 +365,15 @@ class _StatutPill extends StatelessWidget {
     final String label;
 
     if (isConfirme) {
-      bg = Colors.green.withOpacity(0.12);
+      bg = Colors.green.withValues(alpha: 0.12);
       fg = Colors.green[700]!;
       label = 'Confirmé';
     } else if (isEnAttente) {
-      bg = Colors.orange.withOpacity(0.12);
+      bg = Colors.orange.withValues(alpha: 0.12);
       fg = Colors.orange[700]!;
       label = 'En attente';
     } else {
-      bg = Colors.grey.withOpacity(0.12);
+      bg = Colors.grey.withValues(alpha: 0.12);
       fg = Colors.grey[600]!;
       label = statut;
     }

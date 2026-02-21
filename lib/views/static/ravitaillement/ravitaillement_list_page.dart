@@ -109,7 +109,7 @@ class _RavitaillementCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade100),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -287,7 +287,7 @@ class _LigneTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.08),
+              color: AppColors.primary.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -318,15 +318,15 @@ class _StatutBadge extends StatelessWidget {
     final String label;
 
     if (isRejete) {
-      bg = Colors.red.withOpacity(0.12);
+      bg = Colors.red.withValues(alpha: 0.12);
       fg = Colors.red[700]!;
       label = 'Rejeté';
     } else if (isEnAttente) {
-      bg = Colors.orange.withOpacity(0.12);
+      bg = Colors.orange.withValues(alpha: 0.12);
       fg = Colors.orange[700]!;
       label = 'En attente';
     } else {
-      bg = Colors.green.withOpacity(0.12);
+      bg = Colors.green.withValues(alpha: 0.12);
       fg = Colors.green[700]!;
       label = 'Validé';
     }

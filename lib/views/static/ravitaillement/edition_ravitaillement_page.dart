@@ -49,10 +49,10 @@ class EditionRavitaillementPage extends StatelessWidget {
                           padding: const EdgeInsets.all(12),
                           margin: const EdgeInsets.only(bottom: 20),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.06),
+                            color: AppColors.primary.withValues(alpha: 0.06),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                                color: AppColors.primary.withOpacity(0.2)),
+                                color: AppColors.primary.withValues(alpha: 0.2)),
                           ),
                           child: Row(
                             children: [
@@ -121,7 +121,7 @@ class _LigneCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -139,7 +139,7 @@ class _LigneCard extends StatelessWidget {
                   width: 24,
                   height: 24,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
@@ -238,7 +238,7 @@ class _ArticleDropdownItem extends StatelessWidget {
     return ListTile(
       selected: isSelected,
       selectedColor: AppColors.primary,
-      selectedTileColor: AppColors.primary.withOpacity(0.06),
+      selectedTileColor: AppColors.primary.withValues(alpha: 0.06),
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Container(

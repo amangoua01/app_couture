@@ -35,7 +35,7 @@ class EditionMesurePage extends StatelessWidget {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, -5),
                   ),
@@ -106,7 +106,7 @@ class EditionMesurePage extends StatelessWidget {
                                   ? [
                                       BoxShadow(
                                           color: AppColors.primary
-                                              .withOpacity(0.4),
+                                              .withValues(alpha: 0.4),
                                           blurRadius: 8,
                                           offset: const Offset(0, 4))
                                     ]
@@ -143,7 +143,7 @@ class EditionMesurePage extends StatelessWidget {
                               height: 2,
                               margin: const EdgeInsets.symmetric(horizontal: 6),
                               color: isPast
-                                  ? AppColors.primary.withOpacity(0.5)
+                                  ? AppColors.primary.withValues(alpha: 0.5)
                                   : Colors.grey[200],
                             ),
                         ],
@@ -163,7 +163,7 @@ class EditionMesurePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
+                        color: Colors.black.withValues(alpha: 0.04),
                         blurRadius: 15,
                         offset: const Offset(0, 5),
                       ),

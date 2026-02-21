@@ -218,7 +218,7 @@ class _SectionHeader extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -280,7 +280,7 @@ class _SectionHeader extends StatelessWidget {
                             const Gap(6),
                             _Pill(
                               label: '${item.variantes.length} variantes',
-                              bgColor: AppColors.primary.withOpacity(0.12),
+                              bgColor: AppColors.primary.withValues(alpha: 0.12),
                               textColor: AppColors.primary,
                             ),
                           ],
@@ -381,7 +381,7 @@ class _VarianteCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade100),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -429,7 +429,7 @@ class _VarianteCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.55),
+                            color: Colors.black.withValues(alpha: 0.55),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -451,8 +451,8 @@ class _VarianteCard extends StatelessWidget {
                             horizontal: 6, vertical: 3),
                         decoration: BoxDecoration(
                           color: qty > 0
-                              ? Colors.green.withOpacity(0.85)
-                              : Colors.red.withOpacity(0.85),
+                              ? Colors.green.withValues(alpha: 0.85)
+                              : Colors.red.withValues(alpha: 0.85),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -480,7 +480,7 @@ class _VarianteCard extends StatelessWidget {
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.12),
+                                  color: Colors.black.withValues(alpha: 0.12),
                                   blurRadius: 4,
                                 )
                               ],
@@ -609,12 +609,12 @@ class _BilanChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: isPrice
-            ? AppColors.primary.withOpacity(0.07)
+            ? AppColors.primary.withValues(alpha: 0.07)
             : Colors.grey.shade100,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isPrice
-              ? AppColors.primary.withOpacity(0.2)
+              ? AppColors.primary.withValues(alpha: 0.2)
               : Colors.grey.shade200,
         ),
       ),

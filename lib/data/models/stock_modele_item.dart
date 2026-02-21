@@ -47,8 +47,9 @@ class StockModeleItem {
         .where((v) => v.prixMinimal != null)
         .map((v) => v.prixMinimal!)
         .toList();
-    if (prices.isEmpty)
-      return variantes.first.prix?.toDouble().toAmount(unit: 'F') ?? '0 F';
+    if (prices.isEmpty) {
+      return variantes.first.prix.toAmount(unit: 'F');
+    }
     prices.sort();
     return prices.first.toAmount(unit: 'F');
   }
@@ -58,7 +59,7 @@ class StockModeleItem {
     if (variantes.isEmpty) return '0 F';
     final prices = variantes
         .where((v) => v.prix != null)
-        .map((v) => v.prix!.toDouble().value)
+        .map((v) => v.prix.toStrictDouble())
         .toList();
     if (prices.isEmpty) return '0 F';
     prices.sort();

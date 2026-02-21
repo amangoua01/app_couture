@@ -212,14 +212,14 @@ class _NotifItem extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
         color: isSelected
-            ? AppColors.primary.withOpacity(0.08)
+            ? AppColors.primary.withValues(alpha: 0.08)
             : isUnread
-                ? AppColors.primary.withOpacity(0.04)
+                ? AppColors.primary.withValues(alpha: 0.04)
                 : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isSelected
-              ? AppColors.primary.withOpacity(0.4)
+              ? AppColors.primary.withValues(alpha: 0.4)
               : Colors.grey.shade100,
           width: isSelected ? 1.5 : 1,
         ),
@@ -227,7 +227,7 @@ class _NotifItem extends StatelessWidget {
             ? []
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
+                  color: Colors.black.withValues(alpha: 0.03),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 )
@@ -298,7 +298,7 @@ class _NotifItem extends StatelessWidget {
                                 CircleAvatar(
                                   radius: 24,
                                   backgroundColor: isUnread
-                                      ? AppColors.primary.withOpacity(0.1)
+                                      ? AppColors.primary.withValues(alpha: 0.1)
                                       : Colors.grey[100],
                                   child: SvgPicture.asset(
                                     'assets/images/svg/notif.svg',

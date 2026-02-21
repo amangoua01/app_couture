@@ -1,12 +1,23 @@
 import 'package:ateliya/api/facture_api.dart';
-import 'package:ateliya/data/models/mesure.dart';
+import 'package:ateliya/data/models/factures_grouped.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
-import 'package:ateliya/tools/models/paginated_data.dart';
+import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
-import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
+import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
+import 'package:flutter/material.dart';
 
-class CommandeListVctl extends ListViewController<Mesure> {
-  CommandeListVctl() : super(FactureApi());
+class CommandeListVctl extends AuthViewController {
+  final api = FactureApi();
+
+  bool isLoading = false;
+  FacturesGrouped? data;
+
+  // Filtres
+  final dateDebut = DateTimeEditingController();
+  final dateFin = DateTimeEditingController();
+  final nomClientCtrl = TextEditingController();
+  final numeroClientCtrl = TextEditingController();
+  String? etatFacture;
 
   @override
   void onInit() {
@@ -14,27 +25,44 @@ class CommandeListVctl extends ListViewController<Mesure> {
     getList();
   }
 
-  @override
-  Future<void> getList({int page = 1, String? search}) async {
-    startLoad(page);
-    final res = await (api as FactureApi).getFacturesEntreprise(
+  Future<void> getList() async {
+    isLoading = true;
+    update();
+
+    final dateDebutStr = dateDebut.dateTime?.toIso8601String().split('T').first;
+    final dateFinStr = dateFin.dateTime?.toIso8601String().split('T').first;
+
+    final res = await api.getFacturesEntreprise(
       getEntite().value.id.value,
+      dateDebut: dateDebutStr,
+      dateFin: dateFinStr,
+      nomClient: nomClientCtrl.text.trim(),
+      numeroClient: numeroClientCtrl.text.trim(),
+      etatFacture: etatFacture,
     );
 
-    endLoad(page);
+    isLoading = false;
 
     if (res.status) {
-      if (page == 1) {
-        data = PaginatedData(items: res.data ?? [], page: page);
-        data.hasMore = false; // L'API retourne tout, pas de pagination
-      } else {
-        if (res.data != null && res.data!.isNotEmpty) {
-          data.append(PaginatedData(items: res.data!, page: page));
-        }
-      }
-      update();
+      data = res.data;
     } else {
       CMessageDialog.show(message: res.message);
+      data = FacturesGrouped(); // fallback
     }
+
+    update();
+  }
+
+  void rechargerList() {
+    getList();
+  }
+
+  void resetFilters() {
+    dateDebut.clear();
+    dateFin.clear();
+    nomClientCtrl.clear();
+    numeroClientCtrl.clear();
+    etatFacture = null;
+    getList();
   }
 }

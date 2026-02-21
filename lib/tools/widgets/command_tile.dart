@@ -45,7 +45,7 @@ class CommandTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -82,7 +82,7 @@ class CommandTile extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -233,7 +233,7 @@ class CommandTile extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             borderRadius: BorderRadius.circular(8)),
                         child: const Icon(Icons.print,
                             color: Colors.black87, size: 20),
@@ -248,7 +248,7 @@ class CommandTile extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
+                            color: Colors.red.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8)),
                         child: const Icon(Icons.picture_as_pdf,
                             color: Colors.red, size: 20),
@@ -263,7 +263,7 @@ class CommandTile extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.1),
+                              color: AppColors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8)),
                           child: const Icon(Icons.payment,
                               color: AppColors.primary, size: 20),
@@ -287,18 +287,18 @@ class CommandTile extends StatelessWidget {
 
     switch (etat) {
       case 'Terminée':
-        backgroundColor = Colors.green.withOpacity(0.1);
+        backgroundColor = Colors.green.withValues(alpha: 0.1);
         textColor = Colors.green.shade700;
         icon = Icons.check_circle_outline;
         break;
       case 'Livrée':
-        backgroundColor = Colors.blue.withOpacity(0.1);
+        backgroundColor = Colors.blue.withValues(alpha: 0.1);
         textColor = Colors.blue.shade700;
         icon = Icons.local_shipping_outlined;
         break;
       case 'En cours':
       default:
-        backgroundColor = Colors.orange.withOpacity(0.1);
+        backgroundColor = Colors.orange.withValues(alpha: 0.1);
         textColor = Colors.orange.shade700;
         icon = Icons.access_time;
         break;

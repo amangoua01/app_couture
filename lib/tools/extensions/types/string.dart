@@ -11,6 +11,8 @@ extension StringExt on String? {
 
   int? toInt() => int.tryParse(toString());
 
+  int toStrictInt() => toInt() ?? 0;
+
   double? toDouble() {
     var val = value;
     if (value.contains(",")) {
@@ -18,6 +20,8 @@ extension StringExt on String? {
     }
     return double.tryParse(val);
   }
+
+  double toStrictDouble() => toDouble() ?? 0;
 
   String get toFrenchDateTime => (this != null)
       ? Functions.getStringDate(toDateTime(), withTime: true)

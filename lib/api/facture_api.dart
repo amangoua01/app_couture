@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ateliya/api/abstract/crud_web_controller.dart';
 import 'package:ateliya/data/models/facture.dart';
+import 'package:ateliya/data/models/factures_grouped.dart';
 import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/data/models/transaction_response.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
@@ -42,19 +43,36 @@ class FactureApi extends CrudWebController<Facture> {
     }
   }
 
-  Future<DataResponse<List<Mesure>>> getFacturesEntreprise(
-      int succursaleId) async {
+  Future<DataResponse<FacturesGrouped>> getFacturesEntreprise(
+    int succursaleId, {
+    String? dateDebut,
+    String? dateFin,
+    String? nomClient,
+    String? numeroClient,
+    String? etatFacture,
+  }) async {
     try {
-      final response = await client.get(
-        urlBuilder(api: "entreprise/$succursaleId"),
+      final body = {};
+      if (dateDebut != null) body['dateDebut'] = dateDebut;
+      if (dateFin != null) body['dateFin'] = dateFin;
+      if (nomClient != null && nomClient.isNotEmpty) {
+        body['nomClient'] = nomClient;
+      }
+      if (numeroClient != null && numeroClient.isNotEmpty) {
+        body['numeroClient'] = numeroClient;
+      }
+      if (etatFacture != null) body['etatFacture'] = etatFacture;
+
+      final response = await client.post(
+        urlBuilder(api: "advanced/$succursaleId"),
         headers: authHeaders,
+        body: jsonEncode(body),
       );
 
       final json = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        final list =
-            (json['data'] as List).map((e) => Mesure.fromJson(e)).toList();
-        return DataResponse.success(data: list);
+        return DataResponse.success(
+            data: FacturesGrouped.fromJson(json['data'] ?? {}));
       } else {
         return DataResponse.error(message: json['message'] ?? "Erreur");
       }
