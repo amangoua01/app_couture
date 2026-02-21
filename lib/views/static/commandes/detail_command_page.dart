@@ -111,7 +111,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                           child: Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.1),
+                              color: AppColors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Icon(
@@ -159,7 +159,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                               decoration: BoxDecoration(
                                 color:
                                     (isPaid ? Colors.green : AppColors.primary)
-                                        .withOpacity(0.1),
+                                        .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -217,7 +217,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                             width: 50,
                             height: 50,
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.1),
+                              color: AppColors.primary.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
                             child: _buildClientAvatar(mesure.client?.photo)),
@@ -284,7 +284,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                           padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
                                             color: AppColors.primary
-                                                .withOpacity(0.1),
+                                                .withValues(alpha: 0.1),
                                             borderRadius:
                                                 BorderRadius.circular(6),
                                           ),
@@ -349,12 +349,12 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                             ),
                                             decoration: BoxDecoration(
                                               color: AppColors.primary
-                                                  .withOpacity(0.08),
+                                                  .withValues(alpha: 0.08),
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                               border: Border.all(
                                                 color: AppColors.primary
-                                                    .withOpacity(0.2),
+                                                    .withValues(alpha: 0.2),
                                               ),
                                             ),
                                             child: Row(
@@ -471,7 +471,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 10,
               offset: const Offset(0, 4))
         ],
@@ -605,18 +605,18 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
 
     switch (etat) {
       case 'Terminée':
-        backgroundColor = Colors.green.withOpacity(0.1);
+        backgroundColor = Colors.green.withValues(alpha: 0.1);
         textColor = Colors.green.shade700;
         icon = Icons.check_circle_outline;
         break;
       case 'Livrée':
-        backgroundColor = Colors.blue.withOpacity(0.1);
+        backgroundColor = Colors.blue.withValues(alpha: 0.1);
         textColor = Colors.blue.shade700;
         icon = Icons.local_shipping_outlined;
         break;
       case 'En cours':
       default:
-        backgroundColor = Colors.orange.withOpacity(0.1);
+        backgroundColor = Colors.orange.withValues(alpha: 0.1);
         textColor = Colors.orange.shade700;
         icon = Icons.access_time;
         break;

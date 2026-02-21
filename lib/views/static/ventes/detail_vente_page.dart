@@ -64,8 +64,8 @@ class DetailVentePage extends StatelessWidget {
                           //   ),
                           //   decoration: BoxDecoration(
                           //     color: (vente.isActive ?? true)
-                          //         ? AppColors.green.withOpacity(0.1)
-                          //         : Colors.grey.withOpacity(0.1),
+                          //         ? AppColors.green.withValues(alpha: 0.1)
+                          //         : Colors.grey.withValues(alpha: 0.1),
                           //     borderRadius: BorderRadius.circular(20),
                           //     border: Border.all(
                           //       color: (vente.isActive ?? true)
@@ -123,7 +123,7 @@ class DetailVentePage extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.1),
+                                color: AppColors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Icon(
@@ -201,7 +201,7 @@ class DetailVentePage extends StatelessWidget {
                                         ),
                                         decoration: BoxDecoration(
                                           color: AppColors.primary
-                                              .withOpacity(0.1),
+                                              .withValues(alpha: 0.1),
                                           borderRadius:
                                               BorderRadius.circular(6),
                                         ),
@@ -270,7 +270,7 @@ class DetailVentePage extends StatelessWidget {
                       const Gap(10),
                       _buildSummaryRow(
                         "Quantité totale",
-                        "${vente.quantite ?? vente.paiementBoutiqueLignes.fold<int>(0, (sum, ligne) => sum + (ligne.quantite ?? 0))}",
+                        "${vente.quantite}",
                         isBold: false,
                       ),
                       const Gap(10),
@@ -278,7 +278,7 @@ class DetailVentePage extends StatelessWidget {
                       const Gap(10),
                       _buildSummaryRow(
                         "Montant Total",
-                        (vente.montant ?? 0).toAmount(unit: "F"),
+                        vente.montant.toAmount(unit: "F"),
                         isBold: true,
                         valueColor: AppColors.primary,
                       ),
@@ -314,7 +314,7 @@ class DetailVentePage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),

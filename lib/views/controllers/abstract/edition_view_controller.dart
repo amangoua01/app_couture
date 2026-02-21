@@ -1,5 +1,6 @@
 import 'package:ateliya/api/abstract/crud_web_controller.dart';
 import 'package:ateliya/data/models/abstract/model.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,6 +25,10 @@ abstract class EditionViewController<M extends Model,
         res = await onUpdate(item as M);
       }
       if (res != null) {
+        CMessageDialog.show(
+          message: "Opération effectué avec succès",
+          isSuccess: true,
+        );
         Get.back(result: res);
       }
     }

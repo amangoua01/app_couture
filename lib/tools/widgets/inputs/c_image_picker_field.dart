@@ -112,7 +112,7 @@ class CImagePickerField extends StatelessWidget {
                   top: 5,
                   right: 5,
                   child: Material(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(20),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(20),

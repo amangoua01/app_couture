@@ -122,10 +122,10 @@ class _PaiementDialogState extends State<PaiementDialog> {
                 Container(
                   padding: const EdgeInsets.all(15),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.08),
+                    color: AppColors.primary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                     border:
-                        Border.all(color: AppColors.primary.withOpacity(0.2)),
+                        Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
                   ),
                   child: Column(
                     children: [
@@ -189,8 +189,9 @@ class _PaiementDialogState extends State<PaiementDialog> {
                     if (v == null || v.isEmpty) return "Montant requis";
                     final montant = double.tryParse(v);
                     if (montant == null) return "Montant invalide";
-                    if (montant <= 0)
+                    if (montant <= 0) {
                       return "Le montant doit être supérieur à 0";
+                    }
                     if (montant > widget.mesure.resteArgent) {
                       return "Le montant ne peut pas dépasser ${widget.mesure.resteArgent.toAmount(unit: "F")}";
                     }
@@ -286,7 +287,7 @@ class _PaiementDialogState extends State<PaiementDialog> {
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
-                  disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
+                  disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.6),
                 ),
                 child: _isLoading
                     ? const SizedBox(

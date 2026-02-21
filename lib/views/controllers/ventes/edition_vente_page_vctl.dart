@@ -57,6 +57,16 @@ class EditionVentePageVctl extends AuthViewController
 
   Future<void> submit() async {
     if (formKey.currentState!.validate()) {
+      // Vérification du stock
+      final qty = quantiteCtl.text.toInt().value;
+      final stock = modeleBoutique.quantite ?? 0;
+      if (qty > stock) {
+        CMessageDialog.show(
+          message: 'Stock insuffisant — disponible : $stock',
+        );
+        return;
+      }
+
       final data = PaiementBoutiqueDto(
         datePaiment: dateVenteCtl.dateTime!,
         clientId: client!.id!,
@@ -87,6 +97,7 @@ class EditionVentePageVctl extends AuthViewController
           await printVenteReceipt(
             res.data!,
             user.entreprise?.libelle ?? "Boutique",
+            footerMessage: user.settings?.messageFactureBoutique,
           );
         }
 

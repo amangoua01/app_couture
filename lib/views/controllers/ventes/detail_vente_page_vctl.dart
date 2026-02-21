@@ -5,6 +5,10 @@ import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.da
 class DetailVentePageVctl extends AuthViewController
     with PrinterManagerViewMixin {
   Future<void> printReceipt(Vente vente, String entrepriseName) async {
-    await printVenteReceipt(vente, entrepriseName);
+    await printVenteReceipt(
+      vente,
+      entrepriseName,
+      footerMessage: user.settings?.messageFactureBoutique,
+    );
   }
 }

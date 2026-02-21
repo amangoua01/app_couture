@@ -31,21 +31,33 @@ mixin PrinterManagerViewMixin {
     }
   }
 
-  /// Imprimer le reçu d'une mesure/commande
-  Future<void> printMesureReceipt(Mesure mesure) async {
-    await _printGenericReceipt(() => _generateMesureBytes(mesure));
+  /// Imprimer le reçu d'une mesure/commande (Atelier)
+  Future<void> printMesureReceipt(Mesure mesure,
+      {String? footerMessage}) async {
+    final msg = (footerMessage != null && footerMessage.trim().isNotEmpty)
+        ? footerMessage.trim()
+        : "Merci de votre confiance !";
+    await _printGenericReceipt(() => _generateMesureBytes(mesure, msg));
   }
 
   /// Imprimer le reçu d'une vente (Boutique)
-  Future<void> printVenteReceipt(Vente vente, String entrepriseName) async {
+  Future<void> printVenteReceipt(Vente vente, String entrepriseName,
+      {String? footerMessage}) async {
+    final msg = (footerMessage != null && footerMessage.trim().isNotEmpty)
+        ? footerMessage.trim()
+        : "Merci de votre visite !";
     await _printGenericReceipt(
-        () => _generateVenteBytes(vente, entrepriseName));
+        () => _generateVenteBytes(vente, entrepriseName, msg));
   }
 
-  /// Imprimer le reçu d'un paiement spécifique
-  Future<void> printPaiementReceipt(
-      Mesure mesure, PaiementFacture paiement) async {
-    await _printGenericReceipt(() => _generatePaiementBytes(mesure, paiement));
+  /// Imprimer le reçu d'un paiement spécifique (Atelier)
+  Future<void> printPaiementReceipt(Mesure mesure, PaiementFacture paiement,
+      {String? footerMessage}) async {
+    final msg = (footerMessage != null && footerMessage.trim().isNotEmpty)
+        ? footerMessage.trim()
+        : "Merci !";
+    await _printGenericReceipt(
+        () => _generatePaiementBytes(mesure, paiement, msg));
   }
 
   /// Imprimer les informations client et mensurations
@@ -113,7 +125,8 @@ mixin PrinterManagerViewMixin {
         .replaceAll(' ', ' ');
   }
 
-  Future<List<int>?> _generateMesureBytes(Mesure mesure) async {
+  Future<List<int>?> _generateMesureBytes(
+      Mesure mesure, String footerMessage) async {
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = [];
@@ -262,7 +275,7 @@ mixin PrinterManagerViewMixin {
       bytes += generator.qrcode(mesure.id.toString(), size: QRSize.size4);
     }
     bytes += generator.emptyLines(1);
-    bytes += generator.text("Merci de votre confiance !",
+    bytes += generator.text(_normalize(footerMessage),
         styles: const PosStyles(align: PosAlign.center));
     bytes += generator.emptyLines(3);
 
@@ -270,7 +283,7 @@ mixin PrinterManagerViewMixin {
   }
 
   Future<List<int>?> _generateVenteBytes(
-      Vente vente, String entrepriseName) async {
+      Vente vente, String entrepriseName, String footerMessage) async {
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = [];
@@ -365,7 +378,7 @@ mixin PrinterManagerViewMixin {
     ]);
 
     bytes += generator.emptyLines(1);
-    bytes += generator.text("Merci de votre visite !",
+    bytes += generator.text(_normalize(footerMessage),
         styles: const PosStyles(align: PosAlign.center));
     bytes += generator.emptyLines(3);
 
@@ -373,7 +386,7 @@ mixin PrinterManagerViewMixin {
   }
 
   Future<List<int>?> _generatePaiementBytes(
-      Mesure mesure, PaiementFacture paiement) async {
+      Mesure mesure, PaiementFacture paiement, String footerMessage) async {
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = [];
@@ -449,7 +462,7 @@ mixin PrinterManagerViewMixin {
     ]);
 
     bytes += generator.emptyLines(1);
-    bytes += generator.text("Merci !",
+    bytes += generator.text(_normalize(footerMessage),
         styles: const PosStyles(align: PosAlign.center));
     bytes += generator.emptyLines(3);
 

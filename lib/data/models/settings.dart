@@ -8,6 +8,8 @@ class Settings extends ModelJson {
   int nombreSuccursale = 0;
   int nombreJourRestantPourEnvoyerSms = 0;
   int numeroAbonnement = 0;
+  String? messageFactureBoutique;
+  String? messageFactureAtelier;
   DateTime? createdAt;
   bool isActive = false;
 
@@ -18,6 +20,8 @@ class Settings extends ModelJson {
     this.nombreSuccursale = 0,
     this.nombreJourRestantPourEnvoyerSms = 0,
     this.numeroAbonnement = 0,
+    this.messageFactureBoutique,
+    this.messageFactureAtelier,
     this.createdAt,
     this.isActive = false,
   });
@@ -30,6 +34,8 @@ class Settings extends ModelJson {
     nombreJourRestantPourEnvoyerSms =
         json["nombreJourRestantPourEnvoyerSms"] ?? 0;
     numeroAbonnement = json["numeroAbonnement"] ?? 0;
+    messageFactureBoutique = json["messageFactureBoutique"];
+    messageFactureAtelier = json["messageFactureAtelier"];
     createdAt = json["createdAt"].toString().toDateTime();
     isActive = json["isActive"] ?? false;
   }
@@ -45,6 +51,8 @@ class Settings extends ModelJson {
         "nombreSuccursale": nombreSuccursale,
         "nombreJourRestantPourEnvoyerSms": nombreJourRestantPourEnvoyerSms,
         "numeroAbonnement": numeroAbonnement,
+        "messageFactureBoutique": messageFactureBoutique,
+        "messageFactureAtelier": messageFactureAtelier,
         "createdAt": createdAt?.toIso8601String(),
         "isActive": isActive,
       };

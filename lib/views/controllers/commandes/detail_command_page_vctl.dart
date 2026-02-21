@@ -3,15 +3,18 @@ import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/pdf/command_receipt_pdf.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
+import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
-import 'package:get/get.dart';
 
-class DetailCommandPageVctl extends GetxController
+class DetailCommandPageVctl extends AuthViewController
     with PrinterManagerViewMixin {
   final mesureApi = MesureApi();
 
   Future<void> printReceipt(Mesure mesure) async {
-    await printMesureReceipt(mesure);
+    await printMesureReceipt(
+      mesure,
+      footerMessage: user.settings?.messageFactureAtelier,
+    );
   }
 
   Future<void> exportPdf(Mesure mesure) async {

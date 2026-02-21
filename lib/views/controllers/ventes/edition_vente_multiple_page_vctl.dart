@@ -58,7 +58,9 @@ class EditionVenteMultiplePageVctl extends AuthViewController
   Future<List<ModeleBoutique>> getModeles() async {
     if (boutique == null) return [];
     final res = await boutiqueApi.getModeleBoutiqueByBoutiqueId(boutique!.id!);
-    return res.status ? res.data! : [];
+    if (!res.status) return [];
+    // On aplatit toutes les variantes de chaque groupe modèle
+    return res.data!.expand((item) => item.variantes).toList();
   }
 
   void ajouterAuPanier(ModeleBoutique modele, int qte, double prix) {
@@ -139,6 +141,7 @@ class EditionVenteMultiplePageVctl extends AuthViewController
           await printVenteReceipt(
             res.data!,
             user.entreprise?.libelle ?? "Boutique",
+            footerMessage: user.settings?.messageFactureBoutique,
           );
         }
       }

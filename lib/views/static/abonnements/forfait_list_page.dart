@@ -44,15 +44,15 @@ class ForfaitListPage extends StatelessWidget {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  AppColors.primary.withOpacity(0.1),
-                                  AppColors.green.withOpacity(0.1),
+                                  AppColors.primary.withValues(alpha: 0.1),
+                                  AppColors.green.withValues(alpha: 0.1),
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: AppColors.primary.withOpacity(0.2),
+                                color: AppColors.primary.withValues(alpha: 0.2),
                               ),
                             ),
                             child: Row(
@@ -60,7 +60,7 @@ class ForfaitListPage extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: AppColors.primary.withOpacity(0.2),
+                                    color: AppColors.primary.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: const Icon(
@@ -122,7 +122,7 @@ class ForfaitListPage extends StatelessWidget {
                                   boxShadow: [
                                     BoxShadow(
                                       color:
-                                          AppColors.primary.withOpacity(0.15),
+                                          AppColors.primary.withValues(alpha: 0.15),
                                       blurRadius: 15,
                                       offset: const Offset(0, 5),
                                     ),
@@ -134,7 +134,7 @@ class ForfaitListPage extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                     side: BorderSide(
-                                      color: AppColors.primary.withOpacity(0.1),
+                                      color: AppColors.primary.withValues(alpha: 0.1),
                                       width: 1,
                                     ),
                                   ),
@@ -161,7 +161,7 @@ class ForfaitListPage extends StatelessWidget {
                                                       vertical: 6,
                                                     ),
                                                     decoration: BoxDecoration(
-                                                      gradient: LinearGradient(
+                                                      gradient: const LinearGradient(
                                                         colors: [
                                                           AppColors.primary,
                                                           AppColors.green,
@@ -218,12 +218,12 @@ class ForfaitListPage extends StatelessWidget {
                                           padding: const EdgeInsets.all(12),
                                           decoration: BoxDecoration(
                                             color:
-                                                Colors.green.withOpacity(0.1),
+                                                Colors.green.withValues(alpha: 0.1),
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                             border: Border.all(
                                               color:
-                                                  Colors.green.withOpacity(0.3),
+                                                  Colors.green.withValues(alpha: 0.3),
                                             ),
                                           ),
                                           child: Row(
@@ -233,7 +233,7 @@ class ForfaitListPage extends StatelessWidget {
                                                     const EdgeInsets.all(8),
                                                 decoration: BoxDecoration(
                                                   color: Colors.green
-                                                      .withOpacity(0.2),
+                                                      .withValues(alpha: 0.2),
                                                   borderRadius:
                                                       BorderRadius.circular(8),
                                                 ),
@@ -373,13 +373,13 @@ class ForfaitListPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.card_membership_outlined,
               size: 80,
-              color: AppColors.primary.withOpacity(0.5),
+              color: AppColors.primary.withValues(alpha: 0.5),
             ),
           ),
           const Gap(20),

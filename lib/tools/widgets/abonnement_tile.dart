@@ -25,7 +25,7 @@ class AbonnementTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: tileColor.withOpacity(0.3),
+            color: tileColor.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -85,7 +85,7 @@ class AbonnementTile extends StatelessWidget {
                                   leading: Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.1),
+                                      color: AppColors.primary.withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: SvgPicture.asset(
@@ -116,7 +116,7 @@ class AbonnementTile extends StatelessWidget {
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppColors.yellow.withOpacity(0.2),
+                                      color: AppColors.yellow.withValues(alpha: 0.2),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(
@@ -139,7 +139,7 @@ class AbonnementTile extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.25),
+                        color: Colors.white.withValues(alpha: 0.25),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -175,7 +175,7 @@ class AbonnementTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: statusColor.withOpacity(0.4),
+                          color: statusColor.withValues(alpha: 0.4),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -250,7 +250,7 @@ class AbonnementTile extends StatelessWidget {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -300,7 +300,7 @@ class AbonnementTile extends StatelessWidget {
                         Container(
                           width: 1,
                           height: 40,
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                           margin: const EdgeInsets.symmetric(horizontal: 10),
                         ),
                         Expanded(

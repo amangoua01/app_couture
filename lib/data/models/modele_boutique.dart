@@ -79,7 +79,7 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
         json['boutique'] != null ? Boutique.fromJson(json['boutique']) : null;
     creator =
         json['createdBy'] != null ? User.fromJson(json['createdBy']) : null;
-    color = json['color'] is int ? json['color'] : null;
+    color = json['couleur'].toString().toInt();
   }
 
   @override

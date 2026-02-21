@@ -22,7 +22,7 @@ class PrinterListTile extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       selected: isConnected,
       selectedColor: AppColors.primary,
-      selectedTileColor: AppColors.primary.withOpacity(0.1),
+      selectedTileColor: AppColors.primary.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       leading: Container(
         padding: const EdgeInsets.all(8),

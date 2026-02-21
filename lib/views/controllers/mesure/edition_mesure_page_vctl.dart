@@ -147,7 +147,10 @@ class EditionMesurePageVctl extends AuthViewController
 
             if (printChoice == true) {
               if (response.data is Mesure) {
-                await printMesureReceipt(response.data as Mesure);
+                await printMesureReceipt(
+                  response.data as Mesure,
+                  footerMessage: user.settings?.messageFactureAtelier,
+                );
               }
             }
           } else {

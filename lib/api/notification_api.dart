@@ -115,4 +115,30 @@ class NotificationApi extends WebController {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+
+  Future<DataResponse<bool>> deleteMultiple(List<int> ids) async {
+    try {
+      final res = await client.post(
+        urlBuilder(api: 'delete/all/items'),
+        headers: {
+          ...authHeaders,
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'ids': ids}),
+      );
+
+      final data = jsonDecode(res.body);
+
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: true);
+      } else {
+        return DataResponse.error(
+          message: data['message'] ??
+              res.reasonPhrase.defaultValue('Erreur inconnue'),
+        );
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 }

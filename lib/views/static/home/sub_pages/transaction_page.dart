@@ -57,7 +57,7 @@ class TransactionPage extends StatelessWidget {
                           border: Border.all(color: Colors.grey.shade200),
                           boxShadow: [
                             BoxShadow(
-                                color: Colors.black.withOpacity(0.03),
+                                color: Colors.black.withValues(alpha: 0.03),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4))
                           ]),
@@ -189,7 +189,7 @@ class TransactionPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withValues(alpha: 0.02),
               blurRadius: 10,
               offset: const Offset(0, 5))
         ],
@@ -202,7 +202,7 @@ class TransactionPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                    color: color.withOpacity(0.1), shape: BoxShape.circle),
+                    color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
                 child: Icon(icon, color: color, size: 16),
               ),
               const Gap(10),
@@ -246,7 +246,7 @@ class TransactionPage extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade100),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withValues(alpha: 0.02),
               blurRadius: 10,
               offset: const Offset(0, 2))
         ],
@@ -257,7 +257,7 @@ class TransactionPage extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.08),
+              color: iconColor.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(15),
             ),
             child: Icon(iconData, color: iconColor, size: 22),
@@ -352,7 +352,7 @@ class TransactionPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20)),
                         child: Text(
                           ctl.isMonthMode ? "Vue Mois" : "Vue Jour",
