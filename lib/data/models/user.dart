@@ -143,9 +143,9 @@ class User extends ModelJson {
       'pays': pays,
       'boutique': boutique?.toJson(),
       'succursale': succursale?.toJson(),
-      'settings': settings!.toJson(),
-      'activeSubscriptions': activeSubscriptions!.toJson(),
-      'entreprise': entreprise!.toJson(),
+      'settings': settings?.toJson(),
+      'activeSubscriptions': activeSubscriptions?.toJson(),
+      'entreprise': entreprise?.toJson(),
     });
   }
 
