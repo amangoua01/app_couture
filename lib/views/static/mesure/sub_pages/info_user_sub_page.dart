@@ -78,6 +78,7 @@ class InfoUserSubPage extends StatelessWidget {
             enabled: ctl.client != null,
             require: true,
             externalLabel: "Contact client",
+            keyboardType: TextInputType.number,
           ),
         ],
       ),

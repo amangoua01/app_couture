@@ -210,7 +210,7 @@ class AuthApi extends WebController {
   Future<DataResponse<bool>> deleteAccount(int userId) async {
     try {
       final response = await client.delete(
-        urlBuilder(api: "delete/account/$userId", module: ''),
+        urlBuilder(api: "delete/$userId", module: "user"),
         headers: authHeaders,
       );
 

@@ -4,7 +4,6 @@ import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:ateliya/tools/widgets/card_info.dart';
 import 'package:ateliya/tools/widgets/command_tile.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
@@ -228,168 +227,260 @@ class HomePage extends StatelessWidget {
                   children: [
                     Visibility(
                       visible: ctl.user.isAdmin,
-                      child: Card(
-                        elevation: 3,
+                      child: Container(
                         margin: const EdgeInsets.only(top: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          width: Get.width,
-                          height: 150,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: double.infinity,
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.greenLight2,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      CardInfo(
-                                        icon: "assets/images/svg/ticket.svg",
-                                        value: ctl.data.abonnements
-                                                .firstWhere(
-                                                    (e) =>
-                                                        e.numero ==
-                                                        ctl.data.settings
-                                                            ?.numeroAbonnement,
-                                                    orElse: () => Abonnement(
-                                                        code: "Inconnu",
-                                                        description: "Inconnu"))
-                                                .code ??
-                                            "Découverte",
-                                      ),
-                                      CardInfo(
-                                        icon: "assets/images/svg/sms.svg",
-                                        value:
-                                            "${ctl.data.settings?.nombreSms ?? 0} SMS",
-                                      ),
-                                      CardInfo(
-                                        icon: "assets/images/svg/users.svg",
-                                        value:
-                                            "${ctl.data.settings?.nombreUser ?? 0} utilisateur(s)",
-                                      ),
-                                      CardInfo(
-                                        icon: "assets/images/svg/store.svg",
-                                        value:
-                                            "${ctl.data.settings?.nombreSuccursale ?? 0} atelier(s)",
-                                      ),
-                                    ],
-                                  ),
+                        child: Column(
+                          children: [
+                            // ── Bandeau abonnement ─────────────────────
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.primary,
+                                    AppColors.primary.withValues(alpha: 0.75),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
                                 ),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.3),
+                                    blurRadius: 16,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
                               ),
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
                                     children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 5),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.verified_rounded,
+                                                color: Colors.amber, size: 14),
+                                            const Gap(6),
+                                            Text(
+                                              ctl.data.abonnements
+                                                      .firstWhere(
+                                                        (e) =>
+                                                            e.numero ==
+                                                            ctl.data.settings
+                                                                ?.numeroAbonnement,
+                                                        orElse: () => Abonnement(
+                                                            code: "Découverte",
+                                                            description: ""),
+                                                      )
+                                                      .code ??
+                                                  "Découverte",
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Spacer(),
                                       Text(
-                                        "${ternaryFn(
+                                        ternaryFn(
                                           condition: ctl
                                                   .getEntite()
                                                   .value
                                                   .type ==
                                               EntiteEntrepriseType.succursale,
-                                          ifTrue: "Atélier",
+                                          ifTrue: "Atelier",
                                           ifFalse: "Boutique",
-                                        )} ${ctl.getEntite().value.libelle.value}",
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        style: TextStyle(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.75),
+                                          fontSize: 12,
                                         ),
                                       ),
-                                      CardInfo(
-                                        color: AppColors.primary,
-                                        icon: "assets/images/svg/waiting.svg",
-                                        value:
-                                            "Cmd. en cours (${ctl.data.commandes.where((e) => e.isActive).length})",
-                                        height: 15,
-                                      ),
-                                      const CardInfo(
-                                        color: AppColors.primary,
-                                        icon: "assets/images/svg/check.svg",
-                                        value: "Cmd. terminé (0)",
-                                        height: 15,
-                                      ),
-                                      const CardInfo(
-                                        color: AppColors.primary,
-                                        icon:
-                                            "assets/images/svg/reservation.svg",
-                                        value: "Réservation (0)",
-                                        height: 15,
+                                      const Gap(4),
+                                      Text(
+                                        ctl.getEntite().value.libelle.value,
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13),
                                       ),
                                     ],
                                   ),
+                                  const Gap(18),
+                                  // ── Stats en chips ──────────────────
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: [
+                                      _StatChip(
+                                        icon: Icons.sms_outlined,
+                                        label:
+                                            "${ctl.data.settings?.nombreSms ?? 0} SMS",
+                                      ),
+                                      _StatChip(
+                                        icon: Icons.people_outline,
+                                        label:
+                                            "${ctl.data.settings?.nombreUser ?? 0} utilisateur(s)",
+                                      ),
+                                      _StatChip(
+                                        icon: Icons.store_outlined,
+                                        label:
+                                            "${ctl.data.settings?.nombreSuccursale ?? 0} atelier(s)",
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Gap(12),
+
+                            // ── Stats commandes ─────────────────────
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _MiniStatCard(
+                                    icon: Icons.pending_actions_rounded,
+                                    label: "En cours",
+                                    value:
+                                        "${ctl.data.commandes.where((e) => e.isActive).length}",
+                                    color: AppColors.primary,
+                                  ),
                                 ),
+                                const Gap(10),
+                                Expanded(
+                                  child: _MiniStatCard(
+                                    icon: Icons.check_circle_outline_rounded,
+                                    label: "Terminées",
+                                    value:
+                                        "${ctl.data.commandes.where((e) => !e.isActive).length}",
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Gap(30),
+                    // ── Section Mon solde ──────────────────────────────
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            "Mon solde",
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: const BoxDecoration(
+                                  color: Colors.green,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const Gap(5),
+                              const Text(
+                                "Caisse active",
+                                style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                    const Gap(30),
-                    const Text(
-                      "Mon solde",
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
+                    const Gap(10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 16),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            AppColors.primary,
+                            Color.fromRGBO(56, 152, 160, 1),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 14,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(9),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(
+                              Icons.account_balance_wallet_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          ),
+                          const Gap(12),
+                          Text(
+                            "Solde caisse",
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.55),
+                              fontSize: 13,
+                            ),
+                          ),
+                          const Spacer(),
+                          AutoSizeText(
+                            ctl.data.caisse.toAmount(unit: "F"),
+                            minFontSize: 16,
+                            maxFontSize: 26,
+                            style: const TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const Gap(10),
-                    GestureDetector(
-                      // onTap: () => CBottomSheet.show(
-                      //   child: const TransactionBottomPage(),
-                      // ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: AppColors.fieldBorder),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        child: ListTile(
-                          leading: Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Image.asset(
-                              "assets/images/svg/entrant.png",
-                              height: 20,
-                            ),
-                          ),
-                          title: AutoSizeText(
-                            ctl.data.caisse.toAmount(unit: "F"),
-                            minFontSize: 15,
-                            maxFontSize: 20,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          // trailing: const Icon(
-                          //   Icons.arrow_forward_ios,
-                          //   size: 12,
-                          // ),
-                        ),
-                        // child: SoldeCard(
-                        //   icon: "assets/images/svg/entrant.png",
-                        //   value: ctl.data.caisse.toAmount(unit: "F"),
-                        // ),
-                      ),
-                    ),
-                    const Gap(30),
                     Builder(
                       builder: (context) {
                         return Column(
@@ -476,5 +567,99 @@ class HomePage extends StatelessWidget {
             ),
           );
         });
+  }
+}
+
+// ─── Widgets locaux ──────────────────────────────────────────────────────────
+
+class _StatChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _StatChip({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: 13),
+          const Gap(5),
+          Text(
+            label,
+            style: const TextStyle(
+                color: Colors.white, fontSize: 11, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MiniStatCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+
+  const _MiniStatCard({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const Gap(10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(
+                      fontSize: 22, fontWeight: FontWeight.bold, color: color),
+                ),
+                Text(
+                  label,
+                  style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

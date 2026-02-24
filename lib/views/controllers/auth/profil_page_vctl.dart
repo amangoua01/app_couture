@@ -140,7 +140,7 @@ class ProfilPageVctl extends AuthViewController {
     );
     if (rep == true) {
       final res = await api.deleteAccount(user.id.value).load();
-      if (!res.status) {
+      if (res.status) {
         await Cache.clear();
         CMessageDialog.show(
           message: "Compte supprimé avec succès",
