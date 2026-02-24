@@ -173,25 +173,39 @@ class ProfilPage extends StatelessWidget {
                       ),
                       const Gap(24),
 
-                      Center(
-                        child: TextButton.icon(
-                          onPressed: () =>
-                              Get.to(() => const UpdatePasswordPage()),
-                          icon: const Icon(Icons.lock_outline_rounded,
-                              size: 18, color: AppColors.primary),
-                          label: const Text(
-                            'Changer mon mot de passe',
-                            style: TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          style: TextButton.styleFrom(
-                            backgroundColor:
-                                AppColors.primary.withValues(alpha: 0.05),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30)),
+                      TextButton.icon(
+                        onPressed: () =>
+                            Get.to(() => const UpdatePasswordPage()),
+                        icon: const Icon(Icons.lock_outline_rounded,
+                            size: 18, color: AppColors.primary),
+                        label: const Text(
+                          'Changer mon mot de passe',
+                          style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              AppColors.primary.withValues(alpha: 0.05),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                        ),
+                      ),
+                      const Gap(50),
+                      TextButton.icon(
+                        onPressed: ctl.deleteAccount,
+                        icon: const Icon(
+                          Icons.delete_outline_rounded,
+                          size: 18,
+                          color: Colors.red,
+                        ),
+                        label: const Text(
+                          "Supprimer mon compte",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),

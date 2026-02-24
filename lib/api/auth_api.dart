@@ -206,4 +206,22 @@ class AuthApi extends WebController {
       return DataResponse<int>.error(systemError: e, stackTrace: st);
     }
   }
+
+  Future<DataResponse<bool>> deleteAccount(int userId) async {
+    try {
+      final response = await client.delete(
+        urlBuilder(api: "delete/account/$userId", module: ''),
+        headers: authHeaders,
+      );
+
+      final json = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        return DataResponse.success(data: true);
+      } else {
+        return DataResponse.error(message: json["message"]);
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 }

@@ -76,7 +76,7 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                               },
                               items: (filter, loadProps) => ctl.getCaisses(),
                               itemAsString: (item) =>
-                                  "${item.reference} (${item.montant?.toAmount(unit: 'F')})",
+                                  "${item.entite?.libelle ?? "N/A"} (${item.montant?.toAmount(unit: 'F')})",
                             ),
                             CTextFormField(
                               externalLabel: "Montant",

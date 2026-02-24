@@ -5,13 +5,17 @@ import 'package:ateliya/data/models/abstract/fichier.dart';
 import 'package:ateliya/data/models/entreprise.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
+import 'package:ateliya/tools/components/cache.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_bottom_image_picker.dart';
+import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
+import 'package:ateliya/views/static/auth/auth_home_page.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 
 class ProfilPageVctl extends AuthViewController {
   final nomCtl = TextEditingController();
@@ -123,6 +127,29 @@ class ProfilPageVctl extends AuthViewController {
       }
     } catch (e) {
       CMessageDialog.show(message: "Erreur lors de la sélection du logo: $e");
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    final rep = await CChoiceMessageDialog.show(
+      message:
+          "Voulez-vous vraiment supprimer votre compte ?\nCette action est irréversible.",
+      title: "Suppression de compte",
+      validText: "Supprimer",
+      cancelText: "Annuler",
+    );
+    if (rep == true) {
+      final res = await api.deleteAccount(user.id.value).load();
+      if (!res.status) {
+        await Cache.clear();
+        CMessageDialog.show(
+          message: "Compte supprimé avec succès",
+          isSuccess: true,
+        );
+        Get.offAll(() => const AuthHomePage());
+      } else {
+        CMessageDialog.show(message: res.message);
+      }
     }
   }
 
