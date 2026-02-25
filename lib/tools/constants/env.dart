@@ -19,7 +19,7 @@ abstract class Env {
   static NetwordConfig get baseUrl => env.networdConfig;
 
   static const nbItemInListPage = 10;
-  static const supportMail = "supports@moomen.pro";
+  static const supportMail = "support@ateliya.pro";
   static const supportTel = "+2250501242929";
   static const supportWhatsApp = "+2250501242929";
 

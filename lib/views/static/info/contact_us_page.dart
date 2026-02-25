@@ -89,8 +89,7 @@ class ContactUsPage extends StatelessWidget {
             title: "WhatsApp",
             subtitle: Env.supportWhatsApp,
             color: const Color(0xFF25D366),
-            onTap: () => _launch(
-                "https://wa.me/${Env.supportWhatsApp.replaceAll('+', '').replaceAll(' ', '')}"),
+            onTap: () => _launch("https://wa.me/${Env.supportWhatsApp}"),
           ),
           const Gap(32),
 
