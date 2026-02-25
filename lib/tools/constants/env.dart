@@ -8,8 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 abstract class Env {
   static const String appName = 'Ateliya';
-  static const String appVersion = '1.0.6';
-  static const int buildVersion = 13;
+  static const String appVersion = '1.0.7';
+  static const int buildVersion = 14;
   static final fontFamily = GoogleFonts.poppins().fontFamily;
 
   static const defaultDevise = Currency("Fcfa", code: "XOF", decimalDigits: 0);
@@ -20,15 +20,14 @@ abstract class Env {
 
   static const nbItemInListPage = 10;
   static const supportMail = "supports@moomen.pro";
-  static const supportTel = "+2250500262848";
-  static const supportWhatsApp = "+2250500262848";
+  static const supportTel = "+2250501242929";
+  static const supportWhatsApp = "+2250501242929";
 
-  static const termsAndConditionsUrl = "https://moomen.pro/terms-conditions";
+  static const termsAndConditionsUrl = "https://ateliya.com/conditions/";
 
   static String playStoreUrl =
-      "https://play.google.com/store/apps/details?id=pro.moomen.app&pcampaignid=web_share";
-  static String appStoreUrl =
-      "https://apps.apple.com/fr/app/moomen-pro/id6744434813";
+      "https://play.google.com/store/apps/details?id=com.ateliya.app";
+  static String appStoreUrl = "";
 
   static String get copyRight =>
       "© ${DateTime.now().year} $appName. v. $appVersion";

@@ -26,6 +26,7 @@ class EditionSurcusalePage extends StatelessWidget {
             CTextFormField(
               externalLabel: "Contact",
               controller: ctl.contactCtl,
+              keyboardType: TextInputType.number,
             ),
           ],
         );

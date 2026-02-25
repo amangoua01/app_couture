@@ -91,6 +91,7 @@ class EditionClientPage extends StatelessWidget {
                     externalLabel: "Téléphone",
                     require: true,
                     controller: ctl.telCtl,
+                    keyboardType: TextInputType.number,
                   ),
                 ]),
                 FieldSetContainer(children: [
