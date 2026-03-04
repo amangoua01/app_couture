@@ -350,28 +350,32 @@ class HomePage extends StatelessWidget {
                             const Gap(12),
 
                             // ── Stats commandes ─────────────────────
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _MiniStatCard(
-                                    icon: Icons.pending_actions_rounded,
-                                    label: "En cours",
-                                    value:
-                                        "${ctl.data.commandes.where((e) => e.isActive).length}",
-                                    color: AppColors.primary,
+                            Visibility(
+                              visible: ctl.getEntite().value.type ==
+                                  EntiteEntrepriseType.succursale,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: _MiniStatCard(
+                                      icon: Icons.pending_actions_rounded,
+                                      label: "En cours",
+                                      value:
+                                          "${ctl.data.commandes.where((e) => e.isActive).length}",
+                                      color: AppColors.primary,
+                                    ),
                                   ),
-                                ),
-                                const Gap(10),
-                                Expanded(
-                                  child: _MiniStatCard(
-                                    icon: Icons.check_circle_outline_rounded,
-                                    label: "Terminées",
-                                    value:
-                                        "${ctl.data.commandes.where((e) => !e.isActive).length}",
-                                    color: Colors.green,
+                                  const Gap(10),
+                                  Expanded(
+                                    child: _MiniStatCard(
+                                      icon: Icons.check_circle_outline_rounded,
+                                      label: "Terminées",
+                                      value:
+                                          "${ctl.data.commandes.where((e) => !e.isActive).length}",
+                                      color: Colors.green,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
