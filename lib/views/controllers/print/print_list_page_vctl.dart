@@ -9,6 +9,8 @@ import 'package:ateliya/tools/services/sound_service.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_thermal_printer/flutter_thermal_printer.dart';
 import 'package:flutter_thermal_printer/utils/printer.dart';
 import 'package:get/get.dart';
@@ -79,7 +81,7 @@ class PrintListPageVctl extends GetxController with PrinterManagerViewMixin {
         oldDevices = data.map((e) => BlueDevice.fromJson(e)).toList();
         update();
       } catch (e) {
-        print("Error decoding old printers: $e");
+        debugPrint("Error decoding old printers: $e");
       }
     }
   }
@@ -95,16 +97,14 @@ class PrintListPageVctl extends GetxController with PrinterManagerViewMixin {
   /// Vérifie et demande les permissions + Check Bluetooth status
   Future<void> checkPermissionsAndScan() async {
     await [
-      Permission.bluetooth,
       Permission.bluetoothScan,
       Permission.bluetoothConnect,
-      Permission.location,
+      Permission.locationWhenInUse,
     ].request();
 
-    // Check status global (simplifié)
-    permissionGranted = await Permission.bluetooth.isGranted ||
-        await Permission.bluetoothScan.isGranted ||
-        await Permission.location.isGranted;
+    // Toutes les permissions critiques doivent être accordées
+    permissionGranted = await Permission.bluetoothScan.isGranted &&
+        await Permission.bluetoothConnect.isGranted;
 
     // Bluetooth ON ?
     bluetoothEnabled = await PrintBluetoothThermal.bluetoothEnabled;
@@ -115,23 +115,40 @@ class PrintListPageVctl extends GetxController with PrinterManagerViewMixin {
     }
   }
 
-  /// Lance le scan BLE
+  /// Lance le scan BLE avec retry pour gérer CBManagerStateUnknown (iOS)
   Future<void> scanDevices() async {
     if (isScanning) return;
     isScanning = true;
     update();
 
     try {
-      // Lance le scan BLE via FlutterThermalPrinter (meilleur discovery)
-      await _flutterPrinter.getPrinters(connectionTypes: [ConnectionType.BLE]);
+      // Délai d'initialisation Bluetooth (~500ms) avant de scanner
+      // pour laisser la pile Bluetooth se stabiliser
+      await Future.delayed(const Duration(milliseconds: 500));
 
-      // Fallback: Récupérer aussi les paired (si le scan BLE ne trouve rien)
-      // Mais FlutterThermalPrinter le fait souvent inclure.
+      // Boucle de retry pour gérer l'erreur CBManagerStateUnknown
+      // fréquente sur iOS au démarrage du Bluetooth
+      int retries = 0;
+      while (retries < 3) {
+        try {
+          await _flutterPrinter.getPrinters(
+            connectionTypes: [ConnectionType.BLE],
+          );
+          break;
+        } on PlatformException catch (e) {
+          if (e.message?.contains("CBManagerStateUnknown") == true) {
+            retries++;
+            debugPrint("CBManagerStateUnknown – retry $retries/3");
+            await Future.delayed(const Duration(milliseconds: 600));
+          } else {
+            rethrow;
+          }
+        }
+      }
     } catch (e) {
-      print("Scan error: $e");
+      debugPrint("Scan error: $e");
     } finally {
-      // Le scan continue en tâche de fond via le stream, on peut arrêter le loading spinner
-      // ou laisser tourner quelques secondes.
+      // Le scan continue en tâche de fond via le stream
       await Future.delayed(const Duration(seconds: 4));
       isScanning = false;
       update();

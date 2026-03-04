@@ -34,7 +34,7 @@ abstract class CBottomImagePicker {
           ListTile(
             leading: const Icon(IcoFontIcons.camera),
             subtitle: const Text("Prendre une photo depuis la caméra"), //
-            title: const Text("Ouvrir la caméra"),
+            title: const Text("Continuer vers la caméra"),
             onTap: () async {
               var res = await ImagePickerService.pickImage(
                 imageQuality: imageQuality,
@@ -51,7 +51,7 @@ abstract class CBottomImagePicker {
           ListTile(
             leading: const Icon(IcoFontIcons.image),
             subtitle: const Text("Prendre une photo depuis la galerie"),
-            title: const Text("Ouvrir la galerie"),
+            title: const Text("Continuer vers la galerie"),
             onTap: () async {
               var res = await ImagePickerService.pickImage(
                 from: ImageSource.gallery,
