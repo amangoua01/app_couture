@@ -2,7 +2,7 @@ import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:ateliya/views/controllers/ventes/edition_vente_multiple_page_vctl.dart';
+import 'package:ateliya/tools/models/ligne_panier.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 

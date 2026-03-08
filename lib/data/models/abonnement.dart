@@ -15,6 +15,11 @@ class Abonnement extends ModelJson {
   DateTime? createdAt;
   bool isActive = true;
 
+  // Champs de l'abonnement spécifique
+  DateTime? _dateDebut;
+  DateTime? _dateFin;
+  String? _type;
+
   Abonnement({
     super.id,
     this.etat = false,
@@ -30,25 +35,45 @@ class Abonnement extends ModelJson {
 
   Abonnement.fromJson(Json json) {
     id = json["id"];
+
+    // Status can be in "etat" at top level or inside moduleAbonnement
     if (json["etat"] is String) {
       etat = json["etat"] == "actif";
     } else if (json["etat"] is bool) {
       etat = json["etat"] ?? false;
+    }
+
+    final module = json["moduleAbonnement"];
+    if (module != null) {
+      description = module["description"];
+      montant = module["montant"].toString().toDouble().value;
+      duree = module["duree"].toString().toInt() ?? 0;
+      if (module["ligneModules"] != null) {
+        ligneModules = (module["ligneModules"] as List)
+            .map((e) => LigneModule.fromJson(e))
+            .toList();
+      }
+      code = module["code"];
+      numero = module["numero"] ?? 0;
     } else {
-      etat = false;
+      // Fallback to top level if moduleAbonnement is missing
+      description = json["description"];
+      montant = json["montant"].toString().toDouble().value;
+      duree = json["duree"].toString().toInt() ?? 0;
+      if (json["ligneModules"] != null) {
+        ligneModules = (json["ligneModules"] as List)
+            .map((e) => LigneModule.fromJson(e))
+            .toList();
+      }
+      code = json["code"];
+      numero = json["numero"] ?? 0;
     }
-    description = json["description"];
-    montant = json["montant"].toString().toDouble().value;
-    duree = json["duree"].toString().toInt() ?? 0;
-    if (json["ligneModules"] != null) {
-      ligneModules = (json["ligneModules"] as List)
-          .map((e) => LigneModule.fromJson(e))
-          .toList();
-    }
-    code = json["code"];
-    numero = json["numero"] ?? 0;
+
     createdAt = json["createdAt"].toString().toDateTime();
-    isActive = json["isActive"] ?? false;
+    _dateDebut = json["dateDebut"].toString().toDateTime();
+    _dateFin = json["dateFin"].toString().toDateTime();
+    _type = json["type"];
+    isActive = json["isActive"] ?? (json["etat"] == "actif");
   }
 
   @override
@@ -65,16 +90,14 @@ class Abonnement extends ModelJson {
         "code": code,
         "numero": numero,
         "createdAt": createdAt?.toIso8601String(),
+        "dateDebut": _dateDebut?.toIso8601String(),
+        "dateFin": _dateFin?.toIso8601String(),
+        "type": _type,
         "isActive": isActive,
       };
 
   List<LigneModule> get modules => ligneModules;
-  DateTime? get dateDebut => createdAt;
-  DateTime? get dateFin =>
-      createdAt?.add(Duration(days: duree)); // Duree en mois ou jours?
-  String? get type => code;
-
-  // Assuming duree is in months for now based on context, or just days.
-  // If it's just meant to fix the linter error without logic:
-  // DateTime? get dateFin => null;
+  DateTime? get dateDebut => _dateDebut ?? createdAt;
+  DateTime? get dateFin => _dateFin ?? createdAt?.add(Duration(days: duree));
+  String? get type => _type ?? code;
 }

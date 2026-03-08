@@ -1,5 +1,6 @@
 import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/tools/constants/type_user_enum.dart';
+import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/body_edition_page.dart';
 import 'package:ateliya/tools/widgets/field_set_container.dart';
@@ -29,10 +30,12 @@ class EditionPersonnelPage extends StatelessWidget {
                     externalLabel: "Nom",
                     controller: ctl.nomCtl,
                     require: true,
+                    textCapitalization: TextCapitalization.words,
                   ),
                   CTextFormField(
                     externalLabel: "Prénom(s)",
                     controller: ctl.prenomCtl,
+                    textCapitalization: TextCapitalization.words,
                     require: true,
                   ),
                   Visibility(
@@ -41,6 +44,7 @@ class EditionPersonnelPage extends StatelessWidget {
                       externalLabel: "Email",
                       controller: ctl.emailCtl,
                       require: true,
+                      keyboardType: TextInputType.emailAddress,
                     ),
                   ),
                   CDropDownFormField(
@@ -67,13 +71,39 @@ class EditionPersonnelPage extends StatelessWidget {
                       externalLabel: "Mot de passe",
                       controller: ctl.passwordCtl,
                       require: true,
-                      obscureText: true,
+                      obscureText: ctl.passwordHided,
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          ctl.passwordHided = !ctl.passwordHided;
+                          ctl.update();
+                        },
+                        icon: Icon(
+                          ternaryFn(
+                            condition: ctl.passwordHided,
+                            ifTrue: Icons.visibility,
+                            ifFalse: Icons.visibility_off,
+                          ),
+                        ),
+                      ),
                     ),
                     CTextFormField(
                       externalLabel: "Confirmation du mot de passe",
                       controller: ctl.confirmPasswordCtl,
                       require: true,
-                      obscureText: true,
+                      obscureText: ctl.confirmPasswordHided,
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          ctl.confirmPasswordHided = !ctl.confirmPasswordHided;
+                          ctl.update();
+                        },
+                        icon: Icon(
+                          ternaryFn(
+                            condition: ctl.confirmPasswordHided,
+                            ifTrue: Icons.visibility,
+                            ifFalse: Icons.visibility_off,
+                          ),
+                        ),
+                      ),
                       validator: (e) {
                         if (e.value.isEmpty) {
                           return "Ce champ est obligatoire";
@@ -89,7 +119,7 @@ class EditionPersonnelPage extends StatelessWidget {
                 ),
               ),
               Visibility(
-                visible: (item?.isAdmin == false || item == null),
+                visible: (item?.isAdmin == true),
                 child: FieldSetContainer(
                   children: [
                     Visibility(

@@ -14,6 +14,7 @@ class CategorieTypeMesureListVctl extends GetxController {
   final TypeMesure typeMesure;
   final categorieApi = CategorieMesureApi();
   bool isLoading = false;
+  bool isOrderChanged = false;
 
   final categorieTypeMesureApi = CategorieTypeMesureApi();
   List<CategorieMesure> categories = [];
@@ -36,6 +37,7 @@ class CategorieTypeMesureListVctl extends GetxController {
     update();
     final res = await categorieTypeMesureApi.list(id: typeMesure.id);
     isLoading = false;
+    isOrderChanged = false;
     update();
     if (res.status) {
       categoriesType = res.data!.items;
@@ -65,6 +67,44 @@ class CategorieTypeMesureListVctl extends GetxController {
       Get.back();
     } else {
       CMessageDialog.show(message: res.message);
+    }
+  }
+
+  void onReorder(int oldIndex, int newIndex) {
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+    final item = categoriesType.removeAt(oldIndex);
+    categoriesType.insert(newIndex, item);
+
+    // Mettre à jour les ordres locaux
+    for (int i = 0; i < categoriesType.length; i++) {
+      categoriesType[i].ordre = i + 1;
+    }
+
+    isOrderChanged = true;
+    update();
+  }
+
+  Future<void> saveNewOrder() async {
+    isLoading = true;
+    update();
+
+    List<Map<String, dynamic>> ordres = categoriesType
+        .map((e) => {"id": e.id.value, "ordre": e.ordre})
+        .toList();
+
+    final res = await categorieTypeMesureApi.changeOrdreMultiple(ordres).load();
+
+    isLoading = false;
+    if (res.status) {
+      isOrderChanged = false;
+      update();
+    } else {
+      CMessageDialog.show(
+          message: "Erreur lors de la sauvegarde de l'ordre : ${res.message}");
+      // Revert if error
+      getList();
     }
   }
 

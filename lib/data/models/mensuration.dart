@@ -1,18 +1,17 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/data/models/categorie_mesure.dart';
-import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 
 class Mensuration extends ModelJson {
-  double taille = 0;
+  String taille = "0";
   CategorieMesure? categorieMesure;
   DateTime? createdAt;
   bool isActive = true;
 
   Mensuration({
     super.id,
-    this.taille = 0,
+    this.taille = "0",
     this.categorieMesure,
     this.createdAt,
     this.isActive = true,
@@ -20,7 +19,7 @@ class Mensuration extends ModelJson {
 
   Mensuration.fromJson(Json json) {
     id = json["id"];
-    taille = json["taille"].toString().toDouble().value;
+    taille = json["taille"].toString().value;
     if (json["categorieMesure"] != null) {
       categorieMesure = CategorieMesure.fromJson(json["categorieMesure"]);
     }

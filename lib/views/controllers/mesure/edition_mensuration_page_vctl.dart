@@ -9,9 +9,17 @@ class EditionMensurationPageVctl extends GetxController {
   List<MensurationDto> mensurations = const [];
 
   EditionMensurationPageVctl(this.ligne) {
-    mensurations =
-        ligne.typeMesureDto!.mensurations.map((e) => e.clone()).toList();
-    print(mensurations.map((e) => e.categorieMesure.libelle).toList());
+    mensurations = ligne.typeMesureDto!.mensurations
+        .map(
+          (e) => e.clone(),
+        )
+        .toList();
+
+    mensurations.sort(
+      (a, b) => a.categorieMesure.ordre.compareTo(
+        b.categorieMesure.ordre,
+      ),
+    );
   }
 
   Future<void> submit() async {

@@ -12,6 +12,8 @@ abstract class Env {
   static const int buildVersion = 15;
   static final fontFamily = GoogleFonts.poppins().fontFamily;
 
+  static const String defaultPassword = "admin93K";
+
   static const defaultDevise = Currency("Fcfa", code: "XOF", decimalDigits: 0);
 
   static const AppEnv env = AppEnv.dev;

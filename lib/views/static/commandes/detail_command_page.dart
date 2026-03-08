@@ -382,7 +382,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                                             4),
                                                   ),
                                                   child: Text(
-                                                    "${mensuration.taille.toStringAsFixed(1)} cm",
+                                                    mensuration.taille,
                                                     style: const TextStyle(
                                                       fontSize: 11,
                                                       color: Colors.white,

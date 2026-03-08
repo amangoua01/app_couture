@@ -41,4 +41,23 @@ class CategorieTypeMesureApi extends CrudWebController<CategorieTypeMesure> {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+
+  Future<DataResponse<bool>> changeOrdreMultiple(
+      List<Map<String, dynamic>> ordres) async {
+    try {
+      var response = await client.post(
+        urlBuilder(api: "change-ordre-multiple"),
+        headers: authHeaders,
+        body: jsonEncode({"ordres": ordres}),
+      );
+      final body = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        return DataResponse.success(data: true);
+      } else {
+        return DataResponse.error(message: body['message']);
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 }

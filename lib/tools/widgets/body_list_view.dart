@@ -1,7 +1,6 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:ateliya/tools/widgets/list_item.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/tools/widgets/wrapper_listview_from_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
@@ -29,7 +28,7 @@ class User {
 class BodyListView<T> extends StatelessWidget {
   final String title;
   final ListViewController ctl;
-  final ListItem? Function(BuildContext, int, bool isSelected) itemBuilder;
+  final Widget? Function(BuildContext, int, bool isSelected) itemBuilder;
   final Widget? createPage;
   final bool withCreateButton;
   final Key? actionKey;

@@ -38,6 +38,11 @@ class TypeMesureDto extends DtoModel {
   @override
   Map<String, dynamic> toJson() => {"id": id, "nom": libelle};
 
-  bool get isMensurationValide =>
-      mensurations.where((e) => e.isActive).every((e) => e.valeur > 0);
+  bool get isMensurationValide => mensurations.where((e) => e.isActive).every(
+        (e) =>
+            e.valeur.isNotEmpty &&
+            e.valeur != "0" &&
+            e.valeur != "0.0" &&
+            e.isActive,
+      );
 }

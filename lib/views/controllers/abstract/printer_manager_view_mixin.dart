@@ -141,8 +141,8 @@ mixin PrinterManagerViewMixin {
           styles: const PosStyles(
               align: PosAlign.center,
               bold: true,
-              height: PosTextSize.size2,
-              width: PosTextSize.size2));
+              height: PosTextSize.size1,
+              width: PosTextSize.size1));
       if (mesure.succursale?.contact != null) {
         bytes += generator.text(
             _normalize("Tel: ${mesure.succursale!.contact}"),
@@ -538,7 +538,7 @@ mixin PrinterManagerViewMixin {
                 width: 7,
               ),
               PosColumn(
-                text: "${mensuration.taille.toStringAsFixed(1)} cm",
+                text: "${mensuration.taille} cm",
                 width: 5,
                 styles: const PosStyles(align: PosAlign.right, bold: true),
               ),

@@ -9,11 +9,16 @@ import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class EditionRavitaillementVctl extends AuthViewController {
+class EditionTransfertStockVctl extends AuthViewController {
   final _boutiqueApi = BoutiqueApi();
   final _stockApi = ModeleBoutiqueApi();
 
   bool isLoading = false;
+  bool isBoutiquesLoading = false;
+
+  /// Boutiques disponibles pour le transfert
+  List<Boutique> boutiques = [];
+  Boutique? selectedBoutique;
 
   /// Groupes modèle → variantes (StockModeleItem) pour le dropdown
   List<StockModeleItem> stockItems = [];
@@ -23,33 +28,45 @@ class EditionRavitaillementVctl extends AuthViewController {
       stockItems.expand((s) => s.variantes).toList();
 
   /// Lignes du formulaire
-  final List<_LigneForm> lignes = [_LigneForm()];
-
-  EditionRavitaillementVctl(ModeleBoutique? item) {
-    if (item != null) {
-      lignes.first.modele = item;
-    }
-  }
+  final List<_LigneTransfertForm> lignes = [_LigneTransfertForm()];
 
   @override
   void onReady() {
     super.onReady();
-    _loadStockItems();
+    _loadData();
   }
 
-  Future<void> _loadStockItems() async {
+  Future<void> _loadData() async {
     final entite = getEntite().value;
-    if (entite.isEmpty || entite is! Boutique) return;
+    if (entite.isEmpty || entite is! Boutique) {
+      CMessageDialog.show(
+          message: "Veuillez sélectionner une boutique source.");
+      Get.back();
+      return;
+    }
 
     isLoading = true;
     update();
 
     try {
-      final res = await _boutiqueApi.getModeleBoutiqueByBoutiqueId(entite.id!);
-      if (res.status) {
-        stockItems = res.data ?? [];
+      // Load current boutique's stock
+      final resStock =
+          await _boutiqueApi.getModeleBoutiqueByBoutiqueId(entite.id!);
+      if (resStock.status) {
+        stockItems = resStock.data ?? [];
       } else {
-        CMessageDialog.show(message: res.message);
+        CMessageDialog.show(message: resStock.message);
+      }
+
+      // Load all boutiques to allow choosing a destination
+      final resBoutique = await _boutiqueApi.list();
+      if (resBoutique.status) {
+        // Exclude the current boutique from the list of destinations
+        boutiques = (resBoutique.data?.items ?? [])
+            .where((b) => b.id != entite.id)
+            .toList();
+      } else {
+        CMessageDialog.show(message: resBoutique.message);
       }
     } catch (_) {}
 
@@ -58,7 +75,7 @@ class EditionRavitaillementVctl extends AuthViewController {
   }
 
   void addLigne() {
-    lignes.add(_LigneForm());
+    lignes.add(_LigneTransfertForm());
     update();
   }
 
@@ -72,10 +89,25 @@ class EditionRavitaillementVctl extends AuthViewController {
 
   void setModele(int index, ModeleBoutique? modele) {
     lignes[index].modele = modele;
+    // Par défaut, mettre la quantité à 1 s'il n'y avait rien ou réinitialiser.
+    if (lignes[index].quantiteCtl.text.isEmpty) {
+      lignes[index].quantiteCtl.text = '1';
+    }
+    update();
+  }
+
+  void setSelectedBoutique(Boutique? boutique) {
+    selectedBoutique = boutique;
     update();
   }
 
   Future<void> submit() async {
+    if (selectedBoutique == null) {
+      CMessageDialog.show(
+          message: "Veuillez sélectionner la boutique réceptrice.");
+      return;
+    }
+
     // Validation
     for (var i = 0; i < lignes.length; i++) {
       final ligne = lignes[i];
@@ -89,11 +121,18 @@ class EditionRavitaillementVctl extends AuthViewController {
         CMessageDialog.show(message: 'Ligne ${i + 1} : quantité invalide');
         return;
       }
+      final maxQty = ligne.modele?.quantite ?? 0;
+      if (qty > maxQty) {
+        CMessageDialog.show(
+            message:
+                'Ligne ${i + 1} : stock insuffisant pour cet article (max $maxQty)');
+        return;
+      }
     }
 
     final entite = getEntite().value;
     if (entite is! Boutique || entite.id == null) {
-      CMessageDialog.show(message: 'Aucune boutique sélectionnée');
+      CMessageDialog.show(message: 'Aucune boutique émettrice sélectionnée');
       return;
     }
 
@@ -105,15 +144,16 @@ class EditionRavitaillementVctl extends AuthViewController {
         .toList();
 
     final res = await _stockApi
-        .entreeStock(
-          boutiqueId: entite.id!,
+        .transfertStock(
+          boutiqueEmetteurId: entite.id!,
+          boutiqueReceptriceId: selectedBoutique!.id!,
           lignes: lignesPayload,
         )
         .load();
 
     if (res.status) {
       CMessageDialog.show(
-        message: 'Ravitaillement enregistré avec succès',
+        message: 'Transfert effectué avec succès',
         isSuccess: true,
       );
       Get.back(result: true);
@@ -131,7 +171,7 @@ class EditionRavitaillementVctl extends AuthViewController {
   }
 }
 
-class _LigneForm {
+class _LigneTransfertForm {
   ModeleBoutique? modele;
   final TextEditingController quantiteCtl = TextEditingController(text: '1');
 }

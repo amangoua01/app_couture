@@ -7,26 +7,13 @@ import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
 import 'package:ateliya/tools/extensions/future.dart';
+import 'package:ateliya/tools/models/ligne_panier.dart';
 import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-class LignePanier {
-  final ModeleBoutique modele;
-  int quantite;
-  double prixUnitaire;
-
-  LignePanier({
-    required this.modele,
-    required this.quantite,
-    required this.prixUnitaire,
-  });
-
-  double get total => quantite * prixUnitaire;
-}
 
 class EditionVenteMultiplePageVctl extends AuthViewController
     with PrinterManagerViewMixin {

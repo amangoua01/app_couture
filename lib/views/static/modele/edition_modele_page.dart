@@ -65,6 +65,7 @@ class EditionModelePage extends StatelessWidget {
           CTextFormField(
             externalLabel: "Libellé",
             controller: ctl.libelleCtl,
+            textCapitalization: TextCapitalization.sentences,
           ),
         ],
       ),
