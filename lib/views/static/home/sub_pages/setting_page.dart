@@ -3,7 +3,6 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
 import 'package:ateliya/tools/widgets/setting_tile.dart';
 import 'package:ateliya/views/controllers/home/setting_page_vctl.dart';
-import 'package:ateliya/views/static/abonnements/abonnements_list_page.dart';
 import 'package:ateliya/views/static/auth/profil_page.dart';
 import 'package:ateliya/views/static/boutiques/boutiques_list_page.dart';
 import 'package:ateliya/views/static/clients/client_liste_page.dart';
@@ -160,14 +159,14 @@ class SettingPage extends StatelessWidget {
                         visible: ctl.user.isAdmin,
                         onTap: () => Get.to(() => const PersonnelListPage()),
                       ),
-                      SettingTile(
-                        title: "Abonnements",
-                        icon: Icons.card_membership_outlined,
-                        iconBgColor: const Color(0xFFFFF8E1),
-                        color: Colors.amber[800],
-                        visible: ctl.user.isAdmin,
-                        onTap: () => Get.to(() => const AbonnementsListPage()),
-                      ),
+                      // SettingTile(
+                      //   title: "Abonnements",
+                      //   icon: Icons.card_membership_outlined,
+                      //   iconBgColor: const Color(0xFFFFF8E1),
+                      //   color: Colors.amber[800],
+                      //   visible: ctl.user.isAdmin,
+                      //   onTap: () => Get.to(() => const AbonnementsListPage()),
+                      // ),
                       SettingTile(
                         title: "Mes dépenses",
                         icon: Icons.monetization_on_outlined,
