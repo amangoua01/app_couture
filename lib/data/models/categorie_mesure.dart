@@ -8,6 +8,7 @@ class CategorieMesure extends ModelJson {
   Entreprise? entreprise;
   DateTime? createdAt;
   bool isActive = true;
+  int ordre = 0;
 
   CategorieMesure({
     super.id,
@@ -15,6 +16,7 @@ class CategorieMesure extends ModelJson {
     this.entreprise,
     this.createdAt,
     this.isActive = true,
+    this.ordre = 0,
   });
 
   CategorieMesure.fromJson(Json json) {
@@ -25,6 +27,7 @@ class CategorieMesure extends ModelJson {
     }
     createdAt = json["createdAt"].toString().toDateTime();
     isActive = json["isActive"] ?? true;
+    ordre = json["ordre"] ?? 0;
   }
 
   @override

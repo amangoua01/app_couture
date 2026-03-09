@@ -158,4 +158,35 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+
+  /// Transfère un stock d'une boutique vers une autre.
+  ///
+  /// POST /stock/transfert
+  Future<DataResponse<bool>> transfertStock({
+    required int boutiqueEmetteurId,
+    required int boutiqueReceptriceId,
+    required List<Map<String, int>> lignes,
+  }) async {
+    try {
+      final res = await client.post(
+        urlBuilder(api: 'transfert', module: 'stock'),
+        headers: authHeaders,
+        body: jsonEncode({
+          'boutiqueEmetteurId': boutiqueEmetteurId,
+          'boutiqueReceptriceId': boutiqueReceptriceId,
+          'lignes': lignes,
+        }),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        return DataResponse.success(data: true);
+      } else {
+        return DataResponse.error(
+          message: data['message'] ?? "Erreur lors du transfert de stock",
+        );
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 }

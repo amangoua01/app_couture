@@ -5,25 +5,25 @@ import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/command_tile.dart';
-import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/tools/widgets/vente_tile.dart';
 import 'package:ateliya/views/controllers/home/home_page_vctl.dart';
-import 'package:ateliya/views/static/boutiques/edition_boutique_page.dart';
 import 'package:ateliya/views/static/caisse/edition_mouvement_page.dart';
 import 'package:ateliya/views/static/clients/edition_client_page.dart';
 import 'package:ateliya/views/static/commandes/commande_list_page.dart';
 import 'package:ateliya/views/static/depense/edition_depense_page.dart';
 import 'package:ateliya/views/static/home/sub_pages/select_entreprise_bottom_page.dart';
+import 'package:ateliya/views/static/home/widgets/roadmap_onboarding_widget.dart';
 import 'package:ateliya/views/static/mesure/edition_mesure_page.dart';
 import 'package:ateliya/views/static/printers/print_list_page.dart';
-import 'package:ateliya/views/static/surcursales/edition_surcusale_page.dart';
+import 'package:ateliya/views/static/transfert_stock/edition_transfert_stock_page.dart';
 import 'package:ateliya/views/static/ventes/edition_vente_multiple_page.dart';
 import 'package:ateliya/views/static/ventes/vente_boutique_list_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scrolling_fab_animated/flutter_scrolling_fab_animated.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -112,118 +112,167 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
-            floatingActionButton: SpeedDial(
-              heroTag: 'option',
+            floatingActionButton: Visibility(
               visible: ctl.getEntite().value.isNotEmpty,
-              icon: Icons.add,
-              children: [
-                SpeedDialChild(
-                  label: "Créer un client",
-                  child: SvgPicture.asset(
-                    "assets/images/svg/client.svg",
-                    width: 30,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.green,
-                      BlendMode.srcIn,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  PlaceholderWidget(
+                    condition: ctl.getEntite().value.type ==
+                        EntiteEntrepriseType.boutique,
+                    placeholder: ScrollingFabAnimated(
+                      width: 190,
+                      color: AppColors.yellow,
+                      text: const Text(
+                        "Créer une mesure",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      icon: SvgPicture.asset(
+                        "assets/images/svg/mesure.svg",
+                        width: 25,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      onPress: () async {
+                        final res =
+                            await Get.to(() => const EditionMesurePage());
+                        if (res != null) {
+                          ctl.loadData();
+                        }
+                      },
+                      scrollController: ctl.scrollCtl,
+                    ),
+                    child: ScrollingFabAnimated(
+                      width: 190,
+                      // radius: 20,
+                      color: AppColors.yellow,
+                      text: const Text(
+                        "Faire une vente",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      icon: SvgPicture.asset(
+                        "assets/images/svg/atelier.svg",
+                        width: 25,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      onPress: () async {
+                        final res = await Get.to(
+                          () => const EditionVenteMultiplePage(),
+                        );
+                        if (res != null) {
+                          ctl.loadData();
+                        }
+                      },
+                      scrollController: ctl.scrollCtl,
                     ),
                   ),
-                  onTap: () => Get.to(() => const EditionClientPage()),
-                ),
-                SpeedDialChild(
-                  visible: ctl.getEntite().value.type ==
-                      EntiteEntrepriseType.succursale,
-                  label: "Créer une mesure",
-                  child: SvgPicture.asset(
-                    "assets/images/svg/mesure.svg",
-                    width: 30,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.green,
-                      BlendMode.srcIn,
-                    ),
+                  const Gap(10),
+                  SpeedDial(
+                    heroTag: 'option',
+                    visible: ctl.getEntite().value.isNotEmpty,
+                    icon: Icons.more_vert_sharp,
+                    children: [
+                      SpeedDialChild(
+                        label: "Créer un client",
+                        child: SvgPicture.asset(
+                          "assets/images/svg/client.svg",
+                          width: 30,
+                          colorFilter: const ColorFilter.mode(
+                            AppColors.green,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        onTap: () => Get.to(() => const EditionClientPage()),
+                      ),
+                      SpeedDialChild(
+                        visible: (ctl.getEntite().value.type ==
+                                EntiteEntrepriseType.boutique &&
+                            ctl.user.isAdmin),
+                        label: "Transfert de stock",
+                        onTap: () async {
+                          final res = await Get.to(
+                            () => const EditionTransfertStockPage(),
+                          );
+                          if (res != null) {
+                            ctl.loadData();
+                          }
+                        },
+                        child: SvgPicture.asset(
+                          "assets/images/svg/transfer_stock.svg",
+                          width: 30,
+                          colorFilter: const ColorFilter.mode(
+                            AppColors.green,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                      SpeedDialChild(
+                        label: "Créer une dépense",
+                        visible: ctl.user.isAdmin,
+                        child: const Icon(Icons.money_off, color: Colors.white),
+                        backgroundColor: Colors.red,
+                        onTap: () async {
+                          final res =
+                              await Get.to(() => const EditionDepensePage());
+                          if (res != null) {
+                            ctl.loadData();
+                          }
+                        },
+                      ),
+                      SpeedDialChild(
+                        visible: ctl.user.isAdmin,
+                        label: "Approvisionner caisse",
+                        child: const Icon(Icons.wallet, color: Colors.white),
+                        backgroundColor: AppColors.primary,
+                        onTap: () async {
+                          final res = await Get.to(
+                              () => const ApprovisionnerCaissePage());
+                          if (res != null) {
+                            ctl.loadData();
+                          }
+                        },
+                      ),
+                    ],
                   ),
-                  onTap: () async {
-                    final res = await Get.to(() => const EditionMesurePage());
-                    if (res != null) {
-                      ctl.loadData();
-                    }
-                  },
-                ),
-                SpeedDialChild(
-                  visible: (ctl.getEntite().value.type ==
-                      EntiteEntrepriseType.boutique),
-                  label: "Faire une vente",
-                  onTap: () async {
-                    final res =
-                        await Get.to(() => const EditionVenteMultiplePage());
-                    if (res != null) {
-                      ctl.loadData();
-                    }
-                  },
-                  child: SvgPicture.asset(
-                    "assets/images/svg/atelier.svg",
-                    width: 30,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.green,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                ),
-                SpeedDialChild(
-                  label: "Créer une dépense",
-                  visible: ctl.user.isAdmin,
-                  child: const Icon(Icons.money_off, color: Colors.white),
-                  backgroundColor: Colors.red,
-                  onTap: () async {
-                    final res = await Get.to(() => const EditionDepensePage());
-                    if (res != null) {
-                      ctl.loadData();
-                    }
-                  },
-                ),
-                SpeedDialChild(
-                  visible: ctl.user.isAdmin,
-                  label: "Approvisionner caisse",
-                  child: const Icon(Icons.wallet, color: Colors.white),
-                  backgroundColor: AppColors.primary,
-                  onTap: () async {
-                    final res =
-                        await Get.to(() => const ApprovisionnerCaissePage());
-                    if (res != null) {
-                      ctl.loadData();
-                    }
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
             body: PlaceholderWidget(
               condition: ctl.getEntite().value.isNotEmpty,
-              placeholder: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  EmptyDataWidget(
-                    message: "Aucune boutique ou surcussale ?"
-                        "\nCréez-en une pour continuer.",
-                    onRefresh: ternaryFn(
-                      condition: ctl.user.isAdmin,
-                      ifTrue: () => Get.to(() => const EditionBoutiquePage()),
-                      ifFalse: null,
-                    ),
-                    buttonTitle: "Créer une boutique",
+              placeholder: ternaryFn(
+                condition: ctl.user.isAdmin,
+                ifTrue: const RoadmapOnboardingWidget(),
+                ifFalse: Center(
+                  child: Text(
+                    "Aucune boutique ou succursale sélectionnée.\nVeuillez contacter votre administrateur.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey[600]),
                   ),
-                  Visibility(
-                    visible: ctl.user.isAdmin,
-                    child: TextButton(
-                      onPressed: () =>
-                          Get.to(() => const EditionSurcusalePage()),
-                      child: const Text("Créer une succursale"),
-                    ),
-                  ),
-                ],
+                ),
               ),
               child: RefreshIndicator(
                 onRefresh: ctl.loadData,
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  controller: ctl.scrollCtl,
+                  padding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    bottom: 100,
+                  ),
                   children: [
                     Visibility(
                       visible: ctl.user.isAdmin,
@@ -261,7 +310,9 @@ class HomePage extends StatelessWidget {
                                     children: [
                                       Container(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 5),
+                                          horizontal: 10,
+                                          vertical: 5,
+                                        ),
                                         decoration: BoxDecoration(
                                           color: Colors.white
                                               .withValues(alpha: 0.2),
@@ -270,8 +321,11 @@ class HomePage extends StatelessWidget {
                                         ),
                                         child: Row(
                                           children: [
-                                            const Icon(Icons.verified_rounded,
-                                                color: Colors.amber, size: 14),
+                                            const Icon(
+                                              Icons.verified_rounded,
+                                              color: Colors.amber,
+                                              size: 14,
+                                            ),
                                             const Gap(6),
                                             Text(
                                               ctl.data.abonnements
@@ -294,30 +348,52 @@ class HomePage extends StatelessWidget {
                                           ],
                                         ),
                                       ),
-                                      const Spacer(),
-                                      Text(
-                                        ternaryFn(
-                                          condition: ctl
-                                                  .getEntite()
-                                                  .value
-                                                  .type ==
-                                              EntiteEntrepriseType.succursale,
-                                          ifTrue: "Atelier",
-                                          ifFalse: "Boutique",
+                                      const Gap(10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              constraints: BoxConstraints(
+                                                maxWidth: Get.width * .60,
+                                              ),
+                                              child: AutoSizeText(
+                                                ctl
+                                                    .getEntite()
+                                                    .value
+                                                    .libelle
+                                                    .value,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                minFontSize: 13,
+                                                maxFontSize: 25,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  // fontSize: 13,
+                                                ),
+                                              ),
+                                            ),
+                                            Text(
+                                              ternaryFn(
+                                                condition: ctl
+                                                        .getEntite()
+                                                        .value
+                                                        .type ==
+                                                    EntiteEntrepriseType
+                                                        .succursale,
+                                                ifTrue: "Atelier",
+                                                ifFalse: "Boutique",
+                                              ),
+                                              style: TextStyle(
+                                                color: Colors.white
+                                                    .withValues(alpha: 0.75),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        style: TextStyle(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.75),
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      const Gap(4),
-                                      Text(
-                                        ctl.getEntite().value.libelle.value,
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 13),
                                       ),
                                     ],
                                   ),

@@ -5,6 +5,7 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/models/ligne_panier.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';

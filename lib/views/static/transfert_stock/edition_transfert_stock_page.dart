@@ -1,39 +1,36 @@
+import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:ateliya/views/controllers/ravitaillement/edition_ravitaillement_vctl.dart';
+import 'package:ateliya/views/controllers/transfert_stock/edition_transfert_stock_vctl.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-class EditionRavitaillementPage extends StatelessWidget {
-  final ModeleBoutique? item;
-
-  const EditionRavitaillementPage({super.key}) : item = null;
-
-  const EditionRavitaillementPage.one(ModeleBoutique this.item, {super.key});
+class EditionTransfertStockPage extends StatelessWidget {
+  const EditionTransfertStockPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder(
-      init: EditionRavitaillementVctl(item),
+      init: EditionTransfertStockVctl(),
       builder: (ctl) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Nouveau ravitaillement')),
+          appBar: AppBar(title: const Text('Transfert de stock')),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => ctl.addLigne(),
             label: const Text('Ajouter un article'),
             icon: const Icon(Icons.add),
           ),
-          // ── Soumettre ────────────────────────────────────
           bottomNavigationBar: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: CButton(onPressed: ctl.submit),
+              child: CButton(
+                  title: "Confirmer le transfert", onPressed: ctl.submit),
             ),
           ),
           body: ctl.isLoading
@@ -46,13 +43,13 @@ class EditionRavitaillementPage extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.inventory_2_outlined,
+                              Icons.sync_disabled_rounded,
                               size: 60,
                               color: Colors.grey[300],
                             ),
                             const Gap(16),
                             Text(
-                              'Aucun article disponible dans cette boutique.',
+                              'Aucun article disponible en stock dans cette boutique pour un transfert.',
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.grey[500]),
                             ),
@@ -63,16 +60,88 @@ class EditionRavitaillementPage extends StatelessWidget {
                   : ListView(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                       children: [
-                        // ── Info ─────────────────────────────────────────
+                        // ── Sélection Destination ─────────────────────────
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          margin: const EdgeInsets.only(bottom: 24),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.grey.shade200),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary.withAlpha(20),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(Icons.storefront_rounded,
+                                        size: 20, color: AppColors.primary),
+                                  ),
+                                  const Gap(12),
+                                  const Text(
+                                    "Boutique de destination",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              const Gap(16),
+                              DropdownSearch<Boutique>(
+                                enabled: true,
+                                items: (filter, _) => ctl.boutiques.where((b) {
+                                  return (b.libelle.value)
+                                      .toLowerCase()
+                                      .contains(filter.toLowerCase());
+                                }).toList(),
+                                selectedItem: ctl.selectedBoutique,
+                                compareFn: (a, b) => a.id == b.id,
+                                itemAsString: (v) => v.libelle.value,
+                                popupProps: const PopupProps.menu(
+                                  showSearchBox: true,
+                                  searchFieldProps: TextFieldProps(
+                                    decoration: InputDecoration(
+                                      hintText: 'Rechercher une boutique...',
+                                      prefixIcon: Icon(Icons.search),
+                                    ),
+                                  ),
+                                ),
+                                decoratorProps: const DropDownDecoratorProps(
+                                  decoration: InputDecoration(
+                                    labelText: 'Sélectionner une boutique *',
+                                    border: OutlineInputBorder(),
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 12),
+                                  ),
+                                ),
+                                onChanged: (v) => ctl.setSelectedBoutique(v),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // ── Info Lignes ──────────────────────────────────
                         Container(
                           padding: const EdgeInsets.all(12),
-                          margin: const EdgeInsets.only(bottom: 20),
+                          margin: const EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.06),
+                            color: AppColors.primary.withAlpha(15),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                                color:
-                                    AppColors.primary.withValues(alpha: 0.2)),
+                                color: AppColors.primary.withAlpha(30)),
                           ),
                           child: Row(
                             children: [
@@ -81,12 +150,9 @@ class EditionRavitaillementPage extends StatelessWidget {
                               const Gap(8),
                               Expanded(
                                 child: Text(
-                                  'Ajoutez les articles et leur quantité '
-                                  'à ravitailler.',
+                                  'Sélectionnez les articles à transférer et précisez la quantité (le stock actuel est indiqué).',
                                   style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey[700],
-                                  ),
+                                      fontSize: 13, color: Colors.grey[800]),
                                 ),
                               ),
                             ],
@@ -99,7 +165,6 @@ class EditionRavitaillementPage extends StatelessWidget {
                           (i) => _LigneCard(
                             index: i,
                             ctl: ctl,
-                            isArticleEditable: item == null,
                           ),
                         ),
                       ],
@@ -114,13 +179,11 @@ class EditionRavitaillementPage extends StatelessWidget {
 
 class _LigneCard extends StatelessWidget {
   final int index;
-  final EditionRavitaillementVctl ctl;
-  final bool isArticleEditable;
+  final EditionTransfertStockVctl ctl;
 
   const _LigneCard({
     required this.index,
     required this.ctl,
-    this.isArticleEditable = true,
   });
 
   @override
@@ -132,18 +195,18 @@ class _LigneCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withAlpha(3),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -174,21 +237,21 @@ class _LigneCard extends StatelessWidget {
                 if (ctl.lignes.length > 1)
                   IconButton(
                     icon: const Icon(Icons.close_rounded,
-                        color: Colors.red, size: 20),
+                        color: Colors.red, size: 22),
                     onPressed: () => ctl.removeLigne(index),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                   ),
               ],
             ),
-            const Gap(10),
+            const Gap(16),
 
             // Dropdown article
             DropdownSearch<ModeleBoutique>(
-              enabled: isArticleEditable,
+              enabled: true,
               items: (filter, _) => ctl.allVariantes
                   .where((v) =>
-                      (v.modele?.libelle ?? '')
+                      (v.modele?.libelle?.value ?? '')
                           .toLowerCase()
                           .contains(filter.toLowerCase()) ||
                       (v.taille ?? '')
@@ -224,12 +287,12 @@ class _LigneCard extends StatelessWidget {
               ),
               onChanged: (v) => ctl.setModele(index, v),
             ),
-            const Gap(12),
+            const Gap(16),
 
             // Quantité
             CTextFormField(
               controller: ligne.quantiteCtl,
-              externalLabel: 'Quantité à ajouter',
+              externalLabel: 'Quantité à transférer',
               keyboardType: TextInputType.number,
               require: true,
               margin: EdgeInsets.zero,
@@ -254,7 +317,7 @@ class _ArticleDropdownItem extends StatelessWidget {
     return ListTile(
       selected: isSelected,
       selectedColor: AppColors.primary,
-      selectedTileColor: AppColors.primary.withValues(alpha: 0.06),
+      selectedTileColor: AppColors.primary.withAlpha(15),
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Container(
@@ -288,6 +351,7 @@ class _ArticleDropdownItem extends StatelessWidget {
                 color: (item.quantite ?? 0) > 0
                     ? Colors.green[600]
                     : Colors.red[400],
+                fontWeight: FontWeight.bold,
               )),
         ],
       ),

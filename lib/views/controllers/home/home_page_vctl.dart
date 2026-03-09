@@ -6,10 +6,12 @@ import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
+import 'package:flutter/material.dart';
 
 class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
   var data = AccueilData();
   final api = AccueilApi();
+  final scrollCtl = ScrollController();
 
   Future<void> loadData() async {
     final entite = getEntite().value;
@@ -29,5 +31,11 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
   void onReady() {
     loadData();
     super.onReady();
+  }
+
+  @override
+  void onClose() {
+    scrollCtl.dispose();
+    super.onClose();
   }
 }

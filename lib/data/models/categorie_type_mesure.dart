@@ -7,12 +7,14 @@ class CategorieTypeMesure extends ModelJson<CategorieTypeMesure> {
   CategorieMesure? categorieMesure;
   String? createdAt;
   TypeMesure? typeMesure;
+  int ordre = 0;
 
   CategorieTypeMesure({
     super.id,
     this.categorieMesure,
     this.createdAt,
     this.typeMesure,
+    this.ordre = 0,
   });
 
   CategorieTypeMesure.fromJson(Map<String, dynamic> json) {
@@ -21,6 +23,7 @@ class CategorieTypeMesure extends ModelJson<CategorieTypeMesure> {
         ? CategorieMesure.fromJson(json['categorieMesure'])
         : null;
     createdAt = json['createdAt'];
+    ordre = json['ordre'] ?? 0;
   }
 
   @override
@@ -29,6 +32,7 @@ class CategorieTypeMesure extends ModelJson<CategorieTypeMesure> {
     data['id'] = id;
     data['categorieMesure'] = categorieMesure!.id;
     data['createdAt'] = createdAt;
+    data["ordre"] = ordre;
     return data;
   }
 

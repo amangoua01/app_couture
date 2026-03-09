@@ -5,6 +5,7 @@ import 'package:ateliya/tools/widgets/body_list_view.dart';
 import 'package:ateliya/tools/widgets/list_item.dart';
 import 'package:ateliya/views/controllers/modele_boutique/modele_boutique_list_page_vctl.dart';
 import 'package:ateliya/views/static/modele_boutique/edition_modele_boutique_page.dart';
+import 'package:ateliya/views/static/ravitaillement/edition_ravitaillement_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -32,6 +33,19 @@ class ModeleListBoutiquePage extends StatelessWidget {
             index: i,
             title: ctl.data.items[i].modele!.libelle.value,
             subtitle: ctl.data.items[i].quantite.toAmount(unit: "unité(s)"),
+            actions: [
+              PopupMenuItem(
+                child: const Text("Ravitailler"),
+                onTap: () async {
+                  final res = await Get.to(
+                    () => EditionRavitaillementPage.one(ctl.data.items[i]),
+                  );
+                  if (res != null) {
+                    ctl.getList();
+                  }
+                },
+              ),
+            ],
           ),
         );
       },

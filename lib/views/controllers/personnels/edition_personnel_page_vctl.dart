@@ -7,6 +7,7 @@ import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/succursale.dart';
 import 'package:ateliya/data/models/type_user.dart';
 import 'package:ateliya/data/models/user.dart';
+import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
@@ -26,8 +27,14 @@ class EditionPersonnelPageVctl
   final typeUserApi = TypeUserApi();
   final boutiqueApi = BoutiqueApi();
   final succursaleApi = SuccursaleApi();
+  bool passwordHided = true;
+  bool confirmPasswordHided = true;
 
-  EditionPersonnelPageVctl(super.item) : super(api: PersonnelApi());
+  EditionPersonnelPageVctl(super.item) : super(api: PersonnelApi()) {
+    if (item == null) {
+      passwordCtl.text = Env.defaultPassword;
+    }
+  }
 
   @override
   Future<User?> onCreate() async {

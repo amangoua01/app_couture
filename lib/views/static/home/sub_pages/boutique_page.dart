@@ -5,6 +5,7 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/views/controllers/home/boutique_page_vctl.dart';
 import 'package:ateliya/views/static/home/detail_boutique_item_page.dart';
+import 'package:ateliya/views/static/ravitaillement/edition_ravitaillement_page.dart';
 import 'package:ateliya/views/static/ventes/edition_vente_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -37,8 +38,9 @@ class BoutiquePage extends StatelessWidget {
               Expanded(
                 child: ctl.isLoading
                     ? const Center(
-                        child:
-                            CircularProgressIndicator(color: AppColors.primary),
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
                       )
                     : ctl.data.isEmpty
                         ? _buildEmpty(ctl)
@@ -280,7 +282,8 @@ class _SectionHeader extends StatelessWidget {
                             const Gap(6),
                             _Pill(
                               label: '${item.variantes.length} variantes',
-                              bgColor: AppColors.primary.withValues(alpha: 0.12),
+                              bgColor:
+                                  AppColors.primary.withValues(alpha: 0.12),
                               textColor: AppColors.primary,
                             ),
                           ],
@@ -498,6 +501,17 @@ class _VarianteCard extends StatelessWidget {
                               onTap: () async {
                                 final res = await Get.to(
                                     () => EditionVentePage(variante));
+                                if (res != null) ctl.fetchData();
+                              },
+                            ),
+                            PopupMenuItem<String>(
+                              height: 40,
+                              value: 'vente',
+                              child: const Text('Ravitaillement'),
+                              onTap: () async {
+                                final res = await Get.to(
+                                  () => EditionRavitaillementPage.one(variante),
+                                );
                                 if (res != null) ctl.fetchData();
                               },
                             ),

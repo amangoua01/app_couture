@@ -48,9 +48,9 @@ class LigneMesureDto extends DtoModel {
 
   String get getCalcul {
     if (remise > 0) {
-      return "${montant.toAmount()} - ${remise.toAmount()}";
+      return "${montant.toAmount(unit: "F")} - ${remise.toAmount(unit: "F")}";
     } else {
-      return montant.toAmount();
+      return montant.toAmount(unit: "F");
     }
   }
 }

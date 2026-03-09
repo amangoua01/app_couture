@@ -3,12 +3,12 @@ import 'package:ateliya/data/models/categorie_mesure.dart';
 
 class MensurationDto extends DtoModel {
   CategorieMesure categorieMesure;
-  double valeur;
+  String valeur = "0";
   bool isActive;
 
   MensurationDto({
     required this.categorieMesure,
-    this.valeur = 0,
+    this.valeur = "0",
     this.isActive = true,
   });
 

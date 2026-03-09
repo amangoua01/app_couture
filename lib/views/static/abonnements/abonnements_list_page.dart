@@ -59,7 +59,8 @@ class AbonnementsListPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primary.withValues(alpha: 0.3),
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.3),
                                     blurRadius: 15,
                                     offset: const Offset(0, 5),
                                   ),
@@ -135,7 +136,8 @@ class AbonnementsListPage extends StatelessWidget {
                                       padding:
                                           const EdgeInsets.only(bottom: 15),
                                       child: AbonnementTile(
-                                          ctl.abonnements[index]),
+                                        ctl.abonnements[index],
+                                      ),
                                     ),
                                   );
                                 },

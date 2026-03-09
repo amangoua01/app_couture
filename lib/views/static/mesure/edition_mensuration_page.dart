@@ -1,6 +1,5 @@
 import 'package:ateliya/data/dto/mesure/ligne_mesure_dto.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
@@ -154,25 +153,34 @@ class EditionMensurationPage extends StatelessWidget {
                                   child: CTextFormField(
                                     externalLabel: 'Valeur',
                                     require: true,
-                                    initialValue: (e.valeur) > 0
+                                    initialValue: (e.valeur.isNotEmpty)
                                         ? e.valeur.toString()
                                         : '',
+                                    validator: (v) {
+                                      if (e.isActive &&
+                                          (v.value.isEmpty ||
+                                              v == "0" ||
+                                              v == "0.0")) {
+                                        return "Veuillez saisir une valeur";
+                                      }
+                                      return null;
+                                    },
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
                                             decimal: true),
                                     onChanged: (value) {
-                                      e.valeur = value.toDouble().value;
+                                      e.valeur = value.value;
                                     },
-                                    suffix: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12),
-                                      child: Text(
-                                        "cm",
-                                        style: TextStyle(
-                                            color: Colors.grey[500],
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
+                                    // suffix: Padding(
+                                    //   padding: const EdgeInsets.symmetric(
+                                    //       horizontal: 12),
+                                    //   child: Text(
+                                    //     "cm",
+                                    //     style: TextStyle(
+                                    //         color: Colors.grey[500],
+                                    //         fontWeight: FontWeight.w600),
+                                    //   ),
+                                    // ),
                                     margin: EdgeInsets.zero,
                                   ),
                                 ),

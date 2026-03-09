@@ -12,7 +12,7 @@ class ModuleAbonnement {
   List<LigneModuleAbonnement> ligneModules = const [];
   String? code;
   int? numero;
-  Null createdAt;
+  String? createdAt;
   bool? isActive;
 
   ModuleAbonnement(

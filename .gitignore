@@ -46,4 +46,5 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
-android/keys/*.jks
+# android/keys/*.jks
+android/app/.cxx/
