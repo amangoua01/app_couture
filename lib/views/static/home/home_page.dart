@@ -255,7 +255,7 @@ class HomePage extends StatelessWidget {
               condition: ctl.getEntite().value.isNotEmpty,
               placeholder: ternaryFn(
                 condition: ctl.user.isAdmin,
-                ifTrue: const RoadmapOnboardingWidget(),
+                ifTrue: RoadmapOnboardingWidget(ctl),
                 ifFalse: Center(
                   child: Text(
                     "Aucune boutique ou succursale sélectionnée.\nVeuillez contacter votre administrateur.",

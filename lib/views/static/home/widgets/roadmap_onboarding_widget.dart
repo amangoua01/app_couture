@@ -1,4 +1,5 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/views/controllers/home/home_page_vctl.dart';
 import 'package:ateliya/views/static/boutiques/edition_boutique_page.dart';
 import 'package:ateliya/views/static/modele/modele_list_page.dart';
 import 'package:ateliya/views/static/modele_boutique/modele_list_boutique_page.dart';
@@ -9,7 +10,8 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class RoadmapOnboardingWidget extends StatelessWidget {
-  const RoadmapOnboardingWidget({super.key});
+  final HomePageVctl ctl;
+  const RoadmapOnboardingWidget(this.ctl, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +49,20 @@ class RoadmapOnboardingWidget extends StatelessWidget {
               number: "1",
               title: "Créer une boutique",
               description: "Définissez votre point de vente principal.",
-              onTap: () => Get.to(() => const EditionBoutiquePage()),
+              onTap: () async {
+                final res = await Get.to(() => const EditionBoutiquePage());
+                if (res != null) {
+                  ctl.user.hasBoutique = true;
+                  ctl.update();
+                }
+              },
             ),
             _RoadmapStep(
               number: "2",
               title: "Création des modèles",
               description: "Ajoutez vos modèles de base (ex: Robe, Tunique).",
               onTap: () => Get.to(() => const ModeleListPage()),
+              enabled: ctl.user.hasBoutique,
             ),
             _RoadmapStep(
               number: "3",
@@ -61,6 +70,7 @@ class RoadmapOnboardingWidget extends StatelessWidget {
               description:
                   "Définissez les modèles associés à votre boutique avec leurs tarifs.",
               onTap: () => Get.to(() => const ModeleListBoutiquePage()),
+              enabled: ctl.user.hasBoutique,
             ),
           ],
         ),
@@ -94,7 +104,13 @@ class RoadmapOnboardingWidget extends StatelessWidget {
               number: "1",
               title: "Créer une succursale",
               description: "Ajoutez votre atelier de production.",
-              onTap: () => Get.to(() => const EditionSurcusalePage()),
+              onTap: () async {
+                final res = await Get.to(() => const EditionSurcusalePage());
+                if (res != null) {
+                  ctl.user.hasSuccursale = true;
+                  ctl.update();
+                }
+              },
             ),
             _RoadmapStep(
               number: "2",
@@ -102,6 +118,7 @@ class RoadmapOnboardingWidget extends StatelessWidget {
               description:
                   "Ajoutez des mensurations par type (ex: carrure, épaule pour Robe).",
               onTap: () => Get.to(() => const TypeMesureListPage()),
+              enabled: ctl.user.hasSuccursale,
             ),
           ],
         ),
@@ -168,57 +185,65 @@ class RoadmapOnboardingWidget extends StatelessWidget {
                 return Column(
                   children: [
                     InkWell(
-                      onTap: step.onTap,
+                      onTap: step.enabled ? step.onTap : null,
                       borderRadius: BorderRadius.circular(12),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                color: color.withAlpha(30),
-                                shape: BoxShape.circle,
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                step.number,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: color,
+                      child: Opacity(
+                        opacity: step.enabled ? 1.0 : 0.5,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: step.enabled
+                                      ? color.withAlpha(30)
+                                      : Colors.grey.withAlpha(30),
+                                  shape: BoxShape.circle,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  step.number,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: step.enabled ? color : Colors.grey,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const Gap(16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    step.title,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                      color: Colors.black87,
+                              const Gap(16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      step.title,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        color: step.enabled
+                                            ? Colors.black87
+                                            : Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  const Gap(4),
-                                  Text(
-                                    step.description,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.grey[600],
+                                    const Gap(4),
+                                    Text(
+                                      step.description,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey[600],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            const Gap(8),
-                            Icon(Icons.chevron_right_rounded,
-                                color: Colors.grey[400]),
-                          ],
+                              const Gap(8),
+                              if (step.enabled)
+                                Icon(Icons.chevron_right_rounded,
+                                    color: Colors.grey[400]),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -250,11 +275,13 @@ class _RoadmapStep {
   final String title;
   final String description;
   final VoidCallback onTap;
+  final bool enabled;
 
-  _RoadmapStep({
+  const _RoadmapStep({
     required this.number,
     required this.title,
     required this.description,
     required this.onTap,
+    this.enabled = true,
   });
 }
