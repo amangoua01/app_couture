@@ -246,7 +246,7 @@ class EditionVenteMultiplePage extends StatelessWidget {
                                         ),
                                       ),
                                       title: Text(
-                                          item.modele.modele?.libelle ?? ""),
+                                          "${item.modele.modele?.libelle ?? ""}${item.modele.taille?.isNotEmpty == true ? ' - ${item.modele.taille}' : ''}"),
                                       subtitle: Text(
                                           "${item.quantite} x ${item.prixUnitaire.toAmount(unit: '')}"),
                                       trailing: Row(
@@ -311,7 +311,7 @@ class EditionVenteMultiplePage extends StatelessWidget {
               enabled: itemToEdit == null,
               selectedItem: selectedModele,
               itemAsString: (m) =>
-                  "${m.modele?.libelle ?? ''} (${m.prix.toAmount()})",
+                  "${m.modele?.libelle ?? ''}${m.taille?.isNotEmpty == true ? ' - ${m.taille}' : ''} (${m.prix.toAmount()})",
               popupProps: PopupProps.menu(
                 showSearchBox: true,
                 itemBuilder: (context, item, isSelected, b) {
@@ -339,7 +339,8 @@ class EditionVenteMultiplePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    title: Text(item.modele?.libelle ?? ""),
+                    title: Text(
+                        "${item.modele?.libelle ?? ""}${item.taille?.isNotEmpty == true ? ' - ${item.taille}' : ''}"),
                     subtitle: Text(
                         "${item.prix.toAmount()} • Stocks: ${item.quantite}"),
                     selected: isSelected,
