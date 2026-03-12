@@ -1,7 +1,9 @@
+import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/data/models/paiement_facture.dart';
+import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/data/models/vente.dart';
-import 'package:ateliya/data/models/fichier_server.dart';
+import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/blue_device.dart';
@@ -15,7 +17,6 @@ import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:intl/intl.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
-import 'package:ateliya/data/models/user.dart';
 
 mixin PrinterManagerViewMixin {
   /// Gestionnaire d'instance globale de l'imprimante
@@ -135,14 +136,13 @@ mixin PrinterManagerViewMixin {
       if (Get.isRegistered<User>()) {
         final user = Get.find<User>();
         final logo = user.entreprise?.logo;
-        final fullUrl =
-            logo is FichierServer ? (logo).fullUrl : null;
+        final fullUrl = logo is FichierServer ? (logo).fullUrl : null;
         if (fullUrl != null) {
           final response = await http.get(Uri.parse(fullUrl));
           if (response.statusCode == 200) {
             final img.Image? image = img.decodeImage(response.bodyBytes);
             if (image != null) {
-              final img.Image resized = img.copyResize(image, width: 200);
+              final img.Image resized = img.copyResize(image, width: 120);
               bytes += generator.imageRaster(resized, align: PosAlign.center);
               bytes += generator.emptyLines(1);
             }
@@ -194,7 +194,7 @@ mixin PrinterManagerViewMixin {
     ]);
 
     final dateStr = mesure.createdAt != null
-        ? DateFormat('dd/MM/yyyy HH:mm').format(mesure.createdAt!)
+        ? mesure.createdAt.toFrenchDateTime
         : "--/--/----";
     bytes += generator.row([
       PosColumn(text: "Date", width: 4),
@@ -574,7 +574,7 @@ mixin PrinterManagerViewMixin {
                 width: 7,
               ),
               PosColumn(
-                text: "${mensuration.taille} cm",
+                text: mensuration.taille,
                 width: 5,
                 styles: const PosStyles(align: PosAlign.right, bold: true),
               ),
