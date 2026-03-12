@@ -1,6 +1,9 @@
+import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/data/models/paiement_facture.dart';
+import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/data/models/vente.dart';
+import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/blue_device.dart';
@@ -10,6 +13,8 @@ import 'package:ateliya/views/static/printers/print_list_page.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img;
 import 'package:intl/intl.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
@@ -125,6 +130,31 @@ mixin PrinterManagerViewMixin {
         .replaceAll(' ', ' ');
   }
 
+  Future<List<int>> _generateLogoBytes(Generator generator) async {
+    List<int> bytes = [];
+    try {
+      if (Get.isRegistered<User>()) {
+        final user = Get.find<User>();
+        final logo = user.entreprise?.logo;
+        final fullUrl = logo is FichierServer ? (logo).fullUrl : null;
+        if (fullUrl != null) {
+          final response = await http.get(Uri.parse(fullUrl));
+          if (response.statusCode == 200) {
+            final img.Image? image = img.decodeImage(response.bodyBytes);
+            if (image != null) {
+              final img.Image resized = img.copyResize(image, width: 120);
+              bytes += generator.imageRaster(resized, align: PosAlign.center);
+              bytes += generator.emptyLines(1);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Error loading logo: $e");
+    }
+    return bytes;
+  }
+
   Future<List<int>?> _generateMesureBytes(
       Mesure mesure, String footerMessage) async {
     final profile = await CapabilityProfile.load();
@@ -133,6 +163,8 @@ mixin PrinterManagerViewMixin {
 
     bytes += generator.reset();
     bytes += generator.setGlobalCodeTable('CP1252');
+
+    bytes += await _generateLogoBytes(generator);
 
     // -- Header --
     if (mesure.succursale != null) {
@@ -162,7 +194,7 @@ mixin PrinterManagerViewMixin {
     ]);
 
     final dateStr = mesure.createdAt != null
-        ? DateFormat('dd/MM/yyyy HH:mm').format(mesure.createdAt!)
+        ? mesure.createdAt.toFrenchDateTime
         : "--/--/----";
     bytes += generator.row([
       PosColumn(text: "Date", width: 4),
@@ -291,6 +323,8 @@ mixin PrinterManagerViewMixin {
     bytes += generator.reset();
     bytes += generator.setGlobalCodeTable('CP1252');
 
+    bytes += await _generateLogoBytes(generator);
+
     bytes += generator.text(entrepriseName,
         styles: const PosStyles(
             align: PosAlign.center, bold: true, height: PosTextSize.size2));
@@ -393,6 +427,8 @@ mixin PrinterManagerViewMixin {
 
     bytes += generator.reset();
     bytes += generator.setGlobalCodeTable('CP1252');
+
+    bytes += await _generateLogoBytes(generator);
 
     if (mesure.succursale != null) {
       bytes += generator.text(
@@ -538,7 +574,7 @@ mixin PrinterManagerViewMixin {
                 width: 7,
               ),
               PosColumn(
-                text: "${mensuration.taille} cm",
+                text: mensuration.taille,
                 width: 5,
                 styles: const PosStyles(align: PosAlign.right, bold: true),
               ),

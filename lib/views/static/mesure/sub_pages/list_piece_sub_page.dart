@@ -227,7 +227,7 @@ class ListPieceSubPage extends StatelessWidget {
                                                 color: Colors.grey[700]),
                                           ),
                                           Text(
-                                            "${m.valeur} cm",
+                                            m.valeur,
                                             style: const TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold,
