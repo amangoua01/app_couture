@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ateliya/api/abstract/web_controller.dart';
+import 'package:ateliya/data/dto/mouvement_caisse_dto.dart';
 import 'package:ateliya/data/models/caisse.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 import 'package:ateliya/tools/models/paginated_data.dart';
@@ -40,11 +41,11 @@ class CaisseApi extends WebController {
     }
   }
 
-  Future<DataResponse> addMouvement(Map<String, dynamic> data) async {
+  Future<DataResponse> addMouvement(MouvementCaisseDto data) async {
     try {
       final res = await client.post(
         urlBuilder(module: "mouvement-caisse", api: "create"),
-        body: jsonEncode(data),
+        body: jsonEncode(data.toJson()),
         headers: authHeaders,
       );
       final json = jsonDecode(res.body);
