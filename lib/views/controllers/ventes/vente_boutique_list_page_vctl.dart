@@ -6,9 +6,9 @@ import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 
-class VenteListVctl extends ListViewController<Vente>
+class VenteBoutiqueListPageVctl extends ListViewController<Vente>
     with PrinterManagerViewMixin {
-  VenteListVctl() : super(BoutiqueApi());
+  VenteBoutiqueListPageVctl() : super(BoutiqueApi());
 
   PeriodeVenteEnum periode = PeriodeVenteEnum.aujourdhui;
   DateTime? dateDebut;
@@ -19,6 +19,9 @@ class VenteListVctl extends ListViewController<Vente>
     update();
     getList();
   }
+
+  double get totalMontant =>
+      data.items.fold(0.0, (sum, item) => sum + (item.montant ?? 0.0));
 
   @override
   void onInit() {
