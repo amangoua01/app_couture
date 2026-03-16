@@ -4,11 +4,13 @@ class LignePaiementBoutiqueDto extends DtoModel {
   double montant;
   int boutiqueModeleId;
   int quantite;
+  double remise;
 
   LignePaiementBoutiqueDto({
     required this.montant,
     required this.boutiqueModeleId,
     required this.quantite,
+    this.remise = 0,
   });
 
   @override
@@ -16,5 +18,6 @@ class LignePaiementBoutiqueDto extends DtoModel {
         "montant": montant,
         "modeleBoutiqueId": boutiqueModeleId,
         "quantite": quantite,
+        "remise": remise,
       };
 }

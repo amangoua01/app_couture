@@ -49,12 +49,12 @@
 	<string>15.0</string>
 	<!-- Permissions pour accéder à la caméra et à la galerie -->
 	<key>NSCameraUsageDescription</key>
-	<string>Cette application a besoin d'accéder à la caméra pour prendre des photos.</string>
+	<string>Ateliya utilise votre caméra pour scanner les codes-barres des articles et prendre des photos des modèles pour vos commandes, facilitant la gestion de votre inventaire.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Cette application a besoin d'accéder à la galerie pour sélectionner des photos.</string>
+	<string>Ateliya accède à votre galerie pour vous permettre de sélectionner des photos à associer à vos produits ou à vos commandes clients.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Cette application utilise le Bluetooth pour se connecter aux imprimantes thermiques.</string>
+	<string>Ateliya utilise le Bluetooth pour se connecter à vos imprimantes thermiques et imprimer instantanément vos reçus et factures clients.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Cette application utilise le Bluetooth pour se connecter aux imprimantes thermiques.</string>
+	<string>Ateliya utilise le Bluetooth pour se connecter à vos imprimantes thermiques et imprimer instantanément vos reçus et factures clients.</string>
 </dict>
 </plist>

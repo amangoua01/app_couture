@@ -99,7 +99,7 @@ class EditionRavitaillementPage extends StatelessWidget {
                           (i) => _LigneCard(
                             index: i,
                             ctl: ctl,
-                            isArticleEditable: item == null,
+                            // isArticleEditable: item == null,
                           ),
                         ),
                       ],
