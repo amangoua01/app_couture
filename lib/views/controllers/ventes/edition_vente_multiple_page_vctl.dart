@@ -50,32 +50,33 @@ class EditionVenteMultiplePageVctl extends AuthViewController
     return res.data!.expand((item) => item.variantes).toList();
   }
 
-  void ajouterAuPanier(ModeleBoutique modele, int qte, double prix) {
+  void ajouterAuPanier(ModeleBoutique modele, int qte, double prix,
+      [double remise = 0]) {
     if (qte <= 0) return;
 
     final existingIndex = panier.indexWhere((p) => p.modele.id == modele.id);
     if (existingIndex != -1) {
       // On met à jour ou on additionne ?
-      // Disons additionner la quantité, mais mettre à jour le prix si changé ?
-      // Simplification : on écrase tout ou on ajoute.
-      // Si on ajoute depuis le même écran, logique d'ajout.
       panier[existingIndex].quantite += qte;
-      // panier[existingIndex].prixUnitaire = prix; // Keep or update ?
+      panier[existingIndex].prixUnitaire = prix;
+      panier[existingIndex].remise = remise;
       panier.refresh();
     } else {
-      panier
-          .add(LignePanier(modele: modele, quantite: qte, prixUnitaire: prix));
+      panier.add(LignePanier(
+          modele: modele, quantite: qte, prixUnitaire: prix, remise: remise));
     }
     update();
   }
 
-  void modifierLignePanier(LignePanier ligne, int qte, double prix) {
+  void modifierLignePanier(
+      LignePanier ligne, int qte, double prix, double remise) {
     if (qte <= 0) {
       retirerDuPanier(ligne);
       return;
     }
     ligne.quantite = qte;
     ligne.prixUnitaire = prix;
+    ligne.remise = remise;
     panier.refresh();
     update();
   }
@@ -104,12 +105,16 @@ class EditionVenteMultiplePageVctl extends AuthViewController
       boutiqueId: boutique!.id!,
       moyenPaiement: moyenPaiement,
       lignes: panier
-          .map((p) => LignePaiementBoutiqueDto(
-                boutiqueModeleId: p.modele.id!,
-                quantite: p.quantite,
-                montant: p.prixUnitaire,
-              ))
+          .map(
+            (p) => LignePaiementBoutiqueDto(
+              boutiqueModeleId: p.modele.id!,
+              quantite: p.quantite,
+              montant: p.prixUnitaire * p.quantite,
+              remise: p.remise,
+            ),
+          )
           .toList(),
+
     );
 
     final res = await boutiqueApi.makePaiement(dto).load();

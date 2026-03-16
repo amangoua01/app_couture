@@ -3,6 +3,7 @@ import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
+import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/ligne_panier.dart';
@@ -248,7 +249,7 @@ class EditionVenteMultiplePage extends StatelessWidget {
                                       title: Text(
                                           "${item.modele.modele?.libelle ?? ""}${item.modele.taille?.isNotEmpty == true ? ' - ${item.modele.taille}' : ''}"),
                                       subtitle: Text(
-                                          "${item.quantite} x ${item.prixUnitaire.toAmount(unit: '')}"),
+                                          "${item.quantite} x ${item.prixUnitaire.toAmount(unit: '')}${item.remise > 0 ? " (-${item.remise.toAmount()})" : ""}"),
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -287,131 +288,191 @@ class EditionVenteMultiplePage extends StatelessWidget {
       {LignePanier? itemToEdit}) {
     ModeleBoutique? selectedModele = itemToEdit?.modele;
     final prixCtl = TextEditingController(
-        text: itemToEdit?.prixUnitaire.toDouble().value.toStringAsFixed(0));
+      text: itemToEdit?.prixUnitaire.value.toStringAsFixed(0),
+    );
     final qteCtl =
         TextEditingController(text: (itemToEdit?.quantite ?? 1).toString());
+    final remiseCtl = TextEditingController(
+      text: itemToEdit?.remise.value.toStringAsFixed(0) ?? "0",
+    );
 
     CBottomSheet.show(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-                itemToEdit != null
-                    ? "Modifier l'article"
-                    : "Ajouter un article",
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const Gap(20),
-            CDropDownFormField<ModeleBoutique>(
-              externalLabel: "Modèle",
-              items: (filter, props) => ctl.getModeles(),
-              enabled: itemToEdit == null,
-              selectedItem: selectedModele,
-              itemAsString: (m) =>
-                  "${m.modele?.libelle ?? ''}${m.taille?.isNotEmpty == true ? ' - ${m.taille}' : ''} (${m.prix.toAmount()})",
-              popupProps: PopupProps.menu(
-                showSearchBox: true,
-                itemBuilder: (context, item, isSelected, b) {
-                  return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                    leading: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: PlaceholderBuilder(
-                          placeholder: const Icon(Icons.image,
-                              size: 20, color: Colors.grey),
-                          condition: (item.modele?.photo is FichierServer) &&
-                              (item.modele?.photo as FichierServer).fullUrl !=
-                                  null,
-                          builder: () => Image.network(
-                            (item.modele!.photo as FichierServer).fullUrl!,
-                            fit: BoxFit.cover,
+      child: StatefulBuilder(builder: (context, setState) {
+        double calculateTotal() {
+          final prix = double.tryParse(prixCtl.text) ?? 0;
+          final qte = int.tryParse(qteCtl.text) ?? 0;
+          final remise = double.tryParse(remiseCtl.text) ?? 0;
+          return (prix * qte) - remise;
+        }
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                  itemToEdit != null
+                      ? "Modifier l'article"
+                      : "Ajouter un article",
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold)),
+              const Gap(20),
+              CDropDownFormField<ModeleBoutique>(
+                externalLabel: "Modèle",
+                items: (filter, props) => ctl.getModeles(),
+                enabled: itemToEdit == null,
+                selectedItem: selectedModele,
+                itemAsString: (m) =>
+                    "${m.modele?.libelle ?? ''}${m.taille?.isNotEmpty == true ? ' - ${m.taille}' : ''} (${m.prix.toAmount()})",
+                popupProps: PopupProps.menu(
+                  showSearchBox: true,
+                  itemBuilder: (context, item, isSelected, b) {
+                    return ListTile(
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 10),
+                      leading: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: PlaceholderBuilder(
+                            placeholder: const Icon(Icons.image,
+                                size: 20, color: Colors.grey),
+                            condition: (item.modele?.photo is FichierServer) &&
+                                (item.modele?.photo as FichierServer).fullUrl !=
+                                    null,
+                            builder: () => Image.network(
+                              (item.modele!.photo as FichierServer).fullUrl!,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    title: Text(
-                        "${item.modele?.libelle ?? ""}${item.taille?.isNotEmpty == true ? ' - ${item.taille}' : ''}"),
-                    subtitle: Text(
-                        "${item.prix.toAmount()} • Stocks: ${item.quantite}"),
-                    selected: isSelected,
-                  );
+                      title: Text(
+                          "${item.modele?.libelle ?? ""}${item.taille?.isNotEmpty == true ? ' - ${item.taille}' : ''}"),
+                      subtitle: Text(
+                          "${item.prix.toAmount()} • Stocks: ${item.quantite}"),
+                      selected: isSelected,
+                    );
+                  },
+                ),
+                onChanged: (val) {
+                  setState(() {
+                    selectedModele = val;
+                    if (val != null && itemToEdit == null) {
+                      prixCtl.text =
+                          val.prix.toDouble().value.toStringAsFixed(0);
+                    }
+                  });
                 },
               ),
-              onChanged: (val) {
-                selectedModele = val;
-                if (val != null && itemToEdit == null) {
-                  prixCtl.text = val.prix.toDouble().value.toStringAsFixed(0);
-                }
-              },
-            ),
-            const Gap(15),
-            Row(
-              children: [
-                Expanded(
-                  child: CTextFormField(
-                    externalLabel: "Prix Unitaire",
-                    controller: prixCtl,
-                    keyboardType: TextInputType.number,
+              const Gap(15),
+              Row(
+                children: [
+                  Expanded(
+                    child: CTextFormField(
+                      externalLabel: "Prix Unitaire",
+                      hintText: ternaryFn(
+                        condition: selectedModele?.prixMinimal != null,
+                        ifFalse: "Prix de vente",
+                        ifTrue:
+                            "Min : ${selectedModele?.prixMinimal.toAmount()}",
+                      ),
+                      controller: prixCtl,
+                      keyboardType: TextInputType.number,
+                      onChanged: (_) => setState(() {}),
+                    ),
                   ),
-                ),
-                const Gap(15),
-                Expanded(
-                  child: CTextFormField(
-                    externalLabel: "Quantité",
-                    controller: qteCtl,
-                    keyboardType: TextInputType.number,
+                  const Gap(15),
+                  Expanded(
+                    child: CTextFormField(
+                      externalLabel: "Quantité",
+                      controller: qteCtl,
+                      keyboardType: TextInputType.number,
+                      onChanged: (_) => setState(() {}),
+                    ),
                   ),
+                ],
+              ),
+              const Gap(15),
+              CTextFormField(
+                externalLabel: "Remise (sur le total)",
+                controller: remiseCtl,
+                keyboardType: TextInputType.number,
+                onChanged: (_) => setState(() {}),
+              ),
+              const Gap(20),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ],
-            ),
-            const Gap(30),
-            CButton(
-              title: itemToEdit != null ? "Modifier" : "Ajouter au panier",
-              onPressed: () {
-                if (selectedModele != null) {
-                  final prix = double.tryParse(prixCtl.text) ?? 0;
-                  final qte = int.tryParse(qteCtl.text) ?? 1;
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Total ligne",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      calculateTotal().toAmount(unit: 'F'),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Gap(30),
+              CButton(
+                title: itemToEdit != null ? "Modifier" : "Ajouter au panier",
+                onPressed: () {
+                  if (selectedModele != null) {
+                    final prix = double.tryParse(prixCtl.text) ?? 0;
+                    final qte = int.tryParse(qteCtl.text) ?? 1;
+                    final remise = double.tryParse(remiseCtl.text) ?? 0;
 
-                  if (qte > (selectedModele!.quantite ?? 0)) {
-                    CMessageDialog.show(
-                        message:
-                            "Stock insuffisant. Disponible : ${selectedModele!.quantite ?? 0}");
-                    return;
-                  }
+                    if (qte > (selectedModele!.quantite ?? 0) &&
+                        itemToEdit == null) {
+                      CMessageDialog.show(
+                          message:
+                              "Stock insuffisant. Disponible : ${selectedModele!.quantite ?? 0}");
+                      return;
+                    }
 
-                  if (selectedModele!.prixMinimal != null &&
-                      prix < selectedModele!.prixMinimal!) {
-                    CMessageDialog.show(
-                        message:
-                            "Le prix ne peut être inférieur à ${selectedModele!.prixMinimal!.toAmount(unit: 'F')}");
-                    return;
-                  }
+                    if (selectedModele!.prixMinimal != null &&
+                        calculateTotal() <
+                            (selectedModele!.prixMinimal! * qte)) {
+                      CMessageDialog.show(
+                          message:
+                              "Le prix total après remise ne peut être inférieur au prix minimal total (${(selectedModele!.prixMinimal! * qte).toAmount(unit: 'F')})");
+                      return;
+                    }
 
-                  if (itemToEdit != null) {
-                    ctl.modifierLignePanier(itemToEdit, qte, prix);
+                    if (itemToEdit != null) {
+                      ctl.modifierLignePanier(itemToEdit, qte, prix, remise);
+                    } else {
+                      ctl.ajouterAuPanier(selectedModele!, qte, prix, remise);
+                    }
+                    Get.back();
                   } else {
-                    ctl.ajouterAuPanier(selectedModele!, qte, prix);
+                    CMessageDialog.show(
+                        message: "Veuillez sélectionner un article");
                   }
-                  Get.back();
-                } else {
-                  CMessageDialog.show(
-                      message: "Veuillez sélectionner un article");
-                }
-              },
-            )
-          ],
-        ),
-      ),
+                },
+              )
+            ],
+          ),
+        );
+      }),
     );
   }
 }
