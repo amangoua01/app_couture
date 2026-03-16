@@ -1,5 +1,7 @@
 import 'package:ateliya/data/models/caisse.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
+import 'package:ateliya/tools/constants/sens_mouvement_caisse_enum.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
@@ -20,75 +22,115 @@ class ApprovisionnerCaissePage extends StatelessWidget {
           appBar: AppBar(title: const Text("Approvisionner caisse")),
           body: Form(
             key: ctl.formKey,
-            child: Column(
+            child: ListView(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  child: CDropDownFormField<ModePaiementEnum>(
+                    externalLabel: "Mode de paiement",
+                    selectedItem: ctl.modePaiement,
+                    items: (filter, loadProps) async => ModePaiementEnum.values,
+                    itemAsString: (item) => item.label,
+                    onChanged: (e) {
+                      if (e != null) {
+                        ctl.modePaiement = e;
+                        ctl.update();
+                      }
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  child: CDropDownFormField<SensMouvementCaisseEnum>(
+                    externalLabel: "Sens",
+                    selectedItem: ctl.sens,
+                    items: (filter, loadProps) async =>
+                        SensMouvementCaisseEnum.values,
+                    itemAsString: (item) => item.label,
+                    onChanged: (e) {
+                      if (e != null) {
+                        ctl.sens = e;
+                        ctl.update();
+                      }
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
                   child: CTextFormField(
                     externalLabel: "Description",
                     controller: ctl.descriptionCtl,
-                    maxLines: 3,
+                    maxLines: 2,
                   ),
                 ),
-                Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: ctl.lines.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 20),
-                    itemBuilder: (context, index) {
-                      final line = ctl.lines[index];
-                      return Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade300),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Ligne ${index + 1}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: ctl.lines.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 20),
+                  itemBuilder: (context, index) {
+                    final line = ctl.lines[index];
+                    return Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Ligne ${index + 1}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
                                 ),
-                                if (ctl.lines.length > 1)
-                                  IconButton(
-                                    onPressed: () => ctl.removeLine(index),
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            CDropDownFormField<Caisse>(
-                              externalLabel: "Caisse",
-                              require: true,
-                              selectedItem: line.caisse,
-                              onChanged: (e) {
-                                line.caisse = e;
-                                ctl.update();
-                              },
-                              items: (filter, loadProps) => ctl.getCaisses(),
-                              itemAsString: (item) =>
-                                  "${item.entite?.libelle ?? "N/A"} (${item.montant?.toAmount(unit: 'F')})",
-                            ),
-                            CTextFormField(
-                              externalLabel: "Montant",
-                              controller: line.montantCtl,
-                              require: true,
-                              keyboardType: TextInputType.number,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                              ),
+                              if (ctl.lines.length > 1)
+                                IconButton(
+                                  onPressed: () => ctl.removeLine(index),
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.red),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          CDropDownFormField<Caisse>(
+                            externalLabel: "Caisse",
+                            require: true,
+                            selectedItem: line.caisse,
+                            onChanged: (e) {
+                              line.caisse = e;
+                              ctl.update();
+                            },
+                            items: (filter, loadProps) => ctl.getCaisses(),
+                            itemAsString: (item) =>
+                                "${item.entite?.libelle ?? "N/A"} (${item.montant?.toAmount(unit: 'F')})",
+                          ),
+                          CTextFormField(
+                            externalLabel: "Montant",
+                            controller: line.montantCtl,
+                            require: true,
+                            keyboardType: TextInputType.number,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20),

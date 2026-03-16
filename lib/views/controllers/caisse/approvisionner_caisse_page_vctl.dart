@@ -1,7 +1,12 @@
 import 'package:ateliya/api/caisse_api.dart';
+import 'package:ateliya/data/dto/ligne_mouvement_caisse_dto.dart';
+import 'package:ateliya/data/dto/mouvement_caisse_dto.dart';
 import 'package:ateliya/data/models/caisse.dart';
+import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
+import 'package:ateliya/tools/constants/sens_mouvement_caisse_enum.dart';
 import 'package:ateliya/tools/extensions/future.dart';
-import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
+import 'package:ateliya/tools/extensions/types/double.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +20,9 @@ class ApprovisionnerCaissePageVctl extends GetxController {
   final api = CaisseApi();
   final descriptionCtl = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
+  ModePaiementEnum modePaiement = ModePaiementEnum.especes;
+  SensMouvementCaisseEnum sens = SensMouvementCaisseEnum.entree;
 
   // List to manage multiple lines
   final lines = <MouvementLine>[].obs;
@@ -44,7 +52,7 @@ class ApprovisionnerCaissePageVctl extends GetxController {
   double get totalMontant {
     double total = 0;
     for (var line in lines) {
-      total += line.montantCtl.toDouble();
+      total += line.montantCtl.text.fromAmountToDouble() ?? 0;
     }
     return total;
   }
@@ -88,22 +96,24 @@ class ApprovisionnerCaissePageVctl extends GetxController {
 
       // Calculate total amount
       double totalMontant = 0;
-      final lignesData = <Map<String, dynamic>>[];
+      final lignesData = <LigneMouvementCaisseDto>[];
 
       for (var line in lines) {
-        final montant = line.montantCtl.toDouble();
-        totalMontant += montant;
-        lignesData.add({
-          "caisse_id": line.caisse!.id,
-          "montant": line.montantCtl.text,
-        });
+        final montantSaisi = line.montantCtl.text.fromAmountToDouble() ?? 0.0;
+        totalMontant += montantSaisi;
+        lignesData.add(LigneMouvementCaisseDto(
+          caisseId: line.caisse!.id,
+          montant: montantSaisi.toInt().toString(),
+        ));
       }
 
-      final data = {
-        "montant": totalMontant.toInt().toString(),
-        "description": descriptionCtl.text,
-        "lignes": lignesData,
-      };
+      final data = MouvementCaisseDto(
+        sens: sens,
+        montant: totalMontant.toDouble().value.toString(),
+        description: descriptionCtl.text,
+        moyenPaiement: modePaiement.label,
+        lignes: lignesData,
+      );
 
       final res = await api.addMouvement(data).load();
       if (res.status) {
