@@ -62,14 +62,24 @@ class EditionVenteMultiplePageVctl extends AuthViewController
       panier[existingIndex].remise = remise;
       panier.refresh();
     } else {
-      panier.add(LignePanier(
-          modele: modele, quantite: qte, prixUnitaire: prix, remise: remise));
+      panier.add(
+        LignePanier(
+          modele: modele,
+          quantite: qte,
+          prixUnitaire: prix,
+          remise: remise,
+        ),
+      );
     }
     update();
   }
 
   void modifierLignePanier(
-      LignePanier ligne, int qte, double prix, double remise) {
+    LignePanier ligne,
+    int qte,
+    double prix,
+    double remise,
+  ) {
     if (qte <= 0) {
       retirerDuPanier(ligne);
       return;
@@ -109,12 +119,11 @@ class EditionVenteMultiplePageVctl extends AuthViewController
             (p) => LignePaiementBoutiqueDto(
               boutiqueModeleId: p.modele.id!,
               quantite: p.quantite,
-              montant: p.prixUnitaire * p.quantite,
+              montant: p.prixUnitaire,
               remise: p.remise,
             ),
           )
           .toList(),
-
     );
 
     final res = await boutiqueApi.makePaiement(dto).load();

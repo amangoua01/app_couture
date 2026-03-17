@@ -75,6 +75,7 @@ class EditionVentePageVctl extends AuthViewController
             montant: prixCtl.text.toDouble().value,
             boutiqueModeleId: modeleBoutique.id!,
             quantite: quantiteCtl.text.toInt().value,
+            // remise: ,
           ),
         ],
         boutiqueId: boutique!.id!,
