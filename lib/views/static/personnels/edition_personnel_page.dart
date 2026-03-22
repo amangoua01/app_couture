@@ -119,40 +119,32 @@ class EditionPersonnelPage extends StatelessWidget {
                 ),
               ),
               Visibility(
-                visible: (item?.isAdmin == true),
+                visible: ctl.typeUser != null,
                 child: FieldSetContainer(
                   children: [
-                    Visibility(
-                      visible: [TypeUserEnum.adb, TypeUserEnum.adsb]
+                    CDropDownFormField(
+                      externalLabel: "Boutique",
+                      enabled: [TypeUserEnum.adb, TypeUserEnum.adsb]
+                              .contains(ctl.typeUser?.typeEnum) ||
+                          item?.isAdmin == false,
+                      require: [TypeUserEnum.adb, TypeUserEnum.adsb]
                           .contains(ctl.typeUser?.typeEnum),
-                      child: CDropDownFormField(
-                        externalLabel: "Boutique",
-                        enabled: [TypeUserEnum.adb, TypeUserEnum.adsb]
-                                .contains(ctl.typeUser?.typeEnum) ||
-                            item?.isAdmin == false,
-                        require: [TypeUserEnum.adb, TypeUserEnum.adsb]
-                            .contains(ctl.typeUser?.typeEnum),
-                        selectedItem: ctl.boutique,
-                        items: (e, f) => ctl.getBoutiques(),
-                        itemAsString: (e) => e.libelle.value,
-                        onChanged: (e) {
-                          ctl.boutique = e;
-                          ctl.update();
-                        },
-                      ),
+                      selectedItem: ctl.boutique,
+                      items: (e, f) => ctl.getBoutiques(),
+                      itemAsString: (e) => e.libelle.value,
+                      onChanged: (e) {
+                        ctl.boutique = e;
+                        ctl.update();
+                      },
                     ),
-                    Visibility(
-                      visible: [TypeUserEnum.ads, TypeUserEnum.adsb]
+                    CDropDownFormField(
+                      enabled: [TypeUserEnum.ads, TypeUserEnum.adsb]
                           .contains(ctl.typeUser?.typeEnum),
-                      child: CDropDownFormField(
-                        enabled: [TypeUserEnum.ads, TypeUserEnum.adsb]
-                            .contains(ctl.typeUser?.typeEnum),
-                        require: [TypeUserEnum.ads, TypeUserEnum.adsb]
-                            .contains(ctl.typeUser?.typeEnum),
-                        externalLabel: "Surcusale",
-                        items: (e, f) => ctl.getSuccursales(),
-                        selectedItem: ctl.succursale,
-                      ),
+                      require: [TypeUserEnum.ads, TypeUserEnum.adsb]
+                          .contains(ctl.typeUser?.typeEnum),
+                      externalLabel: "Surcusale",
+                      items: (e, f) => ctl.getSuccursales(),
+                      selectedItem: ctl.succursale,
                     ),
                   ],
                 ),

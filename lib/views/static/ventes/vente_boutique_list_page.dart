@@ -1,6 +1,7 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/periode_vente_enum.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/vente_tile.dart';
 import 'package:ateliya/tools/widgets/wrapper_listview_from_view_controller.dart';
@@ -131,6 +132,11 @@ class VenteBoutiqueListPage extends StatelessWidget {
                                   ctl.user.settings?.messageFactureBoutique,
                             );
                           },
+                          onDelete: ternaryFn(
+                            condition: ctl.user.isAdmin,
+                            ifTrue: (e) => ctl.deletePaiement(e.id.value),
+                            ifFalse: null,
+                          ),
                         ),
                       );
                     },

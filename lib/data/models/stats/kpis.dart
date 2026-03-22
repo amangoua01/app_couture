@@ -8,6 +8,11 @@ class Kpis extends ModelJson {
   int commandesEnCours = 0;
   int totalDepenses = 0;
   int totalMouvements = 0;
+  // Dashboard fields
+  int? recettesNettes;
+  int? ticketMoyen;
+  int? facturesActives; // Succursale
+  int? mesuresEnCours; // Succursale
 
   Kpis({
     this.chiffreAffaires = 0,
@@ -16,6 +21,10 @@ class Kpis extends ModelJson {
     this.commandesEnCours = 0,
     this.totalDepenses = 0,
     this.totalMouvements = 0,
+    this.recettesNettes,
+    this.ticketMoyen,
+    this.facturesActives,
+    this.mesuresEnCours,
   });
 
   @override
@@ -30,6 +39,10 @@ class Kpis extends ModelJson {
     commandesEnCours = json['commandesEnCours'] ?? 0;
     totalDepenses = json['totalDepenses'] ?? 0;
     totalMouvements = json['totalMouvements'] ?? 0;
+    recettesNettes = json['recettesNettes'];
+    ticketMoyen = json['ticketMoyen'];
+    facturesActives = json['facturesActives'];
+    mesuresEnCours = json['mesuresEnCours'];
   }
 
   @override
@@ -41,6 +54,10 @@ class Kpis extends ModelJson {
     data['commandesEnCours'] = commandesEnCours;
     data['totalDepenses'] = totalDepenses;
     data['totalMouvements'] = totalMouvements;
+    data['recettesNettes'] = recettesNettes;
+    data['ticketMoyen'] = ticketMoyen;
+    data['facturesActives'] = facturesActives;
+    data['mesuresEnCours'] = mesuresEnCours;
     return data;
   }
 }

@@ -1,7 +1,7 @@
 import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/api/modele_boutique_api.dart';
 import 'package:ateliya/data/dto/ligne_mouvement_stock_dto.dart';
-import 'package:ateliya/data/dto/transfert_stock_dto.dart';
+import 'package:ateliya/data/dto/mouvement_stock_dto.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/data/models/stock_modele_item.dart';
@@ -11,16 +11,12 @@ import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class EditionTransfertStockVctl extends AuthViewController {
+class EditionSortieStockVctl extends AuthViewController {
   final _boutiqueApi = BoutiqueApi();
-  final _stockApi = ModeleBoutiqueApi();
+  final _modeleBoutiqueApi = ModeleBoutiqueApi();
 
   bool isLoading = false;
-  bool isBoutiquesLoading = false;
-
-  /// Boutiques disponibles pour le transfert
-  List<Boutique> boutiques = [];
-  Boutique? selectedBoutique;
+  final commentaireCtl = TextEditingController();
 
   /// Groupes modèle → variantes (StockModeleItem) pour le dropdown
   List<StockModeleItem> stockItems = [];
@@ -30,45 +26,33 @@ class EditionTransfertStockVctl extends AuthViewController {
       stockItems.expand((s) => s.variantes).toList();
 
   /// Lignes du formulaire
-  final List<_LigneTransfertForm> lignes = [_LigneTransfertForm()];
+  final List<SortieStockLigneForm> lignes = [SortieStockLigneForm()];
+
+  EditionSortieStockVctl(ModeleBoutique? item) {
+    if (item != null) {
+      lignes.first.modele = item;
+    }
+  }
 
   @override
   void onReady() {
     super.onReady();
-    _loadData();
+    _loadStockItems();
   }
 
-  Future<void> _loadData() async {
+  Future<void> _loadStockItems() async {
     final entite = getEntite().value;
-    if (entite.isEmpty || entite is! Boutique) {
-      CMessageDialog.show(
-          message: "Veuillez sélectionner une boutique source.");
-      Get.back();
-      return;
-    }
+    if (entite.isEmpty || entite is! Boutique) return;
 
     isLoading = true;
     update();
 
     try {
-      // Load current boutique's stock
-      final resStock =
-          await _boutiqueApi.getModeleBoutiqueByBoutiqueId(entite.id!);
-      if (resStock.status) {
-        stockItems = resStock.data ?? [];
+      final res = await _boutiqueApi.getModeleBoutiqueByBoutiqueId(entite.id!);
+      if (res.status) {
+        stockItems = res.data ?? [];
       } else {
-        CMessageDialog.show(message: resStock.message);
-      }
-
-      // Load all boutiques to allow choosing a destination
-      final resBoutique = await _boutiqueApi.list();
-      if (resBoutique.status) {
-        // Exclude the current boutique from the list of destinations
-        boutiques = (resBoutique.data?.items ?? [])
-            .where((b) => b.id != entite.id)
-            .toList();
-      } else {
-        CMessageDialog.show(message: resBoutique.message);
+        CMessageDialog.show(message: res.message);
       }
     } catch (_) {}
 
@@ -77,13 +61,13 @@ class EditionTransfertStockVctl extends AuthViewController {
   }
 
   void addLigne() {
-    lignes.add(_LigneTransfertForm());
+    lignes.add(SortieStockLigneForm());
     update();
   }
 
   void removeLigne(int index) {
     if (lignes.length > 1) {
-      lignes[index].quantiteCtl.dispose();
+      lignes[index].dispose();
       lignes.removeAt(index);
       update();
     }
@@ -91,26 +75,10 @@ class EditionTransfertStockVctl extends AuthViewController {
 
   void setModele(int index, ModeleBoutique? modele) {
     lignes[index].modele = modele;
-    // Par défaut, mettre la quantité à 1 s'il n'y avait rien ou réinitialiser.
-    if (lignes[index].quantiteCtl.text.isEmpty) {
-      lignes[index].quantiteCtl.text = '1';
-    }
-    update();
-  }
-
-  void setSelectedBoutique(Boutique? boutique) {
-    selectedBoutique = boutique;
     update();
   }
 
   Future<void> submit() async {
-    if (selectedBoutique == null) {
-      CMessageDialog.show(
-        message: "Veuillez sélectionner la boutique réceptrice.",
-      );
-      return;
-    }
-
     // Validation
     for (var i = 0; i < lignes.length; i++) {
       final ligne = lignes[i];
@@ -124,18 +92,15 @@ class EditionTransfertStockVctl extends AuthViewController {
         CMessageDialog.show(message: 'Ligne ${i + 1} : quantité invalide');
         return;
       }
-      final maxQty = ligne.modele?.quantite ?? 0;
-      if (qty > maxQty) {
-        CMessageDialog.show(
-            message:
-                'Ligne ${i + 1} : stock insuffisant pour cet article (max $maxQty)');
+      if (qty > (ligne.modele?.quantite ?? 0)) {
+        CMessageDialog.show(message: 'Ligne ${i + 1} : stock insuffisant');
         return;
       }
     }
 
     final entite = getEntite().value;
     if (entite is! Boutique || entite.id == null) {
-      CMessageDialog.show(message: 'Aucune boutique émettrice sélectionnée');
+      CMessageDialog.show(message: 'Aucune boutique sélectionnée');
       return;
     }
 
@@ -143,14 +108,22 @@ class EditionTransfertStockVctl extends AuthViewController {
         .map((l) => LigneMouvementStockDto(
               modeleBoutiqueId: l.modele!.id!,
               quantite: int.tryParse(l.quantiteCtl.text) ?? 1,
+              motif:
+                  l.motifCtl.text.isEmpty ? 'Sortie directe' : l.motifCtl.text,
             ))
         .toList();
 
-    final res = await _stockApi
-        .transfertStock(
-          TransfertStockDto(
-            boutiqueEmetteurId: entite.id!,
-            boutiqueReceptriceId: selectedBoutique!.id!,
+    //  {
+    //       'modeleBoutiqueId': l.modele!.id!,
+    //       'quantite': int.tryParse(l.quantiteCtl.text) ?? 1,
+    //       'motif': l.motifCtl.text.isEmpty ? 'Sortie directe' : l.motifCtl.text,
+    //     }
+
+    final res = await _modeleBoutiqueApi
+        .sortieDirecte(
+          MouvementStockDto(
+            boutiqueId: entite.id!,
+            commentaire: commentaireCtl.text,
             lignes: lignesPayload,
           ),
         )
@@ -158,7 +131,7 @@ class EditionTransfertStockVctl extends AuthViewController {
 
     if (res.status) {
       CMessageDialog.show(
-        message: 'Transfert effectué avec succès',
+        message: 'Sortie de stock enregistrée avec succès',
         isSuccess: true,
       );
       Get.back(result: true);
@@ -169,14 +142,21 @@ class EditionTransfertStockVctl extends AuthViewController {
 
   @override
   void onClose() {
+    commentaireCtl.dispose();
     for (final l in lignes) {
-      l.quantiteCtl.dispose();
+      l.dispose();
     }
     super.onClose();
   }
 }
 
-class _LigneTransfertForm {
+class SortieStockLigneForm {
   ModeleBoutique? modele;
-  final TextEditingController quantiteCtl = TextEditingController(text: '1');
+  final quantiteCtl = TextEditingController(text: '1');
+  final motifCtl = TextEditingController();
+
+  void dispose() {
+    quantiteCtl.dispose();
+    motifCtl.dispose();
+  }
 }

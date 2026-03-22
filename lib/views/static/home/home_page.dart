@@ -3,10 +3,10 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/command_tile.dart';
-import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
-import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
+import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/tools/widgets/vente_tile.dart';
 import 'package:ateliya/views/controllers/home/home_page_vctl.dart';
@@ -14,10 +14,8 @@ import 'package:ateliya/views/static/caisse/edition_mouvement_page.dart';
 import 'package:ateliya/views/static/clients/edition_client_page.dart';
 import 'package:ateliya/views/static/commandes/commande_list_page.dart';
 import 'package:ateliya/views/static/depense/edition_depense_page.dart';
-import 'package:ateliya/views/static/home/sub_pages/select_entreprise_bottom_page.dart';
 import 'package:ateliya/views/static/home/widgets/roadmap_onboarding_widget.dart';
 import 'package:ateliya/views/static/mesure/edition_mesure_page.dart';
-import 'package:ateliya/views/static/printers/print_list_page.dart';
 import 'package:ateliya/views/static/transfert_stock/edition_transfert_stock_page.dart';
 import 'package:ateliya/views/static/ventes/edition_vente_multiple_page.dart';
 import 'package:ateliya/views/static/ventes/vente_boutique_list_page.dart';
@@ -38,79 +36,14 @@ class HomePage extends StatelessWidget {
         init: HomePageVctl(),
         builder: (ctl) {
           return Scaffold(
-            appBar: AppBar(
-              leadingWidth: 40,
-              leading: Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundColor: Colors.white,
-                  child: Image.asset(
-                    "assets/images/logo_ateliya.png",
-                    fit: BoxFit.contain,
-                    width: 25,
-                    height: 25,
-                  ),
-                ),
-              ),
-              title: GestureDetector(
-                onTap: () => CBottomSheet.show(
-                  child: const SelectEntrepriseBottomPage(),
-                ).then((e) {
-                  if (e != null) {
-                    ctl.loadData();
-                  }
-                  ctl.update();
-                }),
-                child: Container(
-                  width: double.infinity,
-                  height: 35,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Get.to(() => const PrintListPage()),
-                        child: const CircleAvatar(
-                          radius: 15,
-                          child: Icon(Icons.print, size: 15),
-                        ),
-                      ),
-                      const Gap(10),
-                      Expanded(
-                        child: Text(
-                          ternaryFn(
-                            condition: ctl.getEntite().value.isEmpty,
-                            ifTrue: "Sélectionner une entreprise",
-                            ifFalse: ctl.getEntite().value.libelle.value,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 13.5,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const Icon(
-                        Icons.keyboard_arrow_down,
-                        color: AppColors.primary,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              actions: [
-                NotifBadgeIcon(
-                  count: ctl.nbUnreadNotifs,
-                  onRefresh: () => ctl.loadUnreadCount(),
-                ),
-              ],
+            appBar: MainAppBar(
+              enterpriseTitle: ctl.getEntite().value.libelle.value,
+              notifCount: ctl.nbUnreadNotifs,
+              onSelectionChanged: () {
+                ctl.loadData();
+                ctl.update();
+              },
+              onNotifRefresh: () => ctl.loadUnreadCount(),
             ),
             floatingActionButton: Visibility(
               visible: ctl.getEntite().value.isNotEmpty,
@@ -614,6 +547,13 @@ class HomePage extends StatelessWidget {
                                     EntiteEntrepriseType.boutique) {
                                   return VenteTile(
                                     ctl.data.meilleuresVentes[i],
+                                    onDelete: ternaryFn(
+                                      condition: ctl.user.isAdmin,
+                                      ifTrue: (e) => ctl.deletePaiement(
+                                        e.id.value,
+                                      ),
+                                      ifFalse: null,
+                                    ),
                                     onPrint: () async {
                                       await ctl.printVenteReceipt(
                                         ctl.data.meilleuresVentes[i],

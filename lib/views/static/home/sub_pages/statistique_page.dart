@@ -20,15 +20,15 @@ class StatistiquePage extends StatelessWidget {
   const StatistiquePage({super.key});
 
   @override
-  @override
   Widget build(BuildContext context) {
-    return GetBuilder(
+    return GetBuilder<StatistiquePageVctl>(
       init: StatistiquePageVctl(),
       builder: (ctl) {
         return Scaffold(
           backgroundColor: Colors.grey[50],
           appBar: AppBar(
-            title: const Text("Statistiques"),
+            title: const Text("Statistiques",
+                style: TextStyle(fontWeight: FontWeight.bold)),
             elevation: 0,
             centerTitle: true,
             actions: [
@@ -48,7 +48,7 @@ class StatistiquePage extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(20),
                 children: [
-                  // Période Selector
+                  // Period Selector
                   Center(
                     child: Container(
                       decoration: BoxDecoration(
@@ -57,7 +57,7 @@ class StatistiquePage extends StatelessWidget {
                         border: Border.all(color: Colors.grey.shade200),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
+                            color: Colors.black.withOpacity(0.05),
                             blurRadius: 10,
                           ),
                         ],
@@ -71,7 +71,7 @@ class StatistiquePage extends StatelessWidget {
                         activeBgColor: const [AppColors.primary],
                         inactiveBgColor: Colors.white,
                         activeFgColor: Colors.white,
-                        inactiveFgColor: Colors.grey[600],
+                        inactiveFgColor: Colors.grey,
                         labels:
                             PeriodStat.values.map((e) => e.libelle).toList(),
                         onToggle: (index) {
@@ -79,7 +79,9 @@ class StatistiquePage extends StatelessWidget {
                             ctl.periodIndex = index ?? 0;
                             ctl.update();
                           } else {
-                            ctl.fetchStats(indexPeriod: index.value);
+                            if (index != null) {
+                              ctl.fetchStats(indexPeriod: index);
+                            }
                           }
                         },
                       ),
@@ -153,17 +155,15 @@ class StatistiquePage extends StatelessWidget {
                     children: [
                       _buildStatCard(
                         title: "Commandes en cours",
-                        value: (ctl.data.kpis.commandesEnCours).toAmount(),
+                        value: (ctl.data.kpis.commandesEnCours as int?).toAmount(),
                         icon: Icons.hourglass_empty,
                         color: Colors.orange,
                         item: StatCardItem(
-                            title: "",
-                            value: "",
-                            isIncrease: false), // Dummy for now if needed
+                            title: "", value: "", isIncrease: false),
                       ),
                       _buildStatCard(
                         title: "Revenus (FCFA)",
-                        value: (ctl.data.kpis.chiffreAffaires).toAmount(),
+                        value: (ctl.data.kpis.chiffreAffaires as int?).toAmount(),
                         icon: Icons.attach_money,
                         color: Colors.green,
                         item: StatCardItem(
@@ -171,7 +171,7 @@ class StatistiquePage extends StatelessWidget {
                       ),
                       _buildStatCard(
                         title: "Nouveaux clients",
-                        value: (ctl.data.kpis.clientsActifs).toAmount(),
+                        value: (ctl.data.kpis.clientsActifs as int?).toAmount(),
                         icon: Icons.group_add,
                         color: Colors.blue,
                         item: StatCardItem(
@@ -179,7 +179,7 @@ class StatistiquePage extends StatelessWidget {
                       ),
                       _buildStatCard(
                         title: "Réservations",
-                        value: (ctl.data.kpis.reservationsActives).toAmount(),
+                        value: (ctl.data.kpis.reservationsActives as int?).toAmount(),
                         icon: Icons.event,
                         color: Colors.purple,
                         item: StatCardItem(
@@ -187,7 +187,7 @@ class StatistiquePage extends StatelessWidget {
                       ),
                       _buildStatCard(
                         title: "Total Dépenses",
-                        value: (ctl.data.kpis.totalDepenses).toAmount(),
+                        value: (ctl.data.kpis.totalDepenses as int?).toAmount(),
                         icon: Icons.trending_down,
                         color: Colors.red,
                         item: StatCardItem(
@@ -195,7 +195,7 @@ class StatistiquePage extends StatelessWidget {
                       ),
                       _buildStatCard(
                         title: "Total Mouvements",
-                        value: (ctl.data.kpis.totalMouvements).toAmount(),
+                        value: (ctl.data.kpis.totalMouvements as int?).toAmount(),
                         icon: Icons.sync_alt,
                         color: Colors.teal,
                         item: StatCardItem(
@@ -217,8 +217,7 @@ class StatistiquePage extends StatelessWidget {
                             ctl.data.revenusQuotidiens.length,
                             (i) => FlSpot(
                               i.toDouble(),
-                              ctl.data.revenusQuotidiens[i].revenus.value
-                                  .toDouble(),
+                              ctl.data.revenusQuotidiens[i].revenus.toDouble(),
                             ),
                           ),
                         ),
@@ -266,7 +265,7 @@ class StatistiquePage extends StatelessWidget {
     required String value,
     required IconData icon,
     required Color color,
-    required StatCardItem item, // Keep if we want to add trend later
+    required StatCardItem item,
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -276,7 +275,7 @@ class StatistiquePage extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withOpacity(0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -292,12 +291,11 @@ class StatistiquePage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, color: color, size: 20),
               ),
-              // Trend indicator could go here
             ],
           ),
           Column(
@@ -306,7 +304,7 @@ class StatistiquePage extends StatelessWidget {
               Text(
                 value,
                 style: const TextStyle(
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
@@ -315,7 +313,7 @@ class StatistiquePage extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   color: Colors.grey[600],
                   fontWeight: FontWeight.w500,
                 ),
@@ -342,7 +340,7 @@ class StatistiquePage extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withOpacity(0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -354,7 +352,7 @@ class StatistiquePage extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
@@ -388,9 +386,8 @@ class StatistiquePage extends StatelessWidget {
                     sideTitles: SideTitles(showTitles: false),
                   ),
                   bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                          showTitles: true, reservedSize: 30) // Show date/days?
-                      ),
+                      sideTitles:
+                          SideTitles(showTitles: true, reservedSize: 30)),
                 ),
                 borderData: FlBorderData(show: false),
                 lineBarsData: [
@@ -403,7 +400,7 @@ class StatistiquePage extends StatelessWidget {
                     dotData: const FlDotData(show: false),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: color.withValues(alpha: 0.1),
+                      color: color.withOpacity(0.1),
                     ),
                   ),
                 ],

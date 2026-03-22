@@ -225,7 +225,10 @@ class Mesure extends ModelFormData<Mesure> {
     return files;
   }
 
-  double get pourcentage => montantPaye / montantTotal;
+  double get pourcentage {
+    if (montantTotal <= 0) return 0;
+    return (montantPaye / montantTotal).clamp(0.0, 1.0);
+  }
 
   bool get isPaid => pourcentage >= 1.0;
 

@@ -93,4 +93,8 @@ extension CustomDateTime on DateTime? {
     final comparisonDate = other.add(Duration(days: nbDays));
     return this != null && this!.isBefore(comparisonDate);
   }
+
+  DateTime get firstDayOfMonth => DateTime(this!.year, this!.month, 1);
+
+  DateTime get lastDayOfMonth => DateTime(this!.year, this!.month + 1, 0);
 }

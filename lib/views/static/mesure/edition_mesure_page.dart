@@ -179,8 +179,8 @@ class EditionMesurePage extends StatelessWidget {
                         ctl.update();
                       },
                       children: [
-                        InfoUserSubPage(ctl),
                         ListPieceSubPage(ctl),
+                        InfoUserSubPage(ctl),
                         InfoPaiementSubPage(ctl),
                         RecapSubPage(ctl),
                       ],

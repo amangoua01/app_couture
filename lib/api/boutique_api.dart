@@ -177,4 +177,21 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+
+  Future<DataResponse<bool>> deletePaiement(int id) async {
+    try {
+      final res = await client.delete(
+        urlBuilder(api: "delete-boutique/$id", module: "paiement"),
+        headers: authHeaders,
+      );
+      final json = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: true);
+      } else {
+        return DataResponse.error(message: json['message']);
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 }

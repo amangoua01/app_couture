@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ateliya/api/abstract/web_controller.dart';
 import 'package:ateliya/data/dto/mouvement_caisse_dto.dart';
 import 'package:ateliya/data/models/caisse.dart';
+import 'package:ateliya/data/models/mouvement_caisse.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 import 'package:ateliya/tools/models/paginated_data.dart';
 
@@ -28,6 +29,51 @@ class CaisseApi extends WebController {
         return DataResponse.success(
           data: PaginatedData<Caisse>(
             items: (data as List).map((e) => Caisse.fromJson(e)).toList(),
+            page: page,
+          ),
+        );
+      } else {
+        return DataResponse.error(
+          message: data["message"] ?? res.reasonPhrase,
+        );
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  Future<DataResponse<PaginatedData<MouvementCaisse>>> listMouvements({
+    required int boutiqueId,
+    String? dateDebut,
+    String? dateFin,
+    int page = 1,
+    bool withPagination = true,
+  }) async {
+    try {
+      final res = await client.get(
+        urlBuilder(
+          module: "mouvement-caisse",
+          api: "boutique/$boutiqueId/mouvements",
+          params: {
+            if (dateDebut != null) "date_debut": dateDebut,
+            if (dateFin != null) "date_fin": dateFin,
+            "with_pagination": withPagination.toString(),
+            "page": page.toString(),
+          },
+        ),
+        headers: authHeaders,
+      );
+      var data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        if (data is Map && data.containsKey("data")) {
+          data = data["data"];
+        }
+        final items = (data as List? ?? [])
+            .map((e) => MouvementCaisse.fromJson(e))
+            .toList();
+        return DataResponse.success(
+          data: PaginatedData<MouvementCaisse>(
+            items: items,
             page: page,
           ),
         );
