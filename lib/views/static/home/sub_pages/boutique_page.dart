@@ -507,6 +507,7 @@ class _VarianteCard extends StatelessWidget {
                             PopupMenuItem<String>(
                               height: 40,
                               value: 'vente',
+                              enabled: ctl.user.isAdmin,
                               child: const Text('Ravitaillement'),
                               onTap: () async {
                                 final res = await Get.to(
