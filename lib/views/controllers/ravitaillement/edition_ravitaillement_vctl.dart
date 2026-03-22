@@ -1,5 +1,7 @@
 import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/api/modele_boutique_api.dart';
+import 'package:ateliya/data/dto/ligne_mouvement_stock_dto.dart';
+import 'package:ateliya/data/dto/mouvement_stock_dto.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/data/models/stock_modele_item.dart';
@@ -98,16 +100,19 @@ class EditionRavitaillementVctl extends AuthViewController {
     }
 
     final lignesPayload = lignes
-        .map((l) => {
-              'modeleBoutiqueId': l.modele!.id!,
-              'quantite': int.tryParse(l.quantiteCtl.text) ?? 1,
-            })
+        .map(
+          (l) => LigneMouvementStockDto(
+            modeleBoutiqueId: l.modele!.id!,
+            quantite: int.tryParse(l.quantiteCtl.text) ?? 1,
+          ),
+        )
         .toList();
-
     final res = await _stockApi
         .entreeStock(
-          boutiqueId: entite.id!,
-          lignes: lignesPayload,
+          MouvementStockDto(
+            boutiqueId: entite.id!,
+            lignes: lignesPayload,
+          ),
         )
         .load();
 

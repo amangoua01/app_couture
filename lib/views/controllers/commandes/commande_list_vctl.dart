@@ -1,5 +1,6 @@
 import 'package:ateliya/api/facture_api.dart';
 import 'package:ateliya/data/models/factures_grouped.dart';
+import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
@@ -10,7 +11,7 @@ class CommandeListVctl extends AuthViewController {
   final api = FactureApi();
 
   bool isLoading = false;
-  FacturesGrouped? data;
+  FacturesGrouped data = FacturesGrouped();
 
   // Filtres
   final dateDebut = DateTimeEditingController();
@@ -18,6 +19,7 @@ class CommandeListVctl extends AuthViewController {
   final nomClientCtrl = TextEditingController();
   final numeroClientCtrl = TextEditingController();
   String? etatFacture;
+  int tabIndex = 0;
 
   @override
   void onInit() {
@@ -44,17 +46,13 @@ class CommandeListVctl extends AuthViewController {
     isLoading = false;
 
     if (res.status) {
-      data = res.data;
+      data = res.data!;
     } else {
       CMessageDialog.show(message: res.message);
       data = FacturesGrouped(); // fallback
     }
 
     update();
-  }
-
-  void rechargerList() {
-    getList();
   }
 
   void resetFilters() {
@@ -64,5 +62,18 @@ class CommandeListVctl extends AuthViewController {
     numeroClientCtrl.clear();
     etatFacture = null;
     getList();
+  }
+
+  List<Mesure> get items {
+    switch (tabIndex) {
+      case 0:
+        return data.nonTerminees;
+      case 1:
+        return data.soldeesNonTerminees;
+      case 2:
+        return data.terminees;
+      default:
+        return [];
+    }
   }
 }

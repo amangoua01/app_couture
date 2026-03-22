@@ -10,8 +10,9 @@ import 'package:get/get.dart';
 class VenteTile extends StatelessWidget {
   final Vente vente;
   final VoidCallback? onPrint;
+  final Function(Vente)? onDelete;
 
-  const VenteTile(this.vente, {super.key, this.onPrint});
+  const VenteTile(this.vente, {super.key, this.onPrint, this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,9 @@ class VenteTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.fieldBorder.withValues(alpha: 0.5)),
+          border: Border.all(
+            color: AppColors.fieldBorder.withValues(alpha: 0.5),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withValues(alpha: 0.1),
@@ -167,25 +170,48 @@ class VenteTile extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
-                if (onPrint != null) ...[
+                if (onPrint != null || onDelete != null) ...[
                   const Gap(8),
-                  InkWell(
-                    onTap: () {
-                      // Empêcher la propagation du tap au parent
-                      onPrint?.call();
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.black87,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Icon(
-                        Icons.print,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (onPrint != null)
+                        InkWell(
+                          onTap: onPrint,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.black87,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Icon(
+                              Icons.print,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                      if (onPrint != null && onDelete != null) const Gap(8),
+                      if (onDelete != null)
+                        InkWell(
+                          onTap: () => onDelete!(vente),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: Colors.red.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.delete_outline,
+                              color: Colors.red,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ],
               ],

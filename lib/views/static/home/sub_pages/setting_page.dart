@@ -1,10 +1,11 @@
-import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
 import 'package:ateliya/tools/widgets/setting_tile.dart';
 import 'package:ateliya/views/controllers/home/setting_page_vctl.dart';
 import 'package:ateliya/views/static/auth/profil_page.dart';
 import 'package:ateliya/views/static/boutiques/boutiques_list_page.dart';
+import 'package:ateliya/views/static/caisse/mouvement_caisse_list_page.dart';
 import 'package:ateliya/views/static/clients/client_liste_page.dart';
 import 'package:ateliya/views/static/depense/depense_list_page.dart';
 import 'package:ateliya/views/static/info/contact_us_page.dart';
@@ -14,6 +15,7 @@ import 'package:ateliya/views/static/modele_boutique/modele_list_boutique_page.d
 import 'package:ateliya/views/static/personnels/personnels_list_page.dart';
 import 'package:ateliya/views/static/printers/print_list_page.dart';
 import 'package:ateliya/views/static/ravitaillement/ravitaillement_list_page.dart';
+import 'package:ateliya/views/static/stats/stock_statistiques_page.dart';
 import 'package:ateliya/views/static/surcursales/succursales_list_page.dart';
 import 'package:ateliya/views/static/type_mesure/type_mesure_list_page.dart';
 import 'package:flutter/material.dart';
@@ -144,6 +146,16 @@ class SettingPage extends StatelessWidget {
                         onTap: () => Get.to(() => const BoutiquesListPage()),
                       ),
                       SettingTile(
+                        title: "Mouvements caisse",
+                        icon: Icons.account_balance_wallet_outlined,
+                        iconBgColor: const Color(0xFFE8F5E9),
+                        color: Colors.green[700],
+                        visible: ctl.user.isAdmin,
+                        onTap: () => Get.to(
+                          () => const MouvementCaisseListPage(),
+                        ),
+                      ),
+                      SettingTile(
                         title: "Mes succursales",
                         icon: Icons.business_outlined,
                         iconBgColor: const Color(0xFFE3F2FD),
@@ -201,7 +213,9 @@ class SettingPage extends StatelessWidget {
                         icon: Icons.style_outlined,
                         iconBgColor: const Color(0xFFF3E5F5),
                         color: Colors.purple[600],
-                        visible: ctl.user.isAdmin,
+                        visible: ctl.user.isAdmin &&
+                            ctl.getEntite().value.type ==
+                                EntiteEntrepriseType.boutique,
                         onTap: () => Get.to(() => const ModeleListPage()),
                       ),
                       SettingTile(
@@ -209,26 +223,44 @@ class SettingPage extends StatelessWidget {
                         icon: Icons.shopping_bag_outlined,
                         iconBgColor: const Color(0xFFE8F5E9),
                         color: Colors.green[600],
-                        visible: ctl.user.isAdmin,
-                        onTap: () =>
-                            Get.to(() => const ModeleListBoutiquePage()),
+                        visible: ctl.user.isAdmin &&
+                            ctl.getEntite().value.type ==
+                                EntiteEntrepriseType.boutique,
+                        onTap: () => Get.to(
+                          () => const ModeleListBoutiquePage(),
+                        ),
                       ),
                       SettingTile(
                         title: "Type de mesure",
                         icon: Icons.straighten_outlined,
                         iconBgColor: const Color(0xFFFFF3E0),
                         color: Colors.orange[700],
-                        visible: ctl.user.isAdmin,
+                        visible: ctl.user.isAdmin &&
+                            ctl.getEntite().value.type ==
+                                EntiteEntrepriseType.succursale,
                         onTap: () => Get.to(() => const TypeMesureListPage()),
+                      ),
+                      SettingTile(
+                        title: "Suivi de stock",
+                        icon: Icons.analytics_outlined,
+                        iconBgColor: const Color(0xFFFFF3E0),
+                        color: Colors.orange[700],
+                        visible: ctl.user.isAdmin &&
+                            ctl.getEntite().value.type ==
+                                EntiteEntrepriseType.boutique,
+                        onTap: () =>
+                            Get.to(() => const StockStatistiquesPage()),
                       ),
                       SettingTile(
                         title: "Ravitaillements",
                         icon: Icons.inventory_2_outlined,
                         iconBgColor: AppColors.primary.withValues(alpha: 0.1),
-                        visible: ctl.getEntite().value is Boutique,
+                        visible: ctl.getEntite().value.type ==
+                            EntiteEntrepriseType.boutique,
                         showDivider: false,
-                        onTap: () =>
-                            Get.to(() => const RavitaillementListPage()),
+                        onTap: () => Get.to(
+                          () => const RavitaillementListPage(),
+                        ),
                       ),
                     ]),
                     const Gap(24),

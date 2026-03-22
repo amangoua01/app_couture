@@ -1,4 +1,3 @@
-import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/command_tile.dart';
@@ -6,6 +5,7 @@ import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
+import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/views/controllers/commandes/commande_list_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -25,9 +25,13 @@ class CommandeListPage extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: const Text("Commandes"),
-              bottom: const TabBar(
+              bottom: TabBar(
                 isScrollable: true,
-                tabs: [
+                onTap: (index) {
+                  ctl.tabIndex = index;
+                  ctl.update();
+                },
+                tabs: const [
                   Tab(text: "Non terminées"),
                   Tab(text: "Soldées non term."),
                   Tab(text: "Terminées"),
@@ -37,7 +41,7 @@ class CommandeListPage extends StatelessWidget {
                 if (!ctl.isLoading)
                   IconButton(
                     icon: const Icon(Icons.refresh),
-                    onPressed: () => ctl.rechargerList(),
+                    onPressed: ctl.getList,
                   ),
               ],
             ),
@@ -56,24 +60,46 @@ class CommandeListPage extends StatelessWidget {
                     const ColorFilter.mode(Colors.white, BlendMode.srcIn),
               ),
             ),
-            body: ctl.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : TabBarView(
-                    children: [
-                      _TabList(
-                        items: ctl.data?.nonTerminees ?? [],
-                        onRefresh: () async => ctl.rechargerList(),
+            body: PlaceholderBuilder(
+              condition: !ctl.isLoading,
+              placeholder: const Center(child: CircularProgressIndicator()),
+              builder: () {
+                final items = ctl.items;
+                if (items.isEmpty) {
+                  return RefreshIndicator(
+                    onRefresh: ctl.getList,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        alignment: Alignment.center,
+                        child: EmptyDataWidget(
+                          message: "Aucune commande trouvée",
+                          onRefresh: ctl.getList,
+                        ),
                       ),
-                      _TabList(
-                        items: ctl.data?.soldeesNonTerminees ?? [],
-                        onRefresh: () async => ctl.rechargerList(),
-                      ),
-                      _TabList(
-                        items: ctl.data?.terminees ?? [],
-                        onRefresh: () async => ctl.rechargerList(),
-                      ),
-                    ],
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: ctl.getList,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.only(
+                      left: 15,
+                      right: 15,
+                      bottom: 100,
+                      top: 15,
+                    ),
+                    itemCount: ctl.items.length,
+                    itemBuilder: (_, i) => Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: CommandTile(mesure: ctl.items[i]),
+                    ),
                   ),
+                );
+              },
+            ),
           );
         },
       ),
@@ -81,45 +107,45 @@ class CommandeListPage extends StatelessWidget {
   }
 }
 
-class _TabList extends StatelessWidget {
-  final List<Mesure> items;
-  final Future<void> Function() onRefresh;
+// class _TabList extends StatelessWidget {
+//   final List<Mesure> items;
+//   final Future<void> Function() onRefresh;
 
-  const _TabList({required this.items, required this.onRefresh});
+//   const _TabList({required this.items, required this.onRefresh});
 
-  @override
-  Widget build(BuildContext context) {
-    if (items.isEmpty) {
-      return RefreshIndicator(
-        onRefresh: onRefresh,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.7,
-            alignment: Alignment.center,
-            child: EmptyDataWidget(
-              message: "Aucune commande trouvée",
-              onRefresh: onRefresh,
-            ),
-          ),
-        ),
-      );
-    }
+//   @override
+//   Widget build(BuildContext context) {
+//     if (items.isEmpty) {
+//       return RefreshIndicator(
+//         onRefresh: onRefresh,
+//         child: SingleChildScrollView(
+//           physics: const AlwaysScrollableScrollPhysics(),
+//           child: Container(
+//             height: MediaQuery.of(context).size.height * 0.7,
+//             alignment: Alignment.center,
+//             child: EmptyDataWidget(
+//               message: "Aucune commande trouvée",
+//               onRefresh: onRefresh,
+//             ),
+//           ),
+//         ),
+//       );
+//     }
 
-    return RefreshIndicator(
-      onRefresh: onRefresh,
-      child: ListView.builder(
-        padding:
-            const EdgeInsets.only(left: 15, right: 15, bottom: 100, top: 15),
-        itemCount: items.length,
-        itemBuilder: (_, i) => Padding(
-          padding: const EdgeInsets.only(bottom: 15),
-          child: CommandTile(mesure: items[i]),
-        ),
-      ),
-    );
-  }
-}
+//     return RefreshIndicator(
+//       onRefresh: onRefresh,
+//       child: ListView.builder(
+//         padding:
+//             const EdgeInsets.only(left: 15, right: 15, bottom: 100, top: 15),
+//         itemCount: items.length,
+//         itemBuilder: (_, i) => Padding(
+//           padding: const EdgeInsets.only(bottom: 15),
+//           child: CommandTile(mesure: items[i]),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class _FilterSheet extends StatelessWidget {
   final CommandeListVctl ctl;

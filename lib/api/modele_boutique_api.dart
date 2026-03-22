@@ -1,9 +1,12 @@
 import 'dart:convert';
 
 import 'package:ateliya/api/abstract/crud_web_controller.dart';
+import 'package:ateliya/data/dto/mouvement_stock_dto.dart';
+import 'package:ateliya/data/dto/transfert_stock_dto.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/data/models/modele_boutique_details.dart';
 import 'package:ateliya/data/models/ravitaillement_stock.dart';
+import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 
 class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
@@ -79,18 +82,13 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
   ///
   /// [boutiqueId] : ID de la boutique concernée.
   /// [lignes] : liste de { 'modeleBoutiqueId': int, 'quantite': int }.
-  Future<DataResponse<bool>> entreeStock({
-    required int boutiqueId,
-    required List<Map<String, int>> lignes,
-  }) async {
+  Future<DataResponse<bool>> entreeStock(
+      MouvementStockDto mouvementStockDto) async {
     try {
       final res = await client.post(
         urlBuilder(api: 'entree', module: 'stock'),
         headers: authHeaders,
-        body: jsonEncode({
-          'boutiqueId': boutiqueId,
-          'lignes': lignes,
-        }),
+        body: mouvementStockDto.toJson().parseToJson(),
       );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200 || res.statusCode == 201) {
@@ -162,20 +160,13 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
   /// Transfère un stock d'une boutique vers une autre.
   ///
   /// POST /stock/transfert
-  Future<DataResponse<bool>> transfertStock({
-    required int boutiqueEmetteurId,
-    required int boutiqueReceptriceId,
-    required List<Map<String, int>> lignes,
-  }) async {
+  Future<DataResponse<bool>> transfertStock(
+      TransfertStockDto transfertStockDto) async {
     try {
       final res = await client.post(
         urlBuilder(api: 'transfert', module: 'stock'),
         headers: authHeaders,
-        body: jsonEncode({
-          'boutiqueEmetteurId': boutiqueEmetteurId,
-          'boutiqueReceptriceId': boutiqueReceptriceId,
-          'lignes': lignes,
-        }),
+        body: transfertStockDto.toJson().parseToJson(),
       );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200 || res.statusCode == 201) {
@@ -183,6 +174,30 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
       } else {
         return DataResponse.error(
           message: data['message'] ?? "Erreur lors du transfert de stock",
+        );
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  /// Enregistre une sortie de stock directe.
+  ///
+  /// POST /stock/sortie-directe
+  Future<DataResponse<bool>> sortieDirecte(
+      MouvementStockDto mouvementStockDto) async {
+    try {
+      final res = await client.post(
+        urlBuilder(api: 'sortie-directe', module: 'stock'),
+        headers: authHeaders,
+        body: mouvementStockDto.toJson().parseToJson(),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        return DataResponse.success(data: true);
+      } else {
+        return DataResponse.error(
+          message: data['message'] ?? "Erreur lors de la sortie de stock",
         );
       }
     } catch (e, st) {

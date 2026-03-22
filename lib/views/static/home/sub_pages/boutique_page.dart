@@ -6,6 +6,7 @@ import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/views/controllers/home/boutique_page_vctl.dart';
 import 'package:ateliya/views/static/home/detail_boutique_item_page.dart';
 import 'package:ateliya/views/static/ravitaillement/edition_ravitaillement_page.dart';
+import 'package:ateliya/views/static/stocks/edition_sortie_stock_page.dart';
 import 'package:ateliya/views/static/ventes/edition_vente_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -24,9 +25,9 @@ class BoutiquePage extends StatelessWidget {
           appBar: AppBar(
             elevation: 0,
             scrolledUnderElevation: 0,
-            title: const Text(
-              'Boutique',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            title: Text(
+              ctl.getEntite().value.libelle.value,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             centerTitle: true,
           ),
@@ -507,10 +508,23 @@ class _VarianteCard extends StatelessWidget {
                             PopupMenuItem<String>(
                               height: 40,
                               value: 'vente',
+                              enabled: ctl.user.isAdmin,
                               child: const Text('Ravitaillement'),
                               onTap: () async {
                                 final res = await Get.to(
                                   () => EditionRavitaillementPage.one(variante),
+                                );
+                                if (res != null) ctl.fetchData();
+                              },
+                            ),
+                            PopupMenuItem<String>(
+                              height: 40,
+                              value: 'retrait',
+                              enabled: ctl.user.isAdmin,
+                              child: const Text('Retrait de stock'),
+                              onTap: () async {
+                                final res = await Get.to(
+                                  () => EditionSortieStockPage.one(variante),
                                 );
                                 if (res != null) ctl.fetchData();
                               },

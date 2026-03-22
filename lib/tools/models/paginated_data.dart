@@ -8,13 +8,13 @@ class PaginatedData<M extends Model> {
   bool hasMore = false;
 
   PaginatedData({
-    this.items = const [],
+    List<M>? items,
     this.page = 1,
-  }) {
-    if (items.isEmpty) {
+  }) : items = List.from(items ?? []) {
+    if (this.items.isEmpty) {
       hasMore = false;
     } else {
-      if (items.length < Env.nbItemInListPage) {
+      if (this.items.length < Env.nbItemInListPage) {
         hasMore = false;
       } else {
         hasMore = true;

@@ -32,12 +32,13 @@ class EditionMesurePageVctl extends AuthViewController
 
   final pages = const [
     PriseMesureStep(
+      title: "Donnez votre mesuration",
+      subtitle: "Informations sur vos mesures",
+    ),
+    PriseMesureStep(
       title: "Faisons connaissance",
       subtitle: "Informations personnelles",
     ),
-    PriseMesureStep(
-        title: "Donnez votre mesuration",
-        subtitle: "Informations sur vos mesures"),
     PriseMesureStep(
       title: "Informations de paiement",
       subtitle: "Informations sur les paiements",
@@ -60,11 +61,6 @@ class EditionMesurePageVctl extends AuthViewController
     if (page < pages.length - 1) {
       switch (page) {
         case 0:
-          if (!formKey1.currentState!.validate()) {
-            return;
-          }
-          break;
-        case 1:
           if (!mesure.isValide) {
             CMessageDialog.show(
               message: "Veuillez ajouter des pièces"
@@ -79,6 +75,12 @@ class EditionMesurePageVctl extends AuthViewController
               );
               return;
             }
+          }
+
+          break;
+        case 1:
+          if (!formKey1.currentState!.validate()) {
+            return;
           }
           break;
         case 2:

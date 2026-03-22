@@ -1,10 +1,13 @@
 import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/data/models/vente.dart';
 import 'package:ateliya/tools/constants/periode_vente_enum.dart';
+import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/models/paginated_data.dart';
+import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
+import 'package:flutter/material.dart';
 
 class VenteBoutiqueListPageVctl extends ListViewController<Vente>
     with PrinterManagerViewMixin {
@@ -69,6 +72,24 @@ class VenteBoutiqueListPageVctl extends ListViewController<Vente>
       update();
     } else {
       CMessageDialog.show(message: res.message);
+    }
+  }
+
+  Future<void> deletePaiement(int id) async {
+    final confirm = await CChoiceMessageDialog.show(
+      message: "Voulez-vous vraiment supprimer cette vente ?",
+      validText: "Supprimer",
+      cancelText: "Annuler",
+      secondaryColor: Colors.red,
+    );
+    if (confirm == true) {
+      final res = await (api as BoutiqueApi).deletePaiement(id).load();
+      if (res.status) {
+        data.items.removeWhere((e) => e.id == id);
+        update();
+      } else {
+        CMessageDialog.show(message: res.message);
+      }
     }
   }
 }

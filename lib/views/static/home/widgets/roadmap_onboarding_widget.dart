@@ -49,6 +49,7 @@ class RoadmapOnboardingWidget extends StatelessWidget {
               number: "1",
               title: "Créer une boutique",
               description: "Définissez votre point de vente principal.",
+              enabled: !ctl.user.hasBoutique,
               onTap: () async {
                 final res = await Get.to(() => const EditionBoutiquePage());
                 if (res != null) {
@@ -104,6 +105,7 @@ class RoadmapOnboardingWidget extends StatelessWidget {
               number: "1",
               title: "Créer une succursale",
               description: "Ajoutez votre atelier de production.",
+              enabled: !ctl.user.hasSuccursale,
               onTap: () async {
                 final res = await Get.to(() => const EditionSurcusalePage());
                 if (res != null) {

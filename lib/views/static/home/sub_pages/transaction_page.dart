@@ -1,9 +1,10 @@
 import 'package:ateliya/data/models/transaction_response.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
+import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
-import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/views/controllers/home/transaction_page_vctl.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
@@ -21,16 +22,11 @@ class TransactionPage extends StatelessWidget {
       builder: (ctl) {
         return Scaffold(
           backgroundColor: const Color(0xFFF5F7FA),
-          appBar: AppBar(
-            elevation: 0,
-            centerTitle: true,
-            title: const Text("Transactions"),
-            actions: [
-              NotifBadgeIcon(
-                count: ctl.nbUnreadNotifs,
-                onRefresh: () => ctl.loadUnreadCount(),
-              ),
-            ],
+          appBar: MainAppBar(
+            enterpriseTitle: ctl.getEntite().value.libelle.value,
+            notifCount: ctl.nbUnreadNotifs,
+            onSelectionChanged: () => ctl.fetchData(),
+            onNotifRefresh: () => ctl.loadUnreadCount(),
           ),
           body: PlaceholderWidget(
             condition: !ctl.isLoading,

@@ -6,14 +6,19 @@ class RevenusQuotidiens extends ModelJson {
   int? reservations;
   int? ventes;
   int? factures;
-  int? revenus;
+  num revenus = 0;
+  // Dashboard fields
+  num mesures = 0;
+  num livraisons = 0;
 
   RevenusQuotidiens({
     this.jour,
     this.reservations,
     this.ventes,
     this.factures,
-    this.revenus,
+    this.revenus = 0,
+    this.mesures = 0,
+    this.livraisons = 0,
   });
 
   @override
@@ -26,7 +31,9 @@ class RevenusQuotidiens extends ModelJson {
     reservations = json['reservations'];
     ventes = json['ventes'];
     factures = json['factures'];
-    revenus = json['revenus'];
+    revenus = json['revenus'] ?? 0;
+    mesures = json['mesures'] ?? 0;
+    livraisons = json['livraisons'] ?? 0;
   }
 
   @override
@@ -37,6 +44,8 @@ class RevenusQuotidiens extends ModelJson {
     data['ventes'] = ventes;
     data['factures'] = factures;
     data['revenus'] = revenus;
+    data['mesures'] = mesures;
+    data['livraisons'] = livraisons;
     return data;
   }
 }
