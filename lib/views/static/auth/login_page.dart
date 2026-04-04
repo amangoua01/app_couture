@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -191,24 +193,27 @@ class LoginPage extends StatelessWidget {
                         ),
                         const Gap(30),
                         // Social Login or Sign Up hint
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Vous n'avez pas de compte ? ",
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            GestureDetector(
-                              onTap: () => Get.to(() => const RegisterPage()),
-                              child: const Text(
-                                "S'inscrire",
-                                style: TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
+                        Visibility(
+                          visible: Platform.isAndroid,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Vous n'avez pas de compte ? ",
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                              GestureDetector(
+                                onTap: () => Get.to(() => const RegisterPage()),
+                                child: const Text(
+                                  "S'inscrire",
+                                  style: TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         const Gap(40),
                       ],

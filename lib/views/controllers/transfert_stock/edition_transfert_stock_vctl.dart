@@ -30,7 +30,8 @@ class EditionTransfertStockVctl extends AuthViewController {
       stockItems.expand((s) => s.variantes).toList();
 
   /// Lignes du formulaire
-  final List<_LigneTransfertForm> lignes = [_LigneTransfertForm()];
+  /// Lignes du formulaire
+  final List<LigneTransfertForm> lignes = [];
 
   @override
   void onReady() {
@@ -77,16 +78,21 @@ class EditionTransfertStockVctl extends AuthViewController {
   }
 
   void addLigne() {
-    lignes.add(_LigneTransfertForm());
+    lignes.add(LigneTransfertForm());
     update();
   }
 
+  static LigneTransfertForm createLine(ModeleBoutique modele, String quantite) {
+    final line = LigneTransfertForm();
+    line.modele = modele;
+    line.quantiteCtl.text = quantite;
+    return line;
+  }
+
   void removeLigne(int index) {
-    if (lignes.length > 1) {
-      lignes[index].quantiteCtl.dispose();
-      lignes.removeAt(index);
-      update();
-    }
+    lignes[index].quantiteCtl.dispose();
+    lignes.removeAt(index);
+    update();
   }
 
   void setModele(int index, ModeleBoutique? modele) {
@@ -176,7 +182,7 @@ class EditionTransfertStockVctl extends AuthViewController {
   }
 }
 
-class _LigneTransfertForm {
+class LigneTransfertForm {
   ModeleBoutique? modele;
   final TextEditingController quantiteCtl = TextEditingController(text: '1');
 }

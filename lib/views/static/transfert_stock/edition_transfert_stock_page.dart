@@ -22,7 +22,7 @@ class EditionTransfertStockPage extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(title: const Text('Transfert de stock')),
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => ctl.addLigne(),
+            onPressed: () => _showAddBottomSheet(context, ctl),
             label: const Text('Ajouter un article'),
             icon: const Icon(Icons.add),
           ),
@@ -58,7 +58,7 @@ class EditionTransfertStockPage extends StatelessWidget {
                       ),
                     )
                   : ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+                      padding: const EdgeInsets.all(16),
                       children: [
                         // ── Sélection Destination ─────────────────────────
                         Container(
@@ -70,7 +70,7 @@ class EditionTransfertStockPage extends StatelessWidget {
                             border: Border.all(color: Colors.grey.shade200),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withAlpha(3),
+                                color: Colors.black.withValues(alpha: 0.03),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
@@ -84,7 +84,7 @@ class EditionTransfertStockPage extends StatelessWidget {
                                   Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: AppColors.primary.withAlpha(20),
+                                      color: AppColors.primary.withValues(alpha: 0.1),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(Icons.storefront_rounded,
@@ -138,10 +138,10 @@ class EditionTransfertStockPage extends StatelessWidget {
                           padding: const EdgeInsets.all(12),
                           margin: const EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withAlpha(15),
+                            color: AppColors.primary.withValues(alpha: 0.05),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                                color: AppColors.primary.withAlpha(30)),
+                                color: AppColors.primary.withValues(alpha: 0.1)),
                           ),
                           child: Row(
                             children: [
@@ -150,7 +150,7 @@ class EditionTransfertStockPage extends StatelessWidget {
                               const Gap(8),
                               Expanded(
                                 child: Text(
-                                  'Sélectionnez les articles à transférer et précisez la quantité (le stock actuel est indiqué).',
+                                  'Ajoutez les articles que vous souhaitez transférer vers la boutique de destination.',
                                   style: TextStyle(
                                       fontSize: 13, color: Colors.grey[800]),
                                 ),
@@ -160,145 +160,242 @@ class EditionTransfertStockPage extends StatelessWidget {
                         ),
 
                         // ── Lignes ───────────────────────────────────────
-                        ...List.generate(
-                          ctl.lignes.length,
-                          (i) => _LigneCard(
-                            index: i,
-                            ctl: ctl,
+                        if (ctl.lignes.isEmpty)
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 40),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.grey.shade200),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(Icons.playlist_add_rounded,
+                                    size: 48, color: Colors.grey[300]),
+                                const Gap(12),
+                                Text(
+                                  "Aucun article ajouté au transfert",
+                                  style: TextStyle(
+                                      color: Colors.grey[500],
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                const Gap(16),
+                                OutlinedButton.icon(
+                                  onPressed: () =>
+                                      _showAddBottomSheet(context, ctl),
+                                  icon: const Icon(Icons.add),
+                                  label: const Text("Ajouter un article"),
+                                ),
+                              ],
+                            ),
+                          )
+                        else
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: ctl.lignes.length,
+                            separatorBuilder: (context, index) => const Gap(12),
+                            itemBuilder: (context, index) {
+                              return _LigneTransfertSummaryCard(
+                                  index: index, ctl: ctl);
+                            },
                           ),
-                        ),
+                        const Gap(120), // Space for FAB
                       ],
                     ),
         );
       },
     );
   }
+
+  void _showAddBottomSheet(
+      BuildContext context, EditionTransfertStockVctl ctl) {
+    ModeleBoutique? selectedModele;
+    final TextEditingController quantiteCtl = TextEditingController(text: '1');
+
+    Get.bottomSheet(
+      StatefulBuilder(
+        builder: (context, setState) {
+          return Container(
+            padding: const EdgeInsets.all(24),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Ajouter un article',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      onPressed: () => Get.back(),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+                const Gap(16),
+                DropdownSearch<ModeleBoutique>(
+                  items: (filter, _) => ctl.allVariantes
+                      .where((v) =>
+                          (v.modele?.libelle?.value ?? '')
+                              .toLowerCase()
+                              .contains(filter.toLowerCase()) ||
+                          (v.taille ?? '')
+                              .toLowerCase()
+                              .contains(filter.toLowerCase()))
+                      .toList(),
+                  selectedItem: selectedModele,
+                  compareFn: (a, b) => a.id == b.id,
+                  itemAsString: (v) {
+                    final nom = v.modele?.libelle?.value ?? '—';
+                    final taille = v.taille != null ? ' — ${v.taille}' : '';
+                    final stock = ' (stock : ${v.quantite ?? 0})';
+                    return '$nom$taille$stock';
+                  },
+                  popupProps: PopupProps.menu(
+                    showSearchBox: true,
+                    searchFieldProps: const TextFieldProps(
+                      decoration: InputDecoration(
+                        hintText: 'Rechercher par nom ou taille…',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                    ),
+                    itemBuilder: (_, item, isSelected, __) =>
+                        _ArticleDropdownItem(
+                            item: item, isSelected: isSelected),
+                  ),
+                  decoratorProps: const DropDownDecoratorProps(
+                    decoration: InputDecoration(
+                      labelText: 'Sélectionner l\'article *',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  onChanged: (v) => setState(() => selectedModele = v),
+                ),
+                const Gap(16),
+                CTextFormField(
+                  controller: quantiteCtl,
+                  externalLabel: 'Quantité à transférer',
+                  keyboardType: TextInputType.number,
+                  require: true,
+                  margin: EdgeInsets.zero,
+                ),
+                const Gap(24),
+                CButton(
+                  title: 'Ajouter au transfert',
+                  onPressed: () {
+                    if (selectedModele == null) {
+                      Get.snackbar('Erreur', 'Veuillez sélectionner un article',
+                          backgroundColor: Colors.red, colorText: Colors.white);
+                      return;
+                    }
+
+                    int qty = int.tryParse(quantiteCtl.text) ?? 0;
+                    if (qty <= 0) {
+                      Get.snackbar('Erreur', 'Quantité invalide',
+                          backgroundColor: Colors.red, colorText: Colors.white);
+                      return;
+                    }
+
+                    if (qty > (selectedModele!.quantite ?? 0)) {
+                      Get.snackbar('Erreur',
+                          'Stock insuffisant (Max: ${selectedModele!.quantite})',
+                          backgroundColor: Colors.red, colorText: Colors.white);
+                      return;
+                    }
+
+                    ctl.lignes.add(EditionTransfertStockVctl.createLine(
+                        selectedModele!, quantiteCtl.text));
+                    ctl.update();
+                    Get.back();
+                  },
+                ),
+                const Gap(16),
+              ],
+            ),
+          );
+        },
+      ),
+      isScrollControlled: true,
+    );
+  }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _LigneCard extends StatelessWidget {
+class _LigneTransfertSummaryCard extends StatelessWidget {
   final int index;
   final EditionTransfertStockVctl ctl;
 
-  const _LigneCard({
-    required this.index,
-    required this.ctl,
-  });
+  const _LigneTransfertSummaryCard({required this.index, required this.ctl});
 
   @override
   Widget build(BuildContext context) {
     final ligne = ctl.lignes[index];
     final selected = ligne.modele;
+    final photo = selected?.modele?.photo;
+    final String? photoUrl = (photo is FichierServer) ? photo.fullUrl : null;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(3),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 2)),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // En-tête ligne
-            Row(
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: 48,
+              height: 48,
+              color: Colors.grey.shade100,
+              child: photoUrl != null
+                  ? Image.network(photoUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const Icon(
+                            Icons.image_not_supported_outlined,
+                            size: 24,
+                            color: Colors.grey,
+                          ))
+                  : const Icon(Icons.shopping_bag_outlined,
+                      size: 24, color: Colors.grey),
+            ),
+          ),
+          const Gap(12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '${index + 1}',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold),
-                  ),
+                Text(
+                  selected?.modele?.libelle?.value ?? "Article inconnu",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14),
                 ),
-                const Gap(8),
-                const Expanded(
-                  child: Text('Article',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  "Taille: ${selected?.taille ?? 'N/A'} • Qté: ${ligne.quantiteCtl.text}",
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
-                if (ctl.lignes.length > 1)
-                  IconButton(
-                    icon: const Icon(Icons.close_rounded,
-                        color: Colors.red, size: 22),
-                    onPressed: () => ctl.removeLigne(index),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
               ],
             ),
-            const Gap(16),
-
-            // Dropdown article
-            DropdownSearch<ModeleBoutique>(
-              enabled: true,
-              items: (filter, _) => ctl.allVariantes
-                  .where((v) =>
-                      (v.modele?.libelle?.value ?? '')
-                          .toLowerCase()
-                          .contains(filter.toLowerCase()) ||
-                      (v.taille ?? '')
-                          .toLowerCase()
-                          .contains(filter.toLowerCase()))
-                  .toList(),
-              selectedItem: selected,
-              compareFn: (a, b) => a.id == b.id,
-              itemAsString: (v) {
-                final nom = v.modele?.libelle?.value ?? '—';
-                final taille = v.taille != null ? ' — ${v.taille}' : '';
-                final stock = ' (stock : ${v.quantite ?? 0})';
-                return '$nom$taille$stock';
-              },
-              popupProps: PopupProps.menu(
-                showSearchBox: true,
-                searchFieldProps: const TextFieldProps(
-                  decoration: InputDecoration(
-                    hintText: 'Rechercher par nom ou taille…',
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                ),
-                itemBuilder: (_, item, isSelected, __) =>
-                    _ArticleDropdownItem(item: item, isSelected: isSelected),
-              ),
-              decoratorProps: const DropDownDecoratorProps(
-                decoration: InputDecoration(
-                  labelText: 'Sélectionner un article *',
-                  border: OutlineInputBorder(),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                ),
-              ),
-              onChanged: (v) => ctl.setModele(index, v),
-            ),
-            const Gap(16),
-
-            // Quantité
-            CTextFormField(
-              controller: ligne.quantiteCtl,
-              externalLabel: 'Quantité à transférer',
-              keyboardType: TextInputType.number,
-              require: true,
-              margin: EdgeInsets.zero,
-            ),
-          ],
-        ),
+          ),
+          IconButton(
+            onPressed: () => ctl.removeLigne(index),
+            icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+          ),
+        ],
       ),
     );
   }
@@ -317,7 +414,7 @@ class _ArticleDropdownItem extends StatelessWidget {
     return ListTile(
       selected: isSelected,
       selectedColor: AppColors.primary,
-      selectedTileColor: AppColors.primary.withAlpha(15),
+      selectedTileColor: AppColors.primary.withValues(alpha: 0.1),
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Container(

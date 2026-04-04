@@ -39,7 +39,7 @@ class EditionDepensePageVctl extends GetxController {
   }
 
   List<Caisse> caisses = [];
-  List<LigneDepenseRow> ligneRows = [];
+  final ligneRows = <LigneDepenseForm>[].obs;
 
   @override
   void onInit() {
@@ -70,18 +70,23 @@ class EditionDepensePageVctl extends GetxController {
       EasyLoading.showError("Veuillez d'abord saisir le montant total");
       return;
     }
-    final row = LigneDepenseRow();
+    final row = LigneDepenseForm();
     row.montantCtl.addListener(update);
     ligneRows.add(row);
     update();
   }
 
+  static LigneDepenseForm createLine(Caisse caisse, String montant) {
+    final row = LigneDepenseForm();
+    row.caisse = caisse;
+    row.montantCtl.text = montant;
+    return row;
+  }
+
   void removeLigne(int index) {
-    if (ligneRows.isNotEmpty) {
-      final row = ligneRows.removeAt(index);
-      row.montantCtl.removeListener(update);
-      update();
-    }
+    final row = ligneRows.removeAt(index);
+    row.montantCtl.removeListener(update);
+    update();
   }
 
   double get totalMontant => double.tryParse(montantCtl.text) ?? 0;
@@ -177,7 +182,7 @@ class EditionDepensePageVctl extends GetxController {
   }
 }
 
-class LigneDepenseRow {
+class LigneDepenseForm {
   Caisse? caisse;
   final TextEditingController montantCtl = TextEditingController();
 }

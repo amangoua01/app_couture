@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/views/static/auth/login_page.dart';
@@ -52,12 +54,15 @@ class AuthHomePage extends StatelessWidget {
                   onPressed: () => Get.to(() => const LoginPage()),
                 ),
                 const Gap(20),
-                CButton(
-                  color: Colors.white,
-                  textColor: AppColors.primary,
-                  title: "S'inscrire",
-                  border: const BorderSide(color: AppColors.primary),
-                  onPressed: () => Get.to(() => const RegisterPage()),
+                Visibility(
+                  visible: Platform.isAndroid,
+                  child: CButton(
+                    color: Colors.white,
+                    textColor: AppColors.primary,
+                    title: "S'inscrire",
+                    border: const BorderSide(color: AppColors.primary),
+                    onPressed: () => Get.to(() => const RegisterPage()),
+                  ),
                 ),
               ],
             ),

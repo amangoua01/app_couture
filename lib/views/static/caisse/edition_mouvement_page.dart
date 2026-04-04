@@ -5,9 +5,10 @@ import 'package:ateliya/tools/constants/sens_mouvement_caisse_enum.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/views/controllers/caisse/approvisionner_caisse_page_vctl.dart';
-// import 'package:ateliya/views/controllers/caisse/approvisionner_caisse_page_vctl.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class ApprovisionnerCaissePage extends StatelessWidget {
@@ -20,6 +21,20 @@ class ApprovisionnerCaissePage extends StatelessWidget {
       builder: (ctl) {
         return Scaffold(
           appBar: AppBar(title: const Text("Approvisionner caisse")),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () => _showAddBottomSheet(context, ctl),
+            icon: const Icon(Icons.add),
+            label: const Text("Ajouter un montant"),
+          ),
+          bottomNavigationBar: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: CButton(
+                title: "Enregistrer le mouvement",
+                onPressed: ctl.submit,
+              ),
+            ),
+          ),
           body: Form(
             key: ctl.formKey,
             child: ListView(
@@ -77,59 +92,9 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   itemCount: ctl.lines.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 20),
+                  separatorBuilder: (context, index) => const Gap(12),
                   itemBuilder: (context, index) {
-                    final line = ctl.lines[index];
-                    return Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Ligne ${index + 1}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              if (ctl.lines.length > 1)
-                                IconButton(
-                                  onPressed: () => ctl.removeLine(index),
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.red),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          CDropDownFormField<Caisse>(
-                            externalLabel: "Caisse",
-                            require: true,
-                            selectedItem: line.caisse,
-                            onChanged: (e) {
-                              line.caisse = e;
-                              ctl.update();
-                            },
-                            items: (filter, loadProps) => ctl.getCaisses(),
-                            itemAsString: (item) =>
-                                "${item.entite?.libelle ?? "N/A"} (${item.montant?.toAmount(unit: 'F')})",
-                          ),
-                          CTextFormField(
-                            externalLabel: "Montant",
-                            controller: line.montantCtl,
-                            require: true,
-                            keyboardType: TextInputType.number,
-                          ),
-                        ],
-                      ),
-                    );
+                    return _LigneCaisseCard(index: index, ctl: ctl);
                   },
                 ),
                 Padding(
@@ -137,37 +102,36 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Total :",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: AppColors.primary.withValues(alpha: 0.1)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Total cumulé :",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            ctl.totalMontant.toString().toAmount(unit: "F"),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
+                            Text(
+                              ctl.totalMontant.toString().toAmount(unit: "F"),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 20),
-                      OutlinedButton.icon(
-                        onPressed: ctl.addLine,
-                        icon: const Icon(Icons.add),
-                        label: const Text("Ajouter une ligne"),
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: ctl.submit,
-                        child: const Text("Enregistrer"),
-                      ),
+                      const Gap(100), // Space for FAB
                     ],
                   ),
                 ),
@@ -176,6 +140,141 @@ class ApprovisionnerCaissePage extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  void _showAddBottomSheet(
+      BuildContext context, ApprovisionnerCaissePageVctl ctl) {
+    Caisse? selectedCaisse;
+    final TextEditingController montantCtl = TextEditingController();
+
+    Get.bottomSheet(
+      StatefulBuilder(
+        builder: (context, setState) {
+          return Container(
+            padding: const EdgeInsets.all(24),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Ajouter un montant',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      onPressed: () => Get.back(),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+                const Gap(16),
+                CDropDownFormField<Caisse>(
+                  externalLabel: "Sélectionner la caisse",
+                  require: true,
+                  selectedItem: selectedCaisse,
+                  onChanged: (e) => setState(() => selectedCaisse = e),
+                  items: (filter, loadProps) => ctl.getCaisses(),
+                  itemAsString: (item) =>
+                      "${item.entite?.libelle ?? "N/A"} (${item.montant?.toAmount(unit: 'F')})",
+                ),
+                const Gap(12),
+                CTextFormField(
+                  externalLabel: "Montant",
+                  controller: montantCtl,
+                  require: true,
+                  keyboardType: TextInputType.number,
+                  margin: EdgeInsets.zero,
+                ),
+                const Gap(24),
+                CButton(
+                  title: 'Ajouter au mouvement',
+                  onPressed: () {
+                    if (selectedCaisse == null) {
+                      Get.snackbar('Erreur', 'Veuillez sélectionner une caisse',
+                          backgroundColor: Colors.red, colorText: Colors.white);
+                      return;
+                    }
+                    if (montantCtl.text.isEmpty) {
+                      Get.snackbar('Erreur', 'Veuillez saisir un montant',
+                          backgroundColor: Colors.red, colorText: Colors.white);
+                      return;
+                    }
+
+                    ctl.lines.add(ApprovisionnerCaissePageVctl.createLine(
+                        selectedCaisse!, montantCtl.text));
+                    ctl.update();
+                    Get.back();
+                  },
+                ),
+                const Gap(16),
+              ],
+            ),
+          );
+        },
+      ),
+      isScrollControlled: true,
+    );
+  }
+}
+
+class _LigneCaisseCard extends StatelessWidget {
+  final int index;
+  final ApprovisionnerCaissePageVctl ctl;
+
+  const _LigneCaisseCard({required this.index, required this.ctl});
+
+  @override
+  Widget build(BuildContext context) {
+    final line = ctl.lines[index];
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.account_balance_wallet_outlined,
+                color: AppColors.primary, size: 20),
+          ),
+          const Gap(12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  line.caisse?.entite?.libelle ?? "N/A",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                Text(
+                  "Montant : ${line.montantCtl.text.toAmount(unit: 'F')}",
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () => ctl.removeLine(index),
+            icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+          ),
+        ],
+      ),
     );
   }
 }
