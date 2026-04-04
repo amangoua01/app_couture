@@ -25,11 +25,11 @@ class EditionRavitaillementVctl extends AuthViewController {
       stockItems.expand((s) => s.variantes).toList();
 
   /// Lignes du formulaire
-  final List<_LigneForm> lignes = [_LigneForm()];
+  final List<LigneRavitaillementForm> lignes = [];
 
   EditionRavitaillementVctl(ModeleBoutique? item) {
     if (item != null) {
-      lignes.first.modele = item;
+      lignes.add(LigneRavitaillementForm()..modele = item);
     }
   }
 
@@ -60,8 +60,14 @@ class EditionRavitaillementVctl extends AuthViewController {
   }
 
   void addLigne() {
-    lignes.add(_LigneForm());
+    lignes.add(LigneRavitaillementForm());
     update();
+  }
+
+  static LigneRavitaillementForm createLigne(ModeleBoutique modele, String qty) {
+    return LigneRavitaillementForm()
+      ..modele = modele
+      ..quantiteCtl.text = qty;
   }
 
   void removeLigne(int index) {
@@ -136,7 +142,7 @@ class EditionRavitaillementVctl extends AuthViewController {
   }
 }
 
-class _LigneForm {
+class LigneRavitaillementForm {
   ModeleBoutique? modele;
   final TextEditingController quantiteCtl = TextEditingController(text: '1');
 }

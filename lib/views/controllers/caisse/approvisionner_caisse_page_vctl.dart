@@ -11,7 +11,7 @@ import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class MouvementLine {
+class MouvementCaisseLine {
   Caisse? caisse;
   final montantCtl = TextEditingController();
 }
@@ -25,16 +25,17 @@ class ApprovisionnerCaissePageVctl extends GetxController {
   SensMouvementCaisseEnum sens = SensMouvementCaisseEnum.entree;
 
   // List to manage multiple lines
-  final lines = <MouvementLine>[].obs;
+  // List to manage multiple lines
+  final lines = <MouvementCaisseLine>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    addLine(); // Add one initial line
+    // No initial line added anymore, handled by BottomSheet
   }
 
   void addLine() {
-    final line = MouvementLine();
+    final line = MouvementCaisseLine();
     line.montantCtl.addListener(() {
       update();
     });
@@ -42,11 +43,16 @@ class ApprovisionnerCaissePageVctl extends GetxController {
     update();
   }
 
+  static MouvementCaisseLine createLine(Caisse caisse, String montant) {
+    final line = MouvementCaisseLine();
+    line.caisse = caisse;
+    line.montantCtl.text = montant;
+    return line;
+  }
+
   void removeLine(int index) {
-    if (lines.length > 1) {
-      lines.removeAt(index);
-      update();
-    }
+    lines.removeAt(index);
+    update();
   }
 
   double get totalMontant {

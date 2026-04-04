@@ -25,7 +25,7 @@ class EditionRavitaillementPage extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(title: const Text('Nouveau ravitaillement')),
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => ctl.addLigne(),
+            onPressed: () => _showAddBottomSheet(context, ctl),
             label: const Text('Ajouter un article'),
             icon: const Icon(Icons.add),
           ),
@@ -108,6 +108,120 @@ class EditionRavitaillementPage extends StatelessWidget {
       },
     );
   }
+
+  void _showAddBottomSheet(
+      BuildContext context, EditionRavitaillementVctl ctl) {
+    ModeleBoutique? selectedModele;
+    final TextEditingController qtyCtl = TextEditingController(text: '1');
+
+    Get.bottomSheet(
+      StatefulBuilder(
+        builder: (context, setState) {
+          return Container(
+            padding: const EdgeInsets.all(24),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Ajouter un article',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      onPressed: () => Get.back(),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+                const Gap(16),
+                DropdownSearch<ModeleBoutique>(
+                  items: (filter, _) => ctl.allVariantes
+                      .where((v) =>
+                          (v.modele?.libelle ?? '')
+                              .toLowerCase()
+                              .contains(filter.toLowerCase()) ||
+                          (v.taille ?? '')
+                              .toLowerCase()
+                              .contains(filter.toLowerCase()))
+                      .toList(),
+                  selectedItem: selectedModele,
+                  compareFn: (a, b) => a.id == b.id,
+                  itemAsString: (v) {
+                    final nom = v.modele?.libelle?.value ?? '—';
+                    final taille = v.taille != null ? ' — ${v.taille}' : '';
+                    final stock = ' (stock : ${v.quantite ?? 0})';
+                    return '$nom$taille$stock';
+                  },
+                  popupProps: PopupProps.menu(
+                    showSearchBox: true,
+                    searchFieldProps: const TextFieldProps(
+                      decoration: InputDecoration(
+                        hintText: 'Rechercher par nom ou taille…',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                    ),
+                    itemBuilder: (_, item, isSelected, __) =>
+                        _ArticleDropdownItem(
+                            item: item, isSelected: isSelected),
+                  ),
+                  decoratorProps: const DropDownDecoratorProps(
+                    decoration: InputDecoration(
+                      labelText: 'Sélectionner un article *',
+                      border: OutlineInputBorder(),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    ),
+                  ),
+                  onChanged: (v) => setState(() => selectedModele = v),
+                ),
+                const Gap(16),
+                CTextFormField(
+                  controller: qtyCtl,
+                  externalLabel: 'Quantité à ajouter',
+                  keyboardType: TextInputType.number,
+                  require: true,
+                  margin: EdgeInsets.zero,
+                ),
+                const Gap(24),
+                CButton(
+                  title: 'Ajouter au ravitaillement',
+                  onPressed: () {
+                    if (selectedModele == null) {
+                      Get.snackbar('Erreur', 'Veuillez sélectionner un article',
+                          backgroundColor: Colors.red, colorText: Colors.white);
+                      return;
+                    }
+                    final qty = int.tryParse(qtyCtl.text) ?? 0;
+                    if (qty <= 0) {
+                      Get.snackbar(
+                          'Erreur', 'Veuillez saisir une quantité valide',
+                          backgroundColor: Colors.red, colorText: Colors.white);
+                      return;
+                    }
+
+                    ctl.lignes.add(EditionRavitaillementVctl.createLigne(
+                        selectedModele!, qtyCtl.text));
+                    ctl.update();
+                    Get.back();
+                  },
+                ),
+                const Gap(16),
+              ],
+            ),
+          );
+        },
+      ),
+      isScrollControlled: true,
+    );
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -115,18 +229,18 @@ class EditionRavitaillementPage extends StatelessWidget {
 class _LigneCard extends StatelessWidget {
   final int index;
   final EditionRavitaillementVctl ctl;
-  final bool isArticleEditable;
 
   const _LigneCard({
     required this.index,
     required this.ctl,
-    this.isArticleEditable = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final ligne = ctl.lignes[index];
     final selected = ligne.modele;
+    final photo = selected?.modele?.photo;
+    final String? photoUrl = (photo is FichierServer) ? photo.fullUrl : null;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -143,96 +257,70 @@ class _LigneCard extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(12),
+        child: Row(
           children: [
-            // En-tête ligne
-            Row(
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '${index + 1}',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const Gap(8),
-                const Expanded(
-                  child: Text('Article',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                if (ctl.lignes.length > 1)
-                  IconButton(
-                    icon: const Icon(Icons.close_rounded,
-                        color: Colors.red, size: 20),
-                    onPressed: () => ctl.removeLigne(index),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-              ],
-            ),
-            const Gap(10),
-
-            // Dropdown article
-            DropdownSearch<ModeleBoutique>(
-              enabled: isArticleEditable,
-              items: (filter, _) => ctl.allVariantes
-                  .where((v) =>
-                      (v.modele?.libelle ?? '')
-                          .toLowerCase()
-                          .contains(filter.toLowerCase()) ||
-                      (v.taille ?? '')
-                          .toLowerCase()
-                          .contains(filter.toLowerCase()))
-                  .toList(),
-              selectedItem: selected,
-              compareFn: (a, b) => a.id == b.id,
-              itemAsString: (v) {
-                final nom = v.modele?.libelle?.value ?? '—';
-                final taille = v.taille != null ? ' — ${v.taille}' : '';
-                final stock = ' (stock : ${v.quantite ?? 0})';
-                return '$nom$taille$stock';
-              },
-              popupProps: PopupProps.menu(
-                showSearchBox: true,
-                searchFieldProps: const TextFieldProps(
-                  decoration: InputDecoration(
-                    hintText: 'Rechercher par nom ou taille…',
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                ),
-                itemBuilder: (_, item, isSelected, __) =>
-                    _ArticleDropdownItem(item: item, isSelected: isSelected),
+            // Image / Icon
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: 50,
+                height: 50,
+                color: Colors.grey.shade100,
+                child: photoUrl != null
+                    ? Image.network(photoUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Icon(
+                              Icons.image_not_supported_outlined,
+                              size: 24,
+                              color: Colors.grey,
+                            ))
+                    : const Icon(Icons.shopping_bag_outlined,
+                        size: 24, color: Colors.grey),
               ),
-              decoratorProps: const DropDownDecoratorProps(
-                decoration: InputDecoration(
-                  labelText: 'Sélectionner un article *',
-                  border: OutlineInputBorder(),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                ),
-              ),
-              onChanged: (v) => ctl.setModele(index, v),
             ),
             const Gap(12),
 
+            // Text info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    selected?.modele?.libelle?.value ?? '—',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  if (selected?.taille != null)
+                    Text('Taille : ${selected!.taille}',
+                        style:
+                            TextStyle(fontSize: 12, color: Colors.grey[600])),
+                ],
+              ),
+            ),
+
             // Quantité
-            CTextFormField(
-              controller: ligne.quantiteCtl,
-              externalLabel: 'Quantité à ajouter',
-              keyboardType: TextInputType.number,
-              require: true,
-              margin: EdgeInsets.zero,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                'Qté: ${ligne.quantiteCtl.text}',
+                style: const TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+
+            // Supprimer
+            IconButton(
+              icon:
+                  const Icon(Icons.delete_outline, color: Colors.red, size: 22),
+              onPressed: () => ctl.removeLigne(index),
             ),
           ],
         ),
