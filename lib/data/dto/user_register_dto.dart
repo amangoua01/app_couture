@@ -9,6 +9,7 @@ class UserRegisterDto extends DtoModel {
   String numeroEntreprise;
   int pays;
   String device;
+  String? codeParrain;
 
   UserRegisterDto({
     required this.email,
@@ -19,6 +20,7 @@ class UserRegisterDto extends DtoModel {
     required this.numeroEntreprise,
     required this.pays,
     required this.device,
+    this.codeParrain,
   });
 
   @override
@@ -32,6 +34,8 @@ class UserRegisterDto extends DtoModel {
     data['numeroEntreprise'] = numeroEntreprise;
     data['pays'] = pays;
     data['device'] = device;
+    data['codeParrain'] = codeParrain;
+
     return data;
   }
 }

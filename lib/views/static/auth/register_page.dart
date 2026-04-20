@@ -120,6 +120,11 @@ class RegisterPage extends StatelessWidget {
                               },
                             ),
                             CTextFormField(
+                              controller: ctl.codeParrainCtl,
+                              externalLabel: "code parrain",
+                              hintText: "Optionnel",
+                            ),
+                            CTextFormField(
                               controller: ctl.passwordCtl,
                               require: true,
                               obscureText: ctl.showPassword,
