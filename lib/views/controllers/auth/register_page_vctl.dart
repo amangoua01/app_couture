@@ -18,6 +18,7 @@ class RegisterPageVctl extends SessionManagerViewController {
   Pays? selectedPays;
   final emailCtl = TextEditingController();
   final passwordCtl = TextEditingController();
+  final codeParrainCtl = TextEditingController();
   final confirmPasswordCtl = TextEditingController();
   final formKey1 = GlobalKey<FormState>();
   final formKey2 = GlobalKey<FormState>();
@@ -82,6 +83,7 @@ class RegisterPageVctl extends SessionManagerViewController {
           numeroEntreprise: telEntrepriseCtl.text,
           pays: selectedPays!.id!,
           device: Env.deviceType,
+          codeParrain: codeParrainCtl.text,
         );
         final res = await api.register(data).load();
         if (res.status) {
