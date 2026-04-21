@@ -75,7 +75,7 @@ class RegisterPageVctl extends SessionManagerViewController {
 
       if (rep == true) {
         final data = UserRegisterDto(
-          email: emailEntrepriseCtl.text,
+          email: emailCtl.text,
           password: passwordCtl.text,
           confirmPassword: confirmPasswordCtl.text,
           denominationEntreprise: nomEntrepriseCtl.text,
