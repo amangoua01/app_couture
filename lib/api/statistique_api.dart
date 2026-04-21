@@ -40,10 +40,11 @@ class StatistiqueApi extends WebController {
   Future<DataResponse<StatistiquesBoutique>> getData(
     int boutiqueId,
     PeriodStatReq params,
+    EntiteEntrepriseType type,
   ) async {
     try {
       final res = await client.post(
-        urlBuilder(api: "ateliya/boutique/$boutiqueId"),
+        urlBuilder(api: "ateliya/${type.name}/$boutiqueId"),
         body: params.toJson().parseToJson(),
         headers: authHeaders,
       );

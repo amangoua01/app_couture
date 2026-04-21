@@ -20,7 +20,13 @@ class StatistiquePageVctl extends AuthViewController {
     params.filtre = PeriodStat.values[indexPeriod];
     periodIndex = indexPeriod;
     update();
-    final res = await api.getData(getEntite().value.id.value, params).load();
+    final res = await api
+        .getData(
+          getEntite().value.id.value,
+          params,
+          getEntite().value.type,
+        )
+        .load();
     if (res.status) {
       data = res.data!;
       update();
