@@ -4,6 +4,7 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/views/static/auth/login_page.dart';
 import 'package:ateliya/views/static/auth/register_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -55,7 +56,7 @@ class AuthHomePage extends StatelessWidget {
                 ),
                 const Gap(20),
                 Visibility(
-                  visible: Platform.isAndroid,
+                  visible: Platform.isAndroid || kDebugMode,
                   child: CButton(
                     color: Colors.white,
                     textColor: AppColors.primary,
