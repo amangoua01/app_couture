@@ -1,32 +1,23 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
-import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:ateliya/tools/widgets/main_app_bar.dart';
-import 'package:ateliya/views/controllers/home/statistique_page_vctl.dart';
-import 'package:ateliya/views/static/home/sub_pages/stats/atelier/atelier_stats_sub_page.dart';
-import 'package:ateliya/views/static/home/sub_pages/stats/boutique/boutique_stats_sub_page.dart';
+import 'package:ateliya/views/controllers/home/statistique_entreprise_page_vctl.dart';
+import 'package:ateliya/views/static/home/sub_pages/stats/entreprise/entreprise_stats_sub_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-class StatistiquePage extends StatelessWidget {
-  const StatistiquePage({super.key});
+class StatistiqueEntreprisePage extends StatelessWidget {
+  const StatistiqueEntreprisePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder(
-        init: StatistiquePageVctl(),
+        init: StatistiqueEntreprisePageVctl(),
         builder: (ctl) {
           return Scaffold(
-            appBar: MainAppBar(
-              enterpriseTitle: ctl.getEntite().value.libelle.value,
-              notifCount: ctl.nbUnreadNotifs,
-              onSelectionChanged: () {
-                ctl.fetchStats(indexPeriod: ctl.periodIndex);
-              },
-              onNotifRefresh: () => ctl.loadUnreadCount(),
+            appBar: AppBar(
+              title: const Text("Statistiques Globales"),
             ),
             body: Column(
               children: [
@@ -95,19 +86,9 @@ class StatistiquePage extends StatelessWidget {
                 Expanded(
                   child: ctl.isLoading
                       ? const Center(child: CircularProgressIndicator())
-                      : Builder(
-                          builder: (context) {
-                            final type = ctl.getEntite().value.type;
-                            switch (type) {
-                              case EntiteEntrepriseType.boutique:
-                                return BoutiqueStatsSubPage(ctl);
-                              case EntiteEntrepriseType.succursale:
-                                return AtelierStatsSubPage(ctl);
-                              default:
-                                return const Center(
-                                    child: Text("Sélectionnez une entité"));
-                            }
-                          },
+                      : EntrepriseStatsSubPage(
+                          data: ctl.data,
+                          onRefresh: ctl.fetchStats,
                         ),
                 ),
               ],

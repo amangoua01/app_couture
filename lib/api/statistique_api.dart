@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:ateliya/api/abstract/web_controller.dart';
-import 'package:ateliya/data/dto/dash_item_dto.dart';
 import 'package:ateliya/data/models/stats/statistiques_boutique.dart';
 import 'package:ateliya/data/models/stats/stock_statistiques.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
@@ -63,16 +62,15 @@ class StatistiqueApi extends WebController {
   }
 
   Future<DataResponse<StatistiquesBoutique>> getDashboardData(
-    DashItemDto params,
-    EntiteEntrepriseType type,
+    PeriodStatReq params,
   ) async {
     try {
       final res = await client.post(
-        urlBuilder(api: "ateliya/${type.name}/${params.id}"),
+        urlBuilder(api: "ateliya/dashboard"),
         body: params.toJson().parseToJson(),
         headers: authHeaders,
       );
-      final body = await jsonDecode(res.body);
+      final body = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return DataResponse.success(
           data: StatistiquesBoutique.fromJson(body["data"]),

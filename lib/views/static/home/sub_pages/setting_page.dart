@@ -11,6 +11,7 @@ import 'package:ateliya/views/static/boutiques/boutiques_list_page.dart';
 import 'package:ateliya/views/static/caisse/mouvement_caisse_list_page.dart';
 import 'package:ateliya/views/static/clients/client_liste_page.dart';
 import 'package:ateliya/views/static/depense/depense_list_page.dart';
+import 'package:ateliya/views/static/home/sub_pages/statistique_entreprise_page.dart';
 import 'package:ateliya/views/static/info/contact_us_page.dart';
 import 'package:ateliya/views/static/info/terms_conditions_page.dart';
 import 'package:ateliya/views/static/modele/modele_list_page.dart';
@@ -140,6 +141,16 @@ class SettingPage extends StatelessWidget {
                     const _SectionLabel("Gestion de compte"),
                     const Gap(8),
                     _SettingsGroup(tiles: [
+                      SettingTile(
+                        title: "Statistiques",
+                        icon: Icons.bar_chart_outlined,
+                        iconBgColor: const Color(0xFFF3E5F5),
+                        color: Colors.purple[700],
+                        visible: ctl.user.isAdmin,
+                        onTap: () => Get.to(
+                          () => const StatistiqueEntreprisePage(),
+                        ),
+                      ),
                       SettingTile(
                         title: "Mes boutiques",
                         icon: Icons.storefront_outlined,

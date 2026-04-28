@@ -8,11 +8,23 @@ class Kpis extends ModelJson {
   int commandesEnCours = 0;
   int totalDepenses = 0;
   int totalMouvements = 0;
-  // Dashboard fields
-  int? recettesNettes;
+  int totalMouvementsEntrants = 0;
+  int totalMouvementsSortants = 0;
+  int? nombreModelesStockBas;
+  int? stockTotalBoutique;
+  int caisse = 0;
   int? ticketMoyen;
-  int? facturesActives; // Succursale
-  int? mesuresEnCours; // Succursale
+  int? tauxRecouvrement;
+  int? nbVentesBoutique;
+  int? recettesNettes;
+  int? montantDuClients;
+  int? revenusReservations;
+  int? revenusVenteDirecte;
+
+  // Succursale fields
+  int? facturesActives;
+  int? mesuresEnCours;
+  int? revenusFactures;
 
   Kpis({
     this.chiffreAffaires = 0,
@@ -21,10 +33,21 @@ class Kpis extends ModelJson {
     this.commandesEnCours = 0,
     this.totalDepenses = 0,
     this.totalMouvements = 0,
-    this.recettesNettes,
+    this.totalMouvementsEntrants = 0,
+    this.totalMouvementsSortants = 0,
+    this.nombreModelesStockBas,
+    this.stockTotalBoutique,
+    this.caisse = 0,
     this.ticketMoyen,
+    this.tauxRecouvrement,
+    this.nbVentesBoutique,
+    this.recettesNettes,
+    this.montantDuClients,
+    this.revenusReservations,
+    this.revenusVenteDirecte,
     this.facturesActives,
     this.mesuresEnCours,
+    this.revenusFactures,
   });
 
   @override
@@ -39,10 +62,21 @@ class Kpis extends ModelJson {
     commandesEnCours = json['commandesEnCours'] ?? 0;
     totalDepenses = json['totalDepenses'] ?? 0;
     totalMouvements = json['totalMouvements'] ?? 0;
-    recettesNettes = json['recettesNettes'];
+    totalMouvementsEntrants = json['totalMouvementsEntrants'] ?? 0;
+    totalMouvementsSortants = json['totalMouvementsSortants'] ?? 0;
+    nombreModelesStockBas = json['nombreModelesStockBas'];
+    stockTotalBoutique = json['stockTotalBoutique'];
+    caisse = json['caisse'] ?? 0;
     ticketMoyen = json['ticketMoyen'];
+    tauxRecouvrement = json['tauxRecouvrement'];
+    nbVentesBoutique = json['nbVentesBoutique'];
+    recettesNettes = json['recettesNettes'];
+    montantDuClients = json['montantDuClients'];
+    revenusReservations = json['revenusReservations'];
+    revenusVenteDirecte = json['revenusVenteDirecte'];
     facturesActives = json['facturesActives'];
     mesuresEnCours = json['mesuresEnCours'];
+    revenusFactures = json['revenusFactures'];
   }
 
   @override
@@ -54,10 +88,21 @@ class Kpis extends ModelJson {
     data['commandesEnCours'] = commandesEnCours;
     data['totalDepenses'] = totalDepenses;
     data['totalMouvements'] = totalMouvements;
-    data['recettesNettes'] = recettesNettes;
+    data['totalMouvementsEntrants'] = totalMouvementsEntrants;
+    data['totalMouvementsSortants'] = totalMouvementsSortants;
+    data['nombreModelesStockBas'] = nombreModelesStockBas;
+    data['stockTotalBoutique'] = stockTotalBoutique;
+    data['caisse'] = caisse;
     data['ticketMoyen'] = ticketMoyen;
+    data['tauxRecouvrement'] = tauxRecouvrement;
+    data['nbVentesBoutique'] = nbVentesBoutique;
+    data['recettesNettes'] = recettesNettes;
+    data['montantDuClients'] = montantDuClients;
+    data['revenusReservations'] = revenusReservations;
+    data['revenusVenteDirecte'] = revenusVenteDirecte;
     data['facturesActives'] = facturesActives;
     data['mesuresEnCours'] = mesuresEnCours;
+    data['revenusFactures'] = revenusFactures;
     return data;
   }
 }

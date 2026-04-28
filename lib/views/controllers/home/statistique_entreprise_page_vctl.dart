@@ -1,17 +1,15 @@
 import 'package:ateliya/api/statistique_api.dart';
 import 'package:ateliya/data/models/stats/statistiques_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/constants/period_stat.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
-import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/period_stat_req.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/material.dart';
 
-class StatistiquePageVctl extends AuthViewController {
+class StatistiqueEntreprisePageVctl extends AuthViewController {
   int periodIndex = 0;
   final api = StatistiqueApi();
   final params = PeriodStatReq();
@@ -31,7 +29,6 @@ class StatistiquePageVctl extends AuthViewController {
       params.dateDebut = range.start;
       params.dateFin = range.end;
     } else {
-      // Réinitialiser les dates si on clique sur un raccourci (jour, mois, année)
       if (params.filtre == PeriodStat.jour) {
         dateRange = CustomDateTimeRange.now();
         params.dateDebut = dateRange.start;
@@ -45,14 +42,7 @@ class StatistiquePageVctl extends AuthViewController {
     isLoading = true;
     update();
 
-    final entite = getEntite().value;
-    final fetchFuture = api.getData(
-      entite.id.value,
-      params,
-      entite.type,
-    );
-
-    final res = await fetchFuture.load();
+    final res = await api.getDashboardData(params).load();
 
     isLoading = false;
     if (res.status) {
@@ -91,9 +81,7 @@ class StatistiquePageVctl extends AuthViewController {
 
   @override
   void onReady() {
-    if (entities.isNotEmpty) {
-      fetchStats();
-    }
+    fetchStats();
     super.onReady();
   }
 }
