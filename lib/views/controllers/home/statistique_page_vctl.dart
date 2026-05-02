@@ -1,9 +1,7 @@
 import 'package:ateliya/api/statistique_api.dart';
 import 'package:ateliya/data/models/stats/statistiques_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/constants/period_stat.dart';
-import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/period_stat_req.dart';
@@ -46,22 +44,19 @@ class StatistiquePageVctl extends AuthViewController {
     update();
 
     final entite = getEntite().value;
-    final fetchFuture = api.getData(
+    final res = await api.getData(
       entite.id.value,
       params,
       entite.type,
     );
 
-    final res = await fetchFuture.load();
-
     isLoading = false;
     if (res.status) {
       data = res.data!;
-      update();
     } else {
-      update();
       CMessageDialog.show(message: res.message);
     }
+    update();
   }
 
   Future<void> pickDateRange(BuildContext context) async {

@@ -37,9 +37,9 @@ class StockStatistiquesPage extends StatelessWidget {
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.white54,
                 indicatorWeight: 3,
-                tabs: [
+                tabs: const [
                   Tab(text: "Général"),
-                  Tab(text: "Top Modèles"),
+                  Tab(text: "Mouvements"),
                   Tab(text: "Inventaire"),
                   Tab(text: "Par Taille"),
                 ],
@@ -51,7 +51,7 @@ class StockStatistiquesPage extends StatelessWidget {
                 : TabBarView(
                     children: [
                       _GeneralView(ctl: ctl),
-                      _TopModelesView(ctl: ctl),
+                      _HistoriqueMouvementsView(ctl: ctl),
                       _InventaireView(ctl: ctl),
                       _StockParTailleView(ctl: ctl),
                     ],
@@ -381,13 +381,13 @@ class _MoveDetailsCard extends StatelessWidget {
   }
 }
 
-class _TopModelesView extends StatelessWidget {
+class _HistoriqueMouvementsView extends StatelessWidget {
   final StockStatistiquesVctl ctl;
-  const _TopModelesView({required this.ctl});
+  const _HistoriqueMouvementsView({required this.ctl});
 
   @override
   Widget build(BuildContext context) {
-    final list = ctl.data?.topModeles ?? [];
+    final list = ctl.data?.historiqueMouvements ?? [];
     if (ctl.isLoading && list.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -398,6 +398,10 @@ class _TopModelesView extends StatelessWidget {
       separatorBuilder: (_, __) => const Gap(15),
       itemBuilder: (context, index) {
         final item = list[index];
+        final isSortie = item.type?.toLowerCase() == 'sortie';
+        final color = isSortie ? Colors.red : Colors.green;
+        final icon = isSortie ? Icons.arrow_upward : Icons.arrow_downward;
+
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -405,55 +409,96 @@ class _TopModelesView extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: Colors.grey.shade200),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                backgroundColor: AppColors.primary.withOpacity(0.1),
-                child: Text("${index + 1}",
-                    style: const TextStyle(
-                        color: AppColors.primary, fontWeight: FontWeight.bold)),
-              ),
-              const Gap(15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(item.libelle.value,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const Gap(4),
-                    Text("Taille: ${item.taille.value}",
-                        style:
-                            const TextStyle(color: Colors.grey, fontSize: 12)),
-                    const Gap(8),
-                    Row(
-                      children: [
-                        _SmallLabel(
-                            text: "Entrées: ${item.qteEntree ?? 0}",
-                            color: Colors.green),
-                        const Gap(8),
-                        _SmallLabel(
-                            text: "Sorties: ${item.qteSortie ?? 0}",
-                            color: Colors.red),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("${item.stockActuel ?? 0}",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 18,
-                          color: AppColors.primary)),
-                  const Text("EN STOCK",
-                      style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10)),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: color.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(icon, color: color, size: 20),
+                      ),
+                      const Gap(10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.type ?? '',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, color: color)),
+                          Text(item.date ?? '',
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  _SmallLabel(
+                      text: item.statut ?? '',
+                      color: item.statut == 'CONFIRME'
+                          ? Colors.green
+                          : Colors.orange),
                 ],
               ),
+              if (item.commentaire != null && item.commentaire!.isNotEmpty) ...[
+                const Gap(10),
+                Text(item.commentaire!,
+                    style: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 12,
+                        color: Colors.black54)),
+              ],
+              if (item.lignes != null && item.lignes!.isNotEmpty) ...[
+                const Gap(10),
+                const Divider(height: 1),
+                Theme(
+                  data: Theme.of(context)
+                      .copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    tilePadding: EdgeInsets.zero,
+                    title: Text("${item.lignes!.length} articles concernés",
+                        style: const TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.bold)),
+                    children: item.lignes!.map((ligne) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(ligne.modeleLibelle ?? '',
+                                      style: const TextStyle(
+                                          fontSize: 13, fontWeight: FontWeight.w500)),
+                                  Text(
+                                      "Stock : ${ligne.quantiteAvant ?? 0} ➔ ${ligne.quantiteApres ?? 0}",
+                                      style: const TextStyle(
+                                          fontSize: 11, color: Colors.grey)),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              "${isSortie ? '-' : '+'}${ligne.quantiteMouvement ?? 0}",
+                              style: TextStyle(
+                                  color: color,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ],
           ),
         );

@@ -1,5 +1,6 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/data/models/stats/boutique_info.dart';
+import 'package:ateliya/data/models/stats/historique_mouvement.dart';
 import 'package:ateliya/data/models/stats/stat_periode.dart';
 import 'package:ateliya/data/models/stats/stock_detail_modele.dart';
 import 'package:ateliya/data/models/stats/stock_evolution.dart';
@@ -7,20 +8,19 @@ import 'package:ateliya/data/models/stats/stock_kpis.dart';
 import 'package:ateliya/data/models/stats/stock_par_modele.dart';
 import 'package:ateliya/data/models/stats/stock_par_taille.dart';
 import 'package:ateliya/data/models/stats/stock_repartition.dart';
-import 'package:ateliya/data/models/stats/stock_top_modele.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 
 export 'package:ateliya/data/models/stats/boutique_info.dart';
+export 'package:ateliya/data/models/stats/historique_mouvement.dart';
 export 'package:ateliya/data/models/stats/stat_periode.dart';
 export 'package:ateliya/data/models/stats/stock_detail_modele.dart';
 export 'package:ateliya/data/models/stats/stock_evolution.dart';
 export 'package:ateliya/data/models/stats/stock_kpis.dart';
+export 'package:ateliya/data/models/stats/stock_movement_summary.dart';
 export 'package:ateliya/data/models/stats/stock_par_modele.dart';
 export 'package:ateliya/data/models/stats/stock_par_taille.dart';
 export 'package:ateliya/data/models/stats/stock_repartition.dart';
-export 'package:ateliya/data/models/stats/stock_top_modele.dart';
 export 'package:ateliya/data/models/stats/stock_variante.dart';
-export 'package:ateliya/data/models/stats/stock_movement_summary.dart';
 
 class StockStatistiques extends ModelJson<StockStatistiques> {
   BoutiqueInfo? boutique;
@@ -28,7 +28,7 @@ class StockStatistiques extends ModelJson<StockStatistiques> {
   StockKpis? kpis;
   StockRepartition? repartition;
   List<StockEvolution>? evolution;
-  List<StockTopModele>? topModeles;
+  List<HistoriqueMouvement>? historiqueMouvements;
   List<StockDetailModele>? detailModeles;
   List<StockParModele>? stockParModele;
   List<StockParTaille>? stockParTaille;
@@ -39,7 +39,7 @@ class StockStatistiques extends ModelJson<StockStatistiques> {
     this.kpis,
     this.repartition,
     this.evolution,
-    this.topModeles,
+    this.historiqueMouvements,
     this.detailModeles,
     this.stockParModele,
     this.stockParTaille,
@@ -64,10 +64,10 @@ class StockStatistiques extends ModelJson<StockStatistiques> {
       json['evolution']
           .forEach((v) => evolution!.add(StockEvolution.fromJson(v)));
     }
-    if (json['topModeles'] != null) {
-      topModeles = <StockTopModele>[];
-      json['topModeles']
-          .forEach((v) => topModeles!.add(StockTopModele.fromJson(v)));
+    if (json['historiqueMouvements'] != null) {
+      historiqueMouvements = <HistoriqueMouvement>[];
+      json['historiqueMouvements'].forEach(
+          (v) => historiqueMouvements!.add(HistoriqueMouvement.fromJson(v)));
     }
     if (json['detailModeles'] != null) {
       detailModeles = <StockDetailModele>[];
@@ -96,8 +96,9 @@ class StockStatistiques extends ModelJson<StockStatistiques> {
     if (evolution != null) {
       data['evolution'] = evolution!.map((v) => v.toJson()).toList();
     }
-    if (topModeles != null) {
-      data['topModeles'] = topModeles!.map((v) => v.toJson()).toList();
+    if (historiqueMouvements != null) {
+      data['historiqueMouvements'] =
+          historiqueMouvements!.map((v) => v.toJson()).toList();
     }
     if (detailModeles != null) {
       data['detailModeles'] = detailModeles!.map((v) => v.toJson()).toList();

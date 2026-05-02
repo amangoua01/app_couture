@@ -11,6 +11,8 @@ class Entreprise extends ModelFormData<Entreprise> {
   Fichier? logo;
   String? email;
   String? createdAt;
+  bool? ambassadeur;
+  String? codeMarchand;
 
   Entreprise(
       {super.id,
@@ -18,7 +20,9 @@ class Entreprise extends ModelFormData<Entreprise> {
       this.numero,
       this.logo,
       this.email,
-      this.createdAt});
+      this.createdAt,
+      this.ambassadeur,
+      this.codeMarchand});
 
   Entreprise.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -27,6 +31,8 @@ class Entreprise extends ModelFormData<Entreprise> {
     logo = (json['logo'] != null) ? FichierServer.fromJson(json['logo']) : null;
     email = json['email'];
     createdAt = json['createdAt'];
+    ambassadeur = json['ambassadeur'];
+    codeMarchand = json['codeMarchand'];
   }
 
   Map<String, dynamic> toJson() {
@@ -37,6 +43,8 @@ class Entreprise extends ModelFormData<Entreprise> {
     data['logo'] = logo;
     data['email'] = email;
     data['createdAt'] = createdAt;
+    data['ambassadeur'] = ambassadeur;
+    data['codeMarchand'] = codeMarchand;
     return data;
   }
 

@@ -1,4 +1,5 @@
 import 'package:ateliya/data/dto/abstract/dto_model.dart';
+import 'package:ateliya/data/dto/autre_image_mesure_dto.dart';
 import 'package:ateliya/data/dto/mesure/mensuration_dto.dart';
 import 'package:ateliya/data/dto/mesure/type_mesure_dto.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
@@ -13,6 +14,7 @@ class LigneMesureDto extends DtoModel {
   TypeMesureDto? typeMesureDto;
   bool withOutTissu = true;
   String? description;
+  List<AutreImageMesureDto> autresImages = [];
 
   LigneMesureDto({
     this.modeleImagePath,
@@ -24,6 +26,7 @@ class LigneMesureDto extends DtoModel {
     this.typeMesureDto,
     this.withOutTissu = true,
     this.description,
+    this.autresImages = const [],
   });
 
   @override
@@ -35,6 +38,7 @@ class LigneMesureDto extends DtoModel {
         "typeMesure": typeMesureDto,
         "withOutTissu": withOutTissu,
         "description": description,
+        "autresImages": autresImages,
       };
 
   double get total => montant - remise;

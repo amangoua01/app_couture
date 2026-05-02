@@ -22,6 +22,7 @@ import 'package:ateliya/views/static/ravitaillement/ravitaillement_list_page.dar
 import 'package:ateliya/views/static/stats/stock_statistiques_page.dart';
 import 'package:ateliya/views/static/surcursales/succursales_list_page.dart';
 import 'package:ateliya/views/static/type_mesure/type_mesure_list_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -130,6 +131,8 @@ class SettingPage extends StatelessWidget {
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     // Bouton Mon profil (accès rapide)
+                    _ReferralCodeCard(ctl: ctl),
+                    const Gap(24),
                     _QuickProfileCard(
                       name: ctl.user.fullName,
                       onTap: () => Get.to(() => const ProfilPage())
@@ -190,7 +193,8 @@ class SettingPage extends StatelessWidget {
                         icon: Icons.card_membership_outlined,
                         iconBgColor: const Color(0xFFFFF8E1),
                         color: Colors.amber[800],
-                        visible: Platform.isAndroid && ctl.user.isAdmin,
+                        visible: kDebugMode ||
+                            (Platform.isAndroid && ctl.user.isAdmin),
                         onTap: () => Get.to(() => const AbonnementsListPage()),
                       ),
                       SettingTile(
@@ -445,6 +449,90 @@ class _QuickProfileCard extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ReferralCodeCard extends StatelessWidget {
+  final SettingPageVctl ctl;
+  const _ReferralCodeCard({required this.ctl});
+
+  @override
+  Widget build(BuildContext context) {
+    final code = ctl.user.isAdmin
+        ? (ctl.user.entreprise?.codeMarchand ?? "")
+        : (ctl.user.myReferralCode ?? "");
+
+    if (code.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          childrenPadding:
+              const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+          title: Text(
+            ctl.user.isAdmin ? "Mon Code Marchand" : "Mon Code Parrainage",
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              children: [
+                const Icon(Icons.confirmation_number_outlined,
+                    color: AppColors.primary, size: 18),
+                const Gap(8),
+                Text(
+                  code,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.5,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          children: [
+            const Gap(10),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Image.network(
+                "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=$code",
+                width: 150,
+                height: 150,
+                errorBuilder: (_, __, ___) => const Icon(
+                  Icons.qr_code_2_rounded,
+                  size: 150,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

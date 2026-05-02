@@ -1,7 +1,9 @@
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
+import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
 import 'package:ateliya/tools/widgets/body_edition_page.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
@@ -91,7 +93,6 @@ class EditionModeleBoutiquePage extends StatelessWidget {
             externalLabel: "Taille",
             controller: ctl.tailleCtl,
             enabled: ctl.user.isAdmin,
-            require: true,
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
@@ -162,6 +163,50 @@ class EditionModeleBoutiquePage extends StatelessWidget {
             require: true,
             enabled: ctl.user.isAdmin,
             keyboardType: TextInputType.number,
+            validator: (e) {
+              if (e.toDouble().value >= ctl.prixCtl.toDouble()) {
+                return "Le prix minimal doit être inférieur au prix";
+              }
+              return null;
+            },
+          ),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text("Commission"),
+            subtitle: const Text(
+              "Si activé, l'article pourra être vendu au dessus du prix minimal",
+            ),
+            value: ctl.haveCommission,
+            onChanged: (value) {
+              ctl.haveCommission = value;
+              if (value != true) {
+                if (ctl.item == null) {
+                  ctl.prixMaxCtl.text = "0";
+                } else {
+                  if (ctl.prixMaxCtl.text.isEmpty) {
+                    ctl.prixMaxCtl.text =
+                        (ctl.item!.prixMinimal ?? 0).toString();
+                  }
+                }
+              }
+              ctl.update();
+            },
+          ),
+          const Gap(10),
+          CTextFormField(
+            externalLabel: "Prix maximal",
+            controller: ctl.prixMaxCtl,
+            require: ctl.haveCommission,
+            enabled: ctl.user.isAdmin && ctl.haveCommission,
+            keyboardType: TextInputType.number,
+            validator: (e) {
+              if (ctl.haveCommission) {
+                if (e.toDouble().value <= ctl.prixCtl.toDouble()) {
+                  return "Le prix maximal doit être supérieur au prix.";
+                }
+              }
+              return null;
+            },
           ),
           Visibility(
             visible: ctl.item == null,

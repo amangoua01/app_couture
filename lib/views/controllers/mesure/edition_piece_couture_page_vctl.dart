@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ateliya/api/type_mesure_api.dart';
+import 'package:ateliya/data/dto/autre_image_mesure_dto.dart';
 import 'package:ateliya/data/dto/mesure/ligne_mesure_dto.dart';
 import 'package:ateliya/data/dto/mesure/type_mesure_dto.dart';
 import 'package:ateliya/data/models/type_mesure.dart';
@@ -22,6 +23,7 @@ class EditionPieceCouturePageVctl extends AuthViewController {
   final typeMesureApi = TypeMesureApi();
   final descriptionCtl = TextEditingController();
   bool hasImagePagne = false;
+  final autreImagesMesure = <AutreImageMesureDto>[];
 
   EditionPieceCouturePageVctl(this.ligne) {
     if (ligne != null) {
@@ -33,6 +35,7 @@ class EditionPieceCouturePageVctl extends AuthViewController {
           ligne!.pagneImagePath != null ? File(ligne!.pagneImagePath!) : null;
       modeleImageFile =
           ligne!.modeleImagePath != null ? File(ligne!.modeleImagePath!) : null;
+      autreImagesMesure.addAll(ligne!.autresImages);
     }
   }
 
@@ -51,6 +54,8 @@ class EditionPieceCouturePageVctl extends AuthViewController {
       ligne!.pagneImagePath = pagneImageFile?.path;
       ligne!.modeleImagePath = modeleImageFile?.path;
       ligne!.withOutTissu = !hasImagePagne;
+      ligne!.autresImages = [];
+      ligne!.autresImages.addAll(autreImagesMesure);
 
       Get.back(result: ligne!);
     }

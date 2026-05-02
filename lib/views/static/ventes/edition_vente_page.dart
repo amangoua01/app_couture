@@ -117,13 +117,25 @@ class EditionVentePage extends StatelessWidget {
                   externalLabel: "Prix unitaire",
                   keyboardType: TextInputType.number,
                   require: true,
+                  enabled: ctl.modeleBoutique.haveCommission == true,
+                  hintText: ctl.modeleBoutique.haveCommission == true
+                      ? "[${ctl.modeleBoutique.prixMinimal.toAmount(unit: "F")}, ${ctl.modeleBoutique.prixMax.toAmount(unit: "F")}]"
+                      : "Prix de vente",
                   validator: (e) {
                     if (e == null || e.isEmpty) {
                       return "Le prix est requis";
                     } else {
-                      if (e.toDouble().value <
-                          ctl.modeleBoutique.prixMinimal.value) {
-                        return "Le prix doit être > ou = à ${ctl.modeleBoutique.prixMinimal.toAmount(unit: "F")}";
+                      final prix = e.toDouble().value;
+                      if (ctl.modeleBoutique.haveCommission == true) {
+                        final pMin = ctl.modeleBoutique.prixMinimal ?? 0;
+                        final pMax = ctl.modeleBoutique.prixMax ?? 0;
+                        if (prix < pMin || prix > pMax) {
+                          return "Le prix doit être compris entre ${pMin.toAmount(unit: 'F')} et ${pMax.toAmount(unit: 'F')}";
+                        }
+                      } else {
+                        if (prix < ctl.modeleBoutique.prixMinimal.value) {
+                          return "Le prix doit être > ou = à ${ctl.modeleBoutique.prixMinimal.toAmount(unit: "F")}";
+                        }
                       }
                       return null;
                     }

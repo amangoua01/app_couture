@@ -1,6 +1,5 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/data/models/stats/dash_activites.dart';
-import 'package:ateliya/data/models/stats/dash_activites.dart';
 import 'package:ateliya/data/models/stats/kpis.dart';
 import 'package:ateliya/data/models/stats/periode.dart';
 import 'package:ateliya/data/models/stats/revenus_par_type.dart';
@@ -61,7 +60,6 @@ class StatistiquesEntite extends ModelJson {
         activites.add(DashActivites.fromJson(v));
       });
     }
-
   }
 
   @override

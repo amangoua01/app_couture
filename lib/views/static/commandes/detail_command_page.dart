@@ -71,6 +71,11 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                   fontSize: 18,
                 ),
                 actions: [
+                  IconButton(
+                    onPressed: () => _showUpdateDetailsDialog(ctl, _mesure!),
+                    icon: const Icon(Icons.edit, color: Colors.white),
+                    tooltip: "Modifier les détails",
+                  ),
                   if (_mesure!.resteArgent > 0)
                     IconButton(
                       onPressed: () async {
@@ -740,6 +745,112 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
             ],
           ),
         );
+      },
+    );
+  }
+
+  void _showUpdateDetailsDialog(DetailCommandPageVctl ctl, Mesure mesure) {
+    if (mesure.id == null) return;
+
+    final montantCtl =
+        TextEditingController(text: mesure.montantTotal.toString());
+    DateTime? selectedDate = mesure.dateRetrait;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setModalState) {
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 20,
+                right: 20,
+                top: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Modifier les détails",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const Gap(15),
+                TextField(
+                  controller: montantCtl,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Montant total",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const Gap(15),
+                ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  title: const Text("Date de retrait"),
+                  subtitle: Text(selectedDate != null
+                      ? DateFormat('dd MMM yyyy HH:mm', 'fr_FR')
+                          .format(selectedDate!)
+                      : "Sélectionner une date"),
+                  trailing: const Icon(Icons.calendar_today),
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate ?? DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
+                    if (date != null) {
+                      final time = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.fromDateTime(
+                            selectedDate ?? DateTime.now()),
+                      );
+                      if (time != null) {
+                        setModalState(() {
+                          selectedDate = DateTime(date.year, date.month,
+                              date.day, time.hour, time.minute);
+                        });
+                      }
+                    }
+                  },
+                ),
+                const Gap(20),
+                SizedBox(
+                  width: double.infinity,
+                  child: CButton(
+                    title: "Enregistrer",
+                    onPressed: () async {
+                      final montant = double.tryParse(montantCtl.text);
+                      if (montant == null || selectedDate == null) {
+                        Get.snackbar("Erreur",
+                            "Veuillez entrer un montant et une date valides");
+                        return;
+                      }
+                      Get.back();
+                      final updatedMesure = await ctl.updateDetails(
+                          mesure.id!, montant, selectedDate!);
+                      if (updatedMesure != null) {
+                        setState(() {
+                          _mesure = updatedMesure;
+                        });
+                      }
+                    },
+                  ),
+                ),
+                const Gap(20),
+              ],
+            ),
+          );
+        });
       },
     );
   }

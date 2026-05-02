@@ -43,6 +43,30 @@ class FactureApi extends CrudWebController<Facture> {
     }
   }
 
+  Future<DataResponse<Mesure>> updateDetails(
+      int id, double montantTotal, String dateRetrait) async {
+    try {
+      final response = await client.post(
+        urlBuilder(api: "$id/update-details"),
+        headers: authHeaders,
+        body: jsonEncode({
+          "montantTotal": montantTotal,
+          "dateRetrait": dateRetrait,
+        }),
+      );
+
+      final json = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return DataResponse.success(data: Mesure.fromJson(json["data"] ?? {}));
+      } else {
+        return DataResponse.error(
+            message: json["message"] ?? "Erreur lors de la mise à jour");
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
   Future<DataResponse<FacturesGrouped>> getFacturesEntreprise(
     int succursaleId, {
     String? dateDebut,
@@ -73,6 +97,56 @@ class FactureApi extends CrudWebController<Facture> {
       if (response.statusCode == 200) {
         return DataResponse.success(
             data: FacturesGrouped.fromJson(json['data'] ?? {}));
+      } else {
+        return DataResponse.error(message: json['message'] ?? "Erreur");
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  Future<DataResponse<PaginatedFactures>> getFacturesEntreprisePaginated(
+    int succursaleId, {
+    int page = 1,
+    String? dateDebut,
+    String? dateFin,
+    String? nomClient,
+    String? numeroClient,
+    String? etatFacture,
+    String? onglet,
+  }) async {
+    try {
+      final body = {};
+      if (dateDebut != null) body['dateDebut'] = dateDebut;
+      if (dateFin != null) body['dateFin'] = dateFin;
+      if (nomClient != null && nomClient.isNotEmpty) {
+        body['nomClient'] = nomClient;
+      }
+      if (numeroClient != null && numeroClient.isNotEmpty) {
+        body['numeroClient'] = numeroClient;
+      }
+      if (etatFacture != null) body['etatFacture'] = etatFacture;
+      if (onglet != null) body['onglet'] = onglet;
+
+      final response = await client.post(
+        urlBuilder(
+            api: "advanced/$succursaleId",
+            params: {"with_pagination": "true", "page": "$page"},
+        ),
+        headers: authHeaders,
+        body: jsonEncode(body),
+      );
+
+      final json = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final data = json['data'] as List? ?? [];
+        final items = data.map((x) => Mesure.fromJson(x)).toList();
+        final pagination = json['pagination'] ?? {};
+        final totalPages = pagination['totalPages'] ?? 1;
+
+        return DataResponse.success(
+          data: PaginatedFactures(items: items, totalPages: totalPages),
+        );
       } else {
         return DataResponse.error(message: json['message'] ?? "Erreur");
       }
@@ -115,4 +189,11 @@ class FactureApi extends CrudWebController<Facture> {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+}
+
+class PaginatedFactures {
+  final List<Mesure> items;
+  final int totalPages;
+
+  PaginatedFactures({required this.items, required this.totalPages});
 }

@@ -24,11 +24,13 @@ class EditionRavitaillementPage extends StatelessWidget {
       builder: (ctl) {
         return Scaffold(
           appBar: AppBar(title: const Text('Nouveau ravitaillement')),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _showAddBottomSheet(context, ctl),
-            label: const Text('Ajouter un article'),
-            icon: const Icon(Icons.add),
-          ),
+          floatingActionButton: item == null 
+              ? FloatingActionButton.extended(
+                  onPressed: () => _showAddBottomSheet(context, ctl),
+                  label: const Text('Ajouter un article'),
+                  icon: const Icon(Icons.add),
+                )
+              : null,
           // ── Soumettre ────────────────────────────────────
           bottomNavigationBar: SafeArea(
             child: Padding(
@@ -99,7 +101,7 @@ class EditionRavitaillementPage extends StatelessWidget {
                           (i) => _LigneCard(
                             index: i,
                             ctl: ctl,
-                            // isArticleEditable: item == null,
+                            isSingleItem: item != null,
                           ),
                         ),
                       ],
@@ -229,10 +231,12 @@ class EditionRavitaillementPage extends StatelessWidget {
 class _LigneCard extends StatelessWidget {
   final int index;
   final EditionRavitaillementVctl ctl;
+  final bool isSingleItem;
 
   const _LigneCard({
     required this.index,
     required this.ctl,
+    required this.isSingleItem,
   });
 
   @override
@@ -300,28 +304,30 @@ class _LigneCard extends StatelessWidget {
             ),
 
             // Quantité
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                'Qté: ${ligne.quantiteCtl.text}',
-                style: const TextStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
+            SizedBox(
+              width: 70,
+              child: TextFormField(
+                controller: ligne.quantiteCtl,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                  isDense: true,
+                  labelText: 'Qté',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ),
 
             // Supprimer
-            IconButton(
-              icon:
-                  const Icon(Icons.delete_outline, color: Colors.red, size: 22),
-              onPressed: () => ctl.removeLigne(index),
-            ),
+            if (!isSingleItem)
+              IconButton(
+                icon:
+                    const Icon(Icons.delete_outline, color: Colors.red, size: 22),
+                onPressed: () => ctl.removeLigne(index),
+              ),
           ],
         ),
       ),

@@ -1,13 +1,17 @@
+import 'package:ateliya/data/models/pays.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/views/controllers/auth/register_page_vctl.dart';
+import 'package:country_flags/country_flags.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stepindicator/flutter_stepindicator.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
@@ -95,12 +99,29 @@ class RegisterPage extends StatelessWidget {
                         child: ListView(
                           padding: const EdgeInsets.all(20),
                           children: [
-                            CDropDownFormField(
+                            CDropDownFormField<Pays>(
                               externalLabel: "Pays",
                               require: true,
                               hintText: "Sélectionner le pays",
                               selectedItem: ctl.selectedPays,
                               items: (e, f) => ctl.fetchPays(),
+                              popupProps: PopupProps.menu(
+                                itemBuilder:
+                                    (context, item, isDisabled, isSelected) {
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      child: CountryFlag.fromCountryCode(
+                                        item.code.value,
+                                        theme: const ImageTheme(
+                                          width: 30,
+                                          height: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(item.libelle.value),
+                                  );
+                                },
+                              ),
                               onChanged: (e) {
                                 ctl.selectedPays = e;
                                 ctl.update();
@@ -121,8 +142,17 @@ class RegisterPage extends StatelessWidget {
                             ),
                             CTextFormField(
                               controller: ctl.codeParrainCtl,
-                              externalLabel: "code parrain",
-                              hintText: "Optionnel",
+                              externalLabel: "code parrain (Optionnel)",
+                              hintText: "Saisir un code si vous en avez un",
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.qr_code_scanner, color: AppColors.primary),
+                                onPressed: () async {
+                                  final res = await Get.to(() => const SimpleBarcodeScannerPage());
+                                  if (res is String && res != '-1') {
+                                    ctl.codeParrainCtl.text = res;
+                                  }
+                                },
+                              ),
                             ),
                             CTextFormField(
                               controller: ctl.passwordCtl,

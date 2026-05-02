@@ -395,7 +395,10 @@ class _VarianteCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () => Get.to(() => DetailBoutiqueItemPage(variante)),
+          onTap: () async {
+            final res = await Get.to(() => EditionVentePage(variante));
+            if (res != null) ctl.fetchData();
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -497,35 +500,17 @@ class _VarianteCard extends StatelessWidget {
                           itemBuilder: (_) => [
                             PopupMenuItem<String>(
                               height: 40,
+                              value: 'detail',
+                              child: const Text('Voir les détails'),
+                              onTap: () => Get.to(() => DetailBoutiqueItemPage(variante)),
+                            ),
+                            PopupMenuItem<String>(
+                              height: 40,
                               value: 'vente',
                               child: const Text('Faire une vente'),
                               onTap: () async {
                                 final res = await Get.to(
                                     () => EditionVentePage(variante));
-                                if (res != null) ctl.fetchData();
-                              },
-                            ),
-                            PopupMenuItem<String>(
-                              height: 40,
-                              value: 'vente',
-                              enabled: ctl.user.isAdmin,
-                              child: const Text('Ravitaillement'),
-                              onTap: () async {
-                                final res = await Get.to(
-                                  () => EditionRavitaillementPage.one(variante),
-                                );
-                                if (res != null) ctl.fetchData();
-                              },
-                            ),
-                            PopupMenuItem<String>(
-                              height: 40,
-                              value: 'retrait',
-                              enabled: ctl.user.isAdmin,
-                              child: const Text('Retrait de stock'),
-                              onTap: () async {
-                                final res = await Get.to(
-                                  () => EditionSortieStockPage.one(variante),
-                                );
                                 if (res != null) ctl.fetchData();
                               },
                             ),
@@ -558,13 +543,59 @@ class _VarianteCard extends StatelessWidget {
                       ),
                     ],
                     const Gap(2),
-                    Text(
-                      'Stock : $qty',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: qty > 0 ? Colors.green[700] : Colors.red[600],
-                        fontWeight: FontWeight.w500,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Stock : $qty',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: qty > 0 ? Colors.green[700] : Colors.red[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (ctl.user.isAdmin)
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () async {
+                                  final res = await Get.to(
+                                    () => EditionSortieStockPage.one(variante),
+                                  );
+                                  if (res != null) ctl.fetchData();
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Icon(Icons.remove,
+                                      size: 16, color: Colors.red),
+                                ),
+                              ),
+                              const Gap(6),
+                              GestureDetector(
+                                onTap: () async {
+                                  final res = await Get.to(
+                                    () => EditionRavitaillementPage.one(variante),
+                                  );
+                                  if (res != null) ctl.fetchData();
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Icon(Icons.add,
+                                      size: 16, color: Colors.green),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
                     ),
                   ],
                 ),
