@@ -1,6 +1,5 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/data/models/stats/dash_activites.dart';
-import 'package:ateliya/data/models/stats/dernieres_transactions.dart';
 import 'package:ateliya/data/models/stats/kpis.dart';
 import 'package:ateliya/data/models/stats/periode.dart';
 import 'package:ateliya/data/models/stats/revenus_par_type.dart';
@@ -16,7 +15,6 @@ class StatistiquesEntite extends ModelJson {
   List<RevenusQuotidiens> revenusQuotidiens = const [];
   List<RevenusParType> revenusParType = const [];
   List<DashActivites> activites = const [];
-  List<DernieresTransactions> dernieresTransactions = const [];
 
   StatistiquesEntite({
     this.entityId,
@@ -27,7 +25,6 @@ class StatistiquesEntite extends ModelJson {
     this.revenusQuotidiens = const [],
     this.revenusParType = const [],
     this.activites = const [],
-    this.dernieresTransactions = const [],
   });
 
   @override
@@ -63,13 +60,6 @@ class StatistiquesEntite extends ModelJson {
         activites.add(DashActivites.fromJson(v));
       });
     }
-
-    if (json['dernieresTransactions'] != null) {
-      dernieresTransactions = <DernieresTransactions>[];
-      json['dernieresTransactions'].forEach((v) {
-        dernieresTransactions.add(DernieresTransactions.fromJson(v));
-      });
-    }
   }
 
   @override
@@ -90,8 +80,6 @@ class StatistiquesEntite extends ModelJson {
         revenusQuotidiens.map((v) => v.toJson()).toList();
     data['revenusParType'] = revenusParType.map((v) => v.toJson()).toList();
     data['activites'] = activites.map((v) => v.toJson()).toList();
-    data['dernieresTransactions'] =
-        dernieresTransactions.map((v) => v.toJson()).toList();
 
     return data;
   }

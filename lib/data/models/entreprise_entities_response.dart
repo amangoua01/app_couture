@@ -23,4 +23,5 @@ class EntrepriseEntitiesResponse {
   }
 
   bool get isEmpty => boutiques.isEmpty && surcusales.isEmpty;
+  bool get isNotEmpty => !isEmpty;
 }

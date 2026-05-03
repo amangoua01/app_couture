@@ -15,17 +15,25 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
   final api = AccueilApi();
   final scrollCtl = ScrollController();
   final boutiqueApi = BoutiqueApi();
+  bool presentSubscription = false;
 
   Future<void> loadData() async {
     final entite = getEntite().value;
     loadUnreadCount();
     if (entite.isNotEmpty) {
       final res = await api.getAccueilData(entite.id!, entite.type).load();
+      presentSubscription = false;
+      update();
       if (res.status) {
         data = res.data!;
         update();
       } else {
-        CMessageDialog.show(message: res.message);
+        if (res.detailErrors == "endSubscription") {
+          presentSubscription = true;
+          update();
+        } else {
+          CMessageDialog.show(message: res.message);
+        }
       }
     }
   }

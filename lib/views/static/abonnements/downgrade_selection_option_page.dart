@@ -1,3 +1,5 @@
+import 'package:ateliya/data/models/module_abonnement.dart';
+import 'package:ateliya/data/models/operateur.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/forfait_config_section.dart';
 import 'package:ateliya/views/static/abonnements/abonnement_payment_page.dart';
@@ -6,7 +8,14 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class DowngradeSelectionOptionPage extends StatelessWidget {
-  const DowngradeSelectionOptionPage({super.key});
+  final ModuleAbonnement forfait;
+  final Operateur operateur;
+
+  const DowngradeSelectionOptionPage({
+    required this.forfait,
+    required this.operateur,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -85,8 +94,10 @@ class DowngradeSelectionOptionPage extends StatelessWidget {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () =>
-                        Get.to(() => const AbonnementPaymentPage()),
+                    onPressed: () => Get.to(() => AbonnementPaymentPage(
+                          forfait: forfait,
+                          operateur: operateur,
+                        )),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,

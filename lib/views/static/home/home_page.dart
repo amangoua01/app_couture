@@ -10,6 +10,7 @@ import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/tools/widgets/vente_tile.dart';
 import 'package:ateliya/views/controllers/home/home_page_vctl.dart';
+import 'package:ateliya/views/static/abonnements/forfait_list_page.dart';
 import 'package:ateliya/views/static/caisse/edition_mouvement_page.dart';
 import 'package:ateliya/views/static/clients/edition_client_page.dart';
 import 'package:ateliya/views/static/commandes/commande_list_page.dart';
@@ -199,389 +200,493 @@ class HomePage extends StatelessWidget {
               ),
               child: RefreshIndicator(
                 onRefresh: ctl.loadData,
-                child: ListView(
-                  controller: ctl.scrollCtl,
-                  padding: const EdgeInsets.only(
-                    left: 20,
-                    right: 20,
-                    bottom: 100,
-                  ),
-                  children: [
-                    Visibility(
-                      visible: ctl.user.isAdmin,
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 20),
-                        child: Column(
-                          children: [
-                            // ── Bandeau abonnement ─────────────────────
-                            Container(
+                child: PlaceholderWidget(
+                  condition: !ctl.presentSubscription,
+                  placeholder: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.08),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.primary.withValues(alpha: 0.2),
+                                width: 3,
+                              ),
+                            ),
+                            alignment: Alignment.center,
+                            child: SvgPicture.asset(
+                              "assets/images/svg/atelier.svg",
+                              height: 60,
+                              width: 60,
+                              colorFilter: const ColorFilter.mode(
+                                AppColors.primary,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          const Text(
+                            "Abonnement expiré",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF111827),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            "Votre abonnement actuel n'est plus actif. Veuillez le renouveler pour continuer à utiliser toutes les fonctionnalités de l'application.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[700],
+                              height: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Visibility(
+                            visible: ctl.user.isAdmin,
+                            child: Container(
                               width: double.infinity,
-                              padding: const EdgeInsets.all(20),
+                              height: 56,
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
                                     AppColors.primary,
-                                    AppColors.primary.withValues(alpha: 0.75),
+                                    AppColors.primary.withValues(alpha: 0.9),
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
                                     color: AppColors.primary
-                                        .withValues(alpha: 0.3),
-                                    blurRadius: 16,
-                                    offset: const Offset(0, 6),
+                                        .withValues(alpha: 0.4),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 10),
                                   ),
                                 ],
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 5,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.2),
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.verified_rounded,
-                                              color: Colors.amber,
-                                              size: 14,
-                                            ),
-                                            const Gap(6),
-                                            Text(
-                                              ctl.data.abonnements
-                                                      .firstWhere(
-                                                        (e) =>
-                                                            e.numero ==
-                                                            ctl.data.settings
-                                                                ?.numeroAbonnement,
-                                                        orElse: () => Abonnement(
-                                                            code: "Découverte",
-                                                            description: ""),
-                                                      )
-                                                      .code ??
-                                                  "Découverte",
-                                              style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 12),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const Gap(10),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              constraints: BoxConstraints(
-                                                maxWidth: Get.width * .60,
-                                              ),
-                                              child: AutoSizeText(
-                                                ctl
-                                                    .getEntite()
-                                                    .value
-                                                    .libelle
-                                                    .value,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                minFontSize: 13,
-                                                maxFontSize: 25,
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  // fontSize: 13,
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              ternaryFn(
-                                                condition: ctl
-                                                        .getEntite()
-                                                        .value
-                                                        .type ==
-                                                    EntiteEntrepriseType
-                                                        .succursale,
-                                                ifTrue: "Atelier",
-                                                ifFalse: "Boutique",
-                                              ),
-                                              style: TextStyle(
-                                                color: Colors.white
-                                                    .withValues(alpha: 0.75),
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                              child: TextButton.icon(
+                                onPressed: () =>
+                                    Get.to(() => const ForfaitListPage()),
+                                icon: const Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: Colors.white,
+                                  size: 28,
+                                ),
+                                label: const Text(
+                                  "Gérer mon abonnement",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
                                   ),
-                                  const Gap(18),
-                                  // ── Stats en chips ──────────────────
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 8,
-                                    children: [
-                                      _StatChip(
-                                        icon: Icons.sms_outlined,
-                                        label:
-                                            "${ctl.data.settings?.nombreSms ?? 0} SMS",
-                                      ),
-                                      _StatChip(
-                                        icon: Icons.people_outline,
-                                        label:
-                                            "${ctl.data.settings?.nombreUser ?? 0} utilisateur(s)",
-                                      ),
-                                      _StatChip(
-                                        icon: Icons.store_outlined,
-                                        label:
-                                            "${ctl.data.settings?.nombreSuccursale ?? 0} atelier(s)",
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Gap(12),
-
-                            // ── Stats commandes ─────────────────────
-                            Visibility(
-                              visible: ctl.getEntite().value.type ==
-                                  EntiteEntrepriseType.succursale,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: _MiniStatCard(
-                                      icon: Icons.pending_actions_rounded,
-                                      label: "En cours",
-                                      value:
-                                          "${ctl.data.commandes.where((e) => e.isActive).length}",
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
-                                  const Gap(10),
-                                  Expanded(
-                                    child: _MiniStatCard(
-                                      icon: Icons.check_circle_outline_rounded,
-                                      label: "Terminées",
-                                      value:
-                                          "${ctl.data.commandes.where((e) => !e.isActive).length}",
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const Gap(30),
-                    // ── Section Mon solde ──────────────────────────────
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "Mon solde",
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.green.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 6,
-                                height: 6,
-                                decoration: const BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle,
                                 ),
                               ),
-                              const Gap(5),
-                              const Text(
-                                "Caisse active",
-                                style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  child: ListView(
+                    controller: ctl.scrollCtl,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: 100,
+                    ),
+                    children: [
+                      Visibility(
+                        visible: ctl.user.isAdmin,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 20),
+                          child: Column(
+                            children: [
+                              // ── Bandeau abonnement ─────────────────────
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppColors.primary,
+                                      AppColors.primary.withValues(alpha: 0.75),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.primary
+                                          .withValues(alpha: 0.3),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 6),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 5,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white
+                                                .withValues(alpha: 0.2),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.verified_rounded,
+                                                color: Colors.amber,
+                                                size: 14,
+                                              ),
+                                              const Gap(6),
+                                              Text(
+                                                ctl.data.abonnements
+                                                        .firstWhere(
+                                                          (e) =>
+                                                              e.numero ==
+                                                              ctl.data.settings
+                                                                  ?.numeroAbonnement,
+                                                          orElse: () => Abonnement(
+                                                              code:
+                                                                  "Découverte",
+                                                              description: ""),
+                                                        )
+                                                        .code ??
+                                                    "Découverte",
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 12),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const Gap(10),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                constraints: BoxConstraints(
+                                                  maxWidth: Get.width * .60,
+                                                ),
+                                                child: AutoSizeText(
+                                                  ctl
+                                                      .getEntite()
+                                                      .value
+                                                      .libelle
+                                                      .value,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  minFontSize: 13,
+                                                  maxFontSize: 25,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    // fontSize: 13,
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                ternaryFn(
+                                                  condition: ctl
+                                                          .getEntite()
+                                                          .value
+                                                          .type ==
+                                                      EntiteEntrepriseType
+                                                          .succursale,
+                                                  ifTrue: "Atelier",
+                                                  ifFalse: "Boutique",
+                                                ),
+                                                style: TextStyle(
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.75),
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Gap(18),
+                                    // ── Stats en chips ──────────────────
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
+                                      children: [
+                                        // _StatChip(
+                                        //   icon: Icons.sms_outlined,
+                                        //   label:
+                                        //       "${ctl.data.settings?.nombreSms ?? 0} SMS",
+                                        // ),
+                                        _StatChip(
+                                          icon: Icons.people_outline,
+                                          label:
+                                              "${ctl.data.settings?.nombreUser ?? 0} utilisateur(s)",
+                                        ),
+                                        _StatChip(
+                                          icon: Icons.store_outlined,
+                                          label:
+                                              "${ctl.data.settings?.nombreSuccursale ?? 0} atelier(s)",
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Gap(12),
+
+                              // ── Stats commandes ─────────────────────
+                              Visibility(
+                                visible: ctl.getEntite().value.type ==
+                                    EntiteEntrepriseType.succursale,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: _MiniStatCard(
+                                        icon: Icons.pending_actions_rounded,
+                                        label: "En cours",
+                                        value:
+                                            "${ctl.data.commandes.where((e) => e.isActive).length}",
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                    const Gap(10),
+                                    Expanded(
+                                      child: _MiniStatCard(
+                                        icon:
+                                            Icons.check_circle_outline_rounded,
+                                        label: "Terminées",
+                                        value:
+                                            "${ctl.data.commandes.where((e) => !e.isActive).length}",
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                    const Gap(10),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 16),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            AppColors.primary,
-                            Color.fromRGBO(56, 152, 160, 1),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(18),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 14,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
                       ),
-                      child: Row(
+                      const Gap(30),
+                      // ── Section Mon solde ──────────────────────────────
+                      Row(
                         children: [
+                          const Expanded(
+                            child: Text(
+                              "Mon solde",
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                           Container(
-                            padding: const EdgeInsets.all(9),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.green.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Icon(
-                              Icons.account_balance_wallet_rounded,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                          ),
-                          const Gap(12),
-                          Text(
-                            "Solde caisse",
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.55),
-                              fontSize: 13,
-                            ),
-                          ),
-                          const Spacer(),
-                          AutoSizeText(
-                            ctl.data.caisse.toAmount(unit: "F"),
-                            minFontSize: 16,
-                            maxFontSize: 26,
-                            style: const TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Gap(10),
-                    Builder(
-                      builder: (context) {
-                        return Column(
-                          children: [
-                            Row(
+                            child: Row(
                               children: [
-                                Expanded(
-                                  child: Text(
-                                    ternaryFn(
-                                      condition: ctl.getEntite().value.type ==
-                                          EntiteEntrepriseType.boutique,
-                                      ifTrue:
-                                          "Meilleures ventes (${ctl.data.meilleuresVentes.length})",
-                                      ifFalse:
-                                          "Mes mesures (${ctl.data.commandes.length})",
-                                    ),
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    shape: BoxShape.circle,
                                   ),
                                 ),
-                                OutlinedButton(
-                                  onPressed: () {
-                                    if (ctl.getEntite().value.type ==
-                                        EntiteEntrepriseType.boutique) {
-                                      Get.to(
-                                          () => const VenteBoutiqueListPage());
-                                    } else {
-                                      Get.to(() => const CommandeListPage());
-                                    }
-                                  },
-                                  child: const Text(
-                                    "Voir plus",
-                                    style: TextStyle(
-                                      color: AppColors.primary,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                )
+                                const Gap(5),
+                                const Text(
+                                  "Caisse active",
+                                  style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.w600),
+                                ),
                               ],
                             ),
-                            const Gap(15),
-                            ListView.separated(
-                              shrinkWrap: true,
-                              padding: const EdgeInsets.only(bottom: 100),
-                              physics: const NeverScrollableScrollPhysics(),
-                              separatorBuilder: (_, i) => const Gap(10),
-                              itemBuilder: (_, i) {
-                                if (ctl.getEntite().value.type ==
-                                    EntiteEntrepriseType.boutique) {
-                                  return VenteTile(
-                                    ctl.data.meilleuresVentes[i],
-                                    onDelete: ternaryFn(
-                                      condition: ctl.user.isAdmin,
-                                      ifTrue: (e) => ctl.deletePaiement(
-                                        e.id.value,
-                                      ),
-                                      ifFalse: null,
-                                    ),
-                                    onPrint: () async {
-                                      await ctl.printVenteReceipt(
-                                        ctl.data.meilleuresVentes[i],
-                                        ctl.user.entreprise?.libelle ??
-                                            "Boutique",
-                                        footerMessage: ctl.user.settings
-                                            ?.messageFactureBoutique,
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  return CommandTile(
-                                    mesure: ctl.data.commandes[i],
-                                  );
-                                }
-                              },
-                              itemCount: ternaryFn(
-                                condition: ctl.getEntite().value.type ==
-                                    EntiteEntrepriseType.boutique,
-                                ifTrue: ctl.data.meilleuresVentes.length,
-                                ifFalse: ctl.data.commandes.length,
+                          ),
+                        ],
+                      ),
+                      const Gap(10),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 18, vertical: 16),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              AppColors.primary,
+                              Color.fromRGBO(56, 152, 160, 1),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(18),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 14,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(9),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.account_balance_wallet_rounded,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                            const Gap(12),
+                            Text(
+                              "Solde caisse",
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.55),
+                                fontSize: 13,
+                              ),
+                            ),
+                            const Spacer(),
+                            AutoSizeText(
+                              ctl.data.caisse.toAmount(unit: "F"),
+                              minFontSize: 16,
+                              maxFontSize: 26,
+                              style: const TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: -0.5,
                               ),
                             ),
                           ],
-                        );
-                      },
-                    ),
-                  ],
+                        ),
+                      ),
+                      const Gap(10),
+                      Builder(
+                        builder: (context) {
+                          return Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      ternaryFn(
+                                        condition: ctl.getEntite().value.type ==
+                                            EntiteEntrepriseType.boutique,
+                                        ifTrue:
+                                            "Meilleures ventes (${ctl.data.meilleuresVentes.length})",
+                                        ifFalse:
+                                            "Mes mesures (${ctl.data.commandes.length})",
+                                      ),
+                                      style: const TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  OutlinedButton(
+                                    onPressed: () {
+                                      if (ctl.getEntite().value.type ==
+                                          EntiteEntrepriseType.boutique) {
+                                        Get.to(() =>
+                                            const VenteBoutiqueListPage());
+                                      } else {
+                                        Get.to(() => const CommandeListPage());
+                                      }
+                                    },
+                                    child: const Text(
+                                      "Voir plus",
+                                      style: TextStyle(
+                                        color: AppColors.primary,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              const Gap(15),
+                              ListView.separated(
+                                shrinkWrap: true,
+                                padding: const EdgeInsets.only(bottom: 100),
+                                physics: const NeverScrollableScrollPhysics(),
+                                separatorBuilder: (_, i) => const Gap(10),
+                                itemBuilder: (_, i) {
+                                  if (ctl.getEntite().value.type ==
+                                      EntiteEntrepriseType.boutique) {
+                                    return VenteTile(
+                                      ctl.data.meilleuresVentes[i],
+                                      onDelete: ternaryFn(
+                                        condition: ctl.user.isAdmin,
+                                        ifTrue: (e) => ctl.deletePaiement(
+                                          e.id.value,
+                                        ),
+                                        ifFalse: null,
+                                      ),
+                                      onPrint: () async {
+                                        await ctl.printVenteReceipt(
+                                          ctl.data.meilleuresVentes[i],
+                                          ctl.user.entreprise?.libelle ??
+                                              "Boutique",
+                                          footerMessage: ctl.user.settings
+                                              ?.messageFactureBoutique,
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    return CommandTile(
+                                      mesure: ctl.data.commandes[i],
+                                    );
+                                  }
+                                },
+                                itemCount: ternaryFn(
+                                  condition: ctl.getEntite().value.type ==
+                                      EntiteEntrepriseType.boutique,
+                                  ifTrue: ctl.data.meilleuresVentes.length,
+                                  ifFalse: ctl.data.commandes.length,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

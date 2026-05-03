@@ -84,17 +84,36 @@ class CommandeListPage extends StatelessWidget {
 
                 return RefreshIndicator(
                   onRefresh: ctl.getList,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(
-                      left: 15,
-                      right: 15,
-                      bottom: 100,
-                      top: 15,
-                    ),
-                    itemCount: ctl.items.length,
-                    itemBuilder: (_, i) => Padding(
-                      padding: const EdgeInsets.only(bottom: 15),
-                      child: CommandTile(mesure: ctl.items[i]),
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (!ctl.isLoadingMore &&
+                          scrollInfo.metrics.pixels ==
+                              scrollInfo.metrics.maxScrollExtent) {
+                        ctl.loadMore();
+                      }
+                      return false;
+                    },
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(
+                        left: 15,
+                        right: 15,
+                        bottom: 100,
+                        top: 15,
+                      ),
+                      itemCount: ctl.items.length + (ctl.isLoadingMore ? 1 : 0),
+                      itemBuilder: (_, i) {
+                        if (i == ctl.items.length) {
+                          return const Padding(
+                            padding: EdgeInsets.all(15.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: CommandTile(mesure: ctl.items[i]),
+                        );
+                      },
                     ),
                   ),
                 );

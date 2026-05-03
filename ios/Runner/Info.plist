@@ -56,5 +56,20 @@
 	<string>Ateliya utilise le Bluetooth pour se connecter à vos imprimantes thermiques et imprimer instantanément vos reçus et factures clients.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Ateliya utilise le Bluetooth pour se connecter à vos imprimantes thermiques et imprimer instantanément vos reçus et factures clients.</string>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>redirectionurl.ateliya.com</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ateliya</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

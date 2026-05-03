@@ -8,10 +8,13 @@ class Settings extends ModelJson {
   int nombreSuccursale = 0;
   int nombreJourRestantPourEnvoyerSms = 0;
   int numeroAbonnement = 0;
+  int nombreBoutique = 0;
+  String? modeleMessageEnvoyerPourRendezVousProche;
   String? messageFactureBoutique;
   String? messageFactureAtelier;
   DateTime? createdAt;
   bool isActive = false;
+  bool? isMallActive;
 
   Settings({
     super.id,
@@ -20,10 +23,13 @@ class Settings extends ModelJson {
     this.nombreSuccursale = 0,
     this.nombreJourRestantPourEnvoyerSms = 0,
     this.numeroAbonnement = 0,
+    this.nombreBoutique = 0,
+    this.modeleMessageEnvoyerPourRendezVousProche,
     this.messageFactureBoutique,
     this.messageFactureAtelier,
     this.createdAt,
     this.isActive = false,
+    this.isMallActive,
   });
 
   Settings.fromJson(Json json) {
@@ -34,10 +40,13 @@ class Settings extends ModelJson {
     nombreJourRestantPourEnvoyerSms =
         json["nombreJourRestantPourEnvoyerSms"] ?? 0;
     numeroAbonnement = json["numeroAbonnement"] ?? 0;
+    nombreBoutique = json["nombreBoutique"] ?? 0;
+    modeleMessageEnvoyerPourRendezVousProche = json["modeleMessageEnvoyerPourRendezVousProche"];
     messageFactureBoutique = json["messageFactureBoutique"];
     messageFactureAtelier = json["messageFactureAtelier"];
     createdAt = json["createdAt"].toString().toDateTime();
     isActive = json["isActive"] ?? false;
+    isMallActive = json["isMallActive"];
   }
 
   @override
@@ -51,9 +60,12 @@ class Settings extends ModelJson {
         "nombreSuccursale": nombreSuccursale,
         "nombreJourRestantPourEnvoyerSms": nombreJourRestantPourEnvoyerSms,
         "numeroAbonnement": numeroAbonnement,
+        "nombreBoutique": nombreBoutique,
+        "modeleMessageEnvoyerPourRendezVousProche": modeleMessageEnvoyerPourRendezVousProche,
         "messageFactureBoutique": messageFactureBoutique,
         "messageFactureAtelier": messageFactureAtelier,
         "createdAt": createdAt?.toIso8601String(),
         "isActive": isActive,
+        "isMallActive": isMallActive,
       };
 }

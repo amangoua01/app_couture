@@ -1,29 +1,38 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/data/models/stats/activites_boutique.dart';
-import 'package:ateliya/data/models/stats/dernieres_transactions.dart';
 import 'package:ateliya/data/models/stats/kpis.dart';
+import 'package:ateliya/data/models/stats/modele_stock_stat.dart';
 import 'package:ateliya/data/models/stats/periode.dart';
 import 'package:ateliya/data/models/stats/revenus_par_type.dart';
 import 'package:ateliya/data/models/stats/revenus_quotidiens.dart';
+import 'package:ateliya/data/models/stats/top_modele_vendu.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 
 class StatistiquesBoutique extends ModelJson {
+  int? entityId;
+  String? entityNom;
+  String? entityType;
   Periode? periode;
   Kpis kpis = Kpis();
   List<RevenusQuotidiens> revenusQuotidiens = [];
   List<RevenusParType> revenusParType = [];
   List<ActivitesBoutique>? activitesBoutique;
-  List<DernieresTransactions>? dernieresTransactions;
-  int? boutiqueId;
+  List<ModeleStockStat>? topModelesEnStock;
+  List<ModeleStockStat>? modelesStock;
+  List<TopModeleVendu>? topModelesVendus;
 
   StatistiquesBoutique({
+    this.entityId,
+    this.entityNom,
+    this.entityType,
     this.periode,
     Kpis? kpis,
     this.revenusQuotidiens = const [],
     this.revenusParType = const [],
     this.activitesBoutique,
-    this.dernieresTransactions,
-    this.boutiqueId,
+    this.topModelesEnStock,
+    this.modelesStock,
+    this.topModelesVendus,
   }) : kpis = kpis ?? Kpis();
 
   @override
@@ -32,6 +41,9 @@ class StatistiquesBoutique extends ModelJson {
   }
 
   StatistiquesBoutique.fromJson(Json json) {
+    entityId = json['entity_id'] ?? json['boutique_id'];
+    entityNom = json['entity_nom'];
+    entityType = json['entity_type'];
     periode =
         json['periode'] != null ? Periode.fromJson(json['periode']) : null;
     kpis = json['kpis'] != null ? Kpis.fromJson(json['kpis']) : Kpis();
@@ -57,20 +69,34 @@ class StatistiquesBoutique extends ModelJson {
       });
     }
 
-    if (json['dernieresTransactions'] != null) {
-      dernieresTransactions = <DernieresTransactions>[];
-      json['dernieresTransactions'].forEach((v) {
-        dernieresTransactions!.add(DernieresTransactions.fromJson(v));
+    if (json['topModelesEnStock'] != null) {
+      topModelesEnStock = <ModeleStockStat>[];
+      json['topModelesEnStock'].forEach((v) {
+        topModelesEnStock!.add(ModeleStockStat.fromJson(v));
       });
     }
 
-    boutiqueId = json['boutique_id'];
+    if (json['modelesStock'] != null) {
+      modelesStock = <ModeleStockStat>[];
+      json['modelesStock'].forEach((v) {
+        modelesStock!.add(ModeleStockStat.fromJson(v));
+      });
+    }
+
+    if (json['topModelesVendus'] != null) {
+      topModelesVendus = <TopModeleVendu>[];
+      json['topModelesVendus'].forEach((v) {
+        topModelesVendus!.add(TopModeleVendu.fromJson(v));
+      });
+    }
   }
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-
+    data['entity_id'] = entityId;
+    data['entity_nom'] = entityNom;
+    data['entity_type'] = entityType;
     if (periode != null) {
       data['periode'] = periode!.toJson();
     }
@@ -82,11 +108,17 @@ class StatistiquesBoutique extends ModelJson {
       data['activitesBoutique'] =
           activitesBoutique!.map((v) => v.toJson()).toList();
     }
-    if (dernieresTransactions != null) {
-      data['dernieresTransactions'] =
-          dernieresTransactions!.map((v) => v.toJson()).toList();
+    if (topModelesEnStock != null) {
+      data['topModelesEnStock'] =
+          topModelesEnStock!.map((v) => v.toJson()).toList();
     }
-    data['boutique_id'] = boutiqueId;
+    if (modelesStock != null) {
+      data['modelesStock'] = modelesStock!.map((v) => v.toJson()).toList();
+    }
+    if (topModelesVendus != null) {
+      data['topModelesVendus'] =
+          topModelesVendus!.map((v) => v.toJson()).toList();
+    }
 
     return data;
   }

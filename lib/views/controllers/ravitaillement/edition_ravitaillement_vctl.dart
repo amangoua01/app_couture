@@ -64,7 +64,8 @@ class EditionRavitaillementVctl extends AuthViewController {
     update();
   }
 
-  static LigneRavitaillementForm createLigne(ModeleBoutique modele, String qty) {
+  static LigneRavitaillementForm createLigne(
+      ModeleBoutique modele, String qty) {
     return LigneRavitaillementForm()
       ..modele = modele
       ..quantiteCtl.text = qty;
@@ -124,7 +125,8 @@ class EditionRavitaillementVctl extends AuthViewController {
 
     if (res.status) {
       CMessageDialog.show(
-        message: 'Ravitaillement enregistré avec succès',
+        message:
+            'Ravitaillement enregistré avec succès. Le stock sera mis à jour après validation.',
         isSuccess: true,
       );
       Get.back(result: true);

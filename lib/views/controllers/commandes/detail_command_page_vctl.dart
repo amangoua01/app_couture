@@ -1,3 +1,4 @@
+import 'package:ateliya/api/facture_api.dart';
 import 'package:ateliya/api/mesure_api.dart';
 import 'package:ateliya/data/models/mesure.dart';
 import 'package:ateliya/tools/extensions/future.dart';
@@ -9,6 +10,7 @@ import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.da
 class DetailCommandPageVctl extends AuthViewController
     with PrinterManagerViewMixin {
   final mesureApi = MesureApi();
+  final factureApi = FactureApi();
 
   Future<void> printReceipt(Mesure mesure) async {
     await printMesureReceipt(
@@ -18,7 +20,12 @@ class DetailCommandPageVctl extends AuthViewController
   }
 
   Future<void> exportPdf(Mesure mesure) async {
-    await CommandReceiptPdf.generate(mesure);
+    await CommandReceiptPdf.generate(
+      mesure,
+      entreprise: user.entreprise,
+      succursale: mesure.succursale,
+      messageExigences: user.settings?.messageFactureAtelier,
+    );
   }
 
   Future<void> printClientMensurations(Mesure mesure) async {
@@ -45,6 +52,25 @@ class DetailCommandPageVctl extends AuthViewController
     if (res.status) {
       CMessageDialog.show(
         message: "État de la commande modifié avec succès",
+        isSuccess: true,
+      );
+      return res.data;
+    } else {
+      CMessageDialog.show(message: res.message);
+      return null;
+    }
+  }
+
+  Future<Mesure?> updateDetails(
+      int id, double montantTotal, DateTime dateRetrait) async {
+    final formattedDate =
+        "${dateRetrait.year}-${dateRetrait.month.toString().padLeft(2, '0')}-${dateRetrait.day.toString().padLeft(2, '0')} ${dateRetrait.hour.toString().padLeft(2, '0')}:${dateRetrait.minute.toString().padLeft(2, '0')}:00";
+    final res = await factureApi
+        .updateDetails(id, montantTotal, formattedDate)
+        .load();
+    if (res.status) {
+      CMessageDialog.show(
+        message: "Détails mis à jour avec succès",
         isSuccess: true,
       );
       return res.data;

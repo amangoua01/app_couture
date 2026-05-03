@@ -41,7 +41,7 @@ class MesureDto extends MultiPartDtoModel {
             })
         .toList();
 
-    return {
+    final map = {
       "clientId": client?.id?.toString() ?? "",
       "succursaleId": succursale?.id?.toString() ?? "",
       "montantTotal": montantTotal.toString(),
@@ -51,6 +51,17 @@ class MesureDto extends MultiPartDtoModel {
       "dateRetrait": dateRetrait?.toIso8601String() ?? "",
       "mesures": jsonEncode(mesuresJson),
     };
+
+    for (var i = 0; i < lignesMesures.length; i++) {
+      final item = lignesMesures[i];
+      for (var j = 0; j < item.autresImages.length; j++) {
+        final autreImage = item.autresImages[j];
+        map["mesures[$i][autreImageMesures][$j][quantite]"] =
+            autreImage.quantite.toString();
+      }
+    }
+
+    return map;
   }
 
   @override
@@ -76,6 +87,22 @@ class MesureDto extends MultiPartDtoModel {
           "mesures[$i][photoModele]",
           item.modeleImagePath!,
         ));
+      }
+      for (var j = 0; j < item.autresImages.length; j++) {
+        final autreImage = item.autresImages[j];
+        if (autreImage.pagne != null) {
+          files.add(await MultipartFile.fromPath(
+            "mesures[$i][autreImageMesures][$j][imagePagne]",
+            autreImage.pagne!.path,
+          ));
+        }
+        if (autreImage.modele != null) {
+          files.add(await MultipartFile.fromPath(
+            "mesures[$i][autreImageMesures][$j][imageModele]",
+            autreImage.modele!.path,
+          ));
+        }
+        
       }
     }
     return files;

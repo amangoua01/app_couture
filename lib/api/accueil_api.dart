@@ -23,7 +23,9 @@ class AccueilApi extends WebController {
         return DataResponse.success(data: AccueilData.fromJson(data["data"]));
       } else {
         return DataResponse.error(
-            message: data["message"] ?? res.reasonPhrase ?? "Erreur inconnu");
+          message: data["message"] ?? res.reasonPhrase ?? "Erreur inconnu",
+          detailErrors: data["code"],
+        );
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);

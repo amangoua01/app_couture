@@ -5,16 +5,20 @@ class Subscriptions {
   String? etat;
   Entreprise? entreprise;
   String? dateFin;
+  String? dateDebut;
   String? type;
   String? createdAt;
+  Map<String, dynamic>? moduleAbonnement;
 
   Subscriptions(
       {this.id,
       this.etat,
       this.entreprise,
       this.dateFin,
+      this.dateDebut,
       this.type,
-      this.createdAt});
+      this.createdAt,
+      this.moduleAbonnement});
 
   Subscriptions.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -23,8 +27,10 @@ class Subscriptions {
         ? Entreprise.fromJson(json['entreprise'])
         : null;
     dateFin = json['dateFin'];
+    dateDebut = json['dateDebut'];
     type = json['type'];
     createdAt = json['createdAt'];
+    moduleAbonnement = json['moduleAbonnement'];
   }
 
   Map<String, dynamic> toJson() {
@@ -35,8 +41,10 @@ class Subscriptions {
       data['entreprise'] = entreprise!.toJson();
     }
     data['dateFin'] = dateFin;
+    data['dateDebut'] = dateDebut;
     data['type'] = type;
     data['createdAt'] = createdAt;
+    data['moduleAbonnement'] = moduleAbonnement;
     return data;
   }
 }

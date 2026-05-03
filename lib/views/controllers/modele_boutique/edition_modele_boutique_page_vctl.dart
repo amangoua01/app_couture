@@ -24,6 +24,8 @@ class EditionModeleBoutiquePageVctl
   Boutique? boutique;
   Modele? modele;
   int? pickerColor;
+  bool haveCommission = false;
+  final prixMaxCtl = TextEditingController(text: "0");
 
   EditionModeleBoutiquePageVctl(super.item) : super(api: ModeleBoutiqueApi());
 
@@ -37,6 +39,8 @@ class EditionModeleBoutiquePageVctl
       prix: prixCtl.text,
       prixMinimal: prixMinimalCtl.toDouble(),
       color: pickerColor,
+      haveCommission: haveCommission,
+      prixMax: (haveCommission ? prixMaxCtl : prixMinimalCtl).toDouble(),
     );
     final res = await api.create(data).load();
     if (res.status) {
@@ -55,6 +59,8 @@ class EditionModeleBoutiquePageVctl
     prixCtl.text = item.prix.toDouble().value.toString();
     prixMinimalCtl.text = item.prixMinimal?.toDouble().value.toString() ?? "0";
     pickerColor = item.color;
+    haveCommission = item.haveCommission ?? false;
+    prixMaxCtl.text = item.prixMax.value.toString();
   }
 
   @override
@@ -65,6 +71,8 @@ class EditionModeleBoutiquePageVctl
     item.prixMinimal = prixMinimalCtl.toDouble();
     item.taille = tailleCtl.text;
     item.color = pickerColor;
+    item.haveCommission = haveCommission;
+    item.prixMax = prixMaxCtl.toDouble();
     final res = await api.update(item).load();
     if (res.status) {
       return res.data;

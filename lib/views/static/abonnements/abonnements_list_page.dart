@@ -14,10 +14,6 @@ class AbonnementsListPage extends StatelessWidget {
     return GetBuilder(
       init: AbonnementsListPageVctl(),
       builder: (ctl) {
-        final abonnementsActifs = ctl.abonnements.where((a) => a.etat).length;
-        final abonnementsInactifs =
-            ctl.abonnements.where((a) => !a.etat).length;
-
         return Scaffold(
           backgroundColor: Colors.grey[50],
           appBar: AppBar(
@@ -39,7 +35,7 @@ class AbonnementsListPage extends StatelessWidget {
           ),
           body: ctl.isLoading
               ? const Center(child: CircularProgressIndicator())
-              : ctl.abonnements.isEmpty
+              : ctl.abonnementActif == null && ctl.totalAbonnement == 0
                   ? _buildEmptyState(context)
                   : RefreshIndicator(
                       onRefresh: ctl.fetchAbonnements,
@@ -69,9 +65,9 @@ class AbonnementsListPage extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'Tableau de bord',
-                                    style: TextStyle(
+                                  Text(
+                                    'Tableau de bord • Total: ${ctl.totalAbonnement}',
+                                    style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -82,17 +78,8 @@ class AbonnementsListPage extends StatelessWidget {
                                     children: [
                                       Expanded(
                                         child: _buildStatCard(
-                                          'Total',
-                                          ctl.abonnements.length.toString(),
-                                          Icons.subscriptions,
-                                          Colors.white,
-                                        ),
-                                      ),
-                                      const Gap(10),
-                                      Expanded(
-                                        child: _buildStatCard(
                                           'Actifs',
-                                          abonnementsActifs.toString(),
+                                          ctl.nombreAbonnementActif.toString(),
                                           Icons.check_circle,
                                           Colors.green,
                                         ),
@@ -101,9 +88,19 @@ class AbonnementsListPage extends StatelessWidget {
                                       Expanded(
                                         child: _buildStatCard(
                                           'Inactifs',
-                                          abonnementsInactifs.toString(),
+                                          ctl.nombreAbonnementPasse.toString(),
                                           Icons.cancel,
                                           Colors.orange,
+                                        ),
+                                      ),
+                                      const Gap(10),
+                                      Expanded(
+                                        child: _buildStatCard(
+                                          'A venir',
+                                          ctl.nombreAbonnementPending
+                                              .toString(),
+                                          Icons.timer,
+                                          Colors.deepOrange,
                                         ),
                                       ),
                                     ],
@@ -135,13 +132,15 @@ class AbonnementsListPage extends StatelessWidget {
                                     child: Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 15),
-                                      child: AbonnementTile(
-                                        ctl.abonnements[index],
-                                      ),
+                                      child: ctl.abonnementActif != null
+                                          ? AbonnementTile(
+                                              ctl.abonnementActif!,
+                                            )
+                                          : const SizedBox(),
                                     ),
                                   );
                                 },
-                                childCount: ctl.abonnements.length,
+                                childCount: ctl.abonnementActif != null ? 1 : 0,
                               ),
                             ),
                           ),

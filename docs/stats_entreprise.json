@@ -1,0 +1,338 @@
+{
+    "success": true,
+    "data": {
+        "periode": {
+            "debut": "2026-01-01",
+            "fin": "2026-12-31",
+            "nbJours": 365
+        },
+        "kpis": {
+            "chiffreAffaires": 10126909,
+            "totalDepenses": 402000,
+            "totalMouvements": -7117000,
+            "totalMouvementsEntrants": 4622000,
+            "totalMouvementsSortants": 11739000,
+            "reservationsActives": 0,
+            "clientsActifs": 380,
+            "commandesEnCours": 0,
+            "caisse": 3039909,
+            "ticketMoyen": 28538,
+            "nbVentesBoutique": 279,
+            "recettesNettes": 9724909,
+            "montantDuClients": 0,
+            "revenusReservations": 0,
+            "revenusVenteDirecte": 7962000,
+            "revenusFactures": 2164909
+        },
+        "revenusQuotidiens": [
+            {
+                "jour": "Mer 02",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Jeu 03",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Ven 04",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Sam 05",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Dim 06",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 07",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mar 08",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mer 09",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Jeu 10",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Ven 11",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Sam 12",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Dim 13",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 14",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mar 15",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mer 16",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Jeu 17",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Ven 18",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Sam 19",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Dim 20",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 21",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mar 22",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mer 23",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Jeu 24",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Ven 25",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Sam 26",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Dim 27",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 28",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mar 29",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mer 30",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Jeu 31",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            }
+        ],
+        "revenusParType": [
+            {
+                "type": "Réservations",
+                "revenus": 0
+            },
+            {
+                "type": "Ventes boutique",
+                "revenus": 7962000
+            },
+            {
+                "type": "Factures",
+                "revenus": 2164909
+            },
+            {
+                "type": "Mesures",
+                "revenus": 0
+            }
+        ],
+        "activitesBoutique": [
+            {
+                "activite": "Réservations",
+                "nombre": 0,
+                "revenus": 0,
+                "progression": 100
+            },
+            {
+                "activite": "Ventes directes",
+                "nombre": 0,
+                "revenus": 7962000,
+                "progression": 100
+            },
+            {
+                "activite": "Factures clients",
+                "nombre": 167,
+                "revenus": 2164909,
+                "progression": 100
+            },
+            {
+                "activite": "Prises de mesures",
+                "nombre": 201,
+                "revenus": 0,
+                "progression": 100
+            }
+        ],
+        "dernieresTransactions": [
+            {
+                "id": "VTE-594",
+                "type": "Vente",
+                "client": "Mme  Christeel ",
+                "montant": 15000,
+                "statut": "payée"
+            },
+            {
+                "id": "VTE-593",
+                "type": "Vente",
+                "client": "Mr Kouassi",
+                "montant": 15000,
+                "statut": "payée"
+            },
+            {
+                "id": "FAC-203",
+                "type": "Facture",
+                "client": "Papa  De Prisca",
+                "montant": 5000,
+                "statut": "payée"
+            }
+        ],
+        "topModelesVendus": [
+            {
+                "nom": "Tunique",
+                "ventes": 134,
+                "revenus": 3674500
+            },
+            {
+                "nom": "raphia ",
+                "ventes": 81,
+                "revenus": 1410000
+            },
+            {
+                "nom": "chemise classique ",
+                "ventes": 115,
+                "revenus": 1110000
+            },
+            {
+                "nom": "Chemise cubaine",
+                "ventes": 72,
+                "revenus": 1050000
+            },
+            {
+                "nom": "Capuche",
+                "ventes": 11,
+                "revenus": 165000
+            }
+        ],
+        "periode_recherche": {
+            "debut": "2026-01-01 00:00:00",
+            "fin": "2026-12-31 23:59:59"
+        }
+    }
+}

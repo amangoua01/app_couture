@@ -15,6 +15,7 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
   int? quantite;
   String? prix;
   double? prixMinimal;
+  double? prixMax;
   Modele? modele;
   List<LigneEntres> _ligneEntres = [];
   List<LigneReservations> _ligneReservations = [];
@@ -25,11 +26,13 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
   Boutique? boutique;
   User? creator;
   int? color;
+  bool? haveCommission;
 
   ModeleBoutique({
     this.quantite,
     this.prix,
     this.prixMinimal,
+    this.prixMax,
     this.modele,
     List<LigneEntres> ligneEntres = const [],
     List<LigneReservations> ligneReservations = const [],
@@ -39,6 +42,7 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
     this.isActive,
     this.boutique,
     this.color,
+    this.haveCommission,
   })  : _ligneEntres = ligneEntres,
         _ligneReservations = ligneReservations,
         _paiementBoutiqueLignes = paiementBoutiqueLignes;
@@ -53,6 +57,8 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
     quantite = json['quantite'];
     prix = json['prix'];
     prixMinimal = json['prixMinimal'].toString().toDouble();
+    haveCommission = json['haveCommission'];
+    prixMax = json['prixMax'].toString().toDouble();
     modele = json['modele'] != null ? Modele.fromJson(json['modele']) : null;
     if (json['ligneEntres'] != null) {
       _ligneEntres = <LigneEntres>[];
@@ -89,6 +95,8 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
     data['modele'] = modele?.id;
     data['boutique'] = boutique?.id;
     data['prix'] = prix;
+    data['haveCommission'] = haveCommission;
+    data['prixMax'] = prixMax;
     data['prixMinimal'] = prixMinimal;
     data['taille'] = taille;
     data['color'] = color;

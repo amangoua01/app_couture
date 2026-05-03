@@ -1,16 +1,11 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/constants/period_stat.dart';
+import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
-import 'package:ateliya/tools/extensions/types/int.dart';
-import 'package:ateliya/tools/models/stat_card_item.dart';
-import 'package:ateliya/tools/widgets/empty_data_widget.dart';
-import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
-import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
-import 'package:ateliya/tools/widgets/placeholder_builder.dart';
-import 'package:ateliya/tools/widgets/placeholder_widget.dart';
-import 'package:ateliya/tools/widgets/select_dash_period_sub_page.dart';
+import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/views/controllers/home/statistique_page_vctl.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:ateliya/views/static/home/sub_pages/stats/atelier/atelier_stats_sub_page.dart';
+import 'package:ateliya/views/static/home/sub_pages/stats/boutique/boutique_stats_sub_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -21,394 +16,103 @@ class StatistiquePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<StatistiquePageVctl>(
-      init: StatistiquePageVctl(),
-      builder: (ctl) {
-        return Scaffold(
-          backgroundColor: Colors.grey[50],
-          appBar: AppBar(
-            title: const Text("Statistiques",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            elevation: 0,
-            centerTitle: true,
-            actions: [
-              NotifBadgeIcon(
-                count: ctl.nbUnreadNotifs,
-                onRefresh: () => ctl.loadUnreadCount(),
-              ),
-            ],
-          ),
-          body: PlaceholderWidget(
-            condition: ctl.getEntite().value.isNotEmpty,
-            placeholder: const EmptyDataWidget(
-              message: "Aucune entité sélectionnée",
+    return GetBuilder(
+        init: StatistiquePageVctl(),
+        builder: (ctl) {
+          return Scaffold(
+            appBar: MainAppBar(
+              enterpriseTitle: ctl.getEntite().value.libelle.value,
+              notifCount: ctl.nbUnreadNotifs,
+              onSelectionChanged: () {
+                ctl.fetchStats(indexPeriod: ctl.periodIndex);
+              },
+              onNotifRefresh: () => ctl.loadUnreadCount(),
             ),
-            child: RefreshIndicator(
-              onRefresh: ctl.fetchStats,
-              child: ListView(
-                padding: const EdgeInsets.all(20),
-                children: [
-                  // Period Selector
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: Colors.grey.shade200),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      child: ToggleSwitch(
-                        initialLabelIndex: ctl.periodIndex,
-                        totalSwitches: 4,
-                        minWidth: (Get.width - 60) / 4,
-                        cornerRadius: 25,
-                        activeBgColor: const [AppColors.primary],
-                        inactiveBgColor: Colors.white,
+            body: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primary,
+                  ),
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                  child: Column(
+                    children: [
+                      ToggleSwitch(
+                        inactiveBgColor: Colors.white.withOpacity(0.2),
+                        activeBgColor: const [AppColors.yellow],
                         activeFgColor: Colors.white,
-                        inactiveFgColor: Colors.grey,
-                        labels:
-                            PeriodStat.values.map((e) => e.libelle).toList(),
+                        inactiveFgColor: Colors.white70,
+                        minWidth: 100.0,
+                        cornerRadius: 12,
+                        initialLabelIndex: ctl.selectedIndex,
+                        labels: const ["Jour", "Mois", "Année", "Période"],
                         onToggle: (index) {
                           if (index == 3) {
-                            ctl.periodIndex = index ?? 0;
-                            ctl.update();
+                            ctl.pickDateRange(context);
                           } else {
-                            if (index != null) {
-                              ctl.fetchStats(indexPeriod: index);
-                            }
+                            ctl.selectedIndex = index ?? 0;
+                            ctl.fetchStats(indexPeriod: index ?? 0);
                           }
                         },
                       ),
-                    ),
-                  ),
-                  PlaceholderBuilder(
-                      condition: ctl.periodIndex == 3,
-                      builder: () {
-                        return Column(
-                          children: [
-                            const Gap(20),
-                            GestureDetector(
-                              onTap: () => CBottomSheet.show(
-                                child: SelectDashPeriodSubPage(ctl.dateRange),
-                              ).then((e) {
-                                if (e is DateTimeRange) {
-                                  ctl.dateRange = e;
-                                  ctl.params.dateDebut = e.start;
-                                  ctl.params.dateFin = e.end;
-                                  ctl.update();
-                                  ctl.fetchStats(indexPeriod: ctl.periodIndex);
-                                }
-                              }),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 15),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: AppColors.primary),
+                      if (ctl.selectedIndex == 3) ...[
+                        const Gap(10),
+                        GestureDetector(
+                          onTap: () => ctl.pickDateRange(context),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Colors.white24),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.calendar_month,
+                                    color: Colors.white70, size: 16),
+                                const Gap(8),
+                                Text(
+                                  ctl.dateRange.toFrenchDate,
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.calendar_today,
-                                            color: AppColors.primary, size: 20),
-                                        const Gap(10),
-                                        Text(
-                                          ctl.dateRange.toFrenchDate,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.primary),
-                                        ),
-                                      ],
-                                    ),
-                                    const Icon(Icons.arrow_drop_down,
-                                        color: AppColors.primary),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }),
-                  const Gap(25),
-
-                  // KPIs Grid
-                  GridView(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 15,
-                      crossAxisSpacing: 15,
-                      childAspectRatio: 1.3,
-                    ),
-                    children: [
-                      _buildStatCard(
-                        title: "Commandes en cours",
-                        value: (ctl.data.kpis.commandesEnCours as int?).toAmount(),
-                        icon: Icons.hourglass_empty,
-                        color: Colors.orange,
-                        item: StatCardItem(
-                            title: "", value: "", isIncrease: false),
-                      ),
-                      _buildStatCard(
-                        title: "Revenus (FCFA)",
-                        value: (ctl.data.kpis.chiffreAffaires as int?).toAmount(),
-                        icon: Icons.attach_money,
-                        color: Colors.green,
-                        item: StatCardItem(
-                            title: "", value: "", isIncrease: true),
-                      ),
-                      _buildStatCard(
-                        title: "Nouveaux clients",
-                        value: (ctl.data.kpis.clientsActifs as int?).toAmount(),
-                        icon: Icons.group_add,
-                        color: Colors.blue,
-                        item: StatCardItem(
-                            title: "", value: "", isIncrease: true),
-                      ),
-                      _buildStatCard(
-                        title: "Réservations",
-                        value: (ctl.data.kpis.reservationsActives as int?).toAmount(),
-                        icon: Icons.event,
-                        color: Colors.purple,
-                        item: StatCardItem(
-                            title: "", value: "", isIncrease: true),
-                      ),
-                      _buildStatCard(
-                        title: "Total Dépenses",
-                        value: (ctl.data.kpis.totalDepenses as int?).toAmount(),
-                        icon: Icons.trending_down,
-                        color: Colors.red,
-                        item: StatCardItem(
-                            title: "", value: "", isIncrease: false),
-                      ),
-                      _buildStatCard(
-                        title: "Total Mouvements",
-                        value: (ctl.data.kpis.totalMouvements as int?).toAmount(),
-                        icon: Icons.sync_alt,
-                        color: Colors.teal,
-                        item: StatCardItem(
-                            title: "", value: "", isIncrease: true),
-                      ),
-                    ],
-                  ),
-                  const Gap(25),
-
-                  // Charts
-                  Visibility(
-                    visible: ctl.params.filtre != PeriodStat.jour,
-                    child: Column(
-                      children: [
-                        _buildChartCard(
-                          title: "Évolution du Chiffre d'Affaires",
-                          color: AppColors.primary,
-                          spots: List.generate(
-                            ctl.data.revenusQuotidiens.length,
-                            (i) => FlSpot(
-                              i.toDouble(),
-                              ctl.data.revenusQuotidiens[i].revenus.toDouble(),
-                            ),
-                          ),
-                        ),
-                        const Gap(20),
-                        _buildChartCard(
-                          title: "Évolution des Ventes",
-                          color: AppColors.yellow,
-                          spots: List.generate(
-                            ctl.data.revenusQuotidiens.length,
-                            (i) => FlSpot(
-                              i.toDouble(),
-                              ctl.data.revenusQuotidiens[i].ventes.value
-                                  .toDouble(),
-                            ),
-                          ),
-                        ),
-                        const Gap(20),
-                        _buildChartCard(
-                          title: "Évolution des Factures",
-                          color: Colors.red,
-                          spots: List.generate(
-                            ctl.data.revenusQuotidiens.length,
-                            (i) => FlSpot(
-                              i.toDouble(),
-                              ctl.data.revenusQuotidiens[i].factures.value
-                                  .toDouble(),
+                                const Gap(8),
+                                const Icon(Icons.edit,
+                                    color: Colors.white70, size: 14),
+                              ],
                             ),
                           ),
                         ),
                       ],
-                    ),
+                    ],
                   ),
-                  const Gap(40),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: ctl.isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : Builder(
+                          builder: (context) {
+                            final type = ctl.getEntite().value.type;
+                            switch (type) {
+                              case EntiteEntrepriseType.boutique:
+                                return BoutiqueStatsSubPage(ctl);
+                              case EntiteEntrepriseType.succursale:
+                                return AtelierStatsSubPage(ctl);
+                              default:
+                                return const Center(
+                                    child: Text("Sélectionnez une entité"));
+                            }
+                          },
+                        ),
+                ),
+              ],
             ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildStatCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-    required StatCardItem item,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: color, size: 20),
-              ),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const Gap(2),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChartCard({
-    required String title,
-    required Color color,
-    required List<FlSpot> spots,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const Gap(25),
-          AspectRatio(
-            aspectRatio: 1.5,
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  getDrawingHorizontalLine: (value) {
-                    return FlLine(
-                      color: Colors.grey[200],
-                      strokeWidth: 1,
-                    );
-                  },
-                ),
-                titlesData: const FlTitlesData(
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 40,
-                    ),
-                  ),
-                  topTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  bottomTitles: AxisTitles(
-                      sideTitles:
-                          SideTitles(showTitles: true, reservedSize: 30)),
-                ),
-                borderData: FlBorderData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: spots,
-                    isCurved: true,
-                    color: color,
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: const FlDotData(show: false),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: color.withOpacity(0.1),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+          );
+        });
   }
 }

@@ -1,0 +1,327 @@
+{
+    "success": true,
+    "data": {
+        "entity_id": 1,
+        "entity_nom": "Atelier papson yopougon",
+        "periode": {
+            "debut": "2026-03-29",
+            "fin": "2026-04-28",
+            "nbJours": 31
+        },
+        "kpis": {
+            "chiffreAffaires": 897000,
+            "totalDepenses": 0,
+            "totalMouvements": 0,
+            "totalMouvementsEntrants": 0,
+            "totalMouvementsSortants": 0,
+            "facturesActives": 63,
+            "clientsActifs": 60,
+            "mesuresEnCours": 26,
+            "reservationsActives": 0,
+            "commandesEnCours": 26,
+            "caisse": 2159909
+        },
+        "revenusQuotidiens": [
+            {
+                "jour": "Dim 29",
+                "factures": 1,
+                "mesures": 1,
+                "paiements": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 30",
+                "factures": 0,
+                "mesures": 0,
+                "paiements": 1,
+                "revenus": 3000
+            },
+            {
+                "jour": "Mar 31",
+                "factures": 1,
+                "mesures": 1,
+                "paiements": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mer 01",
+                "factures": 5,
+                "mesures": 7,
+                "paiements": 2,
+                "revenus": 10000
+            },
+            {
+                "jour": "Jeu 02",
+                "factures": 1,
+                "mesures": 2,
+                "paiements": 2,
+                "revenus": 15000
+            },
+            {
+                "jour": "Ven 03",
+                "factures": 5,
+                "mesures": 8,
+                "paiements": 4,
+                "revenus": 62500
+            },
+            {
+                "jour": "Sam 04",
+                "factures": 1,
+                "mesures": 3,
+                "paiements": 6,
+                "revenus": 90000
+            },
+            {
+                "jour": "Dim 05",
+                "factures": 0,
+                "mesures": 0,
+                "paiements": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 06",
+                "factures": 2,
+                "mesures": 2,
+                "paiements": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mar 07",
+                "factures": 4,
+                "mesures": 6,
+                "paiements": 3,
+                "revenus": 52000
+            },
+            {
+                "jour": "Mer 08",
+                "factures": 3,
+                "mesures": 3,
+                "paiements": 6,
+                "revenus": 114000
+            },
+            {
+                "jour": "Jeu 09",
+                "factures": 1,
+                "mesures": 1,
+                "paiements": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Ven 10",
+                "factures": 5,
+                "mesures": 5,
+                "paiements": 1,
+                "revenus": 10000
+            },
+            {
+                "jour": "Sam 11",
+                "factures": 1,
+                "mesures": 1,
+                "paiements": 2,
+                "revenus": 25000
+            },
+            {
+                "jour": "Dim 12",
+                "factures": 2,
+                "mesures": 2,
+                "paiements": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 13",
+                "factures": 1,
+                "mesures": 1,
+                "paiements": 2,
+                "revenus": 15000
+            },
+            {
+                "jour": "Mar 14",
+                "factures": 5,
+                "mesures": 6,
+                "paiements": 1,
+                "revenus": 5000
+            },
+            {
+                "jour": "Mer 15",
+                "factures": 3,
+                "mesures": 3,
+                "paiements": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Jeu 16",
+                "factures": 2,
+                "mesures": 2,
+                "paiements": 2,
+                "revenus": 30000
+            },
+            {
+                "jour": "Ven 17",
+                "factures": 3,
+                "mesures": 4,
+                "paiements": 1,
+                "revenus": 40000
+            },
+            {
+                "jour": "Sam 18",
+                "factures": 0,
+                "mesures": 0,
+                "paiements": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Dim 19",
+                "factures": 0,
+                "mesures": 0,
+                "paiements": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 20",
+                "factures": 3,
+                "mesures": 3,
+                "paiements": 1,
+                "revenus": 15000
+            },
+            {
+                "jour": "Mar 21",
+                "factures": 3,
+                "mesures": 4,
+                "paiements": 13,
+                "revenus": 328500
+            },
+            {
+                "jour": "Mer 22",
+                "factures": 1,
+                "mesures": 1,
+                "paiements": 1,
+                "revenus": 2000
+            },
+            {
+                "jour": "Jeu 23",
+                "factures": 4,
+                "mesures": 4,
+                "paiements": 3,
+                "revenus": 60000
+            },
+            {
+                "jour": "Ven 24",
+                "factures": 6,
+                "mesures": 6,
+                "paiements": 1,
+                "revenus": 20000
+            },
+            {
+                "jour": "Sam 25",
+                "factures": 0,
+                "mesures": 0,
+                "paiements": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Dim 26",
+                "factures": 0,
+                "mesures": 0,
+                "paiements": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 27",
+                "factures": 0,
+                "mesures": 0,
+                "paiements": 0,
+                "revenus": 0
+            }
+        ],
+        "revenusParType": [
+            {
+                "type": "Factures",
+                "revenus": 897000
+            },
+            {
+                "type": "Paiements factures",
+                "revenus": 897000
+            },
+            {
+                "type": "Mesures",
+                "revenus": 0
+            },
+            {
+                "type": "Autres",
+                "revenus": 0
+            }
+        ],
+        "activitesBoutique": [
+            {
+                "activite": "Factures clients",
+                "nombre": 63,
+                "revenus": 897000,
+                "progression": 100
+            },
+            {
+                "activite": "Prises de mesures",
+                "nombre": 76,
+                "revenus": 0,
+                "progression": 100
+            },
+            {
+                "activite": "Paiements reçus",
+                "nombre": 52,
+                "revenus": 897000,
+                "progression": 100
+            },
+            {
+                "activite": "Clients actifs",
+                "nombre": 60,
+                "revenus": 0,
+                "progression": 100
+            }
+        ],
+        "dernieresTransactions": [
+            {
+                "id": "FAC-199",
+                "type": "Facture",
+                "client": "Ami De Boss Waren",
+                "montant": 50000,
+                "statut": "partielle"
+            },
+            {
+                "id": "FAC-198",
+                "type": "Facture",
+                "client": "Oulaï Landry",
+                "montant": 50000,
+                "statut": "payée"
+            },
+            {
+                "id": "FAC-197",
+                "type": "Facture",
+                "client": "Camara  Petit Frere",
+                "montant": 15000,
+                "statut": "partielle"
+            },
+            {
+                "id": "PAI-579",
+                "type": "Paiement",
+                "client": "Ami De Boss Waren",
+                "montant": 20000,
+                "statut": "payé"
+            },
+            {
+                "id": "PAI-571",
+                "type": "Paiement",
+                "client": "Frere  De Cedric",
+                "montant": 30000,
+                "statut": "payé"
+            }
+        ],
+        "entity_type": "succursale",
+        "metadata": {
+            "periode_recherche": {
+                "debut": "2026-03-29 17:17:25",
+                "fin": "2026-04-28 17:17:25",
+                "nb_jours": 31
+            },
+            "filtre_applique": "journalier"
+        }
+    }
+}

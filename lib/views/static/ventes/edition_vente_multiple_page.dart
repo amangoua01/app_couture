@@ -3,7 +3,6 @@ import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
-import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/ligne_panier.dart';
@@ -377,13 +376,11 @@ class EditionVenteMultiplePage extends StatelessWidget {
                   Expanded(
                     child: CTextFormField(
                       externalLabel: "Prix Unitaire",
-                      hintText: ternaryFn(
-                        condition: selectedModele?.prixMinimal != null,
-                        ifFalse: "Prix de vente",
-                        ifTrue:
-                            "Min : ${selectedModele?.prixMinimal.toAmount()}",
-                      ),
+                      hintText: selectedModele?.haveCommission == true
+                          ? "[${selectedModele?.prixMinimal.toAmount() ?? 0}, ${selectedModele?.prixMax.toAmount() ?? 0}]"
+                          : "Prix de vente",
                       controller: prixCtl,
+                      enabled: selectedModele?.haveCommission == true,
                       keyboardType: TextInputType.number,
                       onChanged: (_) => setState(() {}),
                     ),
@@ -399,12 +396,19 @@ class EditionVenteMultiplePage extends StatelessWidget {
                   ),
                 ],
               ),
-              const Gap(15),
-              CTextFormField(
-                externalLabel: "Remise (sur le total)",
-                controller: remiseCtl,
-                keyboardType: TextInputType.number,
-                onChanged: (_) => setState(() {}),
+              Visibility(
+                visible: ctl.user.isAdmin,
+                child: Column(
+                  children: [
+                    const Gap(15),
+                    CTextFormField(
+                      externalLabel: "Remise (sur le total)",
+                      controller: remiseCtl,
+                      keyboardType: TextInputType.number,
+                      onChanged: (_) => setState(() {}),
+                    ),
+                  ],
+                ),
               ),
               const Gap(20),
               Container(
@@ -446,6 +450,17 @@ class EditionVenteMultiplePage extends StatelessWidget {
                           message:
                               "Stock insuffisant. Disponible : ${selectedModele!.quantite ?? 0}");
                       return;
+                    }
+
+                    if (selectedModele!.haveCommission == true) {
+                      final pMin = selectedModele!.prixMinimal ?? 0;
+                      final pMax = selectedModele!.prixMax ?? 0;
+                      if (prix < pMin || prix > pMax) {
+                        CMessageDialog.show(
+                            message:
+                                "Le prix unitaire doit être compris entre ${pMin.toAmount(unit: 'F')} et ${pMax.toAmount(unit: 'F')}");
+                        return;
+                      }
                     }
 
                     if (selectedModele!.prixMinimal != null &&

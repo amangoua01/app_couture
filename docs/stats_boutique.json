@@ -1,0 +1,558 @@
+{
+    "success": true,
+    "data": {
+        "entity_id": 1,
+        "entity_nom": "Boutique Yopougon SIDECI",
+        "periode": {
+            "debut": "2026-03-29",
+            "fin": "2026-04-28",
+            "nbJours": 31
+        },
+        "kpis": {
+            "chiffreAffaires": 1075000,
+            "totalDepenses": 0,
+            "totalMouvements": -525000,
+            "totalMouvementsEntrants": 1070000,
+            "totalMouvementsSortants": 1595000,
+            "reservationsActives": 0,
+            "clientsActifs": 36,
+            "commandesEnCours": 0,
+            "nombreModelesStockBas": 0,
+            "stockTotalBoutique": 935,
+            "caisse": 1080000,
+            "ticketMoyen": 22396,
+            "tauxRecouvrement": 100,
+            "nbVentesBoutique": 48,
+            "recettesNettes": 1075000,
+            "montantDuClients": 0,
+            "revenusReservations": 0,
+            "revenusVenteDirecte": 1075000
+        },
+        "alertesStock": [],
+        "topModelesEnStock": [
+            {
+                "id": 9,
+                "libelle": "chemise classique ",
+                "stockGlobal": 79,
+                "tailles": [
+                    {
+                        "taille": "M",
+                        "quantite": 22
+                    },
+                    {
+                        "taille": "L",
+                        "quantite": 20
+                    },
+                    {
+                        "taille": "XL",
+                        "quantite": 32
+                    },
+                    {
+                        "taille": "2XL",
+                        "quantite": 5
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "libelle": "Tunique",
+                "stockGlobal": 451,
+                "tailles": [
+                    {
+                        "taille": "L",
+                        "quantite": 0
+                    },
+                    {
+                        "taille": "M",
+                        "quantite": 56
+                    },
+                    {
+                        "taille": "2XL",
+                        "quantite": 19
+                    },
+                    {
+                        "taille": "XL",
+                        "quantite": 231
+                    },
+                    {
+                        "taille": "XL",
+                        "quantite": 0
+                    },
+                    {
+                        "taille": "L",
+                        "quantite": 145
+                    }
+                ]
+            },
+            {
+                "id": 7,
+                "libelle": "Parfum",
+                "stockGlobal": 42,
+                "tailles": [
+                    {
+                        "taille": "",
+                        "quantite": 1
+                    },
+                    {
+                        "taille": "",
+                        "quantite": 41
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "libelle": "Chemise cubaine",
+                "stockGlobal": 89,
+                "tailles": [
+                    {
+                        "taille": "XL",
+                        "quantite": 27
+                    },
+                    {
+                        "taille": "L",
+                        "quantite": 48
+                    },
+                    {
+                        "taille": "M",
+                        "quantite": 9
+                    },
+                    {
+                        "taille": "2XL",
+                        "quantite": 5
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "libelle": "Costume",
+                "stockGlobal": 107,
+                "tailles": [
+                    {
+                        "taille": "M,XL,L,2XL",
+                        "quantite": 107
+                    }
+                ]
+            }
+        ],
+        "modelesStock": [
+            {
+                "id": 9,
+                "libelle": "chemise classique ",
+                "stockGlobal": 79,
+                "tailles": [
+                    {
+                        "taille": "M",
+                        "quantite": 22
+                    },
+                    {
+                        "taille": "L",
+                        "quantite": 20
+                    },
+                    {
+                        "taille": "XL",
+                        "quantite": 32
+                    },
+                    {
+                        "taille": "2XL",
+                        "quantite": 5
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "libelle": "Tunique",
+                "stockGlobal": 451,
+                "tailles": [
+                    {
+                        "taille": "L",
+                        "quantite": 0
+                    },
+                    {
+                        "taille": "M",
+                        "quantite": 56
+                    },
+                    {
+                        "taille": "2XL",
+                        "quantite": 19
+                    },
+                    {
+                        "taille": "XL",
+                        "quantite": 231
+                    },
+                    {
+                        "taille": "XL",
+                        "quantite": 0
+                    },
+                    {
+                        "taille": "L",
+                        "quantite": 145
+                    }
+                ]
+            },
+            {
+                "id": 7,
+                "libelle": "Parfum",
+                "stockGlobal": 42,
+                "tailles": [
+                    {
+                        "taille": "",
+                        "quantite": 1
+                    },
+                    {
+                        "taille": "",
+                        "quantite": 41
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "libelle": "Chemise cubaine",
+                "stockGlobal": 89,
+                "tailles": [
+                    {
+                        "taille": "XL",
+                        "quantite": 27
+                    },
+                    {
+                        "taille": "L",
+                        "quantite": 48
+                    },
+                    {
+                        "taille": "M",
+                        "quantite": 9
+                    },
+                    {
+                        "taille": "2XL",
+                        "quantite": 5
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "libelle": "Costume",
+                "stockGlobal": 107,
+                "tailles": [
+                    {
+                        "taille": "M,XL,L,2XL",
+                        "quantite": 107
+                    }
+                ]
+            },
+            {
+                "id": 6,
+                "libelle": "Chaussure",
+                "stockGlobal": 98,
+                "tailles": [
+                    {
+                        "taille": "",
+                        "quantite": 98
+                    }
+                ]
+            },
+            {
+                "id": 1,
+                "libelle": "raphia ",
+                "stockGlobal": 69,
+                "tailles": [
+                    {
+                        "taille": "L",
+                        "quantite": 31
+                    },
+                    {
+                        "taille": "XL",
+                        "quantite": 22
+                    },
+                    {
+                        "taille": "M",
+                        "quantite": 8
+                    },
+                    {
+                        "taille": "2XL",
+                        "quantite": 8
+                    }
+                ]
+            }
+        ],
+        "revenusQuotidiens": [
+            {
+                "jour": "Dim 29",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 30",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mar 31",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mer 01",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Jeu 02",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Ven 03",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Sam 04",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Dim 05",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 06",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mar 07",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mer 08",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Jeu 09",
+                "reservations": 0,
+                "ventes": 15,
+                "factures": 0,
+                "revenus": 370000
+            },
+            {
+                "jour": "Ven 10",
+                "reservations": 0,
+                "ventes": 6,
+                "factures": 0,
+                "revenus": 160000
+            },
+            {
+                "jour": "Sam 11",
+                "reservations": 0,
+                "ventes": 6,
+                "factures": 0,
+                "revenus": 175000
+            },
+            {
+                "jour": "Dim 12",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 13",
+                "reservations": 0,
+                "ventes": 5,
+                "factures": 0,
+                "revenus": 65000
+            },
+            {
+                "jour": "Mar 14",
+                "reservations": 0,
+                "ventes": 3,
+                "factures": 0,
+                "revenus": 55000
+            },
+            {
+                "jour": "Mer 15",
+                "reservations": 0,
+                "ventes": 6,
+                "factures": 0,
+                "revenus": 130000
+            },
+            {
+                "jour": "Jeu 16",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Ven 17",
+                "reservations": 0,
+                "ventes": 5,
+                "factures": 0,
+                "revenus": 85000
+            },
+            {
+                "jour": "Sam 18",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Dim 19",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 20",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Mar 21",
+                "reservations": 0,
+                "ventes": 2,
+                "factures": 0,
+                "revenus": 35000
+            },
+            {
+                "jour": "Mer 22",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Jeu 23",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Ven 24",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Sam 25",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Dim 26",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            },
+            {
+                "jour": "Lun 27",
+                "reservations": 0,
+                "ventes": 0,
+                "factures": 0,
+                "revenus": 0
+            }
+        ],
+        "revenusParType": [
+            {
+                "type": "Réservations",
+                "revenus": 0
+            },
+            {
+                "type": "Ventes boutique",
+                "revenus": 1075000
+            },
+            {
+                "type": "Factures",
+                "revenus": 0
+            },
+            {
+                "type": "Mesures",
+                "revenus": 0
+            }
+        ],
+        "activitesBoutique": [
+            {
+                "activite": "Réservations",
+                "nombre": 0,
+                "revenus": 0,
+                "progression": 100
+            },
+            {
+                "activite": "Ventes directes",
+                "nombre": 48,
+                "revenus": 1075000,
+                "progression": 100
+            },
+            {
+                "activite": "Factures clients",
+                "nombre": 0,
+                "revenus": 0,
+                "progression": 100
+            },
+            {
+                "activite": "Prises de mesures",
+                "nombre": 0,
+                "revenus": 0,
+                "progression": 100
+            }
+        ],
+        "dernieresTransactions": [
+            {
+                "id": "VTE-549",
+                "type": "Vente",
+                "client": "Mme Alida",
+                "montant": 20000,
+                "statut": "payée"
+            },
+            {
+                "id": "VTE-548",
+                "type": "Vente",
+                "client": "Mme Alida",
+                "montant": 15000,
+                "statut": "payée"
+            }
+        ],
+        "entity_type": "boutique",
+        "metadata": {
+            "periode_recherche": {
+                "debut": "2026-03-29 17:16:22",
+                "fin": "2026-04-28 17:16:22",
+                "nb_jours": 31
+            },
+            "filtre_applique": "journalier"
+        }
+    }
+}

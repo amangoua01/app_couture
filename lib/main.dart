@@ -1,4 +1,5 @@
 import 'package:ateliya/tools/constants/env.dart';
+import 'package:ateliya/tools/services/deep_link_service.dart';
 import 'package:ateliya/tools/services/notification_service.dart';
 import 'package:ateliya/tools/widgets/themes/app_theme.dart';
 import 'package:ateliya/views/static/starting/splash_screen_page.dart';
@@ -26,6 +27,7 @@ void main() async {
     ));
 
     await NotificationService.setup();
+    DeepLinkService.init();
   } catch (e) {
     if (kDebugMode) print("Error initializing notifications: $e");
   }

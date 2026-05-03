@@ -34,6 +34,8 @@ class User extends ModelJson {
   String? password;
   Entreprise? entreprise;
   bool hasBoutique = false, hasSuccursale = false;
+  String? myReferralCode;
+  bool isDisplay = false;
 
   User(
       {super.id,
@@ -53,7 +55,9 @@ class User extends ModelJson {
       this.password,
       this.entreprise,
       this.hasBoutique = false,
-      this.hasSuccursale = false})
+      this.hasSuccursale = false,
+      this.myReferralCode,
+      this.isDisplay = false})
       : _logo = logo != null ? FichierLocal(path: logo) : null;
 
   User.fromJson(Map<String, dynamic> json) {
@@ -84,6 +88,8 @@ class User extends ModelJson {
         : null;
     hasBoutique = json['hasBoutique'] ?? false;
     hasSuccursale = json['hasSuccursale'] ?? false;
+    myReferralCode = json['my_referral_code'];
+    isDisplay = json['isDisplay'] ?? false;
   }
 
   @override
@@ -109,6 +115,8 @@ class User extends ModelJson {
     data['roles'] = roles;
     data['is_active'] = isActive;
     data['pays'] = pays;
+    data['my_referral_code'] = myReferralCode;
+    data['isDisplay'] = isDisplay;
     if (password != null) {
       data['password'] = password;
     }
@@ -153,6 +161,8 @@ class User extends ModelJson {
       'entreprise': entreprise?.toJson(),
       'hasBoutique': hasBoutique,
       'hasSuccursale': hasSuccursale,
+      'my_referral_code': myReferralCode,
+      'isDisplay': isDisplay,
     });
   }
 
