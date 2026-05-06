@@ -6,6 +6,7 @@ import 'package:ateliya/data/dto/update_profil_dto.dart';
 import 'package:ateliya/data/dto/user_register_dto.dart';
 import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/tools/components/session_manager_view_controller.dart';
+import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 
@@ -22,6 +23,8 @@ class AuthApi extends WebController {
         "login": login,
         "password": password,
         "device": Platform.operatingSystem,
+        "version": Env.appVersion,
+        "build_version": Env.buildVersion,
       }.parseToJson(),
     );
 
