@@ -13,6 +13,7 @@ class Vente extends ModelJson<Vente> {
   List<PaiementBoutiqueLignes> paiementBoutiqueLignes = [];
 
   double? montant;
+  double? remise;
   String? reference;
   String? type;
   String? createdAt;
@@ -23,6 +24,7 @@ class Vente extends ModelJson<Vente> {
       this.paiementBoutiqueLignes = const [],
       super.id,
       this.montant,
+      this.remise,
       this.reference,
       this.type,
       this.createdAt});
@@ -38,6 +40,7 @@ class Vente extends ModelJson<Vente> {
     }
     id = json['id'];
     montant = json['montant'].toString().toDouble().value;
+    remise = json['remise']?.toString().toDouble().value;
     reference = json['reference'];
     type = json['type'];
     createdAt = json['createdAt'];
@@ -56,6 +59,7 @@ class Vente extends ModelJson<Vente> {
         paiementBoutiqueLignes.map((v) => v.toJson()).toList();
     data['id'] = id;
     data['montant'] = montant;
+    data['remise'] = remise;
     data['reference'] = reference;
     data['type'] = type;
     data['createdAt'] = createdAt;
@@ -67,4 +71,9 @@ class Vente extends ModelJson<Vente> {
 
   int get quantite =>
       paiementBoutiqueLignes.fold(0, (a, b) => a + (b.quantite.value));
+
+  double get remiseTotale {
+    if (remise != null && remise! > 0) return remise!;
+    return paiementBoutiqueLignes.fold(0, (a, b) => a + (b.remise.value));
+  }
 }

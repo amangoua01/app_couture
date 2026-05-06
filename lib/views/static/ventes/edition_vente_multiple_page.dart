@@ -463,15 +463,6 @@ class EditionVenteMultiplePage extends StatelessWidget {
                       }
                     }
 
-                    if (selectedModele!.prixMinimal != null &&
-                        calculateTotal() <
-                            (selectedModele!.prixMinimal! * qte)) {
-                      CMessageDialog.show(
-                          message:
-                              "Le prix total après remise ne peut être inférieur au prix minimal total (${(selectedModele!.prixMinimal! * qte).toAmount(unit: 'F')})");
-                      return;
-                    }
-
                     if (itemToEdit != null) {
                       ctl.modifierLignePanier(itemToEdit, qte, prix, remise);
                     } else {

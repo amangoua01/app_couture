@@ -9,12 +9,14 @@ import 'package:ateliya/tools/extensions/types/string.dart';
 class PaiementBoutiqueLignes extends ModelJson {
   int? quantite;
   double? montant;
+  double? remise;
   PaiementBoutique? paiementBoutique;
   ModeleBoutique? modeleBoutique;
 
   PaiementBoutiqueLignes({
     this.quantite,
     this.montant,
+    this.remise,
     this.paiementBoutique,
     this.modeleBoutique,
   });
@@ -28,6 +30,7 @@ class PaiementBoutiqueLignes extends ModelJson {
     id = json['id'];
     quantite = json['quantite'];
     montant = json['montant'].toString().toDouble().value;
+    remise = json['remise']?.toString().toDouble().value;
     paiementBoutique = json['paiementBoutique'] != null
         ? PaiementBoutique.fromJson(json['paiementBoutique'])
         : null;
@@ -44,11 +47,12 @@ class PaiementBoutiqueLignes extends ModelJson {
     data['id'] = id;
     data['quantite'] = quantite;
     data['montant'] = montant;
+    data['remise'] = remise;
     if (paiementBoutique != null) {
       data['paiementBoutique'] = paiementBoutique!.toJson();
     }
     return data;
   }
 
-  double get total => quantite.value * montant.value;
+  double get total => (quantite.value * montant.value) - remise.value;
 }

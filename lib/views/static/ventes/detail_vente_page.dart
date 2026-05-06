@@ -222,6 +222,29 @@ class DetailVentePage extends StatelessWidget {
                                           color: Colors.grey,
                                         ),
                                       ),
+                                      if (ligne.remise.value > 0) ...[
+                                        const Gap(8),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red
+                                                .withValues(alpha: 0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Text(
+                                            "Remise: ${ligne.remise.toAmount(unit: "F")}",
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ],
                                   ),
                                 ],
@@ -273,11 +296,28 @@ class DetailVentePage extends StatelessWidget {
                         "${vente.quantite}",
                         isBold: false,
                       ),
+                      _buildSummaryRow(
+                        "Montant Total",
+                        (vente.montant.value + vente.remiseTotale)
+                            .toAmount(unit: "F"),
+                        isBold: false,
+                      ),
+                      if (vente.remiseTotale > 0) ...[
+                        const Gap(10),
+                        const Divider(),
+                        const Gap(10),
+                        _buildSummaryRow(
+                          "Remise",
+                          "- ${vente.remiseTotale.toAmount(unit: "F")}",
+                          isBold: true,
+                          valueColor: Colors.red,
+                        ),
+                      ],
                       const Gap(10),
                       const Divider(),
                       const Gap(10),
                       _buildSummaryRow(
-                        "Montant Total",
+                        "Net à payer",
                         vente.montant.toAmount(unit: "F"),
                         isBold: true,
                         valueColor: AppColors.primary,
