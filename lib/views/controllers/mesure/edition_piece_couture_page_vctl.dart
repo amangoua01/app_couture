@@ -24,6 +24,8 @@ class EditionPieceCouturePageVctl extends AuthViewController {
   final descriptionCtl = TextEditingController();
   bool hasImagePagne = false;
   final autreImagesMesure = <AutreImageMesureDto>[];
+  final autreImagesPageCtl = PageController();
+  int currentAutreImageIndex = 0;
 
   EditionPieceCouturePageVctl(this.ligne) {
     if (ligne != null) {
@@ -59,6 +61,12 @@ class EditionPieceCouturePageVctl extends AuthViewController {
 
       Get.back(result: ligne!);
     }
+  }
+
+  @override
+  void onClose() {
+    autreImagesPageCtl.dispose();
+    super.onClose();
   }
 
   Future<List<TypeMesure>> fetchTypeMesures() async {

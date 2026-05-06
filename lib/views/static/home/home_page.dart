@@ -610,7 +610,7 @@ class HomePage extends StatelessWidget {
                                         condition: ctl.getEntite().value.type ==
                                             EntiteEntrepriseType.boutique,
                                         ifTrue:
-                                            "Meilleures ventes (${ctl.data.meilleuresVentes.length})",
+                                            "Dernières ventes (${ctl.data.meilleuresVentes.length})",
                                         ifFalse:
                                             "Mes mesures (${ctl.data.commandes.length})",
                                       ),

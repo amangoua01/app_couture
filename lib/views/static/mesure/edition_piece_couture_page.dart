@@ -1,4 +1,5 @@
 import 'package:ateliya/data/dto/autre_image_mesure_dto.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/data/dto/mesure/ligne_mesure_dto.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -157,20 +158,67 @@ class EditionPieceCouturePage extends StatelessWidget {
                             onPressed: () {
                               ctl.autreImagesMesure.add(AutreImageMesureDto());
                               ctl.update();
+                              Future.delayed(const Duration(milliseconds: 100),
+                                  () {
+                                if (ctl.autreImagesPageCtl.hasClients) {
+                                  ctl.autreImagesPageCtl.animateToPage(
+                                    ctl.autreImagesMesure.length - 1,
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeOut,
+                                  );
+                                }
+                              });
                             },
                           ),
                         ),
                       ),
                       const Gap(20),
-                      Column(
-                        children: List.generate(
-                          ctl.autreImagesMesure.length,
-                          (i) {
-                            final item = ctl.autreImagesMesure[i];
-                            return buildImageSelection(item, i, ctl);
-                          },
+                      if (ctl.autreImagesMesure.isNotEmpty) ...[
+                        SizedBox(
+                          height: 330,
+                          child: PageView.builder(
+                            controller: ctl.autreImagesPageCtl,
+                            onPageChanged: (i) {
+                              ctl.currentAutreImageIndex = i;
+                              ctl.update();
+                            },
+                            itemCount: ctl.autreImagesMesure.length,
+                            itemBuilder: (context, i) {
+                              final item = ctl.autreImagesMesure[i];
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                child: buildImageSelection(item, i, ctl),
+                              );
+                            },
+                          ),
                         ),
-                      ),
+                        const Gap(10),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              ctl.autreImagesMesure.length,
+                              (index) => AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 4),
+                                width: ctl.currentAutreImageIndex == index
+                                    ? 12
+                                    : 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  color: ctl.currentAutreImageIndex == index
+                                      ? AppColors.primary
+                                      : Colors.grey.shade300,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -192,8 +240,18 @@ class EditionPieceCouturePage extends StatelessWidget {
   Widget buildImageSelection(AutreImageMesureDto autreImage, int index,
       EditionPieceCouturePageVctl ctl) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      height: 300,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -202,7 +260,7 @@ class EditionPieceCouturePage extends StatelessWidget {
               children: [
                 Expanded(
                   child: CImagePickerField(
-                    label: "Image du pagne/tissu",
+                    label: "Pagne/Tissu",
                     path: autreImage.pagne?.path,
                     onDelete: () {
                       autreImage.pagne = null;
@@ -214,10 +272,10 @@ class EditionPieceCouturePage extends StatelessWidget {
                     },
                   ),
                 ),
-                const Gap(20),
+                const Gap(10),
                 Expanded(
                   child: CImagePickerField(
-                    label: "Image modèle",
+                    label: "Modèle",
                     path: autreImage.modele?.path,
                     onDelete: () {
                       autreImage.modele = null;
@@ -232,57 +290,50 @@ class EditionPieceCouturePage extends StatelessWidget {
               ],
             ),
           ),
-          const Gap(10),
-          ListTile(
-            title: const Text("Quantité voulue :"),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircleAvatar(
-                  radius: 17,
-                  backgroundColor: Colors.red.shade200,
-                  child: IconButton(
-                    icon: const Icon(Icons.remove, size: 18),
-                    onLongPress: () {
-                      autreImage.quantite = 1;
-                      ctl.update();
-                    },
-                    color: Colors.white,
+          const Gap(5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Quantité :",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove_circle_outline, size: 24),
+                    color: Colors.red.shade400,
                     onPressed: () {
                       if (autreImage.quantite > 1) {
                         autreImage.quantite = autreImage.quantite - 1;
+                        ctl.update();
                       }
-                      ctl.update();
                     },
                   ),
-                ),
-                const Gap(15),
-                Text("${autreImage.quantite}"),
-                const Gap(15),
-                CircleAvatar(
-                  radius: 17,
-                  backgroundColor: Colors.green.shade200,
-                  child: IconButton(
-                    icon: const Icon(Icons.add, size: 18),
-                    color: Colors.white,
+                  Text(
+                    "${autreImage.quantite}",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add_circle_outline, size: 24),
+                    color: Colors.green.shade400,
                     onPressed: () {
                       autreImage.quantite = autreImage.quantite + 1;
                       ctl.update();
                     },
                   ),
-                ),
-              ],
-            ),
-          ),
-          const Gap(10),
-          TextButton.icon(
-            onPressed: () {
-              ctl.autreImagesMesure.removeAt(index);
-              ctl.update();
-            },
-            label: const Text("Supprimer"),
-            icon: const Icon(Icons.delete),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+                ],
+              ),
+              IconButton(
+                onPressed: () {
+                  ctl.autreImagesMesure.removeAt(index);
+                  ctl.update();
+                },
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
+              ),
+            ],
           ),
         ],
       ),

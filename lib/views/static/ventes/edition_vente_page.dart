@@ -2,6 +2,7 @@ import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
@@ -149,7 +150,7 @@ class EditionVentePage extends StatelessWidget {
                       externalLabel: "Quantité",
                       require: true,
                       hintText:
-                          'Stock disponible : ${modeleBoutique.quantite ?? 0}',
+                          'Stock disponible : ${modeleBoutique.quantite.value}',
                       keyboardType: TextInputType.number,
                       margin: const EdgeInsets.only(bottom: 4),
                       validator: (e) {
