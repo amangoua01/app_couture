@@ -1,4 +1,6 @@
 import 'package:ateliya/api/abonnement_api.dart';
+import 'package:ateliya/data/models/operateur.dart';
+import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
@@ -13,7 +15,7 @@ class AbonnementPaymentPageVctl extends AuthViewController {
 
   Future<void> validatePayment({
     required int forfaitId,
-    required String operateur,
+    required Operateur operateur,
   }) async {
     if (phoneCtl.text.length < 8) {
       Get.snackbar(
@@ -33,7 +35,7 @@ class AbonnementPaymentPageVctl extends AuthViewController {
       forfaitId: forfaitId,
       email: user.login.value,
       numero: phoneCtl.text,
-      operateur: operateur,
+      operateur: operateur.id.value,
     );
 
     isLoading = false;

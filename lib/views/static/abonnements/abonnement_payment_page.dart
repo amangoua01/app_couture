@@ -60,7 +60,7 @@ class AbonnementPaymentPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            forfait.code ?? "Forfait",
+                            forfait.libelle ?? "Forfait",
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -220,7 +220,7 @@ class AbonnementPaymentPage extends StatelessWidget {
                                       Get.back();
                                       ctl.validatePayment(
                                         forfaitId: forfait.id!,
-                                        operateur: operateur.code ?? "orange",
+                                        operateur: operateur,
                                       );
                                     },
                                     child: const Text("Confirmer"),

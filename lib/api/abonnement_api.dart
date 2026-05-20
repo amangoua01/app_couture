@@ -52,7 +52,7 @@ class AbonnementApi extends WebController {
     required int forfaitId,
     required String email,
     required String numero,
-    required String operateur,
+    required int operateur,
     List<int> dataUser = const [],
     List<int> dataBoutique = const [],
     List<int> dataSuccursale = const [],
@@ -65,7 +65,8 @@ class AbonnementApi extends WebController {
         "email": email,
         "numero": numero,
         "operateur": operateur,
-        "returnURL": "http://redirectionurl.ateliya.com/"
+        "device": "mobile",
+        'returnURL': '',
       };
 
       final res = await client.post(

@@ -23,14 +23,14 @@ class BoutiqueStatsSubPage extends StatelessWidget {
         children: [
           _buildRevenueCard(kpis),
           const Gap(25),
-          _buildEvolutionSection(ctl),
-          const Gap(25),
+          // _buildEvolutionSection(ctl),
+          // const Gap(25),
           _buildActivitySection(data),
           const Gap(25),
           _buildCaisseStockSection(kpis),
           const Gap(25),
-          _buildRevenueDistributionSection(data),
-          const Gap(25),
+          // _buildRevenueDistributionSection(data),
+          // const Gap(25),
           _buildFinancialSummarySection(data),
           const Gap(30),
         ],
@@ -256,12 +256,12 @@ class BoutiqueStatsSubPage extends StatelessWidget {
             _buildMovementCard(kpis),
           ],
         ),
-        if (kpis.nombreModelesStockBas != null &&
-            kpis.nombreModelesStockBas! > 0)
-          Padding(
-            padding: const EdgeInsets.only(top: 15.0),
-            child: _buildAlertCard(kpis.nombreModelesStockBas!),
-          ),
+        // if (kpis.nombreModelesStockBas != null &&
+        //     kpis.nombreModelesStockBas! > 0)
+        //   Padding(
+        //     padding: const EdgeInsets.only(top: 15.0),
+        //     child: _buildAlertCard(kpis.nombreModelesStockBas!),
+        //   ),
       ],
     );
   }
@@ -402,9 +402,9 @@ class BoutiqueStatsSubPage extends StatelessWidget {
 
     return _SectionContainer(
       title: "Résumé financier",
-      trailing: const Text("Détails →",
-          style: TextStyle(
-              color: Colors.teal, fontSize: 12, fontWeight: FontWeight.bold)),
+      // trailing: const Text("Détails →",
+      //     style: TextStyle(
+      //         color: Colors.teal, fontSize: 12, fontWeight: FontWeight.bold)),
       child: Column(
         children: [
           ...activities.map((act) => _buildSummaryItem(
@@ -425,7 +425,6 @@ class BoutiqueStatsSubPage extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildActivityCard(
       {required IconData icon,
@@ -504,7 +503,6 @@ class BoutiqueStatsSubPage extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _SectionContainer extends StatelessWidget {

@@ -127,10 +127,10 @@ class _ForfaitListPageState extends State<ForfaitListPage> {
                                   },
                                   itemBuilder: (context, i) {
                                     final forfait = ctl.forfaits[i];
-                                    final isPremium = forfait.code.value
+                                    final isPremium = forfait.libelle.value
                                             .toLowerCase()
                                             .contains('pro') ||
-                                        forfait.code.value
+                                        forfait.libelle.value
                                             .toLowerCase()
                                             .contains('bus');
 
@@ -275,7 +275,7 @@ class _PlanCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        forfait.code.value.toUpperCase(),
+                        forfait.libelle.value.toUpperCase(),
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w900,

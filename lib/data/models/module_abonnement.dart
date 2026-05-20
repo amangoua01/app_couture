@@ -7,6 +7,7 @@ class ModuleAbonnement {
   int? id;
   bool? etat;
   String? description;
+  String? libelle;
   String? montant;
   String? duree;
   List<LigneModuleAbonnement> ligneModules = const [];
@@ -17,6 +18,7 @@ class ModuleAbonnement {
 
   ModuleAbonnement(
       {this.id,
+      this.libelle,
       this.etat,
       this.description,
       this.montant,
@@ -29,6 +31,7 @@ class ModuleAbonnement {
 
   ModuleAbonnement.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    libelle = json['libelle'];
     etat = json['etat'];
     description = json['description'];
     montant = json['montant'];
@@ -48,6 +51,7 @@ class ModuleAbonnement {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
+    data["libelle"];
     data['etat'] = etat;
     data['description'] = description;
     data['montant'] = montant;
