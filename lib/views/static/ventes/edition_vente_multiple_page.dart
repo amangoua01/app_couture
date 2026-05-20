@@ -311,11 +311,14 @@ class EditionVenteMultiplePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                  itemToEdit != null
-                      ? "Modifier l'article"
-                      : "Ajouter un article",
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold)),
+                itemToEdit != null
+                    ? "Modifier l'article"
+                    : "Ajouter un article",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const Gap(20),
               CDropDownFormField<ModeleBoutique>(
                 externalLabel: "Modèle",
@@ -353,9 +356,11 @@ class EditionVenteMultiplePage extends StatelessWidget {
                         ),
                       ),
                       title: Text(
-                          "${item.modele?.libelle ?? ""}${item.taille?.isNotEmpty == true ? ' - ${item.taille}' : ''}"),
+                        "${item.modele?.libelle ?? ""}${item.taille?.isNotEmpty == true ? ' - ${item.taille}' : ''}",
+                      ),
                       subtitle: Text(
-                          "${item.prix.toAmount()} • Stocks: ${item.quantite}"),
+                        "${item.prix.toAmount()} • Stocks: ${item.quantite}",
+                      ),
                       selected: isSelected,
                     );
                   },

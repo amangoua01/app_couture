@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:ateliya/data/models/notification.dart';
 import 'package:ateliya/firebase_options.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -44,6 +45,7 @@ abstract class NotificationService {
       'Ateliya channel',
       importance: Importance.max,
       priority: Priority.high,
+      color: AppColors.primary,
     );
 
     var iOSPlatformChannelSpecifics = const DarwinNotificationDetails(
@@ -68,7 +70,7 @@ abstract class NotificationService {
 
   static Future<void> _initializeLocalNotif() async {
     var initializationSettingsAndroid =
-        const AndroidInitializationSettings('@mipmap/ic_launcher');
+        const AndroidInitializationSettings('@mipmap/ic_launcher_monochrome');
 
     var initializationSettingsIOS = const DarwinInitializationSettings();
 

@@ -20,8 +20,8 @@ class EntrepriseStatsSubPage extends StatelessWidget {
       children: [
         _buildRevenueCard(kpis),
         const Gap(25),
-        _buildEvolutionSection(data),
-        const Gap(25),
+        // _buildEvolutionSection(data),
+        // const Gap(25),
         _buildKeyIndicatorsSection(kpis),
         const Gap(25),
         _buildGlobalActivitySection(data),
@@ -378,9 +378,9 @@ class EntrepriseStatsSubPage extends StatelessWidget {
 
     return _SectionContainer(
       title: "Résumé financier",
-      trailing: const Text("Détails →",
-          style: TextStyle(
-              color: Colors.blue, fontSize: 12, fontWeight: FontWeight.bold)),
+      // trailing: const Text("Détails →",
+      //     style: TextStyle(
+      //         color: Colors.blue, fontSize: 12, fontWeight: FontWeight.bold)),
       child: Column(
         children: [
           ...activities.map((act) => _buildSummaryItem(
