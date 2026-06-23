@@ -88,7 +88,7 @@ class RegisterPageVctl extends SessionManagerViewController {
         final res = await api.register(data).load();
         if (res.status) {
           user = res.data!;
-          Get.to(() => const HomeWindows());
+          Get.offAll(() => const HomeWindows());
         } else {
           CMessageDialog.show(message: res.message);
         }
