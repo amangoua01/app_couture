@@ -194,7 +194,7 @@ class LoginPage extends StatelessWidget {
                         const Gap(30),
                         // Social Login or Sign Up hint
                         Visibility(
-                          visible: Platform.isAndroid,
+                          // visible: Platform.isAndroid,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
