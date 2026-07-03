@@ -3,6 +3,7 @@ import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/empty_page.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
@@ -105,9 +106,10 @@ class ReservationListSubPage extends StatelessWidget {
 
           if (ctl.details == null || ctl.filteredReservations.isEmpty) {
             return const Center(
-              child: Text(
-                'Aucune réservation disponible',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+              child: EmptyPage(
+                icon: Icons.confirmation_number_outlined,
+                title: 'Aucune réservation disponible',
+                subtitle: 'Les réservations apparaîtront ici',
               ),
             );
           }

@@ -1,8 +1,12 @@
-import 'package:ateliya/data/models/stats/kpis.dart';
 import 'package:ateliya/data/models/stats/statistiques_boutique.dart';
+import 'package:ateliya/data/models/stats/top_modele_vendu.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:ateliya/tools/widgets/build_card_activity.dart';
+import 'package:ateliya/tools/widgets/build_mouvement_card.dart';
+import 'package:ateliya/tools/widgets/build_summury_item.dart';
+import 'package:ateliya/tools/widgets/c_card.dart';
+import 'package:ateliya/tools/widgets/section_container.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -14,31 +18,223 @@ class EntrepriseStatsSubPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final kpis = data.kpis;
+    final activities = data.activitesBoutique ?? [];
 
-    Widget content = ListView(
-      padding: const EdgeInsets.all(15),
+    final content = ListView(
+      padding: const EdgeInsets.all(12),
       children: [
-        _buildRevenueCard(kpis),
-        const Gap(25),
-        // _buildEvolutionSection(data),
-        // const Gap(25),
-        _buildKeyIndicatorsSection(kpis),
-        const Gap(25),
-        _buildGlobalActivitySection(data),
-        const Gap(25),
-        _buildTresorerieSection(kpis),
-        const Gap(25),
-        _buildEntityDistributionSection(data),
-        const Gap(25),
-        _buildFinancialSummarySection(data),
-        const Gap(25),
-        _buildTopModelesSection(data),
-        const Gap(30),
+        // ── Card CA Global ──────────────────────────────────────────────
+        CCard(
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "CHIFFRE D'AFFAIRES GLOBAL",
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.5),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const Gap(8),
+                Text(
+                  kpis.chiffreAffaires.toAmount(unit: "Fcfa"),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.8,
+                  ),
+                ),
+                const Gap(8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                        color: AppColors.secondary.withValues(alpha: 0.3)),
+                  ),
+                  child: const Text(
+                    "Période sélectionnée",
+                    style: TextStyle(
+                      color: AppColors.secondary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const Gap(4),
+                Divider(color: Colors.white.withValues(alpha: 0.9)),
+                const Gap(4),
+                Wrap(
+                  spacing: 18,
+                  runSpacing: 4,
+                  children: [
+                    _InfoRow(
+                        label: "Recettes nettes : ",
+                        value:
+                            (kpis.recettesNettes ?? 0).toAmount(unit: "Fcfa")),
+                    _InfoRow(
+                        label: "Ticket moyen : ",
+                        value: (kpis.ticketMoyen ?? 0).toAmount(unit: "Fcfa")),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        const Gap(24),
+
+        // ── Activité globale ────────────────────────────────────────────
+        SectionContainer(
+          title: "Activité globale",
+          child: GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            crossAxisSpacing: 14,
+            mainAxisSpacing: 14,
+            childAspectRatio: 1.3,
+            children: activities.isNotEmpty
+                ? activities
+                    .map((act) => BuildCardActivity(
+                          icon: _iconForActivity(act.activite),
+                          value: (act.nombre ?? 0).toString(),
+                          label: act.activite ?? "",
+                          iconColor: AppColors.primary,
+                        ))
+                    .toList()
+                : [
+                    const BuildCardActivity(
+                        icon: Icons.receipt_long_outlined,
+                        value: "0",
+                        label: "Factures clients",
+                        iconColor: AppColors.primary),
+                    const BuildCardActivity(
+                        icon: Icons.edit_outlined,
+                        value: "0",
+                        label: "Prises de mesures",
+                        iconColor: AppColors.secondary),
+                    const BuildCardActivity(
+                        icon: Icons.payments_outlined,
+                        value: "0",
+                        label: "Paiements reçus",
+                        iconColor: AppColors.green),
+                    const BuildCardActivity(
+                        icon: Icons.people_outline,
+                        value: "0",
+                        label: "Clients actifs",
+                        iconColor: AppColors.primary),
+                  ],
+          ),
+        ),
+        const Gap(24),
+
+        // ── Caisse & Opérations ─────────────────────────────────────────
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Caisse & Opérations",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primary,
+                    letterSpacing: -0.2)),
+            const Gap(12),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 14,
+              mainAxisSpacing: 14,
+              childAspectRatio: 1.3,
+              children: [
+                BuildCardActivity(
+                    icon: Icons.account_balance_wallet_outlined,
+                    value: kpis.caisse.toAmount(),
+                    label: "Solde caisse (FCFA)",
+                    iconColor: AppColors.primary),
+                BuildCardActivity(
+                    icon: Icons.show_chart,
+                    value: "${kpis.tauxRecouvrement ?? 0}%",
+                    label: "Taux recouvrement",
+                    iconColor: AppColors.secondary),
+                BuildCardActivity(
+                    icon: Icons.attach_money,
+                    value: kpis.totalDepenses.toAmount(),
+                    label: "Dépenses totales",
+                    iconColor: AppColors.secondary),
+                BuildMouvementCard(
+                    entree: kpis.totalMouvementsEntrants.toAmount(),
+                    sortie: kpis.totalMouvementsSortants.toAmount(),
+                    label: "Mouvements (FCFA)"),
+              ],
+            ),
+          ],
+        ),
+        const Gap(24),
+
+        // ── Résumé financier ────────────────────────────────────────────
+        SectionContainer(
+          title: "Résumé financier",
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              border:
+                  Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.04),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                ...activities.map((act) => BuildSummuryItem(
+                      label: act.activite ?? "",
+                      value: "${(act.revenus ?? 0).toAmount()} FCFA",
+                      color: AppColors.primary,
+                    )),
+                BuildSummuryItem(
+                    label: "Dépenses",
+                    value: "-${kpis.totalDepenses.toAmount()} FCFA",
+                    color: AppColors.secondary),
+                Divider(
+                    height: 28,
+                    color: AppColors.fieldBorder.withValues(alpha: 0.6)),
+                BuildSummuryItem(
+                    label: "Recettes nettes",
+                    value: "${(kpis.recettesNettes ?? 0).toAmount()} FCFA",
+                    color: AppColors.green,
+                    isBold: true),
+              ],
+            ),
+          ),
+        ),
+        // ── Top modèles vendus ──────────────────────────────────────────
+        if ((data.topModelesVendus ?? []).isNotEmpty) ...[
+          const Gap(24),
+          SectionContainer(
+            title: "Top modèles vendus",
+            child: _TopModelesCard(modeles: data.topModelesVendus!),
+          ),
+        ],
+        const Gap(32),
       ],
     );
 
     if (onRefresh != null) {
       return RefreshIndicator(
+        color: AppColors.secondary,
         onRefresh: onRefresh!,
         child: content,
       );
@@ -46,574 +242,161 @@ class EntrepriseStatsSubPage extends StatelessWidget {
     return content;
   }
 
-  Widget _buildRevenueCard(Kpis kpis) {
+  IconData _iconForActivity(String? activite) {
+    final a = activite?.toLowerCase() ?? '';
+    if (a.contains('facture')) return Icons.receipt_long_outlined;
+    if (a.contains('mesure')) return Icons.edit_outlined;
+    if (a.contains('paiement')) return Icons.payments_outlined;
+    if (a.contains('client')) return Icons.people_outline;
+    if (a.contains('vente')) return Icons.shopping_bag_outlined;
+    if (a.contains('réservation') || a.contains('reservation'))
+      return Icons.calendar_today_outlined;
+    return Icons.analytics_outlined;
+  }
+}
+
+class _TopModelesCard extends StatelessWidget {
+  final List<TopModeleVendu> modeles;
+  const _TopModelesCard({required this.modeles});
+
+  @override
+  Widget build(BuildContext context) {
+    final maxVentes =
+        modeles.map((m) => m.ventes ?? 0).fold(0, (a, b) => a > b ? a : b);
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E293B), Color(0xFF334155)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF1E293B).withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "CHIFFRE D'AFFAIRES GLOBAL",
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-            ),
-          ),
-          const Gap(8),
-          Text(
-            "${kpis.chiffreAffaires.toAmount()} FCFA",
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Gap(12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF59E0B).withOpacity(0.2),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: const Text(
-              "Période sélectionnée",
-              style: TextStyle(
-                color: Color(0xFFF59E0B),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          const Gap(15),
-          const Divider(color: Colors.white24),
-          const Gap(10),
-          Wrap(
-            spacing: 15,
-            children: [
-              _InfoRow(
-                  label: "Recettes nettes : ",
-                  value: "${(kpis.recettesNettes ?? 0).toAmount()} FCFA"),
-              _InfoRow(
-                  label: "Ticket moyen : ",
-                  value: "${(kpis.ticketMoyen ?? 0).toAmount()} FCFA"),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEvolutionSection(StatistiquesBoutique data) {
-    final revenus = data.revenusQuotidiens;
-    if (revenus.isEmpty) return const SizedBox.shrink();
-
-    // Take last 7 days or all if less
-    final displayRevenus =
-        revenus.length > 7 ? revenus.sublist(revenus.length - 7) : revenus;
-
-    return _SectionContainer(
-      title: "Tendance CA Global",
-      child: Container(
-        height: 200,
-        padding: const EdgeInsets.only(right: 20, top: 10),
-        child: LineChart(
-          LineChartData(
-            gridData: const FlGridData(show: true, drawVerticalLine: false),
-            titlesData: FlTitlesData(
-              show: true,
-              rightTitles:
-                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              topTitles:
-                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    final index = value.toInt();
-                    if (index >= 0 && index < displayRevenus.length) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(displayRevenus[index].jour ?? "",
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 10)),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                  interval: 1,
-                ),
-              ),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) => Text(
-                      value.toInt().toAmount(),
-                      style: const TextStyle(color: Colors.grey, fontSize: 10)),
-                  reservedSize: 35,
-                ),
-              ),
-            ),
-            borderData: FlBorderData(show: false),
-            lineBarsData: [
-              LineChartBarData(
-                spots: List.generate(displayRevenus.length, (i) {
-                  return FlSpot(
-                      i.toDouble(), displayRevenus[i].revenus.toDouble());
-                }),
-                isCurved: true,
-                color: const Color(0xFF1E293B),
-                barWidth: 3,
-                dotData: const FlDotData(show: true),
-                belowBarData: BarAreaData(
-                    show: true,
-                    color: const Color(0xFF1E293B).withOpacity(0.05)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildKeyIndicatorsSection(Kpis kpis) {
-    return _SectionContainer(
-      title: "Indicateurs clés",
-      child: Row(
-        children: [
-          Expanded(
-              child: _buildKeyIndicatorCard(
-                  icon: Icons.store_outlined,
-                  value: (kpis.clientsActifs).toString(),
-                  label: "Clients actifs")),
-          const Gap(10),
-          Expanded(
-              child: _buildKeyIndicatorCard(
-                  icon: Icons.content_cut_outlined,
-                  value: (kpis.commandesEnCours).toString(),
-                  label: "Cmds en cours")),
-          const Gap(10),
-          Expanded(
-              child: _buildKeyIndicatorCard(
-                  icon: Icons.people_outline,
-                  value: (kpis.reservationsActives).toString(),
-                  label: "Réservations")),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGlobalActivitySection(StatistiquesBoutique data) {
-    final activities = data.activitesBoutique ?? [];
-    return _SectionContainer(
-      title: "Activité globale",
-      child: GridView.count(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: 2,
-        crossAxisSpacing: 15,
-        mainAxisSpacing: 15,
-        childAspectRatio: 1.3,
-        children: activities.map<Widget>((act) {
-          return _buildActivityCard(
-              icon: Icons.analytics_outlined,
-              value: (act.nombre ?? 0).toString(),
-              label: act.activite ?? "",
-              iconColor: Colors.teal);
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildTresorerieSection(Kpis kpis) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("Trésorerie",
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87)),
-        const Gap(15),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 15,
-          mainAxisSpacing: 15,
-          childAspectRatio: 1.3,
-          children: [
-            _buildActivityCard(
-                icon: Icons.account_balance_wallet_outlined,
-                value: kpis.caisse.toAmount(),
-                label: "Caisse totale (FCFA)",
-                iconColor: Colors.teal),
-            _buildActivityCard(
-                icon: Icons.show_chart,
-                value: "${kpis.tauxRecouvrement ?? 0}%",
-                label: "Taux recouvrement",
-                iconColor: Colors.orange),
-            _buildActivityCard(
-                icon: Icons.attach_money,
-                value: kpis.totalDepenses.toAmount(),
-                label: "Dépenses totales",
-                iconColor: Colors.red),
-            _buildMovementCard(kpis),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMovementCard(Kpis kpis) {
-    return Container(
-      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2))
+            color: AppColors.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10)),
-            child: const Icon(Icons.sync, color: Colors.blue, size: 20),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        children: modeles.asMap().entries.map((e) {
+          final isLast = e.key == modeles.length - 1;
+          return Column(
             children: [
-              Row(
-                children: [
-                  const Text("Entrées: ",
-                      style: TextStyle(fontSize: 10, color: Colors.grey)),
-                  Text("+ ${kpis.totalMouvementsEntrants.toAmount()}",
-                      style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green)),
-                ],
+              _TopModeleItem(
+                rank: e.key + 1,
+                modele: e.value,
+                maxVentes: maxVentes,
               ),
-              Row(
-                children: [
-                  const Text("Sorties: ",
-                      style: TextStyle(fontSize: 10, color: Colors.grey)),
-                  Text("- ${kpis.totalMouvementsSortants.toAmount()}",
-                      style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red)),
-                ],
-              ),
-              const Gap(2),
-              const Text("Mouvements (FCFA)",
-                  style: TextStyle(fontSize: 10, color: Colors.grey)),
+              if (!isLast)
+                Divider(
+                  height: 1,
+                  indent: 16,
+                  endIndent: 16,
+                  color: AppColors.fieldBorder.withValues(alpha: 0.6),
+                ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEntityDistributionSection(StatistiquesBoutique data) {
-    final distribution = data.revenusParType;
-    if (distribution.isEmpty) return const SizedBox.shrink();
-
-    final colors = [
-      Colors.teal.shade400,
-      Colors.orange.shade400,
-      Colors.indigo.shade400,
-      Colors.blue.shade400,
-    ];
-
-    return _SectionContainer(
-      title: "Répartition globale des revenus",
-      child: SizedBox(
-        height: 250,
-        child: PieChart(
-          PieChartData(
-            sectionsSpace: 0,
-            centerSpaceRadius: 70,
-            sections: List.generate(distribution.length, (i) {
-              return PieChartSectionData(
-                  color: colors[i % colors.length],
-                  value: (distribution[i].revenus ?? 0).toDouble(),
-                  title: '',
-                  radius: 25);
-            }),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFinancialSummarySection(StatistiquesBoutique data) {
-    final activities = data.activitesBoutique ?? [];
-    final kpis = data.kpis;
-
-    return _SectionContainer(
-      title: "Résumé financier",
-      // trailing: const Text("Détails →",
-      //     style: TextStyle(
-      //         color: Colors.blue, fontSize: 12, fontWeight: FontWeight.bold)),
-      child: Column(
-        children: [
-          ...activities.map((act) => _buildSummaryItem(
-              label: act.activite ?? "",
-              value: "${(act.revenus ?? 0).toAmount()} FCFA",
-              color: Colors.teal)),
-          _buildSummaryItem(
-              label: "Ventes directes",
-              value: "${(kpis.revenusVenteDirecte ?? 0).toAmount()} FCFA",
-              color: Colors.blue),
-          _buildSummaryItem(
-              label: "Factures réglées",
-              value: "${(kpis.revenusFactures ?? 0).toAmount()} FCFA",
-              color: Colors.orange),
-          _buildSummaryItem(
-              label: "Réservations",
-              value: "${(kpis.revenusReservations ?? 0).toAmount()} FCFA",
-              color: Colors.purple),
-          _buildSummaryItem(
-              label: "Dépenses",
-              value: "-${kpis.totalDepenses.toAmount()} FCFA",
-              color: Colors.red),
-          const Divider(height: 30),
-          _buildSummaryItem(
-              label: "Recettes nettes",
-              value: "${(kpis.recettesNettes ?? 0).toAmount()} FCFA",
-              color: Colors.green,
-              isBold: true),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTopModelesSection(StatistiquesBoutique data) {
-    final topModeles = data.topModelesVendus ?? [];
-    if (topModeles.isEmpty) return const SizedBox.shrink();
-
-    return _SectionContainer(
-      title: "Top modèles vendus",
-      child: Column(
-        children: topModeles.map<Widget>((modele) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
-                  blurRadius: 5,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.dry_cleaning,
-                      color: AppColors.primary, size: 20),
-                ),
-                const Gap(12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(modele.nom ?? "",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14)),
-                      Text("${modele.ventes} ventes",
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.grey)),
-                    ],
-                  ),
-                ),
-                Text(
-                  "${(modele.revenus ?? 0).toAmount()} FCFA",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: AppColors.primary),
-                ),
-              ],
-            ),
           );
         }).toList(),
       ),
     );
   }
+}
 
-  Widget _buildKeyIndicatorCard(
-      {required IconData icon, required String value, required String label}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2))
-        ],
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: const Color(0xFF1E293B), size: 24),
-          const Gap(10),
-          FittedBox(
-            child: Text(value,
-                style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87)),
-          ),
-          Text(label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 10, color: Colors.grey)),
-        ],
-      ),
-    );
+class _TopModeleItem extends StatelessWidget {
+  final int rank;
+  final TopModeleVendu modele;
+  final int maxVentes;
+  const _TopModeleItem(
+      {required this.rank, required this.modele, required this.maxVentes});
+
+  Color get _barColor {
+    if (rank == 1) return AppColors.secondary;
+    if (rank == 2) return AppColors.green;
+    return AppColors.primary.withValues(alpha: 0.35);
   }
 
-  Widget _buildActivityCard(
-      {required IconData icon,
-      required String value,
-      required String label,
-      required Color iconColor}) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2))
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  @override
+  Widget build(BuildContext context) {
+    final ventes = modele.ventes ?? 0;
+    final ratio = maxVentes > 0 ? ventes / maxVentes : 0.0;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            width: 26,
+            height: 26,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10)),
-            child: Icon(icon, color: iconColor, size: 20),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FittedBox(
-                child: Text(value,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87)),
+              color: AppColors.primary.withValues(alpha: 0.06),
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              "$rank",
+              style: const TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 11,
+                color: AppColors.primary,
               ),
-              Text(label,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey)),
+            ),
+          ),
+          const Gap(10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  modele.nom ?? "-",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const Gap(6),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: ratio,
+                    minHeight: 5,
+                    backgroundColor: AppColors.ligthGrey,
+                    valueColor: AlwaysStoppedAnimation<Color>(_barColor),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Gap(14),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.shopping_bag_outlined,
+                      size: 12, color: AppColors.secondary),
+                  const Gap(3),
+                  Text(
+                    "$ventes ventes",
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ],
+              ),
+              const Gap(2),
+              Text(
+                "${(modele.revenus ?? 0).toAmount()} FCFA",
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey.shade500,
+                ),
+              ),
             ],
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildSummaryItem(
-      {required String label,
-      required String value,
-      required Color color,
-      bool isBold = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-          const Gap(10),
-          Expanded(
-            child: Text(label,
-                style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey.shade700,
-                    fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-          ),
-          Text(value,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: isBold ? color : Colors.black87)),
-        ],
-      ),
-    );
-  }
-}
-
-class _SectionContainer extends StatelessWidget {
-  final String title;
-  final Widget child;
-  final Widget? trailing;
-  const _SectionContainer(
-      {required this.title, required this.child, this.trailing});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(title,
-                style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87)),
-            if (trailing != null) trailing!,
-          ],
-        ),
-        const Gap(15),
-        child,
-      ],
     );
   }
 }
@@ -629,7 +412,8 @@ class _InfoRow extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(label,
-            style: const TextStyle(color: Colors.white70, fontSize: 12)),
+            style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.55), fontSize: 12)),
         Text(value,
             style: const TextStyle(
                 color: Colors.white,

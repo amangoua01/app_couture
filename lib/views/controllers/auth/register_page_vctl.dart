@@ -29,6 +29,14 @@ class RegisterPageVctl extends SessionManagerViewController {
   bool showPassword = false;
   bool showConfirmPassword = false;
 
+
+
+  @override
+  void onInit() {
+    super.onInit();
+    nomEntrepriseCtl.addListener(() => update());
+  }
+
   void onNext() {
     if (currentPage < 1) {
       if (formKey1.currentState!.validate()) {

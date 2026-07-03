@@ -22,10 +22,6 @@ class EditionMensurationPage extends StatelessWidget {
           backgroundColor: Colors.grey[50], // Fond de page légèrement gris
           appBar: AppBar(
             title: const Text("Mesures"),
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black87,
-            elevation: 0,
-            centerTitle: true,
           ),
           body: Form(
             key: ctl.formKey,

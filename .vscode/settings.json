@@ -3,6 +3,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
   },
-  "dart.flutterSdkPath": ".fvm/versions/3.29.0",
+  "dart.flutterSdkPath": ".fvm/flutter_sdk",
   "java.configuration.updateBuildConfiguration": "automatic"
 }

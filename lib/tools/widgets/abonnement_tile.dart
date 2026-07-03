@@ -15,24 +15,56 @@ class AbonnementTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Couleur dynamique selon le statut
-    final Color tileColor =
-        item.etat ? AppColors.primary : Colors.grey.shade400;
-    final Color statusColor = item.etat ? Colors.green : Colors.orange;
-
+    final bool isActive = item.etat;
+    final Color tileBg = isActive ? AppColors.primary : Colors.white;
+    
+    // Thème de couleur dynamique (Coupon vert pour Actif, blanc pour Inactif)
+    final Color outerBorderColor = isActive 
+        ? Colors.transparent 
+        : const Color(0xFFE5ECE9);
+        
+    final Color textColor = isActive ? Colors.white : const Color(0xFF0F231F);
+    final Color subtitleColor = isActive ? Colors.white.withValues(alpha: 0.65) : const Color(0xFF6E8E87);
+    final Color borderDividerColor = isActive ? Colors.white.withValues(alpha: 0.15) : const Color(0xFFE5ECE9);
+    
+    final Color advantagesBg = isActive
+        ? Colors.white.withValues(alpha: 0.16)
+        : AppColors.primary.withValues(alpha: 0.06);
+    final Color advantagesText = isActive
+        ? Colors.white
+        : AppColors.primary;
+        
+    final Color priceBg = isActive
+        ? AppColors.yellow
+        : AppColors.primary.withValues(alpha: 0.06);
+    final Color priceText = isActive
+        ? AppColors.primary
+        : AppColors.primary;
+        
+    final Color statusColor = isActive ? AppColors.yellow : Colors.grey.shade600;
+    final Color statusBg = isActive 
+        ? Colors.white.withValues(alpha: 0.16) 
+        : Colors.grey.withValues(alpha: 0.08);
+    
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: outerBorderColor,
+          width: isActive ? 0 : 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: tileColor.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: isActive 
+                ? AppColors.primary.withValues(alpha: 0.22)
+                : Colors.black.withValues(alpha: 0.02),
+            blurRadius: isActive ? 16 : 10,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: TicketWidget(
-        color: tileColor,
+        color: tileBg,
         width: double.maxFinite,
         height: 185,
         isCornerRounded: true,
@@ -41,107 +73,17 @@ class AbonnementTile extends StatelessWidget {
           children: [
             // Header avec bouton avantages et statut
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Bouton voir les avantages
+                  // Bouton voir les avantages (Style moderne à plat)
                   GestureDetector(
-                    onTap: () => CBottomSheet.show(
-                      child: Container(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Row(
-                              children: [
-                                Icon(
-                                  Icons.star,
-                                  color: AppColors.yellow,
-                                  size: 28,
-                                ),
-                                Gap(10),
-                                Text(
-                                  'Avantages inclus',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Gap(15),
-                            const Divider(),
-                            Flexible(
-                              child: ListView.separated(
-                                shrinkWrap: true,
-                                itemCount: item.modules.length,
-                                separatorBuilder: (_, __) =>
-                                    const Divider(height: 1),
-                                itemBuilder: (_, i) => ListTile(
-                                  contentPadding:
-                                      const EdgeInsets.symmetric(vertical: 8),
-                                  leading: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primary
-                                          .withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: SvgPicture.asset(
-                                      'assets/images/svg/piece.svg',
-                                      width: 24,
-                                      colorFilter: const ColorFilter.mode(
-                                        AppColors.primary,
-                                        BlendMode.srcIn,
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    item.modules[i].libelle.value,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    item.modules[i].description.value,
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                  trailing: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.yellow
-                                          .withValues(alpha: 0.2),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      item.modules[i].quantite
-                                          .toAmount(unit: ""),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.yellow,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    onTap: () => _showAvantages(context),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.25),
+                        color: advantagesBg,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -149,55 +91,52 @@ class AbonnementTile extends StatelessWidget {
                         children: [
                           SvgPicture.asset(
                             'assets/images/svg/list.svg',
-                            width: 16,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.white,
+                            width: 13,
+                            colorFilter: ColorFilter.mode(
+                              advantagesText,
                               BlendMode.srcIn,
                             ),
                           ),
                           const Gap(6),
-                          const Text(
+                          Text(
                             'Avantages',
                             style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
+                              color: advantagesText,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  // Badge de statut
+
+                  // Badge de statut (Pill Premium)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                     decoration: BoxDecoration(
-                      color: statusColor,
+                      color: statusBg,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: statusColor.withValues(alpha: 0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                      border: Border.all(
+                        color: statusColor.withValues(alpha: 0.25),
+                        width: 1,
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          item.etat ? Icons.check_circle : Icons.info,
-                          color: Colors.white,
-                          size: 16,
+                          isActive ? Icons.check_circle_rounded : Icons.info_rounded,
+                          color: statusColor,
+                          size: 14,
                         ),
                         const Gap(4),
                         Text(
-                          item.etat ? "Actif" : "Inactif",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
+                          isActive ? "Actif" : "Inactif",
+                          style: TextStyle(
+                            color: statusColor,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 11.5,
                           ),
                         ),
                       ],
@@ -207,62 +146,61 @@ class AbonnementTile extends StatelessWidget {
               ),
             ),
 
-            const Gap(5),
+            const Gap(4),
 
             // Contenu principal
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Type et montant
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Formule',
                                   style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 11,
+                                    color: subtitleColor,
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                const Gap(2),
+                                const Gap(1),
                                 Text(
                                   item.type.value.capitalize(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 18,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    color: textColor,
+                                    fontSize: 17.5,
+                                    letterSpacing: -0.2,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(8),
+                              color: priceBg,
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
                               item.montant.toAmount(unit: "F"),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                              style: TextStyle(
+                                color: priceText,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 14,
                               ),
                             ),
                           ),
@@ -270,33 +208,33 @@ class AbonnementTile extends StatelessWidget {
                       ),
                     ),
 
-                    const Gap(15),
+                    const Gap(14),
 
-                    // Dates
+                    // Dates de validité
                     Row(
                       children: [
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text(
+                              Text(
                                 'Début',
                                 style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 11,
+                                  color: subtitleColor,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const Gap(4),
+                              const Gap(3),
                               Text(
-                                (item.dateDebut?.toString() ?? "")
-                                    .toFrenchDateTime,
+                                (item.dateDebut?.toString() ?? "").toFrenchDateTime,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 11.5,
                                 ),
                               ),
                             ],
@@ -304,32 +242,32 @@ class AbonnementTile extends StatelessWidget {
                         ),
                         Container(
                           width: 1,
-                          height: 40,
-                          color: Colors.white.withValues(alpha: 0.3),
+                          height: 32,
+                          color: borderDividerColor,
                           margin: const EdgeInsets.symmetric(horizontal: 10),
                         ),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text(
+                              Text(
                                 'Fin',
                                 style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 11,
+                                  color: subtitleColor,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const Gap(4),
+                              const Gap(3),
                               Text(
-                                (item.dateFin?.toString() ?? "")
-                                    .toFrenchDateTime,
+                                (item.dateFin?.toString() ?? "").toFrenchDateTime,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 11.5,
                                 ),
                               ),
                             ],
@@ -343,6 +281,102 @@ class AbonnementTile extends StatelessWidget {
             ),
 
             const Gap(10),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAvantages(BuildContext context) {
+    CBottomSheet.show(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(
+                  Icons.star_rounded,
+                  color: AppColors.yellow,
+                  size: 28,
+                ),
+                Gap(10),
+                Text(
+                  'Avantages inclus',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.primary,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+              ],
+            ),
+            const Gap(15),
+            const Divider(),
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: item.modules.length,
+                separatorBuilder: (_, __) => const Divider(height: 1),
+                itemBuilder: (_, i) => ListTile(
+                  contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/images/svg/piece.svg',
+                      width: 20,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.primary,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                  title: Text(
+                    item.modules[i].libelle.value,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0F231F),
+                    ),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      item.modules[i].description.value,
+                      style: TextStyle(
+                        color: AppColors.primary.withValues(alpha: 0.5),
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  trailing: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.yellow.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      item.modules[i].quantite.toAmount(unit: ""),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.yellow,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

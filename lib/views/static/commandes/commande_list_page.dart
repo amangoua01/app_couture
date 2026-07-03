@@ -1,5 +1,6 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/c_tab_bar.dart';
 import 'package:ateliya/tools/widgets/command_tile.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
@@ -25,18 +26,6 @@ class CommandeListPage extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: const Text("Commandes"),
-              bottom: TabBar(
-                isScrollable: true,
-                onTap: (index) {
-                  ctl.tabIndex = index;
-                  ctl.update();
-                },
-                tabs: const [
-                  Tab(text: "Non terminées"),
-                  Tab(text: "Soldées non term."),
-                  Tab(text: "Terminées"),
-                ],
-              ),
               actions: [
                 if (!ctl.isLoading)
                   IconButton(
@@ -60,64 +49,84 @@ class CommandeListPage extends StatelessWidget {
                     const ColorFilter.mode(Colors.white, BlendMode.srcIn),
               ),
             ),
-            body: PlaceholderBuilder(
-              condition: !ctl.isLoading,
-              placeholder: const Center(child: CircularProgressIndicator()),
-              builder: () {
-                final items = ctl.items;
-                if (items.isEmpty) {
-                  return RefreshIndicator(
-                    onRefresh: ctl.getList,
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.7,
-                        alignment: Alignment.center,
-                        child: EmptyDataWidget(
-                          message: "Aucune commande trouvée",
+            body: Column(
+              children: [
+                CTabBar(
+                  tabs: const [
+                    "Non terminées",
+                    "Soldées non term.",
+                    "Terminées"
+                  ],
+                  onTabChanged: (index) {
+                    ctl.tabIndex = index;
+                    ctl.update();
+                  },
+                ),
+                Expanded(
+                  child: PlaceholderBuilder(
+                    condition: !ctl.isLoading,
+                    placeholder:
+                        const Center(child: CircularProgressIndicator()),
+                    builder: () {
+                      final items = ctl.items;
+                      if (items.isEmpty) {
+                        return RefreshIndicator(
                           onRefresh: ctl.getList,
-                        ),
-                      ),
-                    ),
-                  );
-                }
-
-                return RefreshIndicator(
-                  onRefresh: ctl.getList,
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (ScrollNotification scrollInfo) {
-                      if (!ctl.isLoadingMore &&
-                          scrollInfo.metrics.pixels ==
-                              scrollInfo.metrics.maxScrollExtent) {
-                        ctl.loadMore();
-                      }
-                      return false;
-                    },
-                    child: ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.only(
-                        left: 15,
-                        right: 15,
-                        bottom: 100,
-                        top: 15,
-                      ),
-                      itemCount: ctl.items.length + (ctl.isLoadingMore ? 1 : 0),
-                      itemBuilder: (_, i) {
-                        if (i == ctl.items.length) {
-                          return const Padding(
-                            padding: EdgeInsets.all(15.0),
-                            child: Center(child: CircularProgressIndicator()),
-                          );
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: CommandTile(mesure: ctl.items[i]),
+                          child: SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: Container(
+                              height: MediaQuery.of(context).size.height * 0.7,
+                              alignment: Alignment.center,
+                              child: EmptyDataWidget(
+                                message: "Aucune commande trouvée",
+                                onRefresh: ctl.getList,
+                              ),
+                            ),
+                          ),
                         );
-                      },
-                    ),
+                      }
+
+                      return RefreshIndicator(
+                        onRefresh: ctl.getList,
+                        child: NotificationListener<ScrollNotification>(
+                          onNotification: (ScrollNotification scrollInfo) {
+                            if (!ctl.isLoadingMore &&
+                                scrollInfo.metrics.pixels ==
+                                    scrollInfo.metrics.maxScrollExtent) {
+                              ctl.loadMore();
+                            }
+                            return false;
+                          },
+                          child: ListView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.only(
+                              left: 15,
+                              right: 15,
+                              bottom: 100,
+                              top: 15,
+                            ),
+                            itemCount:
+                                ctl.items.length + (ctl.isLoadingMore ? 1 : 0),
+                            itemBuilder: (_, i) {
+                              if (i == ctl.items.length) {
+                                return const Padding(
+                                  padding: EdgeInsets.all(15.0),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                );
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 15),
+                                child: CommandTile(mesure: ctl.items[i]),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+              ],
             ),
           );
         },

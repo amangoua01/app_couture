@@ -2,6 +2,7 @@ import 'package:ateliya/data/models/transaction_response.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/c_card.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
@@ -21,7 +22,7 @@ class TransactionPage extends StatelessWidget {
       init: TransactionPageVctl(),
       builder: (ctl) {
         return Scaffold(
-          backgroundColor: const Color(0xFFF5F7FA),
+          backgroundColor: const Color(0xFFF8FAF9),
           appBar: MainAppBar(
             enterpriseTitle: ctl.getEntite().value.libelle.value,
             notifCount: ctl.nbUnreadNotifs,
@@ -30,126 +31,139 @@ class TransactionPage extends StatelessWidget {
           ),
           body: PlaceholderWidget(
             condition: !ctl.isLoading,
-            placeholder: const Center(child: CircularProgressIndicator()),
+            placeholder: const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
+                strokeWidth: 2.5,
+              ),
+            ),
             child: Column(
               children: [
-                // ── Header avec solde + résumé ──────────────────────────
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.primary,
-                        Color.fromRGBO(56, 152, 160, 1)
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  padding: const EdgeInsets.fromLTRB(20, 6, 20, 28),
-                  child: Column(
-                    children: [
-                      // Sélecteur de date stylisé
-                      InkWell(
-                        onTap: () => _showDatePicker(context),
-                        borderRadius: BorderRadius.circular(30),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 7, horizontal: 18),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.3)),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.calendar_today_rounded,
-                                  size: 14, color: Colors.white),
-                              const Gap(8),
-                              Text(
-                                ctl.formattedDate,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
+                // ── Header Wallet avec CCard ───────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+                  child: CCard(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (ctl.data != null) ...[
+                            // Ligne 1 : Titre "SOLDE CUMULÉ" + Sélecteur de date
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "SOLDE CUMULÉ",
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.4),
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 1.0,
+                                  ),
                                 ),
-                              ),
-                              const Gap(6),
-                              const Icon(Icons.keyboard_arrow_down_rounded,
-                                  size: 16, color: Colors.white),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Gap(18),
+                                InkWell(
+                                  onTap: () => _showDatePicker(context),
+                                  borderRadius: BorderRadius.circular(30),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 6, horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.08),
+                                      borderRadius: BorderRadius.circular(30),
+                                      border: Border.all(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.12),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.calendar_today_rounded,
+                                            size: 11,
+                                            color: AppColors.secondary),
+                                        const Gap(6),
+                                        Text(
+                                          ctl.formattedDate,
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                            letterSpacing: 0.1,
+                                          ),
+                                        ),
+                                        const Gap(4),
+                                        Icon(Icons.keyboard_arrow_down_rounded,
+                                            size: 13,
+                                            color: Colors.white
+                                                .withValues(alpha: 0.8)),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Gap(4),
 
-                      // Solde total
-                      if (ctl.data != null) ...[
-                        Text(
-                          "Solde total",
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.7),
-                            fontSize: 13,
-                          ),
-                        ),
-                        const Gap(4),
-                        Text(
-                          ctl.data!.summary.total.toAmount(unit: "F"),
-                          style: TextStyle(
-                            fontSize: 34,
-                            fontWeight: FontWeight.w900,
-                            color: ctl.data!.summary.total >= 0
-                                ? Colors.white
-                                : Colors.red[200],
-                            letterSpacing: -1,
-                          ),
-                        ),
-                        const Gap(22),
-
-                        // Cards Revenus / Dépenses
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _SummaryCard(
-                                title: "Revenus",
-                                amount: ctl.data!.summary.revenus,
-                                color: Colors.green,
-                                icon: Icons.arrow_downward_rounded,
+                            // Ligne 2 : Montant du solde
+                            Text(
+                              ctl.data!.summary.total.toAmount(unit: "F"),
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w900,
+                                color: ctl.data!.summary.total >= 0
+                                    ? Colors.white
+                                    : const Color(0xFFC76D6D),
+                                letterSpacing: -0.5,
                               ),
                             ),
                             const Gap(14),
-                            Expanded(
-                              child: _SummaryCard(
-                                title: "Dépenses",
-                                amount: ctl.data!.summary.depenses,
-                                color: Colors.red,
-                                icon: Icons.arrow_upward_rounded,
-                              ),
+
+                            // Cards Revenus / Dépenses
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _SummaryCard(
+                                    title: "Revenus",
+                                    amount: ctl.data!.summary.revenus,
+                                    color: AppColors.green,
+                                    icon: Icons.arrow_downward_rounded,
+                                  ),
+                                ),
+                                const Gap(8),
+                                Expanded(
+                                  child: _SummaryCard(
+                                    title: "Dépenses",
+                                    amount: ctl.data!.summary.depenses,
+                                    color: const Color(0xFFC76D6D),
+                                    icon: Icons.arrow_upward_rounded,
+                                  ),
+                                ),
+                              ],
                             ),
+                          ] else ...[
+                            const Gap(8),
+                            Text(
+                              "Sélectionnez une période",
+                              style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  fontSize: 12),
+                            ),
+                            const Gap(8),
                           ],
-                        ),
-                      ] else ...[
-                        const Gap(10),
-                        Text(
-                          "Sélectionnez une période",
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.6),
-                              fontSize: 14),
-                        ),
-                        const Gap(10),
-                      ],
-                    ],
+                        ],
+                      ),
+                    ),
                   ),
                 ),
 
-                // ── Liste Transactions ──────────────────────────────────
+                // ── Liste Transactions ─────────────────────────────
                 Expanded(
                   child: Container(
                     decoration: const BoxDecoration(
-                      color: Color(0xFFF5F7FA),
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(24)),
+                      color: Color(0xFFF8FAF9),
                     ),
                     child: ctl.data == null
                         ? EmptyDataWidget(onRefresh: ctl.fetchData)
@@ -161,7 +175,7 @@ class TransactionPage extends StatelessWidget {
                               )
                             : ListView.builder(
                                 padding:
-                                    const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                                    const EdgeInsets.fromLTRB(16, 12, 16, 28),
                                 itemCount: ctl.data!.transactions.length,
                                 itemBuilder: (context, index) {
                                   final item = ctl.data!.transactions[index];
@@ -184,16 +198,17 @@ class TransactionPage extends StatelessWidget {
                                             _formatDateLabel(
                                                 item.date.split('T').first),
                                             style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.grey[500],
-                                              letterSpacing: 0.5,
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w800,
+                                              color: AppColors.primary
+                                                  .withValues(alpha: 0.4),
+                                              letterSpacing: 0.8,
                                             ),
                                           ),
                                         ),
                                       ],
                                       _TransactionTile(item: item),
-                                      const Gap(10),
+                                      const Gap(8),
                                     ],
                                   );
                                 },
@@ -210,28 +225,28 @@ class TransactionPage extends StatelessWidget {
 
   String _formatDateLabel(String isoDate) {
     final parts = isoDate.split('-');
-    if (parts.length < 3) return isoDate;
+    if (parts.length < 3) return isoDate.toUpperCase();
     final dt =
         DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
-    if (dt == today) return "Aujourd'hui";
-    if (dt == yesterday) return "Hier";
+    if (dt == today) return "AUJOURD'HUI";
+    if (dt == yesterday) return "HIER";
     const months = [
       '',
-      'Jan',
-      'Fév',
-      'Mar',
-      'Avr',
-      'Mai',
-      'Jun',
-      'Jul',
-      'Aoû',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Déc'
+      'JANVIER',
+      'FÉVRIER',
+      'MARS',
+      'AVRIL',
+      'MAI',
+      'JUIN',
+      'JUILLET',
+      'AOÛT',
+      'SEPTEMBRE',
+      'OCTOBRE',
+      'NOVEMBRE',
+      'DÉCEMBRE'
     ];
     return "${dt.day} ${months[dt.month]} ${dt.year}";
   }
@@ -245,30 +260,32 @@ class TransactionPage extends StatelessWidget {
             children: [
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
                       "Filtrer par date",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.primary),
                     ),
                     InkWell(
                       onTap: ctl.toggleMode,
                       borderRadius: BorderRadius.circular(20),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
+                            horizontal: 14, vertical: 7),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
+                          color: AppColors.primary.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           ctl.isMonthMode ? "Vue Mois" : "Vue Jour",
                           style: const TextStyle(
                               color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w800,
                               fontSize: 12),
                         ),
                       ),
@@ -285,9 +302,9 @@ class TransactionPage extends StatelessWidget {
                   centerAlignModePicker: true,
                   controlsHeight: 50,
                   controlsTextStyle: const TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold),
-                  dayTextStyle: const TextStyle(color: Colors.black),
-                  yearTextStyle: const TextStyle(color: Colors.black),
+                      color: AppColors.primary, fontWeight: FontWeight.bold),
+                  dayTextStyle: const TextStyle(color: AppColors.primary),
+                  yearTextStyle: const TextStyle(color: AppColors.primary),
                 ),
                 value: ctl.selectedDay != null ? [ctl.selectedDay!] : [],
                 onValueChanged: (dates) {
@@ -308,7 +325,7 @@ class TransactionPage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
+                            borderRadius: BorderRadius.circular(16)),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         elevation: 0,
                       ),
@@ -329,7 +346,7 @@ class TransactionPage extends StatelessWidget {
   }
 }
 
-// ── Cards résumé ─────────────────────────────────────────────────────────────
+// ── Cards résumé vitrées WAO ─────────────────────────────────────────────────
 
 class _SummaryCard extends StatelessWidget {
   final String title;
@@ -347,25 +364,23 @@ class _SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.18),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+        color: Colors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(7),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
+              color: color.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon,
-                color: color == Colors.green ? color : Colors.red[300],
-                size: 16),
+            child: Icon(icon, color: color, size: 14),
           ),
-          const Gap(10),
+          const Gap(8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,17 +388,18 @@ class _SummaryCard extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500),
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600),
                 ),
                 const Gap(2),
                 Text(
                   amount.toAmount(unit: "F"),
                   style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 12,
+                      letterSpacing: -0.1),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -396,7 +412,7 @@ class _SummaryCard extends StatelessWidget {
   }
 }
 
-// ── Item de transaction ───────────────────────────────────────────────────────
+// ── Item de transaction WAO ───────────────────────────────────────────────────
 
 class _TransactionTile extends StatelessWidget {
   final TransactionItem item;
@@ -405,7 +421,7 @@ class _TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color iconColor = item.isRevenu ? Colors.green : Colors.red;
+    Color iconColor = item.isRevenu ? AppColors.green : const Color(0xFFC76D6D);
     IconData iconData = item.isRevenu
         ? Icons.arrow_downward_rounded
         : Icons.arrow_upward_rounded;
@@ -422,13 +438,13 @@ class _TransactionTile extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: AppColors.primary.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -436,17 +452,17 @@ class _TransactionTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Icône
+          // Icône dans badge circulaire lumineux plus compact
           Container(
-            width: 44,
-            height: 44,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               color: iconColor.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(13),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(iconData, color: iconColor, size: 20),
+            child: Icon(iconData, color: iconColor, size: 18),
           ),
-          const Gap(14),
+          const Gap(12),
 
           // Infos
           Expanded(
@@ -456,24 +472,30 @@ class _TransactionTile extends StatelessWidget {
                 Text(
                   item.type,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black87),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                      color: AppColors.primary,
+                      letterSpacing: -0.1),
                 ),
                 if (item.description.isNotEmpty) ...[
                   const Gap(2),
                   Text(
                     item.description,
                     style: TextStyle(
-                        color: Colors.grey[500], fontSize: 12, height: 1.3),
+                        color: AppColors.primary.withValues(alpha: 0.45),
+                        fontSize: 11,
+                        height: 1.2),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
-                const Gap(4),
+                const Gap(3),
                 Text(
                   item.heure,
-                  style: TextStyle(color: Colors.grey[400], fontSize: 11),
+                  style: TextStyle(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -486,26 +508,27 @@ class _TransactionTile extends StatelessWidget {
               Text(
                 "${item.isRevenu ? "+" : "−"} ${item.montant.toAmount(unit: "F")}",
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13,
                   color: iconColor,
+                  letterSpacing: -0.2,
                 ),
               ),
               if (item.moyenPaiement != null) ...[
                 const Gap(4),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.08),
+                    color: AppColors.primary.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     item.moyenPaiement!,
-                    style: const TextStyle(
-                        fontSize: 10,
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        fontSize: 9,
+                        color: AppColors.primary.withValues(alpha: 0.8),
+                        fontWeight: FontWeight.w700),
                   ),
                 ),
               ],

@@ -17,11 +17,9 @@ class PrintListPage extends StatelessWidget {
       init: PrintListPageVctl(),
       builder: (ctl) {
         return Scaffold(
-          backgroundColor: Colors.grey[50],
+          backgroundColor: const Color(0xFFF8FAF9),
           appBar: AppBar(
             title: const Text("Imprimantes"),
-            elevation: 0,
-            centerTitle: true,
             actions: [
               IconButton(
                 tooltip: "Scanner",
@@ -31,61 +29,101 @@ class PrintListPage extends StatelessWidget {
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.primary,
+                          color: Colors.white,
                         ),
                       )
-                    : const Icon(Icons.refresh_rounded),
+                    : const Icon(Icons.refresh_rounded, color: Colors.white),
                 onPressed: ctl.checkPermissionsAndScan,
               ),
             ],
           ),
-          floatingActionButton: FloatingActionButton.extended(
+          floatingActionButton: FloatingActionButton(
             onPressed: () => Get.to(() => const AddPrinterFromAdressePage()),
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            icon: const Icon(Icons.add_rounded),
-            label: const Text("Ajouter",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Icon(Icons.add_rounded),
           ),
           body: Column(
             children: [
-              // ── Bandeau permission manquante ───────────────────────
+              // ── Bandeau permission manquante (Modernisé aux couleurs de la marque) ───────────────────────
               if (!ctl.permissionGranted)
                 Container(
-                  margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  padding: const EdgeInsets.all(14),
+                  margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.orange.shade50,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Colors.orange.shade200),
+                    color: const Color(0xFFF4F7F6),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.08),
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.02),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                   child: Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.orange.shade100,
+                          color: AppColors.primary.withValues(alpha: 0.08),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.warning_amber_rounded,
-                            color: Colors.orange.shade700, size: 18),
+                        child: const Icon(
+                          Icons.warning_amber_rounded,
+                          color: AppColors.primary,
+                          size: 18,
+                        ),
                       ),
                       const Gap(12),
                       Expanded(
-                        child: Text(
-                          "Permissions Bluetooth requises pour scanner.",
-                          style: TextStyle(
-                              color: Colors.orange.shade900,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Autorisation requise",
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            const Gap(2),
+                            Text(
+                              "Permissions Bluetooth requises pour scanner.",
+                              style: TextStyle(
+                                color: AppColors.primary.withValues(alpha: 0.6),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      TextButton(
+                      ElevatedButton(
                         onPressed: openAppSettings,
-                        style: TextButton.styleFrom(
-                            foregroundColor: Colors.orange.shade800),
-                        child: const Text("Ouvrir",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text(
+                          "Ouvrir",
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ),
@@ -93,7 +131,7 @@ class PrintListPage extends StatelessWidget {
 
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 100),
                   children: [
                     // ── Section : Déjà utilisées ───────────────────
                     if (ctl.oldDevices.isNotEmpty) ...[
@@ -102,12 +140,12 @@ class PrintListPage extends StatelessWidget {
                         label: "Déjà utilisées",
                         color: AppColors.primary,
                       ),
-                      const Gap(10),
+                      const Gap(12),
                       ...ctl.oldDevices.map((item) {
                         final isConnected =
                             ctl.selectedPrinter.address == item.address;
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(bottom: 12),
                           child: PrinterListTile(
                             item,
                             isConnected: isConnected,
@@ -116,28 +154,50 @@ class PrintListPage extends StatelessWidget {
                           ),
                         );
                       }),
-                      const Gap(16),
+                      const Gap(20),
                     ],
 
                     // ── Section : Appareils disponibles ───────────
                     _SectionHeader(
                       icon: Icons.bluetooth_searching_rounded,
                       label: "Appareils disponibles",
-                      color: Colors.blue,
+                      color: AppColors.primary,
                       trailing: ctl.isScanning
                           ? const SizedBox(
-                              width: 14,
-                              height: 14,
+                              width: 16,
+                              height: 16,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.blue))
+                                strokeWidth: 2.2,
+                                color: AppColors.primary,
+                              ),
+                            )
                           : null,
                     ),
-                    const Gap(10),
+                    const Gap(12),
 
                     if (ctl.isScanning)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 40),
-                        child: Center(child: CircularProgressIndicator()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 40),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const CircularProgressIndicator(
+                                color: AppColors.primary,
+                              ),
+                              const Gap(14),
+                              Text(
+                                "Recherche d'imprimantes en cours...",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      AppColors.primary.withValues(alpha: 0.5),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       )
                     else if (ctl.scannedDevices.isEmpty)
                       Container(
@@ -152,7 +212,7 @@ class PrintListPage extends StatelessWidget {
                         final isConnected =
                             ctl.selectedPrinter.address == item.address;
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(bottom: 12),
                           child: PrinterListTile(
                             item,
                             isConnected: isConnected,
@@ -161,28 +221,59 @@ class PrintListPage extends StatelessWidget {
                         );
                       }),
 
-                    const Gap(16),
+                    const Gap(24),
 
-                    // ── Note de bas de page ────────────────────────
+                    // ── Note de bas de page (Modernisé - Style Ateliya) ────────────────────────
                     Container(
-                      padding: const EdgeInsets.all(14),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(12),
+                        color: AppColors.primary.withValues(alpha: 0.03),
+                        borderRadius: BorderRadius.circular(18),
                         border: Border.all(
-                            color: Colors.blue.withValues(alpha: 0.15)),
+                          color: AppColors.primary.withValues(alpha: 0.08),
+                          width: 1,
+                        ),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.info_outline_rounded,
-                              size: 16, color: Colors.blue[400]),
-                          const Gap(10),
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.06),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.info_outline_rounded,
+                              size: 16,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                          const Gap(12),
                           Expanded(
-                            child: Text(
-                              "Si votre imprimante n'apparaît pas, assurez-vous de l'avoir couplée dans les paramètres Bluetooth de votre téléphone.",
-                              style: TextStyle(
-                                  color: Colors.blue[700], fontSize: 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Astuce de connexion",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                                const Gap(3),
+                                Text(
+                                  "Si votre imprimante n'apparaît pas, assurez-vous de l'avoir couplée dans les paramètres Bluetooth de votre téléphone.",
+                                  style: TextStyle(
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.6),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.35,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -217,20 +308,22 @@ class _SectionHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(6),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
+            color: color.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color, size: 16),
         ),
-        const Gap(10),
+        const Gap(12),
         Text(
-          label,
+          label.toUpperCase(),
           style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-              color: Colors.grey[700]),
+            fontWeight: FontWeight.w900,
+            fontSize: 11.5,
+            color: AppColors.primary.withValues(alpha: 0.8),
+            letterSpacing: 0.6,
+          ),
         ),
         const Spacer(),
         if (trailing != null) trailing!,

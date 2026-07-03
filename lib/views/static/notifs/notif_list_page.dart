@@ -72,12 +72,10 @@ class NotifListPage extends StatelessWidget {
                 ),
               ] else ...[
                 if (ctl.data.items.isNotEmpty)
-                  TextButton(
+                  IconButton(
                     onPressed: () => ctl.getList(),
-                    child: const Text(
-                      'Actualiser',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    icon: const Icon(Icons.refresh, color: Colors.white),
+                    tooltip: 'Actualiser',
                   ),
               ],
             ],

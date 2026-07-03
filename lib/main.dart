@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/services/deep_link_service.dart';
 import 'package:ateliya/tools/services/notification_service.dart';
@@ -45,25 +46,27 @@ void main() async {
       options.replay.sessionSampleRate = 0.5;
       options.replay.onErrorSampleRate = 1.0;
     },
-    appRunner: () => runApp(
-      GetMaterialApp(
-        title: Env.appName,
-        theme: AppTheme.light,
-        locale: const Locale("fr", "FR"),
-        fallbackLocale: const Locale('en', 'US'),
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('fr', 'FR'),
-          Locale('en', 'US'),
-        ],
-        builder: EasyLoading.init(),
-        debugShowCheckedModeBanner: false,
-        home: const SplashScreenPage(),
-      ),
-    ),
+    appRunner: () {
+      runApp(
+        GetMaterialApp(
+          title: Env.appName,
+          theme: AppTheme.light,
+          locale: const Locale("fr", "FR"),
+          fallbackLocale: const Locale('en', 'US'),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('fr', 'FR'),
+            Locale('en', 'US'),
+          ],
+          builder: EasyLoading.init(),
+          debugShowCheckedModeBanner: false,
+          home: const SplashScreenPage(),
+        ),
+      );
+    },
   );
 }

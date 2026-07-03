@@ -19,15 +19,7 @@ class EditionMesurePage extends StatelessWidget {
       builder: (ctl) {
         return Scaffold(
           backgroundColor: const Color(0xFFF5F7FA),
-          appBar: AppBar(
-            title: const Text("Nouvelle commande"),
-            centerTitle: true,
-            backgroundColor: Colors.white,
-            elevation: 0,
-            iconTheme: const IconThemeData(color: Colors.black),
-            titleTextStyle: const TextStyle(
-                color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+          appBar: AppBar(title: const Text("Nouvelle commande")),
           bottomNavigationBar: SafeArea(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),

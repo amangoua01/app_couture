@@ -42,7 +42,13 @@ class StatistiqueEntreprisePageVctl extends AuthViewController {
     isLoading = true;
     update();
 
-    final res = await api.getDashboardData(params).load();
+    var res = await api.getDashboardData(params).load();
+
+    // Retry une fois en cas d'erreur réseau
+    if (!res.status) {
+      await Future.delayed(const Duration(seconds: 1));
+      res = await api.getDashboardData(params).load();
+    }
 
     isLoading = false;
     if (res.status) {

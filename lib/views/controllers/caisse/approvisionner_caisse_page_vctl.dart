@@ -21,24 +21,41 @@ class ApprovisionnerCaissePageVctl extends GetxController {
   final descriptionCtl = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
+
   ModePaiementEnum modePaiement = ModePaiementEnum.especes;
   SensMouvementCaisseEnum sens = SensMouvementCaisseEnum.entree;
 
-  // List to manage multiple lines
-  // List to manage multiple lines
-  final lines = <MouvementCaisseLine>[].obs;
+  final lines = <MouvementCaisseLine>[];
 
-  @override
-  void onInit() {
-    super.onInit();
-    // No initial line added anymore, handled by BottomSheet
+  Caisse? selectedCaisse;
+  final montantBottomSheetCtl = TextEditingController();
+
+  void resetBottomSheet() {
+    selectedCaisse = null;
+    montantBottomSheetCtl.clear();
+  }
+
+  void onCaisseSelected(Caisse? caisse) {
+    selectedCaisse = caisse;
+  }
+
+  bool validateAndAddLine() {
+    if (selectedCaisse == null) {
+      CMessageDialog.show(message: 'Veuillez sélectionner une caisse');
+      return false;
+    }
+    if (montantBottomSheetCtl.text.isEmpty) {
+      CMessageDialog.show(message: 'Veuillez saisir un montant');
+      return false;
+    }
+    lines.add(createLine(selectedCaisse!, montantBottomSheetCtl.text));
+    update();
+    return true;
   }
 
   void addLine() {
     final line = MouvementCaisseLine();
-    line.montantCtl.addListener(() {
-      update();
-    });
+    line.montantCtl.addListener(() => update());
     lines.add(line);
     update();
   }
@@ -73,7 +90,6 @@ class ApprovisionnerCaissePageVctl extends GetxController {
 
   Future<void> submit() async {
     if (formKey.currentState!.validate()) {
-      // Validate that all lines have a caisse selected and a montant
       for (var line in lines) {
         if (line.caisse == null) {
           CMessageDialog.show(
@@ -86,21 +102,8 @@ class ApprovisionnerCaissePageVctl extends GetxController {
               message: "Veuillez saisir un montant pour toutes les lignes");
           return;
         }
-
-        // final montantSaisi = line.montantCtl.text.fromAmountToDouble() ?? 0.0;
-        // final montantDisponible =
-        //     line.caisse!.montant.fromAmountToDouble() ?? 0.0;
-
-        // if (montantSaisi > montantDisponible) {
-        //   CMessageDialog.show(
-        //     message:
-        //         "Solde inssufisant pour la caisse ${line.caisse!.reference} (Disponible: ${line.caisse!.montant.toAmount(unit: 'F')})",
-        //   );
-        //   return;
-        // }
       }
 
-      // Calculate total amount
       double totalMontant = 0;
       final lignesData = <LigneMouvementCaisseDto>[];
 

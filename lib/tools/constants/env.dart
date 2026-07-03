@@ -29,7 +29,8 @@ abstract class Env {
 
   static String playStoreUrl =
       "https://play.google.com/store/apps/details?id=com.ateliya.app";
-  static String appStoreUrl = "";
+  static String appStoreUrl =
+      "https://apps.apple.com/ci/app/ateliya/id6755125319";
 
   static String get copyRight =>
       "© ${DateTime.now().year} $appName. v. $appVersion";

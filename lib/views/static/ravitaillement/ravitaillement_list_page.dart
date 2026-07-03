@@ -49,7 +49,12 @@ class RavitaillementListPage extends StatelessWidget {
                   itemCount: 8,
                   itemBuilder: (_, __) => const ShimmerListtile(),
                 )
-              : ctl.items.isEmpty
+              : ctl.errorMessage != null
+                  ? EmptyDataWidget(
+                      message: ctl.errorMessage!,
+                      onRefresh: () => ctl.fetchData(),
+                    )
+                  : ctl.items.isEmpty
                   ? EmptyDataWidget(
                       message: 'Aucun ravitaillement enregistré',
                       onRefresh: () => ctl.fetchData(),

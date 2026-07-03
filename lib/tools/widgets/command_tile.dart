@@ -17,7 +17,6 @@ class CommandTile extends StatelessWidget {
   Widget build(BuildContext context) {
     if (mesure == null) return const SizedBox.shrink();
 
-    // Calculer les jours restants jusqu'à la date de retrait
     final int? joursRestants =
         mesure!.dateRetrait?.difference(DateTime.now()).inDays;
 
@@ -31,251 +30,257 @@ class CommandTile extends StatelessWidget {
         joursRestants <= 2 &&
         joursRestants >= 0;
 
-    // Récupérer les états uniques des lignes de mesure
     final etats = mesure!.lignesMesures
-        .where((ligne) => ligne.etat != null && ligne.etat!.isNotEmpty)
-        .map((ligne) => ligne.etat!)
+        .where((l) => l.etat != null && l.etat!.isNotEmpty)
+        .map((l) => l.etat!)
         .toSet()
         .toList();
+
+    final articles = mesure!.lignesMesures
+        .map((e) => e.typeMesure?.libelle ?? 'Article')
+        .join(', ');
+
+    final pct = mesure!.pourcentage;
+    final barColor = mesure!.isPaid ? AppColors.green : AppColors.primary;
 
     return GestureDetector(
       onTap: () => Get.to(() => DetailCommandPage(mesure: mesure)),
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
-        padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          border:
+              Border.all(color: AppColors.fieldBorder.withValues(alpha: 0.5)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: AppColors.primary.withValues(alpha: 0.04),
               blurRadius: 10,
-              offset: const Offset(0, 4),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        mesure!.client?.fullName ?? 'Client inconnu',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.black87,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        mesure!.dateRetrait?.toFrenchDateTime ?? "N/A",
-                        style: const TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+            // ── En-tête ─────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Avatar initiales
+                  Container(
+                    width: 46,
+                    height: 46,
+                    decoration: BoxDecoration(
+                      color: isUrgent
+                          ? Colors.red.withValues(alpha: 0.1)
+                          : AppColors.primary.withValues(alpha: 0.07),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    if (isUrgent) ...[
-                      const Gap(4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.warning_rounded,
-                              color: Colors.white,
-                              size: 14,
-                            ),
-                            const Gap(4),
-                            Text(
-                              joursRestants == 0
-                                  ? "AUJOURD'HUI"
-                                  : joursRestants == 1
-                                      ? "DEMAIN"
-                                      : "URGENT",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      _initials(mesure!.client?.fullName),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                        color: isUrgent ? Colors.red : AppColors.primary,
                       ),
-                    ],
-                    if (etats.isNotEmpty) ...[
-                      const Gap(4),
-                      Wrap(
-                        spacing: 4,
-                        runSpacing: 4,
-                        alignment: WrapAlignment.end,
-                        children:
-                            etats.map((etat) => _buildEtatBadge(etat)).toList(),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            ),
-            const Gap(8),
-            Text(
-              mesure!.lignesMesures
-                  .map((e) => e.typeMesure?.libelle ?? "Article")
-                  .join(", "),
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 14,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const Gap(15),
-            Row(
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: mesure!.pourcentage,
-                      backgroundColor: Colors.grey[200],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        mesure!.isPaid ? Colors.green : AppColors.primary,
-                      ),
-                      minHeight: 6,
                     ),
                   ),
-                ),
-                const Gap(10),
-                Text(
-                  '${(mesure!.pourcentage * 100).toInt()}%',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    color: mesure!.isPaid ? Colors.green : AppColors.primary,
-                  ),
-                ),
-              ],
-            ),
-            const Gap(12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Payé",
-                      style: TextStyle(fontSize: 10, color: Colors.grey[500]),
-                    ),
-                    Text(
-                      mesure!.montantPaye.toAmount(unit: "F"),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                  const Gap(12),
+                  // Nom + articles
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Total",
-                          style:
-                              TextStyle(fontSize: 10, color: Colors.grey[500]),
-                        ),
-                        Text(
-                          mesure!.montantTotal.toAmount(unit: "F"),
+                          mesure!.client?.fullName ?? 'Client inconnu',
                           style: const TextStyle(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800,
                             fontSize: 14,
                             color: AppColors.primary,
+                            letterSpacing: -0.2,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const Gap(4),
+                        Text(
+                          articles,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
-                    const Gap(10),
-                    GestureDetector(
-                      onTap: () {
-                        final ctl = Get.put(DetailCommandPageVctl());
-                        ctl.printReceipt(mesure!);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            borderRadius: BorderRadius.circular(8)),
-                        child: const Icon(Icons.print,
-                            color: Colors.black87, size: 20),
-                      ),
-                    ),
-                    const Gap(10),
-                    GestureDetector(
-                      onTap: () {
-                        final ctl = Get.put(DetailCommandPageVctl());
-                        ctl.exportPdf(mesure!);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: Colors.red.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8)),
-                        child: const Icon(Icons.picture_as_pdf,
-                            color: Colors.red, size: 20),
-                      ),
-                    ),
-                    if (mesure!.resteArgent > 0) ...[
-                      const Gap(10),
-                      GestureDetector(
-                        onTap: () async {
-                          await Get.dialog(PaiementDialog(mesure: mesure!));
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
+                  ),
+                  const Gap(8),
+                  // Date + urgent
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      if (mesure!.dateRetrait != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8)),
-                          child: const Icon(Icons.payment,
-                              color: AppColors.primary, size: 20),
+                            color: isUrgent
+                                ? Colors.red.withValues(alpha: 0.08)
+                                : AppColors.primary.withValues(alpha: 0.07),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.calendar_today_outlined,
+                                size: 10,
+                                color:
+                                    isUrgent ? Colors.red : AppColors.primary,
+                              ),
+                              const Gap(4),
+                              Text(
+                                mesure!.dateRetrait!.toFrenchDateTime,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color:
+                                      isUrgent ? Colors.red : AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      )
-                    ]
+                      if (isUrgent) ...[
+                        const Gap(4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.warning_rounded,
+                                  color: Colors.white, size: 11),
+                              const Gap(3),
+                              Text(
+                                joursRestants == 0
+                                    ? "AUJOURD'HUI"
+                                    : joursRestants == 1
+                                        ? "DEMAIN"
+                                        : "URGENT",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      if (etats.isNotEmpty) ...[
+                        const Gap(4),
+                        Wrap(
+                          spacing: 4,
+                          runSpacing: 4,
+                          alignment: WrapAlignment.end,
+                          children:
+                              etats.map((e) => _EtatBadge(etat: e)).toList(),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Barre de progression ─────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: LinearProgressIndicator(
+                        value: pct,
+                        backgroundColor:
+                            AppColors.ligthGrey.withValues(alpha: 0.8),
+                        valueColor: AlwaysStoppedAnimation<Color>(barColor),
+                        minHeight: 6,
+                      ),
+                    ),
+                  ),
+                  const Gap(10),
+                  Text(
+                    '${(pct * 100).toInt()}%',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 12,
+                      color: barColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Gap(12),
+
+            // ── Montants + actions ───────────────────────────────────────
+            Divider(
+                height: 1, color: AppColors.fieldBorder.withValues(alpha: 0.5)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              child: Row(
+                children: [
+                  // Payé
+                  _AmountChip(
+                    label: "Payé",
+                    value: mesure!.montantPaye.toAmount(unit: "F"),
+                    color: AppColors.green,
+                  ),
+                  const Gap(8),
+                  // Total
+                  _AmountChip(
+                    label: "Total",
+                    value: mesure!.montantTotal.toAmount(unit: "F"),
+                    color: AppColors.primary,
+                  ),
+                  const Spacer(),
+                  // Actions
+                  _IconAction(
+                    icon: Icons.print_outlined,
+                    color: AppColors.primary,
+                    onTap: () {
+                      final ctl = Get.put(DetailCommandPageVctl());
+                      ctl.printReceipt(mesure!);
+                    },
+                  ),
+                  const Gap(6),
+                  _IconAction(
+                    icon: Icons.picture_as_pdf_outlined,
+                    color: Colors.red,
+                    onTap: () {
+                      final ctl = Get.put(DetailCommandPageVctl());
+                      ctl.exportPdf(mesure!);
+                    },
+                  ),
+                  if (mesure!.resteArgent > 0) ...[
+                    const Gap(6),
+                    _IconAction(
+                      icon: Icons.payments_outlined,
+                      color: AppColors.secondary,
+                      onTap: () => Get.dialog(PaiementDialog(mesure: mesure!)),
+                    ),
                   ],
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -283,53 +288,107 @@ class CommandTile extends StatelessWidget {
     );
   }
 
-  Widget _buildEtatBadge(String etat) {
-    Color backgroundColor;
-    Color textColor;
-    IconData icon;
+  String _initials(String? name) {
+    if (name == null || name.isEmpty) return '?';
+    final parts = name.trim().split(' ').where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return '?';
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
+  }
+}
+
+class _AmountChip extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  const _AmountChip(
+      {required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: TextStyle(fontSize: 10, color: Colors.grey.shade400)),
+        Text(
+          value,
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            fontSize: 13,
+            color: color,
+            letterSpacing: -0.3,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _IconAction extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+  const _IconAction(
+      {required this.icon, required this.color, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(7),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, size: 16, color: color),
+      ),
+    );
+  }
+}
+
+class _EtatBadge extends StatelessWidget {
+  final String etat;
+  const _EtatBadge({required this.etat});
+
+  @override
+  Widget build(BuildContext context) {
+    final Color bg;
+    final Color fg;
+    final IconData icon;
 
     switch (etat) {
       case 'Terminée':
-        backgroundColor = Colors.green.withValues(alpha: 0.1);
-        textColor = Colors.green.shade700;
+        bg = Colors.green.withValues(alpha: 0.1);
+        fg = Colors.green.shade700;
         icon = Icons.check_circle_outline;
         break;
       case 'Livrée':
-        backgroundColor = Colors.blue.withValues(alpha: 0.1);
-        textColor = Colors.blue.shade700;
+        bg = Colors.blue.withValues(alpha: 0.1);
+        fg = Colors.blue.shade700;
         icon = Icons.local_shipping_outlined;
         break;
-      case 'En cours':
       default:
-        backgroundColor = Colors.orange.withValues(alpha: 0.1);
-        textColor = Colors.orange.shade700;
+        bg = Colors.orange.withValues(alpha: 0.1);
+        fg = Colors.orange.shade700;
         icon = Icons.access_time;
-        break;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(6),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      decoration:
+          BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: textColor),
-          const Gap(4),
-          Flexible(
-            child: Text(
-              etat,
+          Icon(icon, size: 11, color: fg),
+          const Gap(3),
+          Text(etat,
               style: TextStyle(
-                color: textColor,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
+                  color: fg, fontSize: 10, fontWeight: FontWeight.w700)),
         ],
       ),
     );

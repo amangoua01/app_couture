@@ -66,4 +66,6 @@ class AccueilData extends ModelJson {
         "commandes": commandes.map((e) => e.toJson()).toList(),
         "meilleuresVentes": meilleuresVentes.map((e) => e.toJson()).toList(),
       };
+  
+  
 }
