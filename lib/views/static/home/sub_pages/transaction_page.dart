@@ -5,13 +5,12 @@ import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/c_card.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
-import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/views/controllers/home/transaction_page_vctl.dart';
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class TransactionPage extends StatelessWidget {
   const TransactionPage({super.key});
@@ -39,9 +38,80 @@ class TransactionPage extends StatelessWidget {
             ),
             child: Column(
               children: [
-                // ── Header Wallet avec CCard ───────────────────────
+                // ── Filtres ───────────────────────────────────────
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ToggleSwitch(
+                            inactiveBgColor: AppColors.secondary,
+                            activeBgColor: const [AppColors.primary],
+                            activeFgColor: Colors.white,
+                            inactiveFgColor:
+                                Colors.white.withValues(alpha: 0.7),
+                            minWidth: 96.0,
+                            cornerRadius: 14,
+                            initialLabelIndex:
+                                ctl.mode == TransactionFilterMode.jour ? 0 : 1,
+                            labels: const ["Jour", "Mois"],
+                            onToggle: (index) {
+                              if (index == 0) {
+                                ctl.onDaySelected(ctl.focusedDay);
+                              } else {
+                                ctl.selectMonth();
+                              }
+                            },
+                          ),
+                          const Gap(10),
+                          IconButton(
+                            onPressed: () => ctl.pickDateRange(context),
+                            icon: const Icon(
+                              Icons.calendar_month,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Gap(8),
+                      // Affiche la date sélectionnée
+                      GestureDetector(
+                        onTap: () => ctl.pickDateRange(context),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(color: AppColors.primary),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.calendar_month,
+                                  color: AppColors.primary, size: 14),
+                              const Gap(8),
+                              Text(
+                                ctl.formattedDate,
+                                style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Gap(8),
+
+                // ── Header Wallet ─────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
                   child: CCard(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
@@ -49,65 +119,16 @@ class TransactionPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (ctl.data != null) ...[
-                            // Ligne 1 : Titre "SOLDE CUMULÉ" + Sélecteur de date
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "SOLDE CUMULÉ",
-                                  style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.4),
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 1.0,
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () => _showDatePicker(context),
-                                  borderRadius: BorderRadius.circular(30),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 6, horizontal: 12),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.08),
-                                      borderRadius: BorderRadius.circular(30),
-                                      border: Border.all(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.12),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(Icons.calendar_today_rounded,
-                                            size: 11,
-                                            color: AppColors.secondary),
-                                        const Gap(6),
-                                        Text(
-                                          ctl.formattedDate,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white,
-                                            letterSpacing: 0.1,
-                                          ),
-                                        ),
-                                        const Gap(4),
-                                        Icon(Icons.keyboard_arrow_down_rounded,
-                                            size: 13,
-                                            color: Colors.white
-                                                .withValues(alpha: 0.8)),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              "SOLDE CUMULÉ",
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.4),
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1.0,
+                              ),
                             ),
                             const Gap(4),
-
-                            // Ligne 2 : Montant du solde
                             Text(
                               ctl.data!.summary.total.toAmount(unit: "F"),
                               style: TextStyle(
@@ -120,8 +141,6 @@ class TransactionPage extends StatelessWidget {
                               ),
                             ),
                             const Gap(14),
-
-                            // Cards Revenus / Dépenses
                             Row(
                               children: [
                                 Expanded(
@@ -161,59 +180,52 @@ class TransactionPage extends StatelessWidget {
 
                 // ── Liste Transactions ─────────────────────────────
                 Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF8FAF9),
-                    ),
-                    child: ctl.data == null
-                        ? EmptyDataWidget(onRefresh: ctl.fetchData)
-                        : ctl.data!.transactions.isEmpty
-                            ? EmptyDataWidget(
-                                message:
-                                    "Aucune transaction pour cette période",
-                                onRefresh: ctl.fetchData,
-                              )
-                            : ListView.builder(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16, 12, 16, 28),
-                                itemCount: ctl.data!.transactions.length,
-                                itemBuilder: (context, index) {
-                                  final item = ctl.data!.transactions[index];
-                                  final prev = index > 0
-                                      ? ctl.data!.transactions[index - 1]
-                                      : null;
-                                  final showDate = prev == null ||
-                                      item.date.split('T').first !=
-                                          prev.date.split('T').first;
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if (showDate) ...[
-                                        if (index != 0) const Gap(8),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 10, top: 4),
-                                          child: Text(
-                                            _formatDateLabel(
-                                                item.date.split('T').first),
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w800,
-                                              color: AppColors.primary
-                                                  .withValues(alpha: 0.4),
-                                              letterSpacing: 0.8,
-                                            ),
+                  child: ctl.data == null
+                      ? EmptyDataWidget(onRefresh: ctl.fetchData)
+                      : ctl.data!.transactions.isEmpty
+                          ? EmptyDataWidget(
+                              message: "Aucune transaction pour cette période",
+                              onRefresh: ctl.fetchData,
+                            )
+                          : ListView.builder(
+                              padding:
+                                  const EdgeInsets.fromLTRB(16, 12, 16, 28),
+                              itemCount: ctl.data!.transactions.length,
+                              itemBuilder: (context, index) {
+                                final item = ctl.data!.transactions[index];
+                                final prev = index > 0
+                                    ? ctl.data!.transactions[index - 1]
+                                    : null;
+                                final showDate = prev == null ||
+                                    item.date.split('T').first !=
+                                        prev.date.split('T').first;
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (showDate) ...[
+                                      if (index != 0) const Gap(8),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: 10, top: 4),
+                                        child: Text(
+                                          _formatDateLabel(
+                                              item.date.split('T').first),
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w800,
+                                            color: AppColors.primary
+                                                .withValues(alpha: 0.4),
+                                            letterSpacing: 0.8,
                                           ),
                                         ),
-                                      ],
-                                      _TransactionTile(item: item),
-                                      const Gap(8),
+                                      ),
                                     ],
-                                  );
-                                },
-                              ),
-                  ),
+                                    _TransactionTile(item: item),
+                                    const Gap(8),
+                                  ],
+                                );
+                              },
+                            ),
                 ),
               ],
             ),
@@ -250,103 +262,9 @@ class TransactionPage extends StatelessWidget {
     ];
     return "${dt.day} ${months[dt.month]} ${dt.year}";
   }
-
-  void _showDatePicker(BuildContext context) {
-    CBottomSheet.show(
-      child: GetBuilder<TransactionPageVctl>(
-        builder: (ctl) => SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Filtrer par date",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary),
-                    ),
-                    InkWell(
-                      onTap: ctl.toggleMode,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 7),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          ctl.isMonthMode ? "Vue Mois" : "Vue Jour",
-                          style: const TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 12),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1),
-              const Gap(8),
-              CalendarDatePicker2(
-                config: CalendarDatePicker2Config(
-                  calendarType: CalendarDatePicker2Type.single,
-                  selectedDayHighlightColor: AppColors.primary,
-                  centerAlignModePicker: true,
-                  controlsHeight: 50,
-                  controlsTextStyle: const TextStyle(
-                      color: AppColors.primary, fontWeight: FontWeight.bold),
-                  dayTextStyle: const TextStyle(color: AppColors.primary),
-                  yearTextStyle: const TextStyle(color: AppColors.primary),
-                ),
-                value: ctl.selectedDay != null ? [ctl.selectedDay!] : [],
-                onValueChanged: (dates) {
-                  if (dates.isNotEmpty) {
-                    ctl.onDateSelected(dates.first, dates.first);
-                    Get.back();
-                  }
-                },
-                onDisplayedMonthChanged: ctl.onPageChanged,
-              ),
-              if (ctl.isMonthMode)
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => Get.back(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        "Voir tout le mois",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ),
-              const Gap(20),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
 
-// ── Cards résumé vitrées WAO ─────────────────────────────────────────────────
+// ── Cards résumé ──────────────────────────────────────────────────────────────
 
 class _SummaryCard extends StatelessWidget {
   final String title;
@@ -412,7 +330,7 @@ class _SummaryCard extends StatelessWidget {
   }
 }
 
-// ── Item de transaction WAO ───────────────────────────────────────────────────
+// ── Item de transaction ───────────────────────────────────────────────────────
 
 class _TransactionTile extends StatelessWidget {
   final TransactionItem item;
@@ -452,7 +370,6 @@ class _TransactionTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Icône dans badge circulaire lumineux plus compact
           Container(
             width: 36,
             height: 36,
@@ -463,8 +380,6 @@ class _TransactionTile extends StatelessWidget {
             child: Icon(iconData, color: iconColor, size: 18),
           ),
           const Gap(12),
-
-          // Infos
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -500,8 +415,6 @@ class _TransactionTile extends StatelessWidget {
               ],
             ),
           ),
-
-          // Montant + moyen de paiement
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
