@@ -20,71 +20,100 @@ class MouvementCaisseListPage extends StatelessWidget {
       init: MouvementCaisseListVctl(),
       builder: (ctl) {
         return Scaffold(
-          backgroundColor: const Color(0xFFF5F7FA),
+          backgroundColor: const Color(0xFFF8FAF9),
           appBar: AppBar(
             title: const Text("Mouvements de caisse"),
           ),
           body: Column(
             children: [
-              // ── Header avec sélecteur de date ──────────────────────────
-              Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.primary,
-                      Color.fromRGBO(56, 152, 160, 1)
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-                child: Column(
-                  children: [
-                    const Text(
-                      "Historique des mouvements de caisse",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+              // ── Header Période de filtrage (Uniformisé) ───────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.05),
+                      width: 1,
                     ),
-                    const Gap(12),
-                    InkWell(
-                      onTap: () => _showDatePicker(context, ctl),
-                      borderRadius: BorderRadius.circular(30),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.02),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.3)),
+                          color: AppColors.primary.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                        child: const Icon(
+                          Icons.calendar_today_rounded,
+                          size: 16,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      const Gap(12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.calendar_today_rounded,
-                                size: 14, color: Colors.white),
-                            const Gap(8),
+                            Text(
+                              "Période de filtrage",
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color:
+                                    AppColors.primary.withValues(alpha: 0.45),
+                                letterSpacing: 0.1,
+                              ),
+                            ),
+                            const Gap(2),
                             Text(
                               "${DateFormat('dd/MM/yyyy').format(ctl.dateRange.start)} - ${DateFormat('dd/MM/yyyy').format(ctl.dateRange.end)}",
                               style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.primary,
                               ),
                             ),
-                            const Gap(6),
-                            const Icon(Icons.keyboard_arrow_down_rounded,
-                                size: 16, color: Colors.white),
                           ],
                         ),
                       ),
-                    ),
-                  ],
+                      OutlinedButton.icon(
+                        onPressed: () => _showDatePicker(context, ctl),
+                        icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                            size: 16),
+                        label: const Text(
+                          "Modifier",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w800, fontSize: 12),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.primary,
+                          side: BorderSide(
+                            color: AppColors.primary.withValues(alpha: 0.15),
+                            width: 1.2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
@@ -99,7 +128,7 @@ class MouvementCaisseListPage extends StatelessWidget {
                           onRefresh: ctl.fetchData,
                         )
                       : ListView.builder(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.fromLTRB(16, 10, 16, 40),
                           itemCount: ctl.data.items.length,
                           itemBuilder: (context, index) {
                             final item = ctl.data.items[index];
@@ -164,92 +193,131 @@ class _MouvementTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isEntree = item.sens == 1;
-    final color = isEntree ? Colors.green : Colors.red;
-    final icon =
-        isEntree ? Icons.add_circle_outline : Icons.remove_circle_outline;
+    final color = isEntree ? Colors.green.shade600 : Colors.red.shade600;
+    final icon = isEntree ? Icons.north_east_rounded : Icons.south_west_rounded;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.04),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            // Indicateur d'entrée/sortie d'argent chic
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 20),
             ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const Gap(16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const Gap(14),
+
+            // Détails du mouvement
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.reference ?? "Mouvement",
+                    style: const TextStyle(
+                      color: Color(0xFF0F231F),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14.5,
+                      letterSpacing: -0.15,
+                    ),
+                  ),
+                  const Gap(4),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time_rounded,
+                        size: 12,
+                        color: AppColors.primary.withValues(alpha: 0.35),
+                      ),
+                      const Gap(4),
+                      if (item.createdAt != null)
+                        Text(
+                          DateFormat('dd/MM/yyyy HH:mm')
+                              .format(DateTime.parse(item.createdAt!)),
+                          style: TextStyle(
+                            color: AppColors.primary.withValues(alpha: 0.45),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                    ],
+                  ),
+                  if (item.description != null &&
+                      item.description!.isNotEmpty) ...[
+                    const Gap(6),
+                    Text(
+                      item.description!,
+                      style: TextStyle(
+                        color: AppColors.primary.withValues(alpha: 0.6),
+                        fontSize: 12,
+                        height: 1.3,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const Gap(12),
+
+            // Montant et libellé
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  item.reference ?? "Mouvement",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+                  "${isEntree ? '+' : '-'} ${item.montant?.toAmount(unit: 'F') ?? '0 F'}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
                     fontSize: 15,
+                    color: color,
+                    letterSpacing: -0.2,
                   ),
                 ),
-                if (item.createdAt != null) ...[
-                  const Gap(4),
-                  Text(
-                    DateFormat('dd/MM/yyyy HH:mm')
-                        .format(DateTime.parse(item.createdAt!)),
-                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                const Gap(4),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.04),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                ],
-                if (item.description != null &&
-                    item.description!.isNotEmpty) ...[
-                  const Gap(4),
-                  Text(
-                    item.description!,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  child: Text(
+                    item.sensLibelle ?? "",
+                    style: TextStyle(
+                      fontSize: 9.5,
+                      color: AppColors.primary.withValues(alpha: 0.5),
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ],
+                ),
               ],
             ),
-          ),
-          const Gap(12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                "${isEntree ? '+' : '-'} ${item.montant?.toAmount(unit: 'F') ?? '0 F'}",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: color,
-                ),
-              ),
-              const Gap(4),
-              Text(
-                item.sensLibelle ?? "",
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey[400],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

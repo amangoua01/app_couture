@@ -20,10 +20,6 @@ class ContactUsPage extends StatelessWidget {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text("Contactez-nous"),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 0,
-        centerTitle: true,
       ),
       body: ListView(
         padding: const EdgeInsets.all(24),

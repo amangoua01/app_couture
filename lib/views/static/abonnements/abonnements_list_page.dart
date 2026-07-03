@@ -15,23 +15,22 @@ class AbonnementsListPage extends StatelessWidget {
       init: AbonnementsListPageVctl(),
       builder: (ctl) {
         return Scaffold(
-          backgroundColor: Colors.grey[50],
+          backgroundColor: const Color(0xFFF8FAF9),
           appBar: AppBar(
             title: const Text("Mes Abonnements"),
-            foregroundColor: Colors.white,
-            elevation: 0,
             actions: [
               IconButton(
-                icon: const Icon(Icons.refresh),
+                icon: const Icon(Icons.refresh, color: Colors.white),
                 onPressed: ctl.fetchAbonnements,
               ),
             ],
           ),
-          floatingActionButton: FloatingActionButton.extended(
+          floatingActionButton: FloatingActionButton(
             onPressed: () => Get.to(() => const ForfaitListPage()),
-            icon: const Icon(Icons.add),
-            label: const Text('Nouveau'),
             backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            elevation: 4,
+            child: const Icon(Icons.add, size: 28, weight: 800),
           ),
           body: ctl.isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -41,47 +40,81 @@ class AbonnementsListPage extends StatelessWidget {
                       onRefresh: ctl.fetchAbonnements,
                       child: CustomScrollView(
                         slivers: [
-                          // Header avec statistiques
+                          // Header avec statistiques (Uniformisé & Sans Dégradé)
                           SliverToBoxAdapter(
                             child: Container(
-                              margin: const EdgeInsets.all(15),
-                              padding: const EdgeInsets.all(20),
+                              margin: const EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(18),
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [AppColors.primary, AppColors.green],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(22),
+                                border: Border.all(
+                                  color:
+                                      AppColors.primary.withValues(alpha: 0.06),
+                                  width: 1.2,
                                 ),
-                                borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primary
-                                        .withValues(alpha: 0.3),
-                                    blurRadius: 15,
-                                    offset: const Offset(0, 5),
+                                    color: Colors.black.withValues(alpha: 0.02),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
                                   ),
                                 ],
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Tableau de bord • Total: ${ctl.totalAbonnement}',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Row(
+                                        children: [
+                                          Icon(
+                                            Icons.analytics_rounded,
+                                            color: AppColors.primary,
+                                            size: 18,
+                                          ),
+                                          Gap(8),
+                                          Text(
+                                            'Tableau de bord',
+                                            style: TextStyle(
+                                              color: Color(0xFF0F231F),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary
+                                              .withValues(alpha: 0.06),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Text(
+                                          'Total: ${ctl.totalAbonnement}',
+                                          style: const TextStyle(
+                                            color: AppColors.primary,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const Gap(15),
+                                  const Gap(16),
                                   Row(
                                     children: [
                                       Expanded(
                                         child: _buildStatCard(
                                           'Actifs',
                                           ctl.nombreAbonnementActif.toString(),
-                                          Icons.check_circle,
-                                          Colors.green,
+                                          Icons.check_circle_outline_rounded,
+                                          Colors.green.shade600,
                                         ),
                                       ),
                                       const Gap(10),
@@ -89,18 +122,18 @@ class AbonnementsListPage extends StatelessWidget {
                                         child: _buildStatCard(
                                           'Inactifs',
                                           ctl.nombreAbonnementPasse.toString(),
-                                          Icons.cancel,
-                                          Colors.orange,
+                                          Icons.cancel_outlined,
+                                          Colors.grey.shade500,
                                         ),
                                       ),
                                       const Gap(10),
                                       Expanded(
                                         child: _buildStatCard(
-                                          'A venir',
+                                          'À venir',
                                           ctl.nombreAbonnementPending
                                               .toString(),
-                                          Icons.timer,
-                                          Colors.deepOrange,
+                                          Icons.hourglass_empty_rounded,
+                                          AppColors.secondary,
                                         ),
                                       ),
                                     ],
@@ -112,7 +145,7 @@ class AbonnementsListPage extends StatelessWidget {
 
                           // Liste des abonnements
                           SliverPadding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             sliver: SliverList(
                               delegate: SliverChildBuilderDelegate(
                                 (context, index) {
@@ -160,29 +193,38 @@ class AbonnementsListPage extends StatelessWidget {
   Widget _buildStatCard(
       String label, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+        color: const Color(0xFFF4F6F5),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 24),
-          const Gap(5),
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 16),
+          ),
+          const Gap(8),
           Text(
             value,
             style: const TextStyle(
-              color: Colors.white,
+              color: Color(0xFF0F231F),
               fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w900,
             ),
           ),
+          const Gap(2),
           Text(
             label,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.9),
+              color: AppColors.primary.withValues(alpha: 0.5),
               fontSize: 11,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],

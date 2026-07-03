@@ -44,11 +44,21 @@ class StatistiquePageVctl extends AuthViewController {
     update();
 
     final entite = getEntite().value;
-    final res = await api.getData(
+    var res = await api.getData(
       entite.id.value,
       params,
       entite.type,
     );
+
+    // Retry une fois en cas d'erreur réseau (ex: Connection closed)
+    if (!res.status) {
+      await Future.delayed(const Duration(seconds: 1));
+      res = await api.getData(
+        entite.id.value,
+        params,
+        entite.type,
+      );
+    }
 
     isLoading = false;
     if (res.status) {

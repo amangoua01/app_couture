@@ -1,10 +1,8 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:ateliya/views/static/home/sub_pages/select_entreprise_bottom_page.dart';
-import 'package:ateliya/views/static/printers/print_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get.dart';
 
 class EnterpriseSelectorAppBarTitle extends StatelessWidget {
   final String title;
@@ -21,47 +19,54 @@ class EnterpriseSelectorAppBarTitle extends StatelessWidget {
     return GestureDetector(
       onTap: () => CBottomSheet.show(
         child: const SelectEntrepriseBottomPage(),
+        height: 400,
+        isScrollControlled: true,
       ).then((e) {
         if (e != null) {
           onSelectionChanged();
         }
       }),
-      child: Container(
-        width: double.infinity,
-        height: 35,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () => Get.to(() => const PrintListPage()),
-              child: const CircleAvatar(
-                radius: 15,
-                child: Icon(Icons.print, size: 15),
-              ),
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppColors.secondary.withValues(alpha: 0.7),
+              width: 1.2,
             ),
-            const Gap(10),
-            Expanded(
-              child: Text(
-                title.isEmpty ? "Sélectionner une entreprise" : title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.bold,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.storefront_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
+              const Gap(6),
+              Flexible(
+                child: Text(
+                  title.isEmpty ? "Sélectionner une entreprise" : title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-            const Icon(
-              Icons.keyboard_arrow_down,
-              color: AppColors.primary,
-            ),
-          ],
+              const Gap(6),
+              const Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: AppColors.secondary,
+                size: 18,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,0 +1,107 @@
+# Configuration Codemagic pour le projet Flutter Ateliya avec FVM (Flutter Version Management)
+
+workflows:
+  android-workflow:
+    name: Android Release Workflow
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        # Ajoutez vos variables d'environnement (Keystore, etc.) dans ce groupe sur Codemagic
+        - android-signing
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: dev
+          value: true
+          include: true
+    scripts:
+      - name: Activer FVM (Flutter Version Management)
+        script: |
+          dart pub global activate fvm
+          echo "export PATH=\$PATH:\$HOME/.pub-cache/bin" >> $GEAR_ENV_FILE || true
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          fvm install
+      - name: Récupérer les dépendances Flutter
+        script: |
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          fvm flutter pub get
+      - name: Configurer les clés de signature Android (Keystore)
+        script: |
+          # Exemple de décodage du fichier Keystore si stocké sous forme de variable d'environnement Base64 :
+          # echo $ANDROID_KEYSTORE_BASE64 | base64 --decode > android/app/ateliya.keystore
+          echo "Configuration des clés de signature si nécessaire."
+      - name: Exécuter les tests Flutter
+        script: |
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          fvm flutter test
+      - name: Build de l'application (Release App Bundle)
+        script: |
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          fvm flutter build appbundle --release
+    artifacts:
+      - build/app/outputs/bundle/release/*.aab
+      - build/app/outputs/flutter-apk/*.apk
+    publishing:
+      email:
+        recipients:
+          - tech@ateliya.com
+        notify:
+          success: true
+          failure: true
+
+  ios-workflow:
+    name: iOS Release Workflow
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        # Ajoutez vos variables d'environnement (Apple Developer Portal, Certificats, etc.) sur Codemagic
+        - ios-signing
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          value: true
+          include: true
+    scripts:
+      - name: Activer FVM (Flutter Version Management)
+        script: |
+          dart pub global activate fvm
+          echo "export PATH=\$PATH:\$HOME/.pub-cache/bin" >> $GEAR_ENV_FILE || true
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          fvm install
+      - name: Configurer le trousseau de clés (Keychain) et certificats
+        script: |
+          keychain initialize
+          # Si utilisation de l'intégration App Store Connect pour les certificats/profils :
+          # app-store-connect fetch-signing-files "your.bundle.identifier" --project-id "your_project_id"
+          # keychain add-certificates
+      - name: Récupérer les dépendances Flutter
+        script: |
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          fvm flutter pub get
+      - name: Installer les CocoaPods
+        script: |
+          cd ios && pod install --repo-update
+      - name: Build de l'application (Release IPA)
+        script: |
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          fvm flutter build ipa --release --export-options-plist=$HOME/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      email:
+        recipients:
+          - tech@ateliya.com
+        notify:
+          success: true
+          failure: true

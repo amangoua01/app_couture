@@ -61,7 +61,7 @@ class _ForfaitListPageState extends State<ForfaitListPage> {
                                   child: Icon(
                                     Icons.auto_awesome,
                                     size: 180,
-                                    color: Colors.white.withAlpha(20),
+                                    color: Colors.white.withValues(alpha: 0.08),
                                   ),
                                 ),
                               ],
@@ -103,7 +103,7 @@ class _ForfaitListPageState extends State<ForfaitListPage> {
                                     Text(
                                       "Choisissez la formule qui correspond le mieux aux besoins de votre atelier.",
                                       style: TextStyle(
-                                        color: Colors.white.withAlpha(200),
+                                        color: Colors.white.withValues(alpha: 0.78),
                                         fontSize: 15,
                                         fontWeight: FontWeight.w400,
                                         height: 1.4,
@@ -246,208 +246,257 @@ class _PlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      // Adding padding to ensure the shadow isn't clipped by AnimatedBuilder
-      child: Container(
-        decoration: BoxDecoration(
-          color: isPremium ? AppColors.primary.withAlpha(10) : Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: isPremium
-              ? Border.all(color: AppColors.primary, width: 2)
-              : Border.all(color: Colors.grey.shade200, width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(isPremium ? 12 : 6),
-              blurRadius: 24,
-              offset: const Offset(0, 10),
-            ),
-          ],
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isPremium
+              ? AppColors.primary
+              : AppColors.primary.withValues(alpha: 0.1),
+          width: isPremium ? 2 : 1.2,
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
+        boxShadow: [
+          BoxShadow(
+            color: isPremium
+                ? AppColors.primary.withValues(alpha: 0.08)
+                : Colors.black.withValues(alpha: 0.02),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         forfait.libelle.value.toUpperCase(),
                         style: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 14.5,
                           fontWeight: FontWeight.w900,
                           color: AppColors.primary,
-                          letterSpacing: 1.5,
+                          letterSpacing: 1.2,
                         ),
                       ),
                       const Gap(4),
-                      Text(
-                        "${forfait.duree} mois",
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                  if (isPremium)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text("POPULAIRE",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5)),
-                    ),
-                ],
-              ),
-              const Gap(24),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    forfait.montant.toAmount(unit: ""),
-                    style: const TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.black87,
-                        letterSpacing: -1.5),
-                  ),
-                  const Gap(6),
-                  const Text("FCFA",
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.grey)),
-                ],
-              ),
-              const Gap(24),
-              const Divider(height: 1),
-              const Gap(24),
-
-              // Expanded Features List to take available space
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (forfait.ligneModules.isNotEmpty) ...[
-                        ...forfait.ligneModules.map((line) => Padding(
-                              padding: const EdgeInsets.only(bottom: 14),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 2),
-                                    child: Icon(Icons.check_circle_rounded,
-                                        size: 20,
-                                        color: isPremium
-                                            ? AppColors.primary
-                                            : Colors.green),
-                                  ),
-                                  const Gap(12),
-                                  Expanded(
-                                    child: RichText(
-                                      text: TextSpan(
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.grey[800],
-                                            height: 1.4),
-                                        children: [
-                                          TextSpan(
-                                              text: "${line.libelle.value} ",
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.w500)),
-                                          TextSpan(
-                                            text: "(${line.quantite.value})",
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )),
-                      ] else
-                        Text(
-                          forfait.description.value,
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey[700],
-                              height: 1.5),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(6),
                         ),
+                        child: Text(
+                          "${forfait.duree} mois",
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
+                if (isPremium)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.2),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Text(
+                      "POPULAIRE",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const Gap(20),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  forfait.montant.toAmount(unit: ""),
+                  style: const TextStyle(
+                    fontSize: 34,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF0F231F),
+                    letterSpacing: -1,
+                  ),
+                ),
+                const Gap(4),
+                Text(
+                  "FCFA",
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primary.withValues(alpha: 0.5),
+                  ),
+                ),
+              ],
+            ),
+            const Gap(16),
+            Divider(color: AppColors.primary.withValues(alpha: 0.06), height: 1),
+            const Gap(16),
 
-              const Gap(16),
-              // Bottom Action Buttons
-              Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => Get.to(() => OperatorListPage(forfait)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 13,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: const Text(
-                        "Souscrire",
+            // Expanded Features List to take available space
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (forfait.ligneModules.isNotEmpty) ...[
+                      ...forfait.ligneModules.map((line) {
+                        final isIncluded = line.quantite.value != '0' &&
+                            !line.description.value.toLowerCase().contains('non');
+                        final itemColor = isIncluded
+                            ? const Color(0xFF0F231F)
+                            : const Color(0xFF90A39E);
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Icon(
+                                  isIncluded
+                                      ? Icons.check_circle_rounded
+                                      : Icons.remove_circle_outline_rounded,
+                                  size: 18,
+                                  color: isIncluded
+                                      ? Colors.green.shade600
+                                      : Colors.grey.shade400,
+                                ),
+                              ),
+                              const Gap(10),
+                              Expanded(
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: TextStyle(
+                                      fontSize: 13.5,
+                                      color: itemColor,
+                                      height: 1.35,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: "${line.libelle.value} ",
+                                        style: TextStyle(
+                                          fontWeight: isIncluded
+                                              ? FontWeight.w700
+                                              : FontWeight.w500,
+                                        ),
+                                      ),
+                                      if (line.quantite.value != '0')
+                                        TextSpan(
+                                          text: "(${line.quantite.value})",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            color: isIncluded
+                                                ? AppColors.primary
+                                                : Colors.grey,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ] else
+                      Text(
+                        forfait.description.value,
                         style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: AppColors.primary.withValues(alpha: 0.7),
+                          height: 1.4,
                         ),
                       ),
-                    ),
-                  ),
-                  const Gap(12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextButton(
-                      onPressed: () => CBottomSheet.show(
-                          child: DetailForfaitSubPage(forfait)),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: Text(
-                        "Voir les détails",
-                        style: TextStyle(
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+
+            const Gap(14),
+            // Bottom Action Buttons
+            Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Get.to(() => OperatorListPage(forfait)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      "Souscrire",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+                const Gap(8),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => CBottomSheet.show(
+                      child: DetailForfaitSubPage(forfait),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      "Voir les détails",
+                      style: TextStyle(
+                        color: AppColors.primary.withValues(alpha: 0.6),
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

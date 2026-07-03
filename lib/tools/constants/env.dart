@@ -9,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 abstract class Env {
   static const String appName = 'Ateliya';
   static const String appVersion = '1.0.21';
-  static const int buildVersion = 29;
+  static const int buildVersion = 28;
   static final fontFamily = GoogleFonts.poppins().fontFamily;
 
   static const String defaultPassword = "admin93K";
@@ -29,7 +29,8 @@ abstract class Env {
 
   static String playStoreUrl =
       "https://play.google.com/store/apps/details?id=com.ateliya.app";
-  static String appStoreUrl = "";
+  static String appStoreUrl =
+      "https://apps.apple.com/ci/app/ateliya/id6755125319";
 
   static String get copyRight =>
       "© ${DateTime.now().year} $appName. v. $appVersion";

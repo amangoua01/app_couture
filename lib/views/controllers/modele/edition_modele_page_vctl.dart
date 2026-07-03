@@ -1,6 +1,7 @@
 import 'package:ateliya/api/modele_api.dart';
 import 'package:ateliya/data/models/abstract/fichier.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
+import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/modele.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -50,7 +51,9 @@ class EditionModelePageVctl extends EditionViewController<Modele, ModeleApi> {
   }
 
   Future<void> pickPhoto() async {
-    final file = await CBottomImagePicker.show();
+    final image =
+        (photo is FichierServer) ? (photo as FichierServer).fullUrl : null;
+    final file = await CBottomImagePicker.show(image: image);
     if (file != null) {
       photo = FichierLocal.fromFile(file);
       update();

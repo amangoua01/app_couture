@@ -12,6 +12,7 @@ class RavitaillementListVctl extends AuthViewController {
 
   bool isLoading = false;
   List<RavitaillementStock> items = [];
+  String? errorMessage;
   int _page = 1;
   bool hasMore = true;
 
@@ -31,6 +32,7 @@ class RavitaillementListVctl extends AuthViewController {
     }
 
     isLoading = true;
+    errorMessage = null;
     update();
 
     final res = await api.getListStock(
@@ -51,7 +53,7 @@ class RavitaillementListVctl extends AuthViewController {
       hasMore = newItems.length >= 20;
       _page++;
     } else {
-      CMessageDialog.show(message: res.message);
+      errorMessage = res.message;
     }
 
     update();

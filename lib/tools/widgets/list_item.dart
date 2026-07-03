@@ -3,6 +3,7 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
+import 'package:ateliya/tools/widgets/preview_image_page.dart';
 import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -173,17 +174,20 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
     }
     // 2. Image réseau (http / https)
     if (src.startsWith('http')) {
-      return Image.network(
-        src,
-        width: leadingImageSize,
-        height: leadingImageSize,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
-          'assets/images/svg/image_broken.svg',
-          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-          fit: BoxFit.cover,
+      return GestureDetector(
+        onTap: () => Get.to(() => PreviewImagePage(src)),
+        child: Image.network(
+          src,
           width: leadingImageSize,
           height: leadingImageSize,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+            'assets/images/svg/image_broken.svg',
+            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            fit: BoxFit.cover,
+            width: leadingImageSize,
+            height: leadingImageSize,
+          ),
         ),
       );
     }

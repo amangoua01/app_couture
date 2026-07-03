@@ -24,6 +24,18 @@ abstract class AppTheme {
       foregroundColor: Colors.white,
       elevation: 0,
       centerTitle: true,
+      iconTheme: IconThemeData(color: Colors.white),
+      actionsIconTheme: IconThemeData(color: Colors.white),
+      titleTextStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 18,
+        letterSpacing: -0.3,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(16),
+        ),
+      ),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: AppColors.primary,

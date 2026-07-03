@@ -7,8 +7,8 @@ import 'package:ateliya/data/models/caisse.dart';
 import 'package:ateliya/data/models/famille_depense.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
 class EditionDepensePageVctl extends GetxController {
@@ -67,7 +67,7 @@ class EditionDepensePageVctl extends GetxController {
 
   void addLigne() {
     if (montantCtl.text.isEmpty) {
-      EasyLoading.showError("Veuillez d'abord saisir le montant total");
+      CSnackbar.error("Veuillez d'abord saisir le montant total");
       return;
     }
     final row = LigneDepenseForm();
@@ -111,18 +111,17 @@ class EditionDepensePageVctl extends GetxController {
 
   Future<void> submit() async {
     if (selectedFamille == null) {
-      EasyLoading.showError("Veuillez sélectionner une famille de dépense");
+      CSnackbar.error("Veuillez sélectionner une famille de dépense");
       return;
     }
 
-    // Check global amount
     if (montantCtl.text.isEmpty) {
-      EasyLoading.showError("Veuillez saisir le montant total");
+      CSnackbar.error("Veuillez saisir le montant total");
       return;
     }
 
     if (ligneRows.isEmpty) {
-      EasyLoading.showError("Veuillez ajouter au moins une ligne de paiement");
+      CSnackbar.error("Veuillez ajouter au moins une ligne de paiement");
       return;
     }
 
@@ -133,8 +132,7 @@ class EditionDepensePageVctl extends GetxController {
 
       for (var row in ligneRows) {
         if (row.caisse == null || row.montantCtl.text.isEmpty) {
-          EasyLoading.showError(
-              "Veuillez compléter toutes les lignes de paiement");
+          CSnackbar.error("Veuillez compléter toutes les lignes de paiement");
           return;
         }
 
@@ -142,8 +140,8 @@ class EditionDepensePageVctl extends GetxController {
         double caisseBalance = double.tryParse(row.caisse?.montant ?? "0") ?? 0;
 
         if (lineAmount > caisseBalance) {
-          EasyLoading.showError(
-              "Le montant de la ligne dépasse le solde de la caisse ${row.caisse?.entite?.libelle} (${row.caisse?.type})");
+          CSnackbar.error(
+              "Le montant dépasse le solde de la caisse ${row.caisse?.entite?.libelle} (${row.caisse?.type})");
           return;
         }
 
@@ -156,7 +154,7 @@ class EditionDepensePageVctl extends GetxController {
       }
 
       if (linesSum != totalAmount) {
-        EasyLoading.showError(
+        CSnackbar.error(
             "La somme des lignes ($linesSum) doit être égale au montant total ($totalAmount)");
         return;
       }
@@ -165,16 +163,13 @@ class EditionDepensePageVctl extends GetxController {
         montant: montantCtl.text,
         description: descriptionCtl.text,
         familleDepenseId: selectedFamille!.id,
-        lignes: lignesDto, // Use the generated list
+        lignes: lignesDto,
       );
 
       final res = await depenseApi.createOne(dto).load();
       if (res.status) {
         Get.back(result: true);
-        CMessageDialog.show(
-          message: "Dépense enregistrée avec succès",
-          isSuccess: true,
-        );
+        CSnackbar.success("Dépense enregistrée avec succès");
       } else {
         CMessageDialog.show(message: res.message);
       }

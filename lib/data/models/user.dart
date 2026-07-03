@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:ateliya/data/models/abstract/fichier.dart';
 import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/data/models/boutique.dart';

@@ -29,6 +29,14 @@ class RegisterPageVctl extends SessionManagerViewController {
   bool showPassword = false;
   bool showConfirmPassword = false;
 
+
+
+  @override
+  void onInit() {
+    super.onInit();
+    nomEntrepriseCtl.addListener(() => update());
+  }
+
   void onNext() {
     if (currentPage < 1) {
       if (formKey1.currentState!.validate()) {
@@ -88,7 +96,7 @@ class RegisterPageVctl extends SessionManagerViewController {
         final res = await api.register(data).load();
         if (res.status) {
           user = res.data!;
-          Get.to(() => const HomeWindows());
+          Get.offAll(() => const HomeWindows());
         } else {
           CMessageDialog.show(message: res.message);
         }

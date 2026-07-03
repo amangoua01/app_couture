@@ -30,16 +30,12 @@ class ProfilPageVctl extends AuthViewController {
   Fichier? logoUserPath, logoEntreprisePath;
 
   ProfilPageVctl() {
-    if (user.photoProfil.value.isNotEmpty) {
-      logoUserPath = FichierLocal(path: user.photoProfil.value);
-    }
-
+    // logoUserPath reste null — la vue utilise fallbackUrl (photoProfil) directement
     if (user.entreprise != null) {
-      if ((user.entreprise?.logo is FichierServer)) {
-        if ((user.entreprise?.logo as FichierServer).path?.isNotEmpty ==
-            false) {
-          logoEntreprisePath = FichierLocal(
-              path: (user.entreprise?.logo as FichierServer).path!);
+      if (user.entreprise?.logo is FichierServer) {
+        final logo = user.entreprise!.logo as FichierServer;
+        if (logo.path?.isNotEmpty == true) {
+          logoEntreprisePath = logo;
         }
       }
       nomEntrepriseCtl.text = user.entreprise!.libelle.value;

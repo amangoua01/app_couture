@@ -98,6 +98,10 @@ abstract class NotificationService {
 
   static Future<String?> getFcmToken() async {
     try {
+      if (Platform.isIOS) {
+        final apnsToken = await _messaging.getAPNSToken();
+        if (apnsToken == null) return null;
+      }
       return _messaging.getToken();
     } catch (e, st) {
       DataResponse.error(systemError: e, stackTrace: st);

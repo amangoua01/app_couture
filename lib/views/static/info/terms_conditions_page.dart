@@ -13,25 +13,18 @@ class TermsConditionsPage extends StatelessWidget {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text("Termes & Conditions"),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 0,
-        centerTitle: true,
         actions: [
-          TextButton.icon(
+          IconButton(
+            icon: const Icon(
+              Icons.open_in_new_rounded,
+              color: Colors.white,
+            ),
             onPressed: () async {
               final uri = Uri.parse(Env.termsAndConditionsUrl);
               if (await canLaunchUrl(uri)) {
                 await launchUrl(uri, mode: LaunchMode.externalApplication);
               }
             },
-            icon: const Icon(Icons.open_in_new_rounded,
-                size: 16, color: AppColors.primary),
-            label: const Text("Voir en ligne",
-                style: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -76,49 +69,49 @@ class TermsConditionsPage extends StatelessWidget {
           ),
           const Gap(28),
 
-          _TermsSection(
+          const _TermsSection(
             icon: Icons.info_outline_rounded,
             title: "1. Acceptation des conditions",
             body:
                 "En utilisant l'application Ateliya, vous acceptez d'être lié par les présentes conditions d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser l'application.",
           ),
-          _TermsSection(
+          const _TermsSection(
             icon: Icons.account_circle_outlined,
             title: "2. Compte utilisateur",
             body:
                 "Vous êtes responsable de la confidentialité de vos identifiants de connexion. Toute activité réalisée depuis votre compte est sous votre responsabilité. Vous vous engagez à nous signaler immédiatement toute utilisation non autorisée de votre compte.",
           ),
-          _TermsSection(
+          const _TermsSection(
             icon: Icons.security_outlined,
             title: "3. Protection des données",
             body:
                 "Ateliya s'engage à protéger vos données personnelles conformément aux lois en vigueur. Vos données ne seront jamais vendues à des tiers. Elles sont utilisées uniquement dans le cadre de la fourniture du service.",
           ),
-          _TermsSection(
+          const _TermsSection(
             icon: Icons.devices_outlined,
             title: "4. Utilisation du service",
             body:
                 "L'application est destinée à une utilisation professionnelle pour la gestion d'ateliers de couture et de boutiques. Toute utilisation frauduleuse, abusive ou contraire aux lois en vigueur est strictement interdite.",
           ),
-          _TermsSection(
+          const _TermsSection(
             icon: Icons.card_membership_outlined,
             title: "5. Abonnements",
             body:
                 "L'accès à certaines fonctionnalités est soumis à un abonnement payant. Les tarifs en vigueur sont indiqués dans l'application. Les paiements effectués ne sont pas remboursables, sauf dispositions légales contraires.",
           ),
-          _TermsSection(
+          const _TermsSection(
             icon: Icons.update_outlined,
             title: "6. Modifications",
             body:
                 "Ateliya se réserve le droit de modifier les présentes conditions à tout moment. Vous serez informé de tout changement significatif par notification dans l'application. L'utilisation continue de l'application après modification vaut acceptation des nouvelles conditions.",
           ),
-          _TermsSection(
+          const _TermsSection(
             icon: Icons.contact_support_outlined,
             title: "7. Responsabilité",
             body:
                 "Ateliya ne saurait être tenu responsable des pertes de données, interruptions de service ou dommages indirects résultant de l'utilisation de l'application. Nous faisons tout notre possible pour assurer la continuité et la sécurité du service.",
           ),
-          _TermsSection(
+          const _TermsSection(
             icon: Icons.gavel_rounded,
             title: "8. Droit applicable",
             body:
@@ -143,12 +136,12 @@ class TermsConditionsPage extends StatelessWidget {
                 border: Border.all(
                     color: AppColors.primary.withValues(alpha: 0.25)),
               ),
-              child: Row(
+              child: const Row(
                 children: [
-                  const Icon(Icons.language_rounded,
+                  Icon(Icons.language_rounded,
                       color: AppColors.primary, size: 22),
-                  const Gap(14),
-                  const Expanded(
+                  Gap(14),
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -166,7 +159,7 @@ class TermsConditionsPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const Icon(Icons.arrow_forward_ios_rounded,
+                  Icon(Icons.arrow_forward_ios_rounded,
                       size: 14, color: AppColors.primary),
                 ],
               ),

@@ -3,6 +3,7 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/period_stat.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/c_tab_bar.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
@@ -31,29 +32,30 @@ class StockStatistiquesPage extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.bold)),
               elevation: 0,
               centerTitle: true,
-              bottom: const TabBar(
-                isScrollable: true,
-                indicatorColor: Colors.white,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.white54,
-                indicatorWeight: 3,
-                tabs: const [
-                  Tab(text: "Général"),
-                  Tab(text: "Mouvements"),
-                  Tab(text: "Inventaire"),
-                  Tab(text: "Par Taille"),
-                ],
-              ),
             ),
             body: ctl.isLoading && ctl.data == null
                 ? const Center(
                     child: CircularProgressIndicator(color: AppColors.primary))
-                : TabBarView(
+                : Column(
                     children: [
-                      _GeneralView(ctl: ctl),
-                      _HistoriqueMouvementsView(ctl: ctl),
-                      _InventaireView(ctl: ctl),
-                      _StockParTailleView(ctl: ctl),
+                      const CTabBar(
+                        tabs: [
+                          "Général",
+                          "Mouvements",
+                          "Inventaire",
+                          "Par Taille"
+                        ],
+                      ),
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            _GeneralView(ctl: ctl),
+                            _HistoriqueMouvementsView(ctl: ctl),
+                            _InventaireView(ctl: ctl),
+                            _StockParTailleView(ctl: ctl),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
           ),
@@ -477,7 +479,8 @@ class _HistoriqueMouvementsView extends StatelessWidget {
                                 children: [
                                   Text(ligne.modeleLibelle ?? '',
                                       style: const TextStyle(
-                                          fontSize: 13, fontWeight: FontWeight.w500)),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500)),
                                   Text(
                                       "Stock : ${ligne.quantiteAvant ?? 0} ➔ ${ligne.quantiteApres ?? 0}",
                                       style: const TextStyle(
