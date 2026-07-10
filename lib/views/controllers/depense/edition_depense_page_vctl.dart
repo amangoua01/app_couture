@@ -67,7 +67,7 @@ class EditionDepensePageVctl extends GetxController {
 
   void addLigne() {
     if (montantCtl.text.isEmpty) {
-      CSnackbar.error("Veuillez d'abord saisir le montant total");
+      CMessageDialog.show(message: "Veuillez d'abord saisir le montant total");
       return;
     }
     final row = LigneDepenseForm();
@@ -111,17 +111,17 @@ class EditionDepensePageVctl extends GetxController {
 
   Future<void> submit() async {
     if (selectedFamille == null) {
-      CSnackbar.error("Veuillez sélectionner une famille de dépense");
+      CMessageDialog.show(message: "Veuillez sélectionner une famille de dépense");
       return;
     }
 
     if (montantCtl.text.isEmpty) {
-      CSnackbar.error("Veuillez saisir le montant total");
+      CMessageDialog.show(message: "Veuillez saisir le montant total");
       return;
     }
 
     if (ligneRows.isEmpty) {
-      CSnackbar.error("Veuillez ajouter au moins une ligne de paiement");
+      CMessageDialog.show(message: "Veuillez ajouter au moins une ligne de paiement");
       return;
     }
 
@@ -132,7 +132,7 @@ class EditionDepensePageVctl extends GetxController {
 
       for (var row in ligneRows) {
         if (row.caisse == null || row.montantCtl.text.isEmpty) {
-          CSnackbar.error("Veuillez compléter toutes les lignes de paiement");
+          CMessageDialog.show(message: "Veuillez compléter toutes les lignes de paiement");
           return;
         }
 
@@ -140,8 +140,7 @@ class EditionDepensePageVctl extends GetxController {
         double caisseBalance = double.tryParse(row.caisse?.montant ?? "0") ?? 0;
 
         if (lineAmount > caisseBalance) {
-          CSnackbar.error(
-              "Le montant dépasse le solde de la caisse ${row.caisse?.entite?.libelle} (${row.caisse?.type})");
+          CMessageDialog.show(message: "Le montant dépasse le solde de la caisse ${row.caisse?.entite?.libelle} (${row.caisse?.type})");
           return;
         }
 
@@ -154,8 +153,7 @@ class EditionDepensePageVctl extends GetxController {
       }
 
       if (linesSum != totalAmount) {
-        CSnackbar.error(
-            "La somme des lignes ($linesSum) doit être égale au montant total ($totalAmount)");
+        CMessageDialog.show(message: "La somme des lignes ($linesSum) doit être égale au montant total ($totalAmount)");
         return;
       }
 
@@ -169,7 +167,7 @@ class EditionDepensePageVctl extends GetxController {
       final res = await depenseApi.createOne(dto).load();
       if (res.status) {
         Get.back(result: true);
-        CSnackbar.success("Dépense enregistrée avec succès");
+        CMessageDialog.show(message: "Dépense enregistrée avec succès", isSuccess: true);
       } else {
         CMessageDialog.show(message: res.message);
       }

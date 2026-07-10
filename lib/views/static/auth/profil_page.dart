@@ -176,7 +176,7 @@ class ProfilPage extends StatelessWidget {
                               title: 'Enregistrer mon profil',
                               onPressed: ctl.submitProfil,
                             ),
-                            const Gap(24),
+                            const Gap(10),
 
                             TextButton.icon(
                               onPressed: () =>

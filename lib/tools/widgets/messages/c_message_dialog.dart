@@ -12,24 +12,4 @@ abstract class CMessageDialog {
       return EasyLoading.showError(message.value);
     }
   }
-
-  // Get.defaultDialog(
-  //   textConfirm: "OK",
-  //   buttonColor: primaryColor,
-  //   confirmTextColor: Colors.white,
-  //   title: title ?? "Message",
-  //   titleStyle: titleStyle,
-  //   confirm: confirm,
-  //   content: Padding(
-  //     padding: const EdgeInsets.all(10),
-  //     child: Text(
-  //       message ?? "Erreur",
-  //       textAlign: TextAlign.center,
-  //     ),
-  //   ),
-  //   radius: radius,
-  //   actions: actions,
-  //   onConfirm: () => Get.back(),
-  //   barrierDismissible: barrierDismissible,
-  // );
 }

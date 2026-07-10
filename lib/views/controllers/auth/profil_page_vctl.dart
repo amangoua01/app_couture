@@ -12,6 +12,7 @@ import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_bottom_image_picker.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:ateliya/views/static/auth/auth_home_page.dart';
 import 'package:flutter/widgets.dart';
@@ -59,12 +60,12 @@ class ProfilPageVctl extends AuthViewController {
         user.prenoms = dto.prenom;
         user = user;
         update();
-        CMessageDialog.show(
+        CSnackbar.show(
           message: "Profil mis à jour avec succès",
           isSuccess: true,
         );
       } else {
-        CMessageDialog.show(message: res.message);
+        CSnackbar.show(message: "Erreur lors de la mise à jour du profil");
       }
     }
   }
