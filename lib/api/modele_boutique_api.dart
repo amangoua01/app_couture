@@ -53,7 +53,7 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
     try {
       final res = await client.get(
         urlBuilder(
-          api: '$boutiqueId',
+          api: 'boutique/$boutiqueId',
           module: 'stock',
           params: {
             'page': page.toString(),

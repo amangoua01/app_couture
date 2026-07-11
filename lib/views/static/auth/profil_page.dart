@@ -227,8 +227,7 @@ class ProfilPage extends StatelessWidget {
                         builder: () {
                           final isAdmin = ctl.user.isAdmin;
                           return Form(
-                            key: GlobalKey<
-                                FormState>(), // Eviter les soucis de key unique
+                            key: ctl.entrepriseFormKey,
                             child: ListView(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 24),

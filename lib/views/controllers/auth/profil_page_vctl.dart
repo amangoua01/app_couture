@@ -22,6 +22,7 @@ class ProfilPageVctl extends AuthViewController {
   final nomCtl = TextEditingController();
   final prenomCtl = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  final entrepriseFormKey = GlobalKey<FormState>();
   final nomEntrepriseCtl = TextEditingController();
   final telephoneEntrepriseCtl = TextEditingController();
   final emailEntrepriseCtl = TextEditingController();
@@ -64,6 +65,7 @@ class ProfilPageVctl extends AuthViewController {
           message: "Profil mis à jour avec succès",
           isSuccess: true,
         );
+        Get.back();
       } else {
         CSnackbar.show(message: "Erreur lors de la mise à jour du profil");
       }
@@ -71,35 +73,37 @@ class ProfilPageVctl extends AuthViewController {
   }
 
   Future<void> submitEntreprise() async {
-    if (formKey.currentState!.validate()) {
-      final entreprise = Entreprise(
-        libelle: nomEntrepriseCtl.text,
-        numero: telephoneEntrepriseCtl.text,
-        email: emailEntrepriseCtl.text,
-        logo: logoEntreprisePath,
-      );
+    if (entrepriseFormKey.currentState?.validate() != true) return;
+    final entreprise = Entreprise(
+      id: user.entreprise?.id,
+      libelle: nomEntrepriseCtl.text,
+      numero: telephoneEntrepriseCtl.text,
+      email: emailEntrepriseCtl.text,
+      logo: logoEntreprisePath,
+    );
 
-      final res = await entrepriseApi.updateEntreprise(entreprise).load();
-      if (res.status) {
-        // Mettre à jour les données de l'entreprise dans le user
-        if (user.entreprise != null) {
-          user.entreprise!.libelle = res.data!.libelle;
-          user.entreprise!.numero = res.data!.numero;
-          user.entreprise!.email = res.data!.email;
-          user.entreprise!.logo = res.data!.logo;
-        } else {
-          user.entreprise = res.data;
-        }
-        user = user;
-        logoEntreprisePath = null; // Réinitialiser le chemin du logo
-        update();
-        CMessageDialog.show(
-          message: "Entreprise mise à jour avec succès",
-          isSuccess: true,
-        );
-      } else {
-        CMessageDialog.show(message: res.message);
+    final res = await entrepriseApi.updateEntreprise(entreprise).load();
+    if (res.status) {
+      final updated = res.data;
+      if (user.entreprise != null && updated != null) {
+        user.entreprise!.libelle = updated.libelle;
+        user.entreprise!.numero = updated.numero;
+        user.entreprise!.email = updated.email;
+        user.entreprise!.logo = updated.logo;
+      } else if (updated != null) {
+        user.entreprise = updated;
       }
+      user = user;
+      logoEntreprisePath = null;
+      update();
+
+      CSnackbar.show(
+        message: "Entreprise mise à jour avec succès",
+        isSuccess: true,
+      );
+      Get.back();
+    } else {
+      CSnackbar.show(message: res.message);
     }
   }
 
