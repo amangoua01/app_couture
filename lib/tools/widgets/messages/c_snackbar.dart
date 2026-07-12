@@ -3,39 +3,125 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 abstract class CSnackbar {
-  static void success(String message) {
-    _show(
-      message: message,
-      icon: Icons.check_circle_rounded,
-      backgroundColor: AppColors.primary,
-    );
-  }
-
-  static void error(String message) {
-    _show(
-      message: message,
-      icon: Icons.error_rounded,
-      backgroundColor: Colors.red.shade700,
-    );
-  }
-
-  static void _show({
+  static Future<void> show({
     required String message,
-    required IconData icon,
-    required Color backgroundColor,
-  }) {
-    if (Get.isSnackbarOpen) Get.closeCurrentSnackbar();
+    bool isSuccess = false,
+  }) async {
+    final overlay = Get.overlayContext;
+    if (overlay == null) return;
 
-    Get.rawSnackbar(
-      message: message,
-      icon: Icon(icon, color: Colors.white, size: 24),
-      backgroundColor: backgroundColor,
-      borderRadius: 12,
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      snackPosition: SnackPosition.TOP,
-      duration: const Duration(seconds: 3),
-      snackStyle: SnackStyle.FLOATING,
+    final entry = OverlayEntry(
+      builder: (_) => _SnackbarWidget(
+        message: message,
+        isSuccess: isSuccess,
+      ),
+    );
+
+    Overlay.of(overlay).insert(entry);
+    await Future.delayed(const Duration(seconds: 4));
+    entry.remove();
+  }
+}
+
+class _SnackbarWidget extends StatefulWidget {
+  final String message;
+  final bool isSuccess;
+
+  const _SnackbarWidget({required this.message, required this.isSuccess});
+
+  @override
+  State<_SnackbarWidget> createState() => _SnackbarWidgetState();
+}
+
+class _SnackbarWidgetState extends State<_SnackbarWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<Offset> _slide;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+    _ctrl.forward();
+
+    Future.delayed(const Duration(milliseconds: 3500), () {
+      if (mounted) _ctrl.reverse();
+    });
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = widget.isSuccess ? AppColors.green : Colors.redAccent;
+    return Positioned(
+      bottom: MediaQuery.of(context).padding.bottom + 16,
+      left: 16,
+      right: 16,
+      child: SlideTransition(
+        position: _slide,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  widget.isSuccess
+                      ? Icons.check_circle_rounded
+                      : Icons.error_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.isSuccess ? 'Succès' : 'Erreur',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                      Text(
+                        widget.message,
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

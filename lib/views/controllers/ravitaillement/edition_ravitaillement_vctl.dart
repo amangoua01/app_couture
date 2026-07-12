@@ -7,6 +7,7 @@ import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/data/models/stock_modele_item.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -51,7 +52,9 @@ class EditionRavitaillementVctl extends AuthViewController {
       if (res.status) {
         stockItems = res.data ?? [];
       } else {
-        CMessageDialog.show(message: res.message);
+        CSnackbar.show(
+            message: "Erreur lors du chargement des articles",
+            isSuccess: false);
       }
     } catch (_) {}
 
@@ -89,20 +92,22 @@ class EditionRavitaillementVctl extends AuthViewController {
     for (var i = 0; i < lignes.length; i++) {
       final ligne = lignes[i];
       if (ligne.modele == null) {
-        CMessageDialog.show(
-            message: 'Ligne ${i + 1} : sélectionnez un article');
+        CSnackbar.show(
+            message: 'Ligne ${i + 1} : sélectionnez un article',
+            isSuccess: false);
         return;
       }
       final qty = int.tryParse(ligne.quantiteCtl.text) ?? 0;
       if (qty <= 0) {
-        CMessageDialog.show(message: 'Ligne ${i + 1} : quantité invalide');
+        CSnackbar.show(
+            message: 'Ligne ${i + 1} : quantité invalide', isSuccess: false);
         return;
       }
     }
 
     final entite = getEntite().value;
     if (entite is! Boutique || entite.id == null) {
-      CMessageDialog.show(message: 'Aucune boutique sélectionnée');
+      CSnackbar.show(message: 'Aucune boutique sélectionnée', isSuccess: false);
       return;
     }
 
@@ -124,14 +129,14 @@ class EditionRavitaillementVctl extends AuthViewController {
         .load();
 
     if (res.status) {
-      CMessageDialog.show(
-        message:
-            'Ravitaillement enregistré avec succès. Le stock sera mis à jour après validation.',
+      CSnackbar.show(
+        message: 'Ravitaillement enregistré avec succès.',
         isSuccess: true,
       );
       Get.back(result: true);
     } else {
-      CMessageDialog.show(message: res.message);
+      CSnackbar.show(
+          message: res.message ?? "Une erreur est survenue", isSuccess: false);
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:ateliya/data/models/ligne_entree_stock.dart';
 import 'package:ateliya/data/models/ravitaillement_stock.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/shimmer_listtile.dart';
 import 'package:ateliya/views/controllers/ravitaillement/ravitaillement_list_vctl.dart';
@@ -33,14 +34,13 @@ class RavitaillementListPage extends StatelessWidget {
           ),
           floatingActionButton: Visibility(
             visible: ctl.user.isAdmin,
-            child: FloatingActionButton.extended(
+            child: FloatingActionButton(
               onPressed: () async {
                 final res =
                     await Get.to(() => const EditionRavitaillementPage());
                 if (res == true) ctl.fetchData();
               },
-              icon: const Icon(Icons.add_rounded),
-              label: const Text('Nouveau'),
+              child: const Icon(Icons.add_rounded),
             ),
           ),
           body: ctl.isLoading
@@ -55,41 +55,43 @@ class RavitaillementListPage extends StatelessWidget {
                       onRefresh: () => ctl.fetchData(),
                     )
                   : ctl.items.isEmpty
-                  ? EmptyDataWidget(
-                      message: 'Aucun ravitaillement enregistré',
-                      onRefresh: () => ctl.fetchData(),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: () => ctl.fetchData(),
-                      child: NotificationListener<ScrollNotification>(
-                        onNotification: (n) {
-                          if (n is ScrollEndNotification &&
-                              n.metrics.extentAfter < 100) {
-                            ctl.loadMore();
-                          }
-                          return false;
-                        },
-                        child: ListView.separated(
-                          padding: const EdgeInsets.fromLTRB(12, 12, 12, 100),
-                          itemCount: ctl.items.length + (ctl.hasMore ? 1 : 0),
-                          separatorBuilder: (_, __) => const Gap(10),
-                          itemBuilder: (_, i) {
-                            if (i >= ctl.items.length) {
-                              return const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: CircularProgressIndicator(),
-                                ),
-                              );
-                            }
-                            return _RavitaillementCard(
-                              item: ctl.items[i],
-                              ctl: ctl,
-                            );
-                          },
+                      ? EmptyDataWidget(
+                          message: 'Aucun ravitaillement enregistré',
+                          onRefresh: () => ctl.fetchData(),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: () => ctl.fetchData(),
+                          child: NotificationListener<ScrollNotification>(
+                            onNotification: (n) {
+                              if (n is ScrollEndNotification &&
+                                  n.metrics.extentAfter < 100) {
+                                ctl.loadMore();
+                              }
+                              return false;
+                            },
+                            child: ListView.separated(
+                              padding:
+                                  const EdgeInsets.fromLTRB(12, 12, 12, 100),
+                              itemCount:
+                                  ctl.items.length + (ctl.hasMore ? 1 : 0),
+                              separatorBuilder: (_, __) => const Gap(10),
+                              itemBuilder: (_, i) {
+                                if (i >= ctl.items.length) {
+                                  return const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                }
+                                return _RavitaillementCard(
+                                  item: ctl.items[i],
+                                  ctl: ctl,
+                                );
+                              },
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
         );
       },
     );
@@ -190,38 +192,25 @@ class _RavitaillementCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
+                    child: CButton(
                       onPressed: () => ctl.rejeter(item),
-                      icon: const Icon(Icons.close_rounded,
-                          size: 16, color: Colors.red),
-                      label: const Text('Rejeter',
-                          style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.w600)),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.red),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
+                      title: "Annuler",
+                      icon: const Icon(Icons.close_rounded, color: Colors.red),
+                      color: Colors.white,
+                      radius: 10,
+                      textColor: Colors.red,
+                      border: const BorderSide(color: Colors.red),
                     ),
                   ),
                   const Gap(8),
                   Expanded(
-                    child: ElevatedButton.icon(
+                    child: CButton(
                       onPressed: () => ctl.confirmer(item),
-                      icon: const Icon(Icons.check_rounded,
-                          size: 16, color: Colors.white),
-                      label: const Text('Confirmer',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        elevation: 0,
-                      ),
+                      title: "Confirmer",
+                      icon:
+                          const Icon(Icons.check_rounded, color: Colors.white),
+                      color: AppColors.primary,
+                      radius: 10,
                     ),
                   ),
                 ],

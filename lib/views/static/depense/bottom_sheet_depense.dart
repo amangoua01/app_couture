@@ -3,6 +3,7 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/views/controllers/depense/edition_depense_page_vctl.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +13,7 @@ import 'package:get/get.dart';
 class BottomSheetDepense {
   static void show(BuildContext context, EditionDepensePageVctl ctl) {
     if (ctl.totalMontant <= 0) {
-      CSnackbar.error(
-        'Veuillez d\'abord saisir le montant total',
-      );
+      CMessageDialog.show(message: "Veuillez d'abord saisir le montant total");
       return;
     }
 

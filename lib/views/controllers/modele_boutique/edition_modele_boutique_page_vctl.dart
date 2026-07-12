@@ -10,6 +10,7 @@ import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
+import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -44,9 +45,13 @@ class EditionModeleBoutiquePageVctl
     );
     final res = await api.create(data).load();
     if (res.status) {
+      CSnackbar.show(
+        message: "Enregistré avec succès",
+        isSuccess: true,
+      );
       return res.data;
     } else {
-      await CMessageDialog.show(message: res.message);
+      CSnackbar.show(message: "Une erreur est survenue", isSuccess: false);
     }
     return null;
   }
@@ -75,9 +80,16 @@ class EditionModeleBoutiquePageVctl
     item.prixMax = prixMaxCtl.toDouble();
     final res = await api.update(item).load();
     if (res.status) {
+      CSnackbar.show(
+        message: "Enregistré avec succès",
+        isSuccess: true,
+      );
       return res.data;
     } else {
-      CMessageDialog.show(message: res.message);
+      CSnackbar.show(
+        message: "Une erreur est survenue",
+        isSuccess: false,
+      );
     }
     return null;
   }
