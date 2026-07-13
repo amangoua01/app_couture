@@ -137,32 +137,29 @@ class LoginPage extends StatelessWidget {
                           onPressed: ctl.submit,
                         ),
                         const Gap(32),
-                        Visibility(
-                          visible: Platform.isAndroid,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Vous n'avez pas de compte ? ",
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Vous n'avez pas de compte ? ",
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 14,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => Get.to(() => const RegisterPage()),
+                              child: const Text(
+                                "S'inscrire",
                                 style: TextStyle(
-                                  color: Colors.grey[600],
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.bold,
                                   fontSize: 14,
+                                  decoration: TextDecoration.underline,
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: () => Get.to(() => const RegisterPage()),
-                                child: const Text(
-                                  "S'inscrire",
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                         const Gap(24),
                       ],

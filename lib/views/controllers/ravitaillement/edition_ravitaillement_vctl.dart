@@ -9,6 +9,7 @@ import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
+import 'package:ateliya/views/static/ravitaillement/ravitaillement_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -133,7 +134,8 @@ class EditionRavitaillementVctl extends AuthViewController {
         message: 'Ravitaillement enregistré avec succès.',
         isSuccess: true,
       );
-      Get.back(result: true);
+      final confirmed = await Get.to(() => const RavitaillementListPage());
+      Get.back(result: confirmed == true ? true : null);
     } else {
       CSnackbar.show(
           message: res.message ?? "Une erreur est survenue", isSuccess: false);
