@@ -114,8 +114,7 @@ class SettingPage extends StatelessWidget {
                     icon: Icons.card_membership_outlined,
                     iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
                     color: AppColors.secondary,
-                    visible:
-                        kDebugMode || (Platform.isAndroid && ctl.user.isAdmin),
+                    visible: ctl.user.isAdmin,
                     onTap: () => Get.to(() => const AbonnementsListPage()),
                   ),
                   SettingTile(
@@ -234,7 +233,8 @@ class SettingPage extends StatelessWidget {
                   SettingTile(
                     title: "Disponible sur Play Store",
                     icon: Icons.android_rounded,
-                    iconBgColor: const Color(0xFF34A853).withValues(alpha: 0.12),
+                    iconBgColor:
+                        const Color(0xFF34A853).withValues(alpha: 0.12),
                     color: const Color(0xFF34A853),
                     onTap: ctl.openPlayStore,
                   ),

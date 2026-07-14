@@ -95,18 +95,15 @@ class AuthHomePage extends StatelessWidget {
                           onPressed: () => Get.to(() => const LoginPage()),
                         ),
                         const Gap(12),
-                        Visibility(
-                          visible: Platform.isAndroid || kDebugMode,
-                          child: CButton(
-                            color: Colors.white,
-                            textColor: AppColors.primary,
-                            title: "S'inscrire",
-                            border: const BorderSide(
-                              color: AppColors.primary,
-                              width: 1.5,
-                            ),
-                            onPressed: () => Get.to(() => const RegisterPage()),
+                        CButton(
+                          color: Colors.white,
+                          textColor: AppColors.primary,
+                          title: "S'inscrire",
+                          border: const BorderSide(
+                            color: AppColors.primary,
+                            width: 1.5,
                           ),
+                          onPressed: () => Get.to(() => const RegisterPage()),
                         ),
                       ],
                     ),

@@ -80,6 +80,7 @@ class RavitaillementListVctl extends AuthViewController {
     if (res.status) {
       item.statut = 'CONFIRME';
       update();
+      Get.back(result: true);
     } else {
       CMessageDialog.show(message: res.message);
     }
@@ -99,6 +100,7 @@ class RavitaillementListVctl extends AuthViewController {
     if (res.status) {
       item.statut = 'REJETE';
       update();
+      Get.back(result: true);
     } else {
       CMessageDialog.show(message: res.message);
     }
