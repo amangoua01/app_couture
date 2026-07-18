@@ -15,6 +15,7 @@ import 'package:ateliya/views/static/depense/depense_list_page.dart';
 import 'package:ateliya/views/static/home/sub_pages/statistique_entreprise_page.dart';
 import 'package:ateliya/views/static/info/contact_us_page.dart';
 import 'package:ateliya/views/static/info/terms_conditions_page.dart';
+import 'package:ateliya/views/static/mall_ya/mall_ya_home_page.dart';
 import 'package:ateliya/views/static/modele/modele_list_page.dart';
 import 'package:ateliya/views/static/modele_boutique/modele_list_boutique_page.dart';
 import 'package:ateliya/views/static/personnels/personnels_list_page.dart';
@@ -60,8 +61,20 @@ class SettingPage extends StatelessWidget {
                       ?.then((_) => ctl.update()),
                 ),
                 const Gap(24),
-
+                const _SectionLabel("Gestion de mon entreprise"),
+                _SettingsGroup(tiles: [
+                  SettingTile(
+                    title: "Mall Ya",
+                    icon: Icons.factory_outlined,
+                    iconBgColor: AppColors.primary.withValues(alpha: 0.08),
+                    color: AppColors.primary,
+                    visible: ctl.user.isAdmin,
+                    onTap: () => Get.to(() => const MallYaHomePage()),
+                  ),
+                ]),
                 // ── Section Gestion de compte ─────────────────
+                const Gap(24),
+
                 const _SectionLabel("Gestion de compte"),
                 const Gap(8),
                 _SettingsGroup(tiles: [

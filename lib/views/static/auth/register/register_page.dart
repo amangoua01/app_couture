@@ -17,14 +17,6 @@ class RegisterPage extends StatelessWidget {
       builder: (ctl) {
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            title: const Text(
-              "Inscription",
-            ),
-          ),
           body: Column(
             children: [
               Container(
@@ -37,68 +29,93 @@ class RegisterPage extends StatelessWidget {
                     bottomRight: Radius.circular(30),
                   ),
                 ),
-                child: Column(
-                  children: [
-                    Text(
-                      ctl.currentPage == 0
-                          ? "Créez votre compte pour gérer votre atelier facilement."
-                          : "Dernière étape ! Parlez-nous de votre entreprise.",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
+                child: SafeArea(
+                  bottom: false,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () => Get.back(),
+                            child: const Icon(Icons.arrow_back_ios_new_rounded,
+                                color: Colors.white, size: 20),
+                          ),
+                          const Gap(12),
+                          const Text(
+                            'Inscription',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const Gap(16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: AppColors.secondary,
-                              borderRadius: BorderRadius.circular(2),
+                      const Gap(16),
+                      Text(
+                        ctl.currentPage == 0
+                            ? "Créez votre compte pour gérer votre atelier facilement."
+                            : "Dernière étape ! Parlez-nous de votre entreprise.",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const Gap(16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: AppColors.secondary,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
                             ),
                           ),
-                        ),
-                        const Gap(8),
-                        Expanded(
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: ctl.currentPage == 1
-                                  ? AppColors.secondary
-                                  : Colors.white.withOpacity(0.3),
-                              borderRadius: BorderRadius.circular(2),
+                          const Gap(8),
+                          Expanded(
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: ctl.currentPage == 1
+                                    ? AppColors.secondary
+                                    : Colors.white.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const Gap(8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Étape ${ctl.currentPage + 1}/2",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white.withOpacity(0.7),
-                            fontWeight: FontWeight.w500,
+                        ],
+                      ),
+                      const Gap(8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Étape ${ctl.currentPage + 1}/2",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white.withOpacity(0.7),
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                        Text(
-                          ctl.currentPage == 0 ? "Identifiants" : "Entreprise",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white.withOpacity(0.7),
-                            fontWeight: FontWeight.w500,
+                          Text(
+                            ctl.currentPage == 0
+                                ? "Identifiants"
+                                : "Entreprise",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white.withOpacity(0.7),
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Expanded(

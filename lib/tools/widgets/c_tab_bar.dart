@@ -20,12 +20,12 @@ class CTabBar extends StatelessWidget {
       height: 46,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.06),
+        color: const Color(0xFF062A22).withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
       ),
       child: TabBar(
         labelColor: Colors.white,
-        unselectedLabelColor: AppColors.primary.withValues(alpha: 0.6),
+        unselectedLabelColor: AppColors.primary,
         labelStyle: const TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w800,
