@@ -9,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 abstract class Env {
   static const String appName = 'Ateliya';
   static const String appVersion = '1.2.0';
-  static const int buildVersion = 34;
+  static const int buildVersion = 35;
   static final fontFamily = GoogleFonts.poppins().fontFamily;
 
   static const String defaultPassword = "admin93K";
