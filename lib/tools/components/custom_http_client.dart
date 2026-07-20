@@ -46,22 +46,38 @@ class CustomHttpClient extends http.BaseClient {
     Map<String, String> headers = const {},
     List<http.MultipartFile> files = const [],
   }) async {
-    final request = http.MultipartRequest("POST", url);
+    return _sendMultipart('POST', url, body: body, headers: headers, files: files);
+  }
+
+  Future<http.Response> multiPartPut(
+    Uri url, {
+    Map<String, String> body = const {},
+    Map<String, String> headers = const {},
+    List<http.MultipartFile> files = const [],
+  }) async {
+    return _sendMultipart('PUT', url, body: body, headers: headers, files: files);
+  }
+
+  Future<http.Response> _sendMultipart(
+    String method,
+    Uri url, {
+    Map<String, String> body = const {},
+    Map<String, String> headers = const {},
+    List<http.MultipartFile> files = const [],
+  }) async {
+    final request = http.MultipartRequest(method, url);
     if (body.isNotEmpty) request.fields.addAll(body);
     if (files.isNotEmpty) request.files.addAll(files);
     if (headers.isNotEmpty) request.headers.addAll(headers);
     final response = await _inner.send(request);
     if (kDebugMode) {
-      // Logs de l'URL, des headers et du body
       print("🚀 Method: ${request.method}");
       print("🌍 URL: ${request.url}");
       print("🔼 Headers: ${request.headers}");
       print("📦 Body: $body");
       print("📁 Files: ${files.length}");
-      if (files.isNotEmpty) {
-        for (int i = 0; i < files.length; i++) {
-          print("📁 -> File #$i: ${files[i].field} | ${files[i].filename}");
-        }
+      for (int i = 0; i < files.length; i++) {
+        print("📁 -> File #$i: ${files[i].field} | ${files[i].filename}");
       }
     }
     final res = await http.Response.fromStream(response);
