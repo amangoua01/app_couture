@@ -1,4 +1,5 @@
 import 'package:ateliya/data/models/mall_favori.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/views/controllers/mall_ya/mes_favoris_vctl.dart';
 import 'package:ateliya/views/static/mall_ya/favori_detail_page.dart';
 import 'package:flutter/material.dart';
@@ -16,33 +17,131 @@ class MesFavorisPage extends StatelessWidget {
       builder: (ctl) {
         return Scaffold(
           backgroundColor: const Color(0xFFF5F7FA),
-          appBar: AppBar(
-            title: const Text(
-              'Mes favoris',
-              style: TextStyle(fontWeight: FontWeight.w800),
-            ),
-            backgroundColor: const Color(0xFF062A22),
-            foregroundColor: Colors.white,
-            elevation: 0,
-          ),
-          body: ctl.favoris.isEmpty
-              ? const Center(
-                  child: Text(
-                    'Aucun favori enregistré.',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
-                  itemCount: ctl.favoris.length,
-                  separatorBuilder: (_, __) => const Gap(10),
-                  itemBuilder: (_, i) => _FavoriTile(
-                    item: ctl.favoris[i],
-                    onTap: () => Get.to(
-                      () => FavoriDetailPage(favori: ctl.favoris[i]),
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                expandedHeight: 150,
+                backgroundColor: const Color(0xFF062A22),
+                automaticallyImplyLeading: false,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFF062A22),
+                          AppColors.primary,
+                          Color(0xFF0D5040),
+                        ],
+                      ),
+                      borderRadius:
+                          BorderRadius.vertical(bottom: Radius.circular(32)),
+                    ),
+                    padding: EdgeInsets.fromLTRB(
+                        16, MediaQuery.of(context).padding.top + 56, 16, 20),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Gap(12),
+                        Text(
+                          'Mes favoris',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            height: 1.2,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        Gap(6),
+                        Text(
+                          'Vos modèles préférés en un coup d\'œil',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.white54,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
+                title: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => Get.back(),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.15)),
+                        ),
+                        child: const Icon(Icons.arrow_back_ios_new_rounded,
+                            color: Colors.white, size: 17),
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.15)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.favorite_rounded,
+                              color: Colors.white, size: 16),
+                          const Gap(6),
+                          Text(
+                            '${ctl.favoris.length} favori${ctl.favoris.length > 1 ? 's' : ''}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    const SizedBox(width: 40),
+                  ],
+                ),
+              ),
+              ctl.favoris.isEmpty
+                  ? const SliverFillRemaining(
+                      child: Center(
+                        child: Text(
+                          'Aucun favori enregistré.',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    )
+                  : SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (_, i) => Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: _FavoriTile(
+                              item: ctl.favoris[i],
+                              onTap: () => Get.to(() =>
+                                  FavoriDetailPage(favori: ctl.favoris[i])),
+                            ),
+                          ),
+                          childCount: ctl.favoris.length,
+                        ),
+                      ),
+                    ),
+            ],
+          ),
         );
       },
     );

@@ -23,7 +23,6 @@ class MallYaHomePage extends StatelessWidget {
               SliverAppBar(
                 pinned: true,
                 expandedHeight: 150,
-                // backgroundColor: const Color(0xFF062A22),
                 automaticallyImplyLeading: false,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(

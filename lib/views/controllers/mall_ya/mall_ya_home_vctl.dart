@@ -1,7 +1,10 @@
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:ateliya/views/static/mall_ya/mall_commandes_recues_page.dart';
+import 'package:ateliya/views/static/mall_ya/mall_couvertures_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_dashboard_page.dart';
+import 'package:ateliya/views/static/mall_ya/mall_modeles_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_settings_page.dart';
+import 'package:ateliya/views/static/mall_ya/mall_status_page.dart';
 import 'package:ateliya/views/static/mall_ya/mes_adresses_page.dart';
 import 'package:ateliya/views/static/mall_ya/mes_favoris_page.dart';
 import 'package:flutter/material.dart';
@@ -77,14 +80,21 @@ class MallYaHomeVctl extends AuthViewController {
         label: "Couvertures",
         gradient: const [Color(0xFFE65100), Color(0xFFFFA726)],
         accentColor: const Color(0xFFE65100),
-        onTap: () {},
+        onTap: () => Get.to(() => const MallCouverturesPage()),
+      ),
+      MallYaMenuItem(
+        icon: Icons.toggle_on_rounded,
+        label: "Statut boutique",
+        gradient: const [Color(0xFF00695C), Color(0xFF26A69A)],
+        accentColor: const Color(0xFF00695C),
+        onTap: () => Get.to(() => const MallStatusPage()),
       ),
       MallYaMenuItem(
         icon: Icons.auto_awesome_rounded,
         label: "Modèles boutique",
         gradient: const [Color(0xFF6A1B9A), Color(0xFFAB47BC)],
         accentColor: const Color(0xFF6A1B9A),
-        onTap: () {},
+        onTap: () => Get.to(() => const MallModelesPage()),
       ),
     ];
   }

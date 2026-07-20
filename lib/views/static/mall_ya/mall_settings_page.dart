@@ -28,47 +28,45 @@ class MallSettingsPage extends StatelessWidget {
               foregroundColor: Colors.white,
               elevation: 0,
             ),
-            body: ctl.loading
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
+            body: Column(
+              children: [
+                const CTabBar(
+                  tabs: ['Général', 'Nouveautés', 'Promos', 'Réseaux'],
+                ),
+                Expanded(
+                  child: TabBarView(
                     children: [
-                      const CTabBar(
-                        tabs: ['Général', 'Nouveautés', 'Promos', 'Réseaux'],
+                      _GeneralTab(ctl: ctl),
+                      _HeaderTab(
+                        badgeCtl: ctl.nouveauHeaderBadgeCtl,
+                        titleCtl: ctl.nouveauHeaderTitleCtl,
+                        subtitleCtl: ctl.nouveauHeaderSubtitleCtl,
+                        descriptionCtl: ctl.nouveauHeaderDescriptionCtl,
+                        icon: Icons.new_releases_rounded,
+                        color: const Color(0xFF1565C0),
+                        label: 'Nouveautés',
+                        hint:
+                            'Bandeau affiché au-dessus de vos modèles marqués "Nouveau".',
+                        onSave: ctl.saveNouveau,
                       ),
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            _GeneralTab(ctl: ctl),
-                            _HeaderTab(
-                              badgeCtl: ctl.nouveauHeaderBadgeCtl,
-                              titleCtl: ctl.nouveauHeaderTitleCtl,
-                              subtitleCtl: ctl.nouveauHeaderSubtitleCtl,
-                              descriptionCtl: ctl.nouveauHeaderDescriptionCtl,
-                              icon: Icons.new_releases_rounded,
-                              color: const Color(0xFF1565C0),
-                              label: 'Nouveautés',
-                              hint:
-                                  'Bandeau affiché au-dessus de vos modèles marqués "Nouveau".',
-                              onSave: ctl.saveNouveau,
-                            ),
-                            _HeaderTab(
-                              badgeCtl: ctl.promoHeaderBadgeCtl,
-                              titleCtl: ctl.promoHeaderTitleCtl,
-                              subtitleCtl: ctl.promoHeaderSubtitleCtl,
-                              descriptionCtl: ctl.promoHeaderDescriptionCtl,
-                              icon: Icons.local_offer_rounded,
-                              color: const Color(0xFFC2185B),
-                              label: 'Promotions',
-                              hint:
-                                  'Bandeau affiché au-dessus de vos modèles en promotion.',
-                              onSave: ctl.savePromo,
-                            ),
-                            _ReseauxTab(ctl: ctl),
-                          ],
-                        ),
+                      _HeaderTab(
+                        badgeCtl: ctl.promoHeaderBadgeCtl,
+                        titleCtl: ctl.promoHeaderTitleCtl,
+                        subtitleCtl: ctl.promoHeaderSubtitleCtl,
+                        descriptionCtl: ctl.promoHeaderDescriptionCtl,
+                        icon: Icons.local_offer_rounded,
+                        color: const Color(0xFFC2185B),
+                        label: 'Promotions',
+                        hint:
+                            'Bandeau affiché au-dessus de vos modèles en promotion.',
+                        onSave: ctl.savePromo,
                       ),
+                      _ReseauxTab(ctl: ctl),
                     ],
                   ),
+                ),
+              ],
+            ),
           ),
         );
       },
