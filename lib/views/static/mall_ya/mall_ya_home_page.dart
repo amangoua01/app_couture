@@ -117,22 +117,20 @@ class MallYaHomePage extends StatelessWidget {
               ),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-                sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 14,
-                    crossAxisSpacing: 14,
-                    childAspectRatio: 2.2,
-                  ),
+                sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final item = ctl.menuItems[index];
-                      return CMenuCard(
-                        icon: item.icon,
-                        label: item.label,
-                        gradient: item.gradient,
-                        accentColor: item.accentColor,
-                        onTap: item.onTap,
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: CMenuCard(
+                          icon: item.icon,
+                          label: item.label,
+                          subtitle: item.subtitle,
+                          gradient: item.gradient,
+                          accentColor: item.accentColor,
+                          onTap: item.onTap,
+                        ),
                       );
                     },
                     childCount: ctl.menuItems.length,
