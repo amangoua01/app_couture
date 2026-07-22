@@ -16,6 +16,28 @@ class MallApi extends WebController {
   @override
   String get module => 'mall';
 
+  Future<DataResponse<List<MallRecentOrder>>> getUserCommandes(
+      int userId) async {
+    try {
+      final res = await client.get(
+        urlBuilder(api: 'user/$userId/commandes'),
+        headers: authHeaders,
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        final list = (data['data'] as List)
+            .map((e) => MallRecentOrder.fromJson(e))
+            .toList();
+        return DataResponse.success(data: list);
+      } else {
+        return DataResponse.error(
+            message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue');
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
   Future<DataResponse<List<MallRecentOrder>>> getCommandesRecues() async {
     try {
       final res = await client.get(
@@ -196,16 +218,68 @@ class MallApi extends WebController {
   }
 
   Future<DataResponse<void>> createPromotionsNouveautes(
-      Map<String, dynamic> body) async {
+      List<Map<String, dynamic>> items, {List<File?> images = const []}) async {
     try {
-      final res = await client.post(
+      final files = <http.MultipartFile>[];
+      for (int i = 0; i < images.length; i++) {
+        final img = images[i];
+        if (img != null) {
+          files.add(await http.MultipartFile.fromPath('images[$i]', img.path));
+        }
+      }
+      final res = await client.multiPart(
         urlBuilder(api: 'promotions-nouveautes'),
+        body: {'items': jsonEncode(items)},
+        files: files,
         headers: authHeaders,
-        body: jsonEncode(body),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        return DataResponse.success(data: null);
+      } else {
+        return DataResponse.error(
+            message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue');
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  Future<DataResponse<List<MallModeleBoutique>>> getPromotions(
+      String entrepriseId) async {
+    try {
+      final res = await client.get(
+        urlBuilder(api: 'promotions', params: {'entrepriseId': entrepriseId}),
+        headers: authHeaders,
       );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        return DataResponse.success(data: null);
+        final list = (data['data'] as List)
+            .map((e) => MallModeleBoutique.fromJson(e))
+            .toList();
+        return DataResponse.success(data: list);
+      } else {
+        return DataResponse.error(
+            message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue');
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  Future<DataResponse<List<MallModeleBoutique>>> getNouveautes(
+      String entrepriseId) async {
+    try {
+      final res = await client.get(
+        urlBuilder(api: 'nouveautes', params: {'entrepriseId': entrepriseId}),
+        headers: authHeaders,
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        final list = (data['data'] as List)
+            .map((e) => MallModeleBoutique.fromJson(e))
+            .toList();
+        return DataResponse.success(data: list);
       } else {
         return DataResponse.error(
             message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue');
@@ -473,6 +547,45 @@ class MallApi extends WebController {
       } else {
         return DataResponse.error(
             message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue');
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  Future<DataResponse<void>> invaliderCommande(int id) async {
+    try {
+      final res = await client.put(
+        urlBuilder(api: 'commandes/$id/invalider'),
+        headers: authHeaders,
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: null);
+      } else {
+        return DataResponse.error(
+          message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue',
+        );
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  Future<DataResponse<void>> validerCommande(int commandeId) async {
+    try {
+      final res = await client.post(
+        urlBuilder(api: 'commandes/valider'),
+        headers: authHeaders,
+        body: jsonEncode({'id': commandeId}),
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: null);
+      } else {
+        return DataResponse.error(
+          message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue',
+        );
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);

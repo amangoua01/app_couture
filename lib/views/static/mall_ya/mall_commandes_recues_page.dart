@@ -201,8 +201,20 @@ class MallCommandesRecuesPage extends StatelessWidget {
                         delegate: SliverChildBuilderDelegate(
                           (context, index) => _CommandeTile(
                             order: ctl.commandes[index],
-                            onTap: () => Get.to(() => MallDetailCommandePage(
-                                order: ctl.commandes[index])),
+                            onTap: () {
+                              final order = ctl.commandes[index];
+                              Get.to(() => MallDetailCommandePage(
+                                    order: order,
+                                    onValider: () {
+                                      Get.back();
+                                      ctl.validerCommande(order.id);
+                                    },
+                                    onInvalider: () {
+                                      Get.back();
+                                      ctl.invaliderCommande(order.id);
+                                    },
+                                  ));
+                            },
                           ),
                           childCount: ctl.commandes.length,
                         ),

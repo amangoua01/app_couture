@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 class MallSettingsVctl extends AuthViewController {
   final _api = MallApi();
   bool loading = true;
+  bool saving = false;
 
   // Général
   final libelleCtl = TextEditingController();
@@ -44,10 +45,24 @@ class MallSettingsVctl extends AuthViewController {
   @override
   void onClose() {
     for (final c in [
-      libelleCtl, descriptionCtl, emailCtl, numeroCtl,
-      promoHeaderBadgeCtl, promoHeaderTitleCtl, promoHeaderSubtitleCtl, promoHeaderDescriptionCtl,
-      nouveauHeaderBadgeCtl, nouveauHeaderTitleCtl, nouveauHeaderSubtitleCtl, nouveauHeaderDescriptionCtl,
-      whatsappCtl, facebookCtl, instagramCtl, tiktokCtl, twitterCtl, youtubeCtl,
+      libelleCtl,
+      descriptionCtl,
+      emailCtl,
+      numeroCtl,
+      promoHeaderBadgeCtl,
+      promoHeaderTitleCtl,
+      promoHeaderSubtitleCtl,
+      promoHeaderDescriptionCtl,
+      nouveauHeaderBadgeCtl,
+      nouveauHeaderTitleCtl,
+      nouveauHeaderSubtitleCtl,
+      nouveauHeaderDescriptionCtl,
+      whatsappCtl,
+      facebookCtl,
+      instagramCtl,
+      tiktokCtl,
+      twitterCtl,
+      youtubeCtl,
     ]) {
       c.dispose();
     }
@@ -85,48 +100,54 @@ class MallSettingsVctl extends AuthViewController {
   }
 
   Future<void> saveGeneral() async {
-    final res = await _api.updateMallSettings({
-      'libelle': libelleCtl.text,
+    if (libelleCtl.text.trim().isEmpty) {
+      CSnackbar.show(message: 'Le nom de la boutique est requis');
+      return;
+    }
+    await _save({
+      'libelle': libelleCtl.text.trim(),
       'description': descriptionCtl.text,
       'email': emailCtl.text,
       'numero': numeroCtl.text,
-    }).load();
-    _handleResponse(res);
+    });
   }
 
   Future<void> savePromo() async {
-    final res = await _api.updateMallSettings({
+    await _save({
       'mallPromoHeaderBadge': promoHeaderBadgeCtl.text,
       'mallPromoHeaderTitle': promoHeaderTitleCtl.text,
       'mallPromoHeaderSubtitle': promoHeaderSubtitleCtl.text,
       'mallPromoHeaderDescription': promoHeaderDescriptionCtl.text,
-    }).load();
-    _handleResponse(res);
+    });
   }
 
   Future<void> saveNouveau() async {
-    final res = await _api.updateMallSettings({
+    await _save({
       'mallNouveauHeaderBadge': nouveauHeaderBadgeCtl.text,
       'mallNouveauHeaderTitle': nouveauHeaderTitleCtl.text,
       'mallNouveauHeaderSubtitle': nouveauHeaderSubtitleCtl.text,
       'mallNouveauHeaderDescription': nouveauHeaderDescriptionCtl.text,
-    }).load();
-    _handleResponse(res);
+    });
   }
 
   Future<void> saveReseaux() async {
-    final res = await _api.updateMallSettings({
+    await _save({
       'whatsapp': whatsappCtl.text,
       'facebook': facebookCtl.text,
       'instagram': instagramCtl.text,
       'tiktok': tiktokCtl.text,
       'twitter': twitterCtl.text,
       'youtube': youtubeCtl.text,
-    }).load();
-    _handleResponse(res);
+    });
   }
 
-  void _handleResponse(dynamic res) {
+  Future<void> _save(Map<String, dynamic> body) async {
+    if (saving) return;
+    saving = true;
+    update();
+    final res = await _api.updateMallSettings(body).load();
+    saving = false;
+    update();
     if (res.status) {
       CSnackbar.show(message: 'Modifications enregistrées', isSuccess: true);
     } else {

@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 
 class CommandeListVctl extends AuthViewController {
   final api = FactureApi();
+  final int initialTab;
+
+  CommandeListVctl({this.initialTab = 0});
 
   bool isLoading = false;
   bool isLoadingMore = false;
@@ -21,18 +24,24 @@ class CommandeListVctl extends AuthViewController {
   final nomClientCtrl = TextEditingController();
   final numeroClientCtrl = TextEditingController();
   String? etatFacture;
-  int _tabIndex = 0;
+
+  late int _tabIndex = initialTab;
   int get tabIndex => _tabIndex;
   set tabIndex(int val) {
     _tabIndex = val;
     getList();
   }
 
-  String get _currentOnglet {
-    if (tabIndex == 0) return "nonTerminees";
-    if (tabIndex == 1) return "soldeesNonTerminees";
-    return "terminees";
-  }
+  // 5 tabs alignés exactement sur les valeurs type de l'API
+  static const tabs = [
+    ('NONTERMINEE', 'Non terminées'),
+    ('SOLDEESNONTERMINEE', 'Soldées non term.'),
+    ('TERMINEE', 'Terminées'),
+    ('LIVRER', 'Livrées'),
+    ('RETIRE', 'Retirées'),
+  ];
+
+  String get _currentType => tabs[_tabIndex].$1;
 
   @override
   void onInit() {
@@ -52,12 +61,12 @@ class CommandeListVctl extends AuthViewController {
     final res = await api.getFacturesEntreprisePaginated(
       getEntite().value.id.value,
       page: currentPage,
+      type: _currentType,
       dateDebut: dateDebutStr,
       dateFin: dateFinStr,
       nomClient: nomClientCtrl.text.trim(),
       numeroClient: numeroClientCtrl.text.trim(),
       etatFacture: etatFacture,
-      onglet: _currentOnglet,
     );
 
     isLoading = false;
@@ -84,12 +93,12 @@ class CommandeListVctl extends AuthViewController {
     final res = await api.getFacturesEntreprisePaginated(
       getEntite().value.id.value,
       page: currentPage,
+      type: _currentType,
       dateDebut: dateDebutStr,
       dateFin: dateFinStr,
       nomClient: nomClientCtrl.text.trim(),
       numeroClient: numeroClientCtrl.text.trim(),
       etatFacture: etatFacture,
-      onglet: _currentOnglet,
     );
 
     isLoadingMore = false;

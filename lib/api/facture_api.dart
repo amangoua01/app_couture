@@ -108,30 +108,31 @@ class FactureApi extends CrudWebController<Facture> {
   Future<DataResponse<PaginatedFactures>> getFacturesEntreprisePaginated(
     int succursaleId, {
     int page = 1,
+    required String type,
     String? dateDebut,
     String? dateFin,
     String? nomClient,
     String? numeroClient,
     String? etatFacture,
-    String? onglet,
   }) async {
     try {
-      final body = {};
+      final body = <String, dynamic>{};
       if (dateDebut != null) body['dateDebut'] = dateDebut;
       if (dateFin != null) body['dateFin'] = dateFin;
-      if (nomClient != null && nomClient.isNotEmpty) {
+      if (nomClient != null && nomClient.isNotEmpty)
         body['nomClient'] = nomClient;
-      }
-      if (numeroClient != null && numeroClient.isNotEmpty) {
+      if (numeroClient != null && numeroClient.isNotEmpty)
         body['numeroClient'] = numeroClient;
-      }
       if (etatFacture != null) body['etatFacture'] = etatFacture;
-      if (onglet != null) body['onglet'] = onglet;
 
       final response = await client.post(
         urlBuilder(
-            api: "advanced/$succursaleId",
-            params: {"with_pagination": "true", "page": "$page"},
+          api: "advanced/$succursaleId",
+          params: {
+            "with_pagination": "true",
+            "page": "$page",
+            "type": type,
+          },
         ),
         headers: authHeaders,
         body: jsonEncode(body),
@@ -142,7 +143,7 @@ class FactureApi extends CrudWebController<Facture> {
         final data = json['data'] as List? ?? [];
         final items = data.map((x) => Mesure.fromJson(x)).toList();
         final pagination = json['pagination'] ?? {};
-        final totalPages = pagination['totalPages'] ?? 1;
+        final totalPages = (pagination['totalPages'] as int?) ?? 0;
 
         return DataResponse.success(
           data: PaginatedFactures(items: items, totalPages: totalPages),
