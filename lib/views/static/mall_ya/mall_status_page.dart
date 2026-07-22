@@ -94,12 +94,7 @@ class MallStatusPage extends StatelessWidget {
                   ],
                 ),
               ),
-              if (ctl.loading)
-                const SliverFillRemaining(
-                  child:
-                      Center(child: CircularProgressIndicator(color: _kColor)),
-                )
-              else if (ctl.statuts.isEmpty)
+              if (ctl.statuts.isEmpty)
                 SliverFillRemaining(
                   child: Center(
                     child: Column(

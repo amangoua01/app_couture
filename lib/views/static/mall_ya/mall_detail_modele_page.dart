@@ -37,6 +37,17 @@ class MallDetailModelePage extends StatelessWidget {
     final photoUrl = item.modele?.photo?.fullUrl;
     final prix = double.tryParse(item.prix) ?? 0;
     final fmt = NumberFormat('#,###', 'fr_FR');
+    final promo = item.activePromo;
+    final nouveau = item.activeNouveau;
+    final prixPromo = promo?.prixPromotion != null
+        ? double.tryParse(promo!.prixPromotion!)
+        : null;
+    final prixNouv = nouveau?.prixNouveau != null
+        ? double.tryParse(nouveau!.prixNouveau!)
+        : null;
+    final prixUnite = promo?.prixUnite != null
+        ? double.tryParse(promo!.prixUnite!)
+        : null;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -107,14 +118,87 @@ class MallDetailModelePage extends StatelessWidget {
                           ),
                         ),
                         const Gap(8),
-                        Text(
-                          '${fmt.format(prix)} FCFA',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                            color: Color(0xFFC2185B),
+                        // Badges
+                        if (item.isNouveaute || item.isPromotion || item.isSurMesure == true)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Wrap(
+                              spacing: 6,
+                              children: [
+                                if (item.isNouveaute)
+                                  _Badge(label: 'Nouveau', color: const Color(0xFF1565C0)),
+                                if (item.isPromotion)
+                                  _Badge(label: 'Promo', color: const Color(0xFFC2185B)),
+                                if (item.isSurMesure == true)
+                                  _Badge(label: 'Sur mesure', color: const Color(0xFF6A1B9A)),
+                              ],
+                            ),
                           ),
-                        ),
+                        // Prix original barré si promo/nouveau
+                        if (prixPromo != null || prixNouv != null)
+                          Text(
+                            '${fmt.format(prix)} FCFA',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey,
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                          ),
+                        // Prix promo
+                        if (prixPromo != null) ...[
+                          const Gap(2),
+                          Text(
+                            '${fmt.format(prixPromo)} FCFA',
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFFC2185B),
+                            ),
+                          ),
+                          if (prixUnite != null)
+                            Text(
+                              '${fmt.format(prixUnite)} FCFA / unité',
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey),
+                            ),
+                          if (promo?.dateFinPromotion != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.timer_outlined,
+                                      size: 13, color: Color(0xFFC2185B)),
+                                  const Gap(4),
+                                  Text(
+                                    'Fin : ${_formatDate(promo!.dateFinPromotion!)}',
+                                    style: const TextStyle(
+                                        fontSize: 11,
+                                        color: Color(0xFFC2185B),
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ] else if (prixNouv != null) ...[
+                          const Gap(2),
+                          Text(
+                            '${fmt.format(prixNouv)} FCFA',
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFF1565C0),
+                            ),
+                          ),
+                        ] else
+                          Text(
+                            '${fmt.format(prix)} FCFA',
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFFC2185B),
+                            ),
+                          ),
                         if (item.boutique != null) ...[
                           const Gap(12),
                           const Divider(height: 1),
@@ -188,6 +272,34 @@ class MallDetailModelePage extends StatelessWidget {
               Icon(Icons.checkroom_rounded, color: Color(0xFF062A22), size: 80),
         ),
       );
+}
+
+class _Badge extends StatelessWidget {
+  final String label;
+  final Color color;
+  const _Badge({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(label,
+          style: TextStyle(
+              fontSize: 11, fontWeight: FontWeight.w700, color: color)),
+    );
+  }
+}
+
+String _formatDate(String raw) {
+  try {
+    return DateFormat('dd/MM/yyyy', 'fr_FR').format(DateTime.parse(raw));
+  } catch (_) {
+    return raw;
+  }
 }
 
 class _InfoRow extends StatelessWidget {

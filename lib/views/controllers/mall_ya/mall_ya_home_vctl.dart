@@ -1,10 +1,12 @@
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
+import 'package:share_plus/share_plus.dart' show Share;
 import 'package:ateliya/views/static/mall_ya/mall_commandes_recues_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_couvertures_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_dashboard_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_modeles_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_settings_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_status_page.dart';
+import 'package:ateliya/views/static/mall_ya/mes_commandes_page.dart';
 import 'package:ateliya/views/static/mall_ya/mes_adresses_page.dart';
 import 'package:ateliya/views/static/mall_ya/mes_favoris_page.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +32,21 @@ class MallYaMenuItem {
 
 class MallYaHomeVctl extends AuthViewController {
   late final List<MallYaMenuItem> menuItems;
+
+  Future<void> shareBoutique() async {
+    final code = user.entreprise?.codeMarchand ?? '';
+    final url = 'https://malliya.ateliya.com/enterprise/$code';
+    print('🔗 Share URL: $url');
+    print('🏪 Code marchand: $code');
+    try {
+      await Share.share('Découvrez notre boutique sur Mall Ya :\n$url');
+    } catch (e, stack) {
+      print('❌ Share error: $e');
+      print('📋 Stack: $stack');
+      Get.snackbar('Partage indisponible',
+          'Le partage n\'est pas supporté sur cet appareil.');
+    }
+  }
 
   @override
   void onInit() {
@@ -65,7 +82,7 @@ class MallYaHomeVctl extends AuthViewController {
         subtitle: "Historique d'achats",
         gradient: const [Color(0xFFB8860B), Color(0xFFDAA520)],
         accentColor: const Color(0xFFB8860B),
-        onTap: () {},
+        onTap: () => Get.to(() => const MesCommandesPage()),
       ),
       MallYaMenuItem(
         icon: Icons.favorite_rounded,

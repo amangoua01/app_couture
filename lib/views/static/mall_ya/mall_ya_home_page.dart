@@ -111,7 +111,13 @@ class MallYaHomePage extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    const SizedBox(width: 40),
+                    IconButton(
+                      onPressed: ctl.shareBoutique,
+                      icon: const Icon(
+                        Icons.share_rounded,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),

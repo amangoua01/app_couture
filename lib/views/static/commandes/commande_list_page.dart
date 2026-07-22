@@ -2,7 +2,7 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/c_tab_bar.dart';
 import 'package:ateliya/tools/widgets/command_tile.dart';
-import 'package:ateliya/tools/widgets/empty_data_widget.dart';
+import 'package:ateliya/tools/widgets/empty_page.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
@@ -14,14 +14,33 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class CommandeListPage extends StatelessWidget {
-  const CommandeListPage({super.key});
+  final int initialTab;
+  const CommandeListPage({super.key, this.initialTab = 0});
+
+  IconData _tabIcon(int index) {
+    switch (CommandeListVctl.tabs[index].$1) {
+      case 'NONTERMINEE':
+        return Icons.pending_actions_rounded;
+      case 'SOLDEESNONTERMINEE':
+        return Icons.payments_rounded;
+      case 'TERMINEE':
+        return Icons.task_alt_rounded;
+      case 'LIVRER':
+        return Icons.local_shipping_rounded;
+      case 'RETIRE':
+        return Icons.inventory_2_rounded;
+      default:
+        return Icons.inbox_rounded;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: CommandeListVctl.tabs.length,
+      initialIndex: initialTab,
       child: GetBuilder<CommandeListVctl>(
-        init: CommandeListVctl(),
+        init: CommandeListVctl(initialTab: initialTab),
         builder: (ctl) {
           return Scaffold(
             appBar: AppBar(
@@ -52,15 +71,8 @@ class CommandeListPage extends StatelessWidget {
             body: Column(
               children: [
                 CTabBar(
-                  tabs: const [
-                    "Non terminées",
-                    "Soldées non term.",
-                    "Terminées"
-                  ],
-                  onTabChanged: (index) {
-                    ctl.tabIndex = index;
-                    ctl.update();
-                  },
+                  tabs: CommandeListVctl.tabs.map((t) => t.$2).toList(),
+                  onTabChanged: (index) => ctl.tabIndex = index,
                 ),
                 Expanded(
                   child: PlaceholderBuilder(
@@ -68,18 +80,18 @@ class CommandeListPage extends StatelessWidget {
                     placeholder:
                         const Center(child: CircularProgressIndicator()),
                     builder: () {
-                      final items = ctl.items;
-                      if (items.isEmpty) {
+                      if (ctl.items.isEmpty) {
                         return RefreshIndicator(
                           onRefresh: ctl.getList,
                           child: SingleChildScrollView(
                             physics: const AlwaysScrollableScrollPhysics(),
-                            child: Container(
-                              height: MediaQuery.of(context).size.height * 0.7,
-                              alignment: Alignment.center,
-                              child: EmptyDataWidget(
-                                message: "Aucune commande trouvée",
-                                onRefresh: ctl.getList,
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              child: EmptyPage(
+                                icon: _tabIcon(ctl.tabIndex),
+                                title: 'Aucune commande',
+                                subtitle:
+                                    'Aucune commande ${CommandeListVctl.tabs[ctl.tabIndex].$2.toLowerCase()} pour le moment.',
                               ),
                             ),
                           ),

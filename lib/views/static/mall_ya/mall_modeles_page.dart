@@ -2,11 +2,13 @@ import 'package:ateliya/data/models/mall_modele_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/views/controllers/mall_ya/mall_modeles_vctl.dart';
 import 'package:ateliya/views/static/mall_ya/mall_detail_modele_page.dart';
-import 'package:ateliya/views/static/mall_ya/mall_edition_modele_page.dart';
+import 'package:ateliya/views/static/mall_ya/mall_lot_promotions_page.dart';
+import 'package:ateliya/views/static/mall_ya/mall_lot_nouveautes_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MallModelesPage extends StatelessWidget {
   const MallModelesPage({super.key});
@@ -360,67 +362,135 @@ class MallModelesPage extends StatelessWidget {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            onChanged: ctl.setSearch,
+                            decoration: InputDecoration(
+                              hintText: 'Rechercher...',
+                              hintStyle: const TextStyle(
+                                  fontSize: 13, color: Colors.grey),
+                              prefixIcon: const Icon(Icons.search_rounded,
+                                  color: Colors.grey, size: 20),
+                              suffixIcon: ctl.searchQuery.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.close_rounded,
+                                          size: 18, color: Colors.grey),
+                                      onPressed: () => ctl.setSearch(''),
+                                    )
+                                  : null,
+                              border: InputBorder.none,
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                    child: TextField(
-                      onChanged: ctl.setSearch,
-                      decoration: InputDecoration(
-                        hintText: 'Rechercher un modèle...',
-                        hintStyle:
-                            const TextStyle(fontSize: 13, color: Colors.grey),
-                        prefixIcon: const Icon(Icons.search_rounded,
-                            color: Colors.grey, size: 20),
-                        suffixIcon: ctl.searchQuery.isNotEmpty
-                            ? IconButton(
-                                icon: const Icon(Icons.close_rounded,
-                                    size: 18, color: Colors.grey),
-                                onPressed: () => ctl.setSearch(''),
-                              )
-                            : null,
-                        border: InputBorder.none,
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: 14),
                       ),
-                    ),
+                      const Gap(8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.04),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: PopupMenuButton<int?>(
+                          onSelected: ctl.setBoutique,
+                          initialValue: ctl.selectedBoutiqueId,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14)),
+                          itemBuilder: (_) => [
+                            const PopupMenuItem(
+                              value: null,
+                              child: Text('Toutes les boutiques',
+                                  style: TextStyle(fontSize: 13)),
+                            ),
+                            ...ctl.boutiqueOptions.map(
+                              (b) => PopupMenuItem(
+                                value: b.id,
+                                child: Text(b.libelle,
+                                    style: const TextStyle(fontSize: 13)),
+                              ),
+                            ),
+                          ],
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 14),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.storefront_rounded,
+                                  size: 20,
+                                  color: ctl.selectedBoutiqueId != null
+                                      ? AppColors.primary
+                                      : Colors.grey,
+                                ),
+                                const Gap(4),
+                                Icon(
+                                  Icons.arrow_drop_down_rounded,
+                                  size: 18,
+                                  color: ctl.selectedBoutiqueId != null
+                                      ? AppColors.primary
+                                      : Colors.grey,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              items.isEmpty
+              items.isEmpty && ctl.loading
                   ? const SliverFillRemaining(
-                      child: Center(
-                        child: Text('Aucun modèle trouvé.',
-                            style: TextStyle(color: Colors.grey)),
-                      ),
+                      child: _ModelesSkeleton(),
                     )
-                  : SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (_, i) => Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: GestureDetector(
-                              onTap: () async {
-                                final result = await Get.to(
-                                    () => MallDetailModelePage(item: items[i]));
-                                if (result == 'deleted') ctl.loadModeles();
-                              },
-                              child: _ModeleTile(item: items[i]),
+                  : items.isEmpty
+                      ? const SliverFillRemaining(
+                          child: Center(
+                            child: Text('Aucun modèle trouvé.',
+                                style: TextStyle(color: Colors.grey)),
+                          ),
+                        )
+                      : SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (_, i) => Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    final result = await Get.to(() =>
+                                        MallDetailModelePage(item: items[i]));
+                                    if (result == 'deleted') ctl.loadModeles();
+                                  },
+                                  child: _ModeleTile(item: items[i]),
+                                ),
+                              ),
+                              childCount: items.length,
                             ),
                           ),
-                          childCount: items.length,
                         ),
-                      ),
-                    ),
             ],
           ),
           floatingActionButton: Column(
@@ -431,22 +501,26 @@ class MallModelesPage extends StatelessWidget {
                 icon: Icons.auto_awesome,
                 label: 'Nouveauté',
                 color: const Color(0xFF1565C0),
-                onTap: () async {
-                  final res = await Get.to(
-                      () => MallEditionModelePage(item: ctl.modeles.first));
-                  if (res != null) ctl.loadModeles();
-                },
+                onTap: ctl.modeles.isEmpty
+                    ? null
+                    : () async {
+                        final res = await Get.to(
+                            () => MallLotNouveautesPage(modeles: ctl.modeles));
+                        if (res == true) ctl.loadModeles();
+                      },
               ),
               const Gap(10),
               _FabAction(
                 icon: Icons.local_offer_rounded,
                 label: 'Promotion',
                 color: const Color(0xFFC2185B),
-                onTap: () async {
-                  final res = await Get.to(
-                      () => MallEditionModelePage(item: ctl.modeles.first));
-                  if (res != null) ctl.loadModeles();
-                },
+                onTap: ctl.modeles.isEmpty
+                    ? null
+                    : () async {
+                        final res = await Get.to(
+                            () => MallLotPromotionsPage(modeles: ctl.modeles));
+                        if (res == true) ctl.loadModeles();
+                      },
               ),
             ],
           ),
@@ -626,7 +700,7 @@ class _FabAction extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const _FabAction({
     required this.icon,
@@ -639,30 +713,57 @@ class _FabAction extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
+      child: Opacity(
+        opacity: onTap == null ? 0.4 : 1.0,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: Colors.white, size: 16),
+              const Gap(6),
+              Text(label,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13)),
+            ],
+          ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: Colors.white, size: 16),
-            const Gap(6),
-            Text(label,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13)),
-          ],
+      ),
+    );
+  }
+}
+
+class _ModelesSkeleton extends StatelessWidget {
+  const _ModelesSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade200,
+      highlightColor: Colors.grey.shade100,
+      child: ListView.builder(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+        itemCount: 5,
+        itemBuilder: (_, __) => Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          height: 88,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
       ),
     );

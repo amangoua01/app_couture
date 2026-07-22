@@ -26,6 +26,27 @@ class MallCommandesRecuesVctl extends AuthViewController {
     update();
   }
 
+  Future<void> invaliderCommande(int commandeId) async {
+    final res = await _api.invaliderCommande(commandeId).load();
+    if (res.status) {
+      CSnackbar.show(
+          message: 'Commande invalidée avec succès', isSuccess: true);
+      await loadData();
+    } else {
+      CSnackbar.show(message: res.message);
+    }
+  }
+
+  Future<void> validerCommande(int commandeId) async {
+    final res = await _api.validerCommande(commandeId).load();
+    if (res.status) {
+      CSnackbar.show(message: 'Commande validée avec succès', isSuccess: true);
+      await loadData();
+    } else {
+      CSnackbar.show(message: res.message);
+    }
+  }
+
   Future<void> loadData() async {
     final res = await _api.getCommandesRecues().load();
     if (res.status) {

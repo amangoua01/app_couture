@@ -43,6 +43,8 @@ class FormDepot extends StatelessWidget {
           CDropDownFormField<SensMouvementCaisseEnum>(
             externalLabel: "Sens",
             selectedItem: ctl.sens,
+            enabled: false,
+            fillColor: Colors.grey.shade100,
             items: (filter, loadProps) async => SensMouvementCaisseEnum.values,
             itemAsString: (item) => item.label,
             onChanged: (e) {

@@ -1,6 +1,7 @@
 import 'package:ateliya/data/models/mall_dashboard_stats.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/env.dart';
+import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,15 @@ import 'package:intl/intl.dart';
 
 class MallDetailCommandePage extends StatelessWidget {
   final MallRecentOrder order;
-  const MallDetailCommandePage({super.key, required this.order});
+  final VoidCallback? onValider;
+  final VoidCallback? onInvalider;
+  final bool showActions;
+  const MallDetailCommandePage(
+      {super.key,
+      required this.order,
+      this.onValider,
+      this.onInvalider,
+      this.showActions = true});
 
   Color get _statusColor {
     switch (order.statut) {
@@ -47,6 +56,26 @@ class MallDetailCommandePage extends StatelessWidget {
     } catch (_) {
       return order.dateCommande;
     }
+  }
+
+  void _confirmValider() async {
+    final rep = await CChoiceMessageDialog.show(
+      title: 'Valider la commande',
+      message: 'Confirmer la validation de cette commande ?',
+      secondaryColor: const Color(0xFF0A7A5A),
+      validText: 'Valider',
+    );
+    if (rep == true) onValider?.call();
+  }
+
+  void _confirmInvalider() async {
+    final rep = await CChoiceMessageDialog.show(
+      title: 'Invalider la commande',
+      message: "Confirmer l'invalidation de cette commande ?",
+      secondaryColor: Colors.red.shade700,
+      validText: 'Invalider',
+    );
+    if (rep == true) onInvalider?.call();
   }
 
   @override
@@ -92,7 +121,6 @@ class MallDetailCommandePage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
         children: [
-          // Boutique + statut sur la même ligne
           _SectionCard(
             title: 'Boutique',
             child: Column(
@@ -157,7 +185,6 @@ class MallDetailCommandePage extends StatelessWidget {
             ),
           ),
           const Gap(14),
-          // Articles
           _SectionCard(
             title: 'Articles commandés',
             child: Column(
@@ -167,7 +194,6 @@ class MallDetailCommandePage extends StatelessWidget {
             ),
           ),
           const Gap(14),
-          // Total
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -196,6 +222,46 @@ class MallDetailCommandePage extends StatelessWidget {
               ],
             ),
           ),
+          if (showActions && order.statut == 'EN_ATTENTE') ...[
+            const Gap(14),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _confirmValider,
+                    icon: const Icon(Icons.check_circle_rounded, size: 16),
+                    label: const Text('Valider',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w800, fontSize: 13)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0A7A5A),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                    ),
+                  ),
+                ),
+                const Gap(10),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _confirmInvalider,
+                    icon: const Icon(Icons.cancel_rounded, size: 16),
+                    label: const Text('Invalider',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w800, fontSize: 13)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade700,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );

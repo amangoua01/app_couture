@@ -6,6 +6,7 @@ import 'package:ateliya/views/controllers/mall_ya/mall_settings_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MallSettingsPage extends StatelessWidget {
   const MallSettingsPage({super.key});
@@ -28,45 +29,49 @@ class MallSettingsPage extends StatelessWidget {
               foregroundColor: Colors.white,
               elevation: 0,
             ),
-            body: Column(
-              children: [
-                const CTabBar(
-                  tabs: ['Général', 'Nouveautés', 'Promos', 'Réseaux'],
-                ),
-                Expanded(
-                  child: TabBarView(
+            body: ctl.loading
+                ? const _LoadingSkeleton()
+                : Column(
                     children: [
-                      _GeneralTab(ctl: ctl),
-                      _HeaderTab(
-                        badgeCtl: ctl.nouveauHeaderBadgeCtl,
-                        titleCtl: ctl.nouveauHeaderTitleCtl,
-                        subtitleCtl: ctl.nouveauHeaderSubtitleCtl,
-                        descriptionCtl: ctl.nouveauHeaderDescriptionCtl,
-                        icon: Icons.new_releases_rounded,
-                        color: const Color(0xFF1565C0),
-                        label: 'Nouveautés',
-                        hint:
-                            'Bandeau affiché au-dessus de vos modèles marqués "Nouveau".',
-                        onSave: ctl.saveNouveau,
+                      const CTabBar(
+                        tabs: ['Général', 'Nouveautés', 'Promos', 'Réseaux'],
                       ),
-                      _HeaderTab(
-                        badgeCtl: ctl.promoHeaderBadgeCtl,
-                        titleCtl: ctl.promoHeaderTitleCtl,
-                        subtitleCtl: ctl.promoHeaderSubtitleCtl,
-                        descriptionCtl: ctl.promoHeaderDescriptionCtl,
-                        icon: Icons.local_offer_rounded,
-                        color: const Color(0xFFC2185B),
-                        label: 'Promotions',
-                        hint:
-                            'Bandeau affiché au-dessus de vos modèles en promotion.',
-                        onSave: ctl.savePromo,
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            _GeneralTab(ctl: ctl),
+                            _HeaderTab(
+                              badgeCtl: ctl.nouveauHeaderBadgeCtl,
+                              titleCtl: ctl.nouveauHeaderTitleCtl,
+                              subtitleCtl: ctl.nouveauHeaderSubtitleCtl,
+                              descriptionCtl: ctl.nouveauHeaderDescriptionCtl,
+                              icon: Icons.new_releases_rounded,
+                              color: const Color(0xFF1565C0),
+                              label: 'Nouveautés',
+                              hint:
+                                  'Bandeau affiché au-dessus de vos modèles marqués "Nouveau".',
+                              onSave: ctl.saveNouveau,
+                              saving: ctl.saving,
+                            ),
+                            _HeaderTab(
+                              badgeCtl: ctl.promoHeaderBadgeCtl,
+                              titleCtl: ctl.promoHeaderTitleCtl,
+                              subtitleCtl: ctl.promoHeaderSubtitleCtl,
+                              descriptionCtl: ctl.promoHeaderDescriptionCtl,
+                              icon: Icons.local_offer_rounded,
+                              color: const Color(0xFFC2185B),
+                              label: 'Promotions',
+                              hint:
+                                  'Bandeau affiché au-dessus de vos modèles en promotion.',
+                              onSave: ctl.savePromo,
+                              saving: ctl.saving,
+                            ),
+                            _ReseauxTab(ctl: ctl),
+                          ],
+                        ),
                       ),
-                      _ReseauxTab(ctl: ctl),
                     ],
                   ),
-                ),
-              ],
-            ),
           ),
         );
       },
@@ -121,6 +126,14 @@ class _GeneralTab extends StatelessWidget {
         CButton(
           title: 'Enregistrer',
           color: AppColors.primary,
+          enabled: !ctl.saving,
+          icon: ctl.saving
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white))
+              : null,
           onPressed: ctl.saveGeneral,
         ),
       ],
@@ -140,6 +153,7 @@ class _HeaderTab extends StatelessWidget {
   final String label;
   final String hint;
   final Future<void> Function() onSave;
+  final bool saving;
 
   const _HeaderTab({
     required this.badgeCtl,
@@ -151,6 +165,7 @@ class _HeaderTab extends StatelessWidget {
     required this.label,
     required this.hint,
     required this.onSave,
+    this.saving = false,
   });
 
   @override
@@ -193,6 +208,14 @@ class _HeaderTab extends StatelessWidget {
         CButton(
           title: 'Enregistrer',
           color: color,
+          enabled: !saving,
+          icon: saving
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white))
+              : null,
           onPressed: onSave,
         ),
       ],
@@ -257,6 +280,14 @@ class _ReseauxTab extends StatelessWidget {
         CButton(
           title: 'Enregistrer',
           color: const Color(0xFF37474F),
+          enabled: !ctl.saving,
+          icon: ctl.saving
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white))
+              : null,
           onPressed: ctl.saveReseaux,
         ),
       ],
@@ -359,6 +390,47 @@ class _Card extends StatelessWidget {
       ),
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start, children: children),
+    );
+  }
+}
+
+// ── Loading skeleton ──────────────────────────────────────────────────────────
+
+class _LoadingSkeleton extends StatelessWidget {
+  const _LoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade200,
+      highlightColor: Colors.grey.shade100,
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+        children: [
+          _SkeletonBox(height: 56, radius: 12),
+          const Gap(16),
+          _SkeletonBox(height: 200, radius: 20),
+          const Gap(24),
+          _SkeletonBox(height: 45, radius: 10),
+        ],
+      ),
+    );
+  }
+}
+
+class _SkeletonBox extends StatelessWidget {
+  final double height;
+  final double radius;
+  const _SkeletonBox({required this.height, required this.radius});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(radius),
+      ),
     );
   }
 }

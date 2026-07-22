@@ -8,13 +8,39 @@ class MallModelesVctl extends AuthViewController {
   final _api = MallApi();
   List<MallModeleBoutique> modeles = [];
   List<MallModeleBoutique> modelesArchives = [];
+  List<MallModeleBoutique> promotions = [];
+  List<MallModeleBoutique> nouveautes = [];
 
+  bool loading = false;
   int tabIndex = 0;
   String searchQuery = '';
+  int? selectedBoutiqueId;
+
+  List<MallBoutiqueInfo> get boutiqueOptions {
+    final source = tabIndex == 1
+        ? nouveautes
+        : tabIndex == 2
+            ? promotions
+            : modeles;
+    final seen = <int>{};
+    return source
+        .where((m) => m.boutique != null && seen.add(m.boutique!.id))
+        .map((m) => m.boutique!)
+        .toList();
+  }
+
+  void setBoutique(int? id) {
+    selectedBoutiqueId = id;
+    update();
+  }
 
   void setTab(int i) {
     tabIndex = i;
+    searchQuery = '';
+    selectedBoutiqueId = null;
     update();
+    if (i == 1 && nouveautes.isEmpty) _loadNouveautes();
+    if (i == 2 && promotions.isEmpty) _loadPromotions();
   }
 
   void setSearch(String v) {
@@ -23,31 +49,67 @@ class MallModelesVctl extends AuthViewController {
   }
 
   List<MallModeleBoutique> get filtered {
-    var list = List<MallModeleBoutique>.from(modeles);
-    if (searchQuery.isNotEmpty) {
-      list = list
-          .where((m) => (m.modele?.libelle ?? '')
-              .toLowerCase()
-              .contains(searchQuery.toLowerCase()))
-          .toList();
+    final source = tabIndex == 1
+        ? nouveautes
+        : tabIndex == 2
+            ? promotions
+            : modeles;
+    var list = source;
+    if (selectedBoutiqueId != null) {
+      list = list.where((m) => m.boutique?.id == selectedBoutiqueId).toList();
     }
-    if (tabIndex == 1) {
-      list = list.where((m) => m.isNouveaute == true).toList();
-    } else if (tabIndex == 2) {
-      list = list.where((m) => m.isPromotion == true).toList();
-    }
-    return list;
+    if (searchQuery.isEmpty) return list;
+    return list
+        .where((m) => (m.modele?.libelle ?? '')
+            .toLowerCase()
+            .contains(searchQuery.toLowerCase()))
+        .toList();
   }
 
+  String? get _codeMarchand => user.entreprise?.codeMarchand;
+
   Future<void> loadModeles() async {
+    loading = true;
+    update();
     final res = await _api.getMyModeles().load();
     if (res.status) {
       modeles = res.data!.where((m) => m.isActive).toList();
       modelesArchives = res.data!.where((m) => !m.isActive).toList();
-      update();
     } else {
       CSnackbar.show(message: res.message ?? 'Erreur inconnue');
     }
+    loading = false;
+    update();
+  }
+
+  Future<void> _loadNouveautes() async {
+    final code = _codeMarchand;
+    if (code == null || code.isEmpty) return;
+    loading = true;
+    update();
+    final res = await _api.getNouveautes(code).load();
+    if (res.status) {
+      nouveautes = res.data!;
+    } else {
+      CSnackbar.show(message: res.message ?? 'Erreur inconnue');
+    }
+    loading = false;
+    update();
+  }
+
+  Future<void> _loadPromotions() async {
+    final code = _codeMarchand;
+    if (code == null || code.isEmpty) return;
+    loading = true;
+    update();
+    final res = await _api.getPromotions(code).load();
+    if (res.status) {
+      promotions = res.data!;
+    } else {
+      CSnackbar.show(message: res.message ?? 'Erreur inconnue');
+    }
+    loading = false;
+    update();
   }
 
   Future<void> reactiverModele(int id) async {
