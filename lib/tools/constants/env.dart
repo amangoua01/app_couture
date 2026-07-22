@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 abstract class Env {
   static const String appName = 'Ateliya';
-  static const String appVersion = '1.2.0';
+  static const String appVersion = '1.3.3';
   static const int buildVersion = 38;
   static final fontFamily = GoogleFonts.poppins().fontFamily;
 
