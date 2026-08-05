@@ -1,7 +1,7 @@
-import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/services/deep_link_service.dart';
 import 'package:ateliya/tools/services/notification_service.dart';
+import 'package:ateliya/tools/services/printer_connection_service.dart';
 import 'package:ateliya/tools/widgets/themes/app_theme.dart';
 import 'package:ateliya/views/static/starting/splash_screen_page.dart';
 import 'package:flutter/foundation.dart';
@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 void main() async {
@@ -29,6 +29,9 @@ void main() async {
 
     await NotificationService.setup();
     DeepLinkService.init();
+
+    // Service de surveillance de connexion imprimante (vit pendant toute l'app)
+    Get.put(PrinterConnectionService());
   } catch (e) {
     if (kDebugMode) print("Error initializing notifications: $e");
   }

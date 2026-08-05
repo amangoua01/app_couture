@@ -7,6 +7,7 @@ import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/models/blue_device.dart';
+import 'package:ateliya/tools/services/printer_connection_service.dart';
 import 'package:ateliya/tools/services/sound_service.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/static/printers/print_list_page.dart';
@@ -33,6 +34,15 @@ mixin PrinterManagerViewMixin {
       Get.replace<BlueDevice>(printer);
     } else {
       Get.put(printer, permanent: true);
+    }
+    // Synchroniser avec le service de surveillance
+    if (Get.isRegistered<PrinterConnectionService>()) {
+      final service = Get.find<PrinterConnectionService>();
+      if (printer.isNoEmpty) {
+        service.onPrinterConnected();
+      } else {
+        service.onPrinterDisconnected();
+      }
     }
   }
 
@@ -86,27 +96,52 @@ mixin PrinterManagerViewMixin {
   Future<void> _printGenericReceipt(
       Future<List<int>?> Function() generatorFn) async {
     try {
-      if (selectedPrinter.isNoEmpty) {
-        final bool isConnected = await PrintBluetoothThermal.connectionStatus;
-        if (isConnected) {
-          final List<int>? bytes = await generatorFn();
-          if (bytes != null) {
-            final res = await PrintBluetoothThermal.writeBytes(bytes);
-            if (!res) {
-              CMessageDialog.show(
-                  message:
-                      "Erreur lors de l'envoi des données à l'imprimante.");
-            } else {
-              SoundService.playBeep();
-            }
-          } else {
-            CMessageDialog.show(message: "Erreur de génération du ticket.");
-          }
-        } else {
-          _promptConnection();
-        }
-      } else {
+      if (selectedPrinter.isEmpty) {
         _promptConnection();
+        return;
+      }
+
+      // Vérifier la connexion, tenter reconnexion si nécessaire
+      bool isConnected = await PrintBluetoothThermal.connectionStatus;
+
+      if (!isConnected) {
+        // Tentative de reconnexion automatique via le service
+        if (Get.isRegistered<PrinterConnectionService>()) {
+          debugPrint("Impression: déconnecté, tentative de reconnexion...");
+          isConnected =
+              await Get.find<PrinterConnectionService>().tryReconnect();
+        }
+
+        if (!isConnected) {
+          CMessageDialog.show(
+            message:
+                "L'imprimante est déconnectée. Veuillez vérifier qu'elle est allumée et réessayer.",
+          );
+          return;
+        }
+      }
+
+      // Générer les bytes du ticket
+      final List<int>? bytes = await generatorFn();
+      if (bytes == null) {
+        CMessageDialog.show(message: "Erreur de génération du ticket.");
+        return;
+      }
+
+      // Envoi avec retry : si le premier envoi échoue, attendre 500ms et réessayer
+      bool success = await PrintBluetoothThermal.writeBytes(bytes);
+      if (!success) {
+        debugPrint("Impression: premier envoi échoué, retry dans 500ms...");
+        await Future.delayed(const Duration(milliseconds: 500));
+        success = await PrintBluetoothThermal.writeBytes(bytes);
+      }
+
+      if (success) {
+        SoundService.playBeep();
+      } else {
+        CMessageDialog.show(
+          message: "Erreur lors de l'envoi des données à l'imprimante.",
+        );
       }
     } catch (e, st) {
       debugPrint("Print Error: $e\n$st");
@@ -193,8 +228,8 @@ mixin PrinterManagerViewMixin {
       ),
     ]);
 
-    final dateStr = mesure.createdAt != null
-        ? mesure.createdAt.toFrenchDateTime
+    final dateStr = mesure.dateDepot != null
+        ? mesure.dateDepot.toFrenchDateTime
         : "--/--/----";
     bytes += generator.row([
       PosColumn(text: "Date", width: 4),
@@ -215,8 +250,14 @@ mixin PrinterManagerViewMixin {
         ),
       ]);
       if (mesure.client!.tel != null) {
-        bytes += generator.text(_normalize("Tel: ${mesure.client!.tel}"),
-            styles: const PosStyles(align: PosAlign.right));
+        bytes += generator.row([
+          PosColumn(text: "Tel", width: 4),
+          PosColumn(
+            text: _normalize(mesure.client!.tel!),
+            width: 8,
+            styles: const PosStyles(align: PosAlign.right),
+          ),
+        ]);
       }
     }
     bytes += generator.hr();
@@ -304,7 +345,7 @@ mixin PrinterManagerViewMixin {
 
     // -- Footer --
     if (mesure.id != null) {
-      bytes += generator.qrcode(mesure.id.toString(), size: QRSize.size4);
+      bytes += generator.qrcode(mesure.id.toString(), size: QRSize.size8);
     }
     bytes += generator.emptyLines(1);
     bytes += generator.text(_normalize(footerMessage),
@@ -411,6 +452,10 @@ mixin PrinterManagerViewMixin {
       ),
     ]);
 
+    bytes += generator.emptyLines(1);
+    if (vente.reference != null) {
+      bytes += generator.qrcode(vente.reference.value, size: QRSize.size8);
+    }
     bytes += generator.emptyLines(1);
     bytes += generator.text(_normalize(footerMessage),
         styles: const PosStyles(align: PosAlign.center));
@@ -589,8 +634,8 @@ mixin PrinterManagerViewMixin {
 
     // -- Footer --
     bytes += generator.emptyLines(1);
-    final dateStr = mesure.createdAt != null
-        ? DateFormat('dd/MM/yyyy HH:mm').format(mesure.createdAt!)
+    final dateStr = mesure.dateDepot != null
+        ? DateFormat('dd/MM/yyyy HH:mm').format(mesure.dateDepot!)
         : "--/--/----";
     bytes += generator.text("Date: $dateStr",
         styles: const PosStyles(align: PosAlign.center));

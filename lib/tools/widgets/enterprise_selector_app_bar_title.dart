@@ -18,8 +18,9 @@ class EnterpriseSelectorAppBarTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => CBottomSheet.show(
+        isDismissible: true,
         child: const SelectEntrepriseBottomPage(),
-        height: 400,
+        height: 600,
         isScrollControlled: true,
       ).then((e) {
         if (e != null) {

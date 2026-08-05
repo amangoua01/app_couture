@@ -145,7 +145,7 @@ class CommandReceiptPdf {
                               'INV-${mesure.id.toString().padLeft(6, '0')}'),
                           _buildDetailRow(
                               'Date:',
-                              mesure.createdAt?.toString().substring(0, 10) ??
+                              mesure.dateDepot?.toString().substring(0, 10) ??
                                   ''),
                           _buildDetailRow(
                               'Livraison prévue:',

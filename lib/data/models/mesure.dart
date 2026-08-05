@@ -36,7 +36,6 @@ class Mesure extends ModelFormData<Mesure> {
       _montantTotal ?? lignesMesures.fold(0, (a, b) => a + b.total);
 
   bool isActive = true;
-  DateTime? createdAt;
   String? etatFacture;
 
   Mesure({
@@ -51,7 +50,6 @@ class Mesure extends ModelFormData<Mesure> {
     this.signatureUrl,
     this.files = const [],
     this.paiementFactures = const [],
-    this.createdAt,
     this.isActive = true,
     this.etatFacture,
   });
@@ -92,7 +90,6 @@ class Mesure extends ModelFormData<Mesure> {
           .map((e) => PaiementFacture.fromJson(e))
           .toList();
     }
-    createdAt = json['createdAt'].toString().toDateTime();
     isActive = json['isActive'] ?? true;
     etatFacture = json['etatFacture'];
     etatFacture = json['etatFacture'];
@@ -151,7 +148,6 @@ class Mesure extends ModelFormData<Mesure> {
       "ResteArgent": resteArgent,
       "signature": signature,
       "mesures": lignesMesures.map((e) => e.toJson()).toList(),
-      "createdAt": createdAt?.toIso8601String(),
       "isActive": isActive,
       "paiementFactures": paiementFactures.map((e) => e.toJson()).toList(),
       "etatFacture": etatFacture,

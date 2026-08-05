@@ -298,6 +298,10 @@ class DetailVentePage extends StatelessWidget {
                       ),
                       _buildSummaryRow(
                         "Montant Total",
+                        // (vente.paiementBoutiqueLignes.fold(
+                        //             0.0, (double e, f) => e + f.total.value) +
+                        //         vente.remiseTotale)
+                        //     .toAmount(unit: "F"),
                         (vente.montant.value + vente.remiseTotale)
                             .toAmount(unit: "F"),
                         isBold: false,

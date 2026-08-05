@@ -1,31 +1,33 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
 import 'package:ateliya/tools/constants/sens_mouvement_caisse_enum.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:ateliya/tools/widgets/empty_page.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/empty_page.dart';
+import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
+import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/tools/widgets/ligne_card.dart';
 import 'package:ateliya/views/controllers/caisse/approvisionner_caisse_page_vctl.dart';
 import 'package:ateliya/views/static/caisse/bottom_sheet_depot.dart';
-import 'package:ateliya/views/static/caisse/form_depot.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class ApprovisionnerCaissePage extends StatelessWidget {
-  const ApprovisionnerCaissePage({super.key});
+  final SensMouvementCaisseEnum sens;
+  const ApprovisionnerCaissePage({
+    this.sens = SensMouvementCaisseEnum.entree,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder(
-      init: ApprovisionnerCaissePageVctl(),
+      init: ApprovisionnerCaissePageVctl(sens),
       builder: (ctl) {
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: AppBar(
-            title: const Text(
-              "Nouveau dépôt",
-            ),
-          ),
+          appBar: AppBar(title: const Text("Nouveau dépôt")),
           floatingActionButton: FloatingActionButton(
             onPressed: () => BottomSheetDepot.show(ctl),
             elevation: 4,
@@ -62,7 +64,61 @@ class ApprovisionnerCaissePage extends StatelessWidget {
               child: ListView(
                 physics: const BouncingScrollPhysics(),
                 children: [
-                  FormDepot(ctl: ctl),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.grey.shade100),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CDropDownFormField<ModePaiementEnum>(
+                          externalLabel: "Mode de paiement",
+                          selectedItem: ctl.modePaiement,
+                          items: (filter, loadProps) async =>
+                              ModePaiementEnum.values,
+                          itemAsString: (item) => item.label,
+                          onChanged: (e) {
+                            if (e != null) {
+                              ctl.modePaiement = e;
+                              ctl.update();
+                            }
+                          },
+                        ),
+                        CDropDownFormField<SensMouvementCaisseEnum>(
+                          externalLabel: "Sens",
+                          selectedItem: ctl.sens,
+                          enabled: false,
+                          fillColor: Colors.grey.shade100,
+                          items: (filter, loadProps) async =>
+                              SensMouvementCaisseEnum.values,
+                          itemAsString: (item) => item.label,
+                          onChanged: (e) {
+                            if (e != null) {
+                              ctl.sens = e;
+                              ctl.update();
+                            }
+                          },
+                        ),
+                        CTextFormField(
+                          externalLabel: "Description",
+                          controller: ctl.descriptionCtl,
+                          maxLines: 2,
+                          margin: EdgeInsets.zero,
+                          hintText: "Saisir une description (facultatif)",
+                        ),
+                      ],
+                    ),
+                  ),
                   const Gap(24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,14 +210,14 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final line = ctl.lines[index];
                         return LigneCard(
-                            index: index,
-                            title: line.caisse!.entite!.libelle.value,
-                            subtitle:
-                                "${ctl.sens.label.value} • ${ctl.modePaiement.label.value}",
-                            montant: line.montantCtl.text,
-                            isEntree:
-                                ctl.sens == SensMouvementCaisseEnum.entree,
-                            onDelete: () => ctl.removeLine(index));
+                          index: index,
+                          title: line.caisse!.entite!.libelle.value,
+                          subtitle:
+                              "${ctl.sens.label.value} • ${ctl.modePaiement.label.value}",
+                          montant: line.montantCtl.text,
+                          isEntree: ctl.sens == SensMouvementCaisseEnum.entree,
+                          onDelete: () => ctl.removeLine(index),
+                        );
                       },
                     ),
                 ],

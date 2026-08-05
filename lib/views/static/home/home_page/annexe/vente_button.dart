@@ -2,11 +2,13 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/views/controllers/home/home_page_vctl.dart';
+import 'package:ateliya/views/static/home/home_page/scan_qr_code_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scrolling_fab_animated/flutter_scrolling_fab_animated.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 class VenteButton extends StatelessWidget {
   final HomePageVctl ctl;
@@ -119,18 +121,38 @@ class VenteButton extends StatelessWidget {
               SpeedDialChild(
                 label: "Créer une dépense",
                 visible: ctl.user.isAdmin,
-                child: const Icon(Icons.money_off_rounded,
-                    color: Colors.white, size: 20),
+                child: const Icon(
+                  Icons.money_off_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 backgroundColor: AppColors.yellow,
                 onTap: ctl.goToDepense,
               ),
               SpeedDialChild(
                 visible: ctl.user.isAdmin,
-                label: "Approvisionner caisse",
-                child: const Icon(Icons.account_balance_wallet_rounded,
-                    color: Colors.white, size: 20),
+                label: "Dépenser",
+                child: SvgPicture.asset(
+                  "assets/images/svg/depense.svg",
+                  width: 20,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
                 backgroundColor: AppColors.primary,
-                onTap: ctl.goToDeposit,
+                onTap: ctl.goToDepense,
+              ),
+              SpeedDialChild(
+                backgroundColor: AppColors.primary,
+                label: "Scanner un reçu",
+                child: SvgPicture.asset(
+                  "assets/images/svg/qr_code.svg",
+                  width: 30,
+                  colorFilter:
+                      const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                ),
+                onTap: () => Get.to(() => const ScanQrCodePage()),
               ),
             ],
           ),

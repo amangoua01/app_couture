@@ -194,4 +194,21 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+
+  Future<DataResponse<Vente>> getVenteByRef(String reference) async {
+    try {
+      final res = await client.get(
+        urlBuilder(api: "byRef/$reference", module: "vente"),
+        headers: authHeaders,
+      );
+      final json = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: Vente.fromJson(json['data']));
+      } else {
+        return DataResponse.error(message: json['message']);
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 }

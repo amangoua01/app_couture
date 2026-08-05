@@ -1,5 +1,6 @@
 import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/services/printer_connection_service.dart';
 import 'package:ateliya/tools/widgets/enterprise_selector_app_bar_title.dart';
 import 'package:ateliya/tools/widgets/notif_badge_icon.dart';
 import 'package:ateliya/views/static/printers/print_list_page.dart';
@@ -18,6 +19,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.notifCount,
     required this.onNotifRefresh,
   });
+
+  PrinterConnectionService? get _printerService =>
+      Get.isRegistered<PrinterConnectionService>()
+          ? Get.find<PrinterConnectionService>()
+          : null;
 
   @override
   Widget build(BuildContext context) {
@@ -46,15 +52,36 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
         onSelectionChanged: onSelectionChanged,
       ),
       actions: [
-        IconButton(
-          onPressed: () => Get.to(() => const PrintListPage()),
-          icon: const Icon(
-            Icons.print_rounded,
-            color: Colors.white,
-            size: 26,
-          ),
-          tooltip: "Imprimantes",
-        ),
+        Obx(() {
+          final isConnected = _printerService?.isPrinterConnected.value ?? false;
+          return IconButton(
+            onPressed: () => Get.to(() => const PrintListPage()),
+            icon: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                const Icon(
+                  Icons.print_rounded,
+                  color: Colors.white,
+                  size: 26,
+                ),
+                Positioned(
+                  right: -2,
+                  top: -2,
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: isConnected ? Colors.greenAccent : Colors.redAccent,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.primary, width: 1.5),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            tooltip: isConnected ? "Imprimante connectée" : "Imprimante déconnectée",
+          );
+        }),
         Padding(
           padding: const EdgeInsets.only(right: 12),
           child: NotifBadgeIcon(

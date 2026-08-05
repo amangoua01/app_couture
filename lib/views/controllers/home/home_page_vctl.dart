@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:ateliya/api/accueil_api.dart';
 import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/data/models/accueil_data.dart';
+import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
+import 'package:ateliya/tools/constants/sens_mouvement_caisse_enum.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
@@ -10,14 +12,13 @@ import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 import 'package:ateliya/views/static/caisse/approvisionner_caisse_page.dart';
 import 'package:ateliya/views/static/clients/edition_client_page.dart';
+import 'package:ateliya/views/static/commandes/commande_list_page.dart';
 import 'package:ateliya/views/static/depense/edition_depense_page.dart';
 import 'package:ateliya/views/static/mesure/edition_mesure_page.dart'
     show EditionMesurePage;
-import 'package:ateliya/views/static/commandes/commande_list_page.dart';
-import 'package:ateliya/views/static/ventes/vente_boutique_list_page.dart';
 import 'package:ateliya/views/static/transfert_stock/edition_transfert_stock_page.dart';
 import 'package:ateliya/views/static/ventes/edition_vente_multiple_page.dart';
-import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
+import 'package:ateliya/views/static/ventes/vente_boutique_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -62,8 +63,8 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
     }
   }
 
-  goToDeposit() async {
-    final res = await Get.to(() => const ApprovisionnerCaissePage());
+  goToMouvementCaisse(SensMouvementCaisseEnum sens) async {
+    final res = await Get.to(() => ApprovisionnerCaissePage(sens: sens));
     if (res != null) {
       loadData();
     }
