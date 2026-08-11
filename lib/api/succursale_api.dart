@@ -1,9 +1,9 @@
 import 'package:ateliya/api/abstract/crud_web_controller.dart';
-import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/data/models/atelier.dart';
 
-class SuccursaleApi extends CrudWebController<Succursale> {
+class SuccursaleApi extends CrudWebController<Atelier> {
   @override
-  Succursale get item => Succursale();
+  Atelier get item => Atelier();
 
   SuccursaleApi() : super(listApi: "entreprise");
 

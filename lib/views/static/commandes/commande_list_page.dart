@@ -54,18 +54,21 @@ class CommandeListPage extends StatelessWidget {
               ],
             ),
             floatingActionButton: FloatingActionButton(
-              onPressed: () => CBottomSheet.show(
-                child: GetBuilder<CommandeListVctl>(
-                  init: ctl,
-                  builder: (_) => _FilterSheet(ctl: ctl),
-                ),
-              ),
+              onPressed:
+                  () => CBottomSheet.show(
+                    child: GetBuilder<CommandeListVctl>(
+                      init: ctl,
+                      builder: (_) => _FilterSheet(ctl: ctl),
+                    ),
+                  ),
               backgroundColor: AppColors.primary,
               child: SvgPicture.asset(
                 'assets/images/svg/filter.svg',
                 height: 22,
-                colorFilter:
-                    const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
             body: Column(
@@ -77,8 +80,9 @@ class CommandeListPage extends StatelessWidget {
                 Expanded(
                   child: PlaceholderBuilder(
                     condition: !ctl.isLoading,
-                    placeholder:
-                        const Center(child: CircularProgressIndicator()),
+                    placeholder: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
                     builder: () {
                       if (ctl.items.isEmpty) {
                         return RefreshIndicator(
@@ -124,7 +128,8 @@ class CommandeListPage extends StatelessWidget {
                                 return const Padding(
                                   padding: EdgeInsets.all(15.0),
                                   child: Center(
-                                      child: CircularProgressIndicator()),
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 );
                               }
                               return Padding(
@@ -199,8 +204,11 @@ class _FilterSheet extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(Icons.filter_list_rounded,
-                color: AppColors.primary, size: 20),
+            const Icon(
+              Icons.filter_list_rounded,
+              color: AppColors.primary,
+              size: 20,
+            ),
             const Gap(8),
             const Text(
               'Filtrer les commandes',
@@ -212,8 +220,10 @@ class _FilterSheet extends StatelessWidget {
                 ctl.resetFilters();
                 Get.back();
               },
-              child: const Text('Réinitialiser',
-                  style: TextStyle(color: Colors.red, fontSize: 12)),
+              child: const Text(
+                'Réinitialiser',
+                style: TextStyle(color: Colors.red, fontSize: 12),
+              ),
             ),
           ],
         ),
@@ -256,7 +266,7 @@ class _FilterSheet extends StatelessWidget {
         const Gap(10),
         // Dropdown pour état facture
         DropdownButtonFormField<String>(
-          value: ctl.etatFacture,
+          initialValue: ctl.etatFacture,
           decoration: const InputDecoration(
             labelText: 'État de la commande (facture)',
             border: OutlineInputBorder(),
@@ -266,7 +276,9 @@ class _FilterSheet extends StatelessWidget {
             DropdownMenuItem(value: null, child: Text('Tous (Toutes dates)')),
             DropdownMenuItem(value: 'EN_COURS', child: Text('En cours')),
             DropdownMenuItem(
-                value: 'NON_COMMENCE', child: Text('Non commencé')),
+              value: 'NON_COMMENCE',
+              child: Text('Non commencé'),
+            ),
             DropdownMenuItem(value: 'TERMINE', child: Text('Terminé')),
             DropdownMenuItem(value: 'SOLDE', child: Text('Soldé')),
           ],

@@ -1,5 +1,5 @@
+import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/data/models/boutique.dart';
-import 'package:ateliya/data/models/succursale.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/c_tab_bar.dart';
@@ -7,7 +7,6 @@ import 'package:ateliya/tools/widgets/wrapper_listview.dart';
 import 'package:ateliya/views/controllers/home/select_entreprise_bottom_page_vctl.dart';
 import 'package:ateliya/views/static/home/widgets/build_entity_item.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -36,7 +35,7 @@ class SelectEntrepriseBottomPage extends StatelessWidget {
           ),
           const Gap(6),
           const CTabBar(
-            tabs: ["Boutiques", "Succursales"],
+            tabs: ["Boutiques", "Ateliers"],
             margin: EdgeInsets.symmetric(horizontal: 20),
           ),
           const Gap(20),
@@ -54,7 +53,7 @@ class SelectEntrepriseBottomPage extends StatelessWidget {
                       itemBuilder: (e, _) {
                         final isSelected =
                             (ctl.getEntite().value is Boutique) &&
-                                (ctl.getEntite().value as Boutique).id == e.id;
+                            (ctl.getEntite().value as Boutique).id == e.id;
                         return BuildEntityItem(
                           title: e.libelle.value,
                           subtitle: e.contact.value,
@@ -67,12 +66,12 @@ class SelectEntrepriseBottomPage extends StatelessWidget {
                     WrapperListview(
                       padding: EdgeInsets.zero,
                       isLoading: ctl.isLoading,
-                      items: ctl.entities.surcusales,
+                      items: ctl.entities.ateliers,
                       onRefresh: ctl.fetchEntrepriseEntities,
                       itemBuilder: (e, __) {
-                        final isSelected = (ctl.getEntite().value
-                                is Succursale) &&
-                            (ctl.getEntite().value as Succursale).id == e.id;
+                        final isSelected =
+                            (ctl.getEntite().value is Atelier) &&
+                            (ctl.getEntite().value as Atelier).id == e.id;
                         return BuildEntityItem(
                           title: e.libelle.value,
                           subtitle: e.contact.value,

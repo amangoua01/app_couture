@@ -27,12 +27,12 @@ class BuildEntityItem extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.white,
+          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected
-                ? AppColors.primary.withOpacity(0.5)
-                : Colors.grey.withOpacity(0.5),
+                ? AppColors.primary.withValues(alpha: 0.5)
+                : Colors.grey.withValues(alpha: 0.5),
             width: isSelected ? 1 : 1,
           ),
         ),

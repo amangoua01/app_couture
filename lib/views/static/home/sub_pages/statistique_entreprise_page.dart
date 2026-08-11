@@ -1,6 +1,5 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
-import 'package:ateliya/tools/widgets/empty_page.dart';
 import 'package:ateliya/views/controllers/home/statistique_entreprise_page_vctl.dart';
 import 'package:ateliya/views/static/home/sub_pages/stats/entreprise/entreprise_stats_sub_page.dart';
 import 'package:flutter/material.dart';
@@ -82,8 +81,8 @@ class StatistiqueEntreprisePage extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color:
-                                        AppColors.primary.withValues(alpha: 0.1),
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(Icons.edit,
@@ -107,9 +106,9 @@ class StatistiqueEntreprisePage extends StatelessWidget {
                             ),
                           )
                         : EntrepriseStatsSubPage(
-                                data: ctl.data,
-                                onRefresh: ctl.fetchStats,
-                              ),
+                            data: ctl.data,
+                            onRefresh: ctl.fetchStats,
+                          ),
                   ),
                 ],
               ),

@@ -1,7 +1,6 @@
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/stock_modele_item.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/views/controllers/home/boutique_page_vctl.dart';
 import 'package:ateliya/views/static/home/detail_boutique_item_page.dart';
 import 'package:ateliya/views/static/ravitaillement/edition_ravitaillement_page.dart';

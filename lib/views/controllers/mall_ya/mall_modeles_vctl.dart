@@ -76,7 +76,7 @@ class MallModelesVctl extends AuthViewController {
       modeles = res.data!.where((m) => m.isActive).toList();
       modelesArchives = res.data!.where((m) => !m.isActive).toList();
     } else {
-      CSnackbar.show(message: res.message ?? 'Erreur inconnue');
+      CSnackbar.show(message: res.message);
     }
     loading = false;
     update();
@@ -91,7 +91,7 @@ class MallModelesVctl extends AuthViewController {
     if (res.status) {
       nouveautes = res.data!;
     } else {
-      CSnackbar.show(message: res.message ?? 'Erreur inconnue');
+      CSnackbar.show(message: res.message);
     }
     loading = false;
     update();
@@ -106,7 +106,7 @@ class MallModelesVctl extends AuthViewController {
     if (res.status) {
       promotions = res.data!;
     } else {
-      CSnackbar.show(message: res.message ?? 'Erreur inconnue');
+      CSnackbar.show(message: res.message);
     }
     loading = false;
     update();
@@ -118,7 +118,7 @@ class MallModelesVctl extends AuthViewController {
       CSnackbar.show(message: 'Modèle réactivé avec succès', isSuccess: true);
       await loadModeles();
     } else {
-      CSnackbar.show(message: res.message ?? 'Erreur inconnue');
+      CSnackbar.show(message: res.message);
     }
   }
 

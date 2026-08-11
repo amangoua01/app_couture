@@ -6,7 +6,6 @@ import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class MallStatusVctl extends AuthViewController {
   final _api = MallApi();

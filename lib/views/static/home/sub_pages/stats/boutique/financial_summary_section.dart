@@ -4,7 +4,6 @@ import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/widgets/build_summury_item.dart';
 import 'package:ateliya/tools/widgets/section_container.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 
 class FinancialSummarySection extends StatelessWidget {
   final StatistiquesBoutique data;

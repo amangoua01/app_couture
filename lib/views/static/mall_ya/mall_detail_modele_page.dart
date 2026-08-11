@@ -1,6 +1,5 @@
 import 'package:ateliya/api/mall_api.dart';
 import 'package:ateliya/data/models/mall_modele_boutique.dart';
-import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
@@ -28,7 +27,7 @@ class MallDetailModelePage extends StatelessWidget {
       CSnackbar.show(message: 'Modèle supprimé avec succès', isSuccess: true);
       Get.back(result: 'deleted');
     } else {
-      CSnackbar.show(message: res.message ?? 'Erreur inconnue');
+      CSnackbar.show(message: res.message);
     }
   }
 
@@ -45,9 +44,8 @@ class MallDetailModelePage extends StatelessWidget {
     final prixNouv = nouveau?.prixNouveau != null
         ? double.tryParse(nouveau!.prixNouveau!)
         : null;
-    final prixUnite = promo?.prixUnite != null
-        ? double.tryParse(promo!.prixUnite!)
-        : null;
+    final prixUnite =
+        promo?.prixUnite != null ? double.tryParse(promo!.prixUnite!) : null;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -119,18 +117,25 @@ class MallDetailModelePage extends StatelessWidget {
                         ),
                         const Gap(8),
                         // Badges
-                        if (item.isNouveaute || item.isPromotion || item.isSurMesure == true)
+                        if (item.isNouveaute ||
+                            item.isPromotion ||
+                            item.isSurMesure == true)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8),
                             child: Wrap(
                               spacing: 6,
                               children: [
                                 if (item.isNouveaute)
-                                  _Badge(label: 'Nouveau', color: const Color(0xFF1565C0)),
+                                  const _Badge(
+                                      label: 'Nouveau',
+                                      color: Color(0xFF1565C0)),
                                 if (item.isPromotion)
-                                  _Badge(label: 'Promo', color: const Color(0xFFC2185B)),
+                                  const _Badge(
+                                      label: 'Promo', color: Color(0xFFC2185B)),
                                 if (item.isSurMesure == true)
-                                  _Badge(label: 'Sur mesure', color: const Color(0xFF6A1B9A)),
+                                  const _Badge(
+                                      label: 'Sur mesure',
+                                      color: Color(0xFF6A1B9A)),
                               ],
                             ),
                           ),

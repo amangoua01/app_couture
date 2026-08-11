@@ -29,10 +29,10 @@ abstract class CChoiceMessageDialog {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: secondaryColor.withOpacity(0.12),
+                    color: secondaryColor.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: secondaryColor.withOpacity(0.2),
+                      color: secondaryColor.withValues(alpha: 0.2),
                       width: 3,
                     ),
                   ),

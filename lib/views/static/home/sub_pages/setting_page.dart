@@ -1,12 +1,13 @@
-import 'dart:io';
-
+import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
+import 'package:ateliya/tools/constants/type_user_enum.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/setting_tile.dart';
 import 'package:ateliya/views/controllers/home/setting_page_vctl.dart';
 import 'package:ateliya/views/static/abonnements/abonnements_list_page.dart';
+import 'package:ateliya/views/static/ateliers/ateliers_list_page.dart';
 import 'package:ateliya/views/static/auth/profil_page.dart';
 import 'package:ateliya/views/static/boutiques/boutiques_list_page.dart';
 import 'package:ateliya/views/static/caisse/mouvement_caisse_list_page.dart';
@@ -22,9 +23,7 @@ import 'package:ateliya/views/static/personnels/personnels_list_page.dart';
 import 'package:ateliya/views/static/printers/print_list_page.dart';
 import 'package:ateliya/views/static/ravitaillement/ravitaillement_list_page.dart';
 import 'package:ateliya/views/static/stats/stock_statistiques_page.dart';
-import 'package:ateliya/views/static/surcursales/succursales_list_page.dart';
 import 'package:ateliya/views/static/type_mesure/type_mesure_list_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
@@ -57,230 +56,251 @@ class SettingPage extends StatelessWidget {
 
                 _QuickProfileCard(
                   name: ctl.user.fullName,
-                  onTap: () => Get.to(() => const ProfilPage())
-                      ?.then((_) => ctl.update()),
+                  onTap:
+                      () => Get.to(() => const ProfilPage())?.then((e) {
+                        if (e != null) {
+                          if (e is User) {
+                            ctl.user = e;
+                            ctl.update();
+                          }
+                        }
+                      }),
                 ),
                 const Gap(24),
                 const _SectionLabel("Gestion de mon entreprise"),
-                _SettingsGroup(tiles: [
-                  SettingTile(
-                    title: "Mall Ya",
-                    icon: Icons.factory_outlined,
-                    iconBgColor: AppColors.primary.withValues(alpha: 0.08),
-                    color: AppColors.primary,
-                    visible: ctl.user.isAdmin,
-                    onTap: () => Get.to(() => const MallYaHomePage()),
-                  ),
-                ]),
+                _SettingsGroup(
+                  tiles: [
+                    SettingTile(
+                      title: "Mall Ya",
+                      icon: Icons.factory_outlined,
+                      iconBgColor: AppColors.primary.withValues(alpha: 0.08),
+                      color: AppColors.primary,
+                      visible: ctl.user.isAdmin,
+                      onTap: () => Get.to(() => const MallYaHomePage()),
+                    ),
+                  ],
+                ),
                 // ── Section Gestion de compte ─────────────────
                 const Gap(24),
 
                 const _SectionLabel("Gestion de compte"),
                 const Gap(8),
-                _SettingsGroup(tiles: [
-                  SettingTile(
-                    title: "Statistiques",
-                    icon: Icons.bar_chart_outlined,
-                    iconBgColor: AppColors.primary.withValues(alpha: 0.08),
-                    color: AppColors.primary,
-                    visible: ctl.user.isAdmin,
-                    onTap: () => Get.to(
-                      () => const StatistiqueEntreprisePage(),
+                _SettingsGroup(
+                  tiles: [
+                    SettingTile(
+                      title: "Statistiques",
+                      icon: Icons.bar_chart_outlined,
+                      iconBgColor: AppColors.primary.withValues(alpha: 0.08),
+                      color: AppColors.primary,
+                      visible: ctl.user.isAdmin,
+                      onTap:
+                          () => Get.to(() => const StatistiqueEntreprisePage()),
                     ),
-                  ),
-                  SettingTile(
-                    title: "Mes boutiques",
-                    icon: Icons.storefront_outlined,
-                    iconBgColor: AppColors.green.withValues(alpha: 0.12),
-                    color: AppColors.green,
-                    visible: ctl.user.isAdmin,
-                    onTap: () => Get.to(() => const BoutiquesListPage()),
-                  ),
-                  SettingTile(
-                    title: "Mouvements caisse",
-                    icon: Icons.account_balance_wallet_outlined,
-                    iconBgColor: AppColors.green.withValues(alpha: 0.12),
-                    color: AppColors.green,
-                    visible: ctl.user.isAdmin,
-                    onTap: () => Get.to(
-                      () => const MouvementCaisseListPage(),
+                    SettingTile(
+                      title: "Mes boutiques",
+                      icon: Icons.storefront_outlined,
+                      iconBgColor: AppColors.green.withValues(alpha: 0.12),
+                      color: AppColors.green,
+                      visible: ctl.user.isAdmin,
+                      onTap: () => Get.to(() => const BoutiquesListPage()),
                     ),
-                  ),
-                  SettingTile(
-                    title: "Mes succursales",
-                    icon: Icons.business_outlined,
-                    iconBgColor: AppColors.primary.withValues(alpha: 0.08),
-                    color: AppColors.primary,
-                    visible: ctl.user.isAdmin,
-                    onTap: () => Get.to(() => const SuccursalesListPage()),
-                  ),
-                  SettingTile(
-                    title: "Mon personnel",
-                    icon: Icons.people_outline,
-                    iconBgColor: AppColors.primary.withValues(alpha: 0.08),
-                    color: AppColors.primary,
-                    visible: ctl.user.isAdmin,
-                    onTap: () => Get.to(() => const PersonnelListPage()),
-                  ),
-                  SettingTile(
-                    title: "Abonnements",
-                    icon: Icons.card_membership_outlined,
-                    iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
-                    color: AppColors.secondary,
-                    visible: ctl.user.isAdmin,
-                    onTap: () => Get.to(() => const AbonnementsListPage()),
-                  ),
-                  SettingTile(
-                    title: "Mes dépenses",
-                    icon: Icons.monetization_on_outlined,
-                    iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
-                    color: AppColors.secondary,
-                    visible: ctl.user.isAdmin,
-                    onTap: () => Get.to(() => const DepenseListPage()),
-                  ),
-                  SettingTile(
-                    title: "Imprimantes",
-                    icon: Icons.print_outlined,
-                    iconBgColor: AppColors.primary.withValues(alpha: 0.08),
-                    color: AppColors.primary,
-                    showDivider: false,
-                    onTap: () => Get.to(() => const PrintListPage()),
-                  ),
-                ]),
+                    SettingTile(
+                      title: "Mouvements caisse",
+                      icon: Icons.account_balance_wallet_outlined,
+                      iconBgColor: AppColors.green.withValues(alpha: 0.12),
+                      color: AppColors.green,
+                      visible: ctl.user.isAdmin,
+                      onTap:
+                          () => Get.to(() => const MouvementCaisseListPage()),
+                    ),
+                    SettingTile(
+                      title: "Mes ateliers",
+                      icon: Icons.business_outlined,
+                      iconBgColor: AppColors.primary.withValues(alpha: 0.08),
+                      color: AppColors.primary,
+                      visible: ctl.user.isAdmin,
+                      onTap: () => Get.to(() => const AteliersListPage()),
+                    ),
+                    SettingTile(
+                      title: "Mon personnel",
+                      icon: Icons.people_outline,
+                      iconBgColor: AppColors.primary.withValues(alpha: 0.08),
+                      color: AppColors.primary,
+                      visible: ctl.user.isAdmin,
+                      onTap: () => Get.to(() => const PersonnelListPage()),
+                    ),
+                    SettingTile(
+                      title: "Abonnements",
+                      icon: Icons.card_membership_outlined,
+                      iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
+                      color: AppColors.secondary,
+                      visible: ctl.user.isAdmin,
+                      onTap: () => Get.to(() => const AbonnementsListPage()),
+                    ),
+                    SettingTile(
+                      title: "Mes dépenses",
+                      icon: Icons.monetization_on_outlined,
+                      iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
+                      color: AppColors.secondary,
+                      visible: ctl.user.isAdmin,
+                      onTap: () => Get.to(() => const DepenseListPage()),
+                    ),
+                    SettingTile(
+                      title: "Imprimantes",
+                      icon: Icons.print_outlined,
+                      iconBgColor: AppColors.primary.withValues(alpha: 0.08),
+                      color: AppColors.primary,
+                      showDivider: false,
+                      onTap: () => Get.to(() => const PrintListPage()),
+                    ),
+                  ],
+                ),
                 const Gap(24),
 
                 // ── Section Atelier & Catalogue ───────────────
                 const _SectionLabel("Atelier & Catalogue"),
                 const Gap(8),
-                _SettingsGroup(tiles: [
-                  SettingTile(
-                    title: "Mes clients",
-                    icon: Icons.group_outlined,
-                    iconBgColor: AppColors.primary.withValues(alpha: 0.08),
-                    color: AppColors.primary,
-                    onTap: () => Get.to(() => const ClientListePage()),
-                  ),
-                  SettingTile(
-                    title: "Mes modèles",
-                    icon: Icons.style_outlined,
-                    iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
-                    color: AppColors.secondary,
-                    visible: ctl.user.isAdmin &&
-                        ctl.getEntite().value.type ==
-                            EntiteEntrepriseType.boutique,
-                    onTap: () => Get.to(() => const ModeleListPage()),
-                  ),
-                  SettingTile(
-                    title: "Modèles boutiques",
-                    icon: Icons.shopping_bag_outlined,
-                    iconBgColor: AppColors.green.withValues(alpha: 0.12),
-                    color: AppColors.green,
-                    visible: ctl.user.isAdmin &&
-                        ctl.getEntite().value.type ==
-                            EntiteEntrepriseType.boutique,
-                    onTap: () => Get.to(
-                      () => const ModeleListBoutiquePage(),
+                _SettingsGroup(
+                  tiles: [
+                    SettingTile(
+                      visible: ctl.user.type?.code != TypeUserEnum.ac.code,
+                      title: "Mes clients",
+                      icon: Icons.group_outlined,
+                      iconBgColor: AppColors.primary.withValues(alpha: 0.08),
+                      color: AppColors.primary,
+                      onTap: () => Get.to(() => const ClientListePage()),
                     ),
-                  ),
-                  SettingTile(
-                    title: "Type de mesure",
-                    icon: Icons.straighten_outlined,
-                    iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
-                    color: AppColors.secondary,
-                    visible: ctl.user.isAdmin &&
-                        ctl.getEntite().value.type ==
-                            EntiteEntrepriseType.succursale,
-                    onTap: () => Get.to(() => const TypeMesureListPage()),
-                  ),
-                  SettingTile(
-                    title: "Suivi de stock",
-                    icon: Icons.analytics_outlined,
-                    iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
-                    color: AppColors.secondary,
-                    visible: ctl.user.isAdmin &&
-                        ctl.getEntite().value.type ==
-                            EntiteEntrepriseType.boutique,
-                    onTap: () => Get.to(() => const StockStatistiquesPage()),
-                  ),
-                  SettingTile(
-                    title: "Ravitaillements",
-                    icon: Icons.inventory_2_outlined,
-                    iconBgColor: AppColors.primary.withValues(alpha: 0.08),
-                    color: AppColors.primary,
-                    visible: ctl.getEntite().value.type ==
-                        EntiteEntrepriseType.boutique,
-                    showDivider: false,
-                    onTap: () => Get.to(
-                      () => const RavitaillementListPage(),
+                    SettingTile(
+                      title: "Mes modèles",
+                      icon: Icons.style_outlined,
+                      iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
+                      color: AppColors.secondary,
+                      visible:
+                          ctl.user.isAdmin &&
+                          ctl.getEntite().value.type ==
+                              EntiteEntrepriseType.boutique,
+                      onTap: () => Get.to(() => const ModeleListPage()),
                     ),
-                  ),
-                ]),
+                    SettingTile(
+                      title: "Modèles boutiques",
+                      icon: Icons.shopping_bag_outlined,
+                      iconBgColor: AppColors.green.withValues(alpha: 0.12),
+                      color: AppColors.green,
+                      visible:
+                          ctl.user.isAdmin &&
+                          ctl.getEntite().value.type ==
+                              EntiteEntrepriseType.boutique,
+                      onTap: () => Get.to(() => const ModeleListBoutiquePage()),
+                    ),
+                    SettingTile(
+                      title: "Type de mesure",
+                      icon: Icons.straighten_outlined,
+                      iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
+                      color: AppColors.secondary,
+                      visible:
+                          ctl.user.isAdmin &&
+                          ctl.getEntite().value.type ==
+                              EntiteEntrepriseType.succursale,
+                      onTap: () => Get.to(() => const TypeMesureListPage()),
+                    ),
+                    SettingTile(
+                      title: "Suivi de stock",
+                      icon: Icons.analytics_outlined,
+                      iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
+                      color: AppColors.secondary,
+                      visible:
+                          ctl.user.isAdmin &&
+                          ctl.getEntite().value.type ==
+                              EntiteEntrepriseType.boutique,
+                      onTap: () => Get.to(() => const StockStatistiquesPage()),
+                    ),
+                    SettingTile(
+                      title: "Ravitaillements",
+                      icon: Icons.inventory_2_outlined,
+                      iconBgColor: AppColors.primary.withValues(alpha: 0.08),
+                      color: AppColors.primary,
+                      visible:
+                          ctl.getEntite().value.type ==
+                          EntiteEntrepriseType.boutique,
+                      showDivider: false,
+                      onTap: () => Get.to(() => const RavitaillementListPage()),
+                    ),
+                  ],
+                ),
                 const Gap(24),
 
                 // ── Section À propos ──────────────────────────
                 const _SectionLabel("À propos"),
                 const Gap(8),
-                _SettingsGroup(tiles: [
-                  SettingTile(
-                    title: "Contactez-nous",
-                    icon: Icons.support_agent_outlined,
-                    iconBgColor: AppColors.primary.withValues(alpha: 0.08),
-                    color: AppColors.primary,
-                    onTap: () => Get.to(() => const ContactUsPage()),
-                  ),
-                  SettingTile(
-                    title: "Termes & Conditions",
-                    icon: Icons.gavel_outlined,
-                    iconBgColor: AppColors.primary.withValues(alpha: 0.08),
-                    color: AppColors.primary,
-                    showDivider: false,
-                    onTap: () => Get.to(() => const TermsConditionsPage()),
-                  ),
-                ]),
+                _SettingsGroup(
+                  tiles: [
+                    SettingTile(
+                      title: "Contactez-nous",
+                      icon: Icons.support_agent_outlined,
+                      iconBgColor: AppColors.primary.withValues(alpha: 0.08),
+                      color: AppColors.primary,
+                      onTap: () => Get.to(() => const ContactUsPage()),
+                    ),
+                    SettingTile(
+                      title: "Termes & Conditions",
+                      icon: Icons.gavel_outlined,
+                      iconBgColor: AppColors.primary.withValues(alpha: 0.08),
+                      color: AppColors.primary,
+                      showDivider: false,
+                      onTap: () => Get.to(() => const TermsConditionsPage()),
+                    ),
+                  ],
+                ),
                 const Gap(24),
 
                 // ── Section Partager l'application ───────────
                 const _SectionLabel("Partager l'application"),
                 const Gap(8),
-                _SettingsGroup(tiles: [
-                  SettingTile(
-                    title: "Disponible sur Play Store",
-                    icon: Icons.android_rounded,
-                    iconBgColor:
-                        const Color(0xFF34A853).withValues(alpha: 0.12),
-                    color: const Color(0xFF34A853),
-                    onTap: ctl.openPlayStore,
-                  ),
-                  SettingTile(
-                    title: "Disponible sur App Store",
-                    icon: Icons.apple_rounded,
-                    iconBgColor: AppColors.primary.withValues(alpha: 0.08),
-                    color: AppColors.primary,
-                    onTap: ctl.openAppStore,
-                  ),
-                  SettingTile(
-                    title: "Copier le lien de partage",
-                    icon: Icons.share_outlined,
-                    iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
-                    color: AppColors.secondary,
-                    showDivider: false,
-                    onTap: ctl.shareApp,
-                  ),
-                ]),
+                _SettingsGroup(
+                  tiles: [
+                    SettingTile(
+                      title: "Disponible sur Play Store",
+                      icon: Icons.android_rounded,
+                      iconBgColor: const Color(
+                        0xFF34A853,
+                      ).withValues(alpha: 0.12),
+                      color: const Color(0xFF34A853),
+                      onTap: ctl.openPlayStore,
+                    ),
+                    SettingTile(
+                      title: "Disponible sur App Store",
+                      icon: Icons.apple_rounded,
+                      iconBgColor: AppColors.primary.withValues(alpha: 0.08),
+                      color: AppColors.primary,
+                      onTap: ctl.openAppStore,
+                    ),
+                    SettingTile(
+                      title: "Copier le lien de partage",
+                      icon: Icons.share_outlined,
+                      iconBgColor: AppColors.secondary.withValues(alpha: 0.15),
+                      color: AppColors.secondary,
+                      showDivider: false,
+                      onTap: ctl.shareApp,
+                    ),
+                  ],
+                ),
                 const Gap(24),
 
                 // ── Déconnexion ───────────────────────────────
-                _SettingsGroup(tiles: [
-                  SettingTile(
-                    title: "Déconnexion",
-                    icon: Icons.logout_rounded,
-                    iconBgColor:
-                        const Color(0xFFC76D6D).withValues(alpha: 0.12),
-                    color: const Color(0xFFC76D6D),
-                    showDivider: false,
-                    onTap: ctl.logoutUser,
-                  ),
-                ]),
+                _SettingsGroup(
+                  tiles: [
+                    SettingTile(
+                      title: "Déconnexion",
+                      icon: Icons.logout_rounded,
+                      iconBgColor: const Color(
+                        0xFFC76D6D,
+                      ).withValues(alpha: 0.12),
+                      color: const Color(0xFFC76D6D),
+                      showDivider: false,
+                      onTap: ctl.logoutUser,
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -323,9 +343,7 @@ class _SettingsGroup extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.05),
-        ),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withValues(alpha: 0.04),
@@ -353,9 +371,7 @@ class _QuickProfileCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.05),
-        ),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withValues(alpha: 0.02),
@@ -393,18 +409,20 @@ class _QuickProfileCard extends StatelessWidget {
                       const Text(
                         "Informations du profil",
                         style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 14,
-                            color: AppColors.primary,
-                            letterSpacing: -0.1),
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14,
+                          color: AppColors.primary,
+                          letterSpacing: -0.1,
+                        ),
                       ),
                       const Gap(1),
                       Text(
                         "Modifier vos coordonnées personnelles",
                         style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.primary.withValues(alpha: 0.4)),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.primary.withValues(alpha: 0.4),
+                        ),
                       ),
                     ],
                   ),
@@ -430,15 +448,17 @@ class _UnifiedProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final photo = ctl.user.photoProfil;
-    final userName = ctl.user.fullName.isNotEmpty
-        ? ctl.user.fullName
-        : ctl.user.nom.value.isNotEmpty
+    final userName =
+        ctl.user.fullName.isNotEmpty
+            ? ctl.user.fullName
+            : ctl.user.nom.value.isNotEmpty
             ? ctl.user.nom.value
             : "Utilisateur";
 
-    final code = ctl.user.isAdmin
-        ? (ctl.user.entreprise?.codeMarchand ?? "")
-        : (ctl.user.myReferralCode ?? "");
+    final code =
+        ctl.user.isAdmin
+            ? (ctl.user.entreprise?.codeMarchand ?? "")
+            : (ctl.user.myReferralCode ?? "");
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -473,16 +493,18 @@ class _UnifiedProfileHeader extends StatelessWidget {
                           width: 2,
                         ),
                       ),
-                      child: photo != null && photo.isNotEmpty
-                          ? CircleAvatar(
-                              radius: 26,
-                              backgroundImage: NetworkImage(photo),
-                            )
-                          : const CircleAvatar(
-                              radius: 26,
-                              backgroundImage:
-                                  AssetImage("assets/images/user.png"),
-                            ),
+                      child:
+                          photo != null && photo.isNotEmpty
+                              ? CircleAvatar(
+                                radius: 26,
+                                backgroundImage: NetworkImage(photo),
+                              )
+                              : const CircleAvatar(
+                                radius: 26,
+                                backgroundImage: AssetImage(
+                                  "assets/images/user.png",
+                                ),
+                              ),
                     ),
                     const Gap(12),
                     // Nom
@@ -534,7 +556,9 @@ class _UnifiedProfileHeader extends StatelessWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8),
@@ -612,11 +636,12 @@ class _UnifiedProfileHeader extends StatelessWidget {
                       "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=$code&color=0a3a30",
                       width: 85,
                       height: 85,
-                      errorBuilder: (_, __, ___) => const Icon(
-                        Icons.qr_code_2_rounded,
-                        size: 85,
-                        color: AppColors.primary,
-                      ),
+                      errorBuilder:
+                          (_, __, ___) => const Icon(
+                            Icons.qr_code_2_rounded,
+                            size: 85,
+                            color: AppColors.primary,
+                          ),
                     ),
                   ),
                 ),
@@ -629,7 +654,10 @@ class _UnifiedProfileHeader extends StatelessWidget {
   }
 
   void _showZoomedQrCode(
-      BuildContext context, String code, SettingPageVctl ctl) {
+    BuildContext context,
+    String code,
+    SettingPageVctl ctl,
+  ) {
     Get.dialog(
       Dialog(
         backgroundColor: Colors.white,
@@ -660,8 +688,11 @@ class _UnifiedProfileHeader extends StatelessWidget {
                         color: Colors.grey.shade100,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.close_rounded,
-                          color: Colors.grey, size: 20),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: Colors.grey,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ],
@@ -691,11 +722,12 @@ class _UnifiedProfileHeader extends StatelessWidget {
                       "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=$code&color=0a3a30",
                       width: 200,
                       height: 200,
-                      errorBuilder: (_, __, ___) => const Icon(
-                        Icons.qr_code_2_rounded,
-                        size: 200,
-                        color: AppColors.primary,
-                      ),
+                      errorBuilder:
+                          (_, __, ___) => const Icon(
+                            Icons.qr_code_2_rounded,
+                            size: 200,
+                            color: AppColors.primary,
+                          ),
                     ),
                   ),
                 ),
@@ -705,8 +737,10 @@ class _UnifiedProfileHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(10),

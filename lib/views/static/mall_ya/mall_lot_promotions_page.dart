@@ -22,11 +22,7 @@ class MallLotPromotionsPage extends StatelessWidget {
       builder: (ctl) {
         return Scaffold(
           backgroundColor: const Color(0xFFF5F7FA),
-          appBar: AppBar(
-            title: const Text(
-              'Créer des offres promotionnelles',
-            ),
-          ),
+          appBar: AppBar(title: const Text('Créer des offres promotionnelles')),
           body: ListView(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 120),
             children: [
@@ -46,7 +42,10 @@ class MallLotPromotionsPage extends StatelessWidget {
                       child: Text(
                         'Ajoutez plusieurs offres promotionnelles en une seule fois. Chaque ligne est un lot indépendant.',
                         style: TextStyle(
-                            fontSize: 12, color: _kColor, height: 1.4),
+                          fontSize: 12,
+                          color: _kColor,
+                          height: 1.4,
+                        ),
                       ),
                     ),
                   ],
@@ -72,8 +71,9 @@ class MallLotPromotionsPage extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                        color: _kColor.withValues(alpha: 0.3),
-                        style: BorderStyle.solid),
+                      color: _kColor.withValues(alpha: 0.3),
+                      style: BorderStyle.solid,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.03),
@@ -85,14 +85,20 @@ class MallLotPromotionsPage extends StatelessWidget {
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.add_circle_outline_rounded,
-                          color: _kColor, size: 18),
+                      Icon(
+                        Icons.add_circle_outline_rounded,
+                        color: _kColor,
+                        size: 18,
+                      ),
                       Gap(8),
-                      Text('Ajouter une ligne',
-                          style: TextStyle(
-                              color: _kColor,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13)),
+                      Text(
+                        'Ajouter une ligne',
+                        style: TextStyle(
+                          color: _kColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -107,7 +113,11 @@ class MallLotPromotionsPage extends StatelessWidget {
           ),
           bottomNavigationBar: Padding(
             padding: EdgeInsets.fromLTRB(
-                16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
+              16,
+              12,
+              16,
+              MediaQuery.of(context).padding.bottom + 12,
+            ),
             child: CButton(
               title: 'Créer les promotions',
               onPressed: ctl.soumettre,
@@ -155,8 +165,9 @@ class _LigneCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
               color: _kColor.withValues(alpha: 0.06),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
             ),
             child: Row(
               children: [
@@ -168,19 +179,25 @@ class _LigneCard extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: Text('${index + 1}',
-                        style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w900,
-                            color: _kColor)),
+                    child: Text(
+                      '${index + 1}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        color: _kColor,
+                      ),
+                    ),
                   ),
                 ),
                 const Gap(10),
-                const Text('Offre promotionnelle',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 13,
-                        color: Color(0xFF062A22))),
+                const Text(
+                  'Offre promotionnelle',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                    color: Color(0xFF062A22),
+                  ),
+                ),
                 const Spacer(),
                 if (ctl.lignes.length > 1)
                   GestureDetector(
@@ -191,8 +208,11 @@ class _LigneCard extends StatelessWidget {
                         color: Colors.red.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.delete_outline_rounded,
-                          color: Colors.red, size: 16),
+                      child: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red,
+                        size: 16,
+                      ),
                     ),
                   ),
               ],
@@ -228,23 +248,30 @@ class _LigneCard extends StatelessWidget {
                           GestureDetector(
                             onTap: () async {
                               final f = await ImagePickerService.pickImage(
-                                  from: ImageSource.gallery);
+                                from: ImageSource.gallery,
+                              );
                               if (f != null) ctl.setImage(index, f);
                             },
                             child: Container(
                               height: 80,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 10),
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF5F7FA),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: Colors.grey.withValues(alpha: 0.2)),
+                                  color: Colors.grey.withValues(alpha: 0.2),
+                                ),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.image_outlined,
-                                      color: Colors.grey, size: 16),
+                                  const Icon(
+                                    Icons.image_outlined,
+                                    color: Colors.grey,
+                                    size: 16,
+                                  ),
                                   const Gap(6),
                                   Expanded(
                                     child: Text(
@@ -252,10 +279,12 @@ class _LigneCard extends StatelessWidget {
                                           ? ligne.image!.path.split('/').last
                                           : 'Aucun fichier choisi',
                                       style: TextStyle(
-                                          fontSize: 11,
-                                          color: ligne.image != null
-                                              ? const Color(0xFF062A22)
-                                              : Colors.grey),
+                                        fontSize: 11,
+                                        color:
+                                            ligne.image != null
+                                                ? const Color(0xFF062A22)
+                                                : Colors.grey,
+                                      ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -276,7 +305,8 @@ class _LigneCard extends StatelessWidget {
                         GestureDetector(
                           onTap: () async {
                             final f = await ImagePickerService.pickImage(
-                                from: ImageSource.gallery);
+                              from: ImageSource.gallery,
+                            );
                             if (f != null) ctl.setImage(index, f);
                           },
                           child: Container(
@@ -285,38 +315,46 @@ class _LigneCard extends StatelessWidget {
                               color: const Color(0xFFF5F7FA),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: ligne.image != null
-                                      ? _kColor.withValues(alpha: 0.4)
-                                      : Colors.grey.withValues(alpha: 0.2)),
+                                color:
+                                    ligne.image != null
+                                        ? _kColor.withValues(alpha: 0.4)
+                                        : Colors.grey.withValues(alpha: 0.2),
+                              ),
                             ),
-                            child: ligne.image != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(9),
-                                    child: Image.file(ligne.image!,
-                                        fit: BoxFit.cover),
-                                  )
-                                : Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      const Icon(
+                            child:
+                                ligne.image != null
+                                    ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(9),
+                                      child: Image.file(
+                                        ligne.image!,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                    : Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        const Icon(
                                           Icons.add_photo_alternate_outlined,
                                           color: Colors.grey,
-                                          size: 20),
-                                      if (ligne.image != null)
-                                        Positioned(
-                                          top: 2,
-                                          right: 2,
-                                          child: GestureDetector(
-                                            onTap: () =>
-                                                ctl.setImage(index, null),
-                                            child: const Icon(
+                                          size: 20,
+                                        ),
+                                        if (ligne.image != null)
+                                          Positioned(
+                                            top: 2,
+                                            right: 2,
+                                            child: GestureDetector(
+                                              onTap:
+                                                  () =>
+                                                      ctl.setImage(index, null),
+                                              child: const Icon(
                                                 Icons.close_rounded,
                                                 color: Colors.red,
-                                                size: 12),
+                                                size: 12,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                    ],
-                                  ),
+                                      ],
+                                    ),
                           ),
                         ),
                       ],
@@ -340,7 +378,7 @@ class _LigneCard extends StatelessWidget {
                             hint: '1',
                             keyboardType: TextInputType.number,
                             inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
+                              FilteringTextInputFormatter.digitsOnly,
                             ],
                           ),
                         ],
@@ -359,7 +397,7 @@ class _LigneCard extends StatelessWidget {
                             hint: '0',
                             keyboardType: TextInputType.number,
                             inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
+                              FilteringTextInputFormatter.digitsOnly,
                             ],
                           ),
                         ],
@@ -374,7 +412,9 @@ class _LigneCard extends StatelessWidget {
                           const _Label('Px lot'),
                           const Gap(6),
                           _PriceField(
-                              controller: ligne.prixLotCtrl, hint: '25000'),
+                            controller: ligne.prixLotCtrl,
+                            hint: '25000',
+                          ),
                         ],
                       ),
                     ),
@@ -392,7 +432,9 @@ class _LigneCard extends StatelessWidget {
                           const _Label('Px/unité'),
                           const Gap(6),
                           _PriceField(
-                              controller: ligne.prixUniteCtrl, hint: '14000'),
+                            controller: ligne.prixUniteCtrl,
+                            hint: '14000',
+                          ),
                         ],
                       ),
                     ),
@@ -407,31 +449,39 @@ class _LigneCard extends StatelessWidget {
                             onTap: () async {
                               final picked = await showDatePicker(
                                 context: context,
-                                initialDate:
-                                    DateTime.now().add(const Duration(days: 7)),
+                                initialDate: DateTime.now().add(
+                                  const Duration(days: 7),
+                                ),
                                 firstDate: DateTime.now(),
-                                lastDate: DateTime.now()
-                                    .add(const Duration(days: 365)),
+                                lastDate: DateTime.now().add(
+                                  const Duration(days: 365),
+                                ),
                                 locale: const Locale('fr'),
                               );
                               if (picked != null) ctl.setDateFin(index, picked);
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
+                                horizontal: 10,
+                                vertical: 10,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF5F7FA),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: Colors.grey.withValues(alpha: 0.2)),
+                                  color: Colors.grey.withValues(alpha: 0.2),
+                                ),
                               ),
                               child: Row(
                                 children: [
-                                  Icon(Icons.calendar_today_rounded,
-                                      color: ligne.dateFin != null
-                                          ? _kColor
-                                          : Colors.grey,
-                                      size: 14),
+                                  Icon(
+                                    Icons.calendar_today_rounded,
+                                    color:
+                                        ligne.dateFin != null
+                                            ? _kColor
+                                            : Colors.grey,
+                                    size: 14,
+                                  ),
                                   const Gap(6),
                                   Expanded(
                                     child: Text(
@@ -439,10 +489,12 @@ class _LigneCard extends StatelessWidget {
                                           ? 'jj/mm/aaaa'
                                           : ligne.finCtrl.text,
                                       style: TextStyle(
-                                          fontSize: 12,
-                                          color: ligne.finCtrl.text.isEmpty
-                                              ? Colors.grey
-                                              : const Color(0xFF062A22)),
+                                        fontSize: 12,
+                                        color:
+                                            ligne.finCtrl.text.isEmpty
+                                                ? Colors.grey
+                                                : const Color(0xFF062A22),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -458,26 +510,34 @@ class _LigneCard extends StatelessWidget {
 
                 // Actif toggle
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF5F7FA),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.toggle_on_rounded,
-                          color: Colors.grey, size: 18),
+                      const Icon(
+                        Icons.toggle_on_rounded,
+                        color: Colors.grey,
+                        size: 18,
+                      ),
                       const Gap(8),
-                      const Text('Actif',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF062A22))),
+                      const Text(
+                        'Actif',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF062A22),
+                        ),
+                      ),
                       const Spacer(),
                       Switch.adaptive(
                         value: ligne.actif,
-                        activeColor: AppColors.primary,
+                        activeThumbColor: AppColors.primary,
                         onChanged: (v) => ctl.toggleActif(index, v),
                       ),
                     ],
@@ -513,27 +573,36 @@ class _DropdownModele extends StatelessWidget {
         color: const Color(0xFFF5F7FA),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-            color: hasError
-                ? Colors.red.withValues(alpha: 0.4)
-                : Colors.grey.withValues(alpha: 0.2)),
+          color:
+              hasError
+                  ? Colors.red.withValues(alpha: 0.4)
+                  : Colors.grey.withValues(alpha: 0.2),
+        ),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<MallModeleBoutique>(
           value: selected,
           isExpanded: true,
-          hint: const Text('Sélectionner un modèle...',
-              style: TextStyle(fontSize: 13, color: Colors.grey)),
-          items: modeles
-              .map((m) => DropdownMenuItem(
-                    value: m,
-                    child: Text(
-                      m.modele?.libelle ?? '—',
-                      style: const TextStyle(
-                          fontSize: 13, color: Color(0xFF062A22)),
-                      overflow: TextOverflow.ellipsis,
+          hint: const Text(
+            'Sélectionner un modèle...',
+            style: TextStyle(fontSize: 13, color: Colors.grey),
+          ),
+          items:
+              modeles
+                  .map(
+                    (m) => DropdownMenuItem(
+                      value: m,
+                      child: Text(
+                        m.modele?.libelle ?? '—',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF062A22),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ))
-              .toList(),
+                  )
+                  .toList(),
           onChanged: onChanged,
         ),
       ),
@@ -559,9 +628,14 @@ class _PriceField extends StatelessWidget {
           ),
         ),
         const Gap(6),
-        const Text('FCFA',
-            style: TextStyle(
-                fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w600)),
+        const Text(
+          'FCFA',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }
@@ -573,9 +647,14 @@ class _Label extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text,
-        style: const TextStyle(
-            fontSize: 11, fontWeight: FontWeight.w700, color: Colors.grey));
+    return Text(
+      text,
+      style: const TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
+        color: Colors.grey,
+      ),
+    );
   }
 }
 
@@ -609,8 +688,10 @@ class _InputField extends StatelessWidget {
           hintText: hint,
           hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 10,
+          ),
         ),
       ),
     );

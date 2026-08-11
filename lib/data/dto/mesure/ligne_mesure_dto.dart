@@ -2,6 +2,7 @@ import 'package:ateliya/data/dto/abstract/dto_model.dart';
 import 'package:ateliya/data/dto/autre_image_mesure_dto.dart';
 import 'package:ateliya/data/dto/mesure/mensuration_dto.dart';
 import 'package:ateliya/data/dto/mesure/type_mesure_dto.dart';
+import 'package:ateliya/data/models/taille_standard.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 
@@ -15,6 +16,7 @@ class LigneMesureDto extends DtoModel {
   bool withOutTissu = true;
   String? description;
   List<AutreImageMesureDto> autresImages = [];
+  TailleStandard? tailleStandard;
 
   LigneMesureDto({
     this.modeleImagePath,
@@ -27,19 +29,21 @@ class LigneMesureDto extends DtoModel {
     this.withOutTissu = true,
     this.description,
     this.autresImages = const [],
+    this.tailleStandard,
   });
 
   @override
   Map<String, dynamic> toJson() => {
-        "montant": montant,
-        "remise": remise,
-        "nomClient": nomClient,
-        "mensurationDto": mensurationDto,
-        "typeMesure": typeMesureDto,
-        "withOutTissu": withOutTissu,
-        "description": description,
-        "autresImages": autresImages,
-      };
+    "montant": montant,
+    "remise": remise,
+    "nomClient": nomClient,
+    "mensurationDto": mensurationDto,
+    "typeMesure": typeMesureDto,
+    "withOutTissu": withOutTissu,
+    "description": description,
+    "autresImages": autresImages,
+    "tailleStandardId": tailleStandard?.id,
+  };
 
   double get total => montant - remise;
 

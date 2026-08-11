@@ -14,18 +14,21 @@ class AuthApi extends WebController {
   @override
   String get module => "auth";
 
-  Future<DataResponse<User>> login(
-      {required String login, required String password}) async {
+  Future<DataResponse<User>> login({
+    required String login,
+    required String password,
+  }) async {
     final response = await client.post(
       urlBuilder(module: "", api: "login"),
       headers: headers,
-      body: {
-        "login": login,
-        "password": password,
-        "device": Platform.operatingSystem,
-        "version": Env.appVersion,
-        "build_version": Env.buildVersion,
-      }.parseToJson(),
+      body:
+          {
+            "login": login,
+            "password": password,
+            "device": Platform.operatingSystem,
+            "version": Env.appVersion,
+            "build_version": Env.buildVersion,
+          }.parseToJson(),
     );
 
     final json = jsonDecode(response.body);
@@ -76,7 +79,8 @@ class AuthApi extends WebController {
         return DataResponse.success(data: true);
       } else {
         return DataResponse<bool>.error(
-            message: "Logout failed with status code ${response.statusCode}");
+          message: "Logout failed with status code ${response.statusCode}",
+        );
       }
     } catch (e) {
       return DataResponse<bool>.error(message: "Logout failed: $e");
@@ -95,8 +99,9 @@ class AuthApi extends WebController {
         return DataResponse<bool>.success(data: true);
       } else {
         return DataResponse<bool>.error(
-            message:
-                "Password reset failed with status code ${response.statusCode}");
+          message:
+              "Password reset failed with status code ${response.statusCode}",
+        );
       }
     } catch (e) {
       return DataResponse<bool>.error(message: "Password reset failed: $e");
@@ -121,8 +126,10 @@ class AuthApi extends WebController {
     }
   }
 
-  Future<DataResponse<bool>> checkOTPResetPassword(
-      {required String email, required String otp}) async {
+  Future<DataResponse<bool>> checkOTPResetPassword({
+    required String email,
+    required String otp,
+  }) async {
     try {
       final response = await client.post(
         urlBuilder(api: "reset-password/verify-token-expired", module: ''),
@@ -145,19 +152,21 @@ class AuthApi extends WebController {
     }
   }
 
-  Future<DataResponse<bool>> finalizeResetPassword(
-      {required String email,
-      required String otp,
-      required String newPassword}) async {
+  Future<DataResponse<bool>> finalizeResetPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
+  }) async {
     try {
       final response = await client.post(
         urlBuilder(api: "reset-password/reset", module: ''),
         headers: headers,
-        body: {
-          "email": email,
-          "token": otp,
-          "newPassword": newPassword,
-        }.parseToJson(),
+        body:
+            {
+              "email": email,
+              "token": otp,
+              "newPassword": newPassword,
+            }.parseToJson(),
       );
       final json = jsonDecode(response.body);
       if (response.statusCode == 200) {
@@ -172,10 +181,11 @@ class AuthApi extends WebController {
 
   Future<DataResponse<User>> updateProfile(UpdateProfilDto data) async {
     try {
-      final response = await client.post(
+      final response = await client.multiPart(
         urlBuilder(api: "update/profil/${data.id}", module: 'user'),
-        body: data.toJson().parseToJson(),
+        body: data.toJson(),
         headers: authHeaders,
+        files: await data.getFiles(),
       );
 
       final json = jsonDecode(response.body);
@@ -190,8 +200,10 @@ class AuthApi extends WebController {
     }
   }
 
-  Future<DataResponse<int>> updateFcmToken(
-      {required String fcmToken, required String login}) async {
+  Future<DataResponse<int>> updateFcmToken({
+    required String fcmToken,
+    required String login,
+  }) async {
     try {
       final response = await client.post(
         urlBuilder(api: "device-token", module: ""),

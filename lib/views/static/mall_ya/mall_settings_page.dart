@@ -406,11 +406,11 @@ class _LoadingSkeleton extends StatelessWidget {
       highlightColor: Colors.grey.shade100,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
-        children: [
+        children: const [
           _SkeletonBox(height: 56, radius: 12),
-          const Gap(16),
+          Gap(16),
           _SkeletonBox(height: 200, radius: 20),
-          const Gap(24),
+          Gap(24),
           _SkeletonBox(height: 45, radius: 10),
         ],
       ),

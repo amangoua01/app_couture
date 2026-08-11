@@ -1,7 +1,7 @@
 import 'package:ateliya/data/models/entreprise.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/mesure.dart';
-import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:pdf/pdf.dart';
@@ -12,7 +12,7 @@ class CommandReceiptPdf {
   static Future<void> generate(
     Mesure mesure, {
     Entreprise? entreprise,
-    Succursale? succursale,
+    Atelier? succursale,
     String? messageExigences,
   }) async {
     pw.ImageProvider? logoImage;
@@ -109,21 +109,26 @@ class CommandReceiptPdf {
                           pw.Text(
                             'FACTURÉ À',
                             style: pw.TextStyle(
-                                color: PdfColors.grey700,
-                                fontSize: 10,
-                                fontWeight: pw.FontWeight.bold),
+                              color: PdfColors.grey700,
+                              fontSize: 10,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
                           ),
                           pw.SizedBox(height: 8),
                           pw.Text(
                             mesure.client?.fullName ?? "Client Inconnu",
                             style: pw.TextStyle(
-                                fontSize: 14, fontWeight: pw.FontWeight.bold),
+                              fontSize: 14,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
                           ),
                           if (mesure.client?.tel != null) ...[
                             pw.SizedBox(height: 5),
-                            pw.Text('Tél: ${mesure.client!.tel!}',
-                                style: const pw.TextStyle(fontSize: 10)),
-                          ]
+                            pw.Text(
+                              'Tél: ${mesure.client!.tel!}',
+                              style: const pw.TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -141,18 +146,23 @@ class CommandReceiptPdf {
                       child: pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          _buildDetailRow('N° Facture:',
-                              'INV-${mesure.id.toString().padLeft(6, '0')}'),
                           _buildDetailRow(
-                              'Date:',
-                              mesure.dateDepot?.toString().substring(0, 10) ??
-                                  ''),
+                            'N° Facture:',
+                            'INV-${mesure.id.toString().padLeft(6, '0')}',
+                          ),
                           _buildDetailRow(
-                              'Livraison prévue:',
-                              mesure.dateRetrait?.toString().substring(0, 10) ??
-                                  ''),
+                            'Date:',
+                            mesure.dateDepot?.toString().substring(0, 10) ?? '',
+                          ),
                           _buildDetailRow(
-                              'Statut:', mesure.etatFacture ?? 'En cours'),
+                            'Livraison prévue:',
+                            mesure.dateRetrait?.toString().substring(0, 10) ??
+                                '',
+                          ),
+                          _buildDetailRow(
+                            'Statut:',
+                            mesure.etatFacture ?? 'En cours',
+                          ),
                         ],
                       ),
                     ),
@@ -191,22 +201,34 @@ class CommandReceiptPdf {
                   3: const pw.FlexColumnWidth(2),
                   4: const pw.FlexColumnWidth(2),
                 },
-                border:
-                    pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
+                border: pw.TableBorder.all(
+                  color: PdfColors.grey300,
+                  width: 0.5,
+                ),
                 children: [
                   // Table Header
                   pw.TableRow(
-                    decoration:
-                        const pw.BoxDecoration(color: PdfColors.grey200),
+                    decoration: const pw.BoxDecoration(
+                      color: PdfColors.grey200,
+                    ),
                     children: [
                       _buildTableCell('Article', isHeader: true),
                       _buildTableCell('Détails', isHeader: true),
-                      _buildTableCell('Qté',
-                          isHeader: true, align: pw.TextAlign.center),
-                      _buildTableCell('Prix Unit.',
-                          isHeader: true, align: pw.TextAlign.right),
-                      _buildTableCell('Total',
-                          isHeader: true, align: pw.TextAlign.right),
+                      _buildTableCell(
+                        'Qté',
+                        isHeader: true,
+                        align: pw.TextAlign.center,
+                      ),
+                      _buildTableCell(
+                        'Prix Unit.',
+                        isHeader: true,
+                        align: pw.TextAlign.right,
+                      ),
+                      _buildTableCell(
+                        'Total',
+                        isHeader: true,
+                        align: pw.TextAlign.right,
+                      ),
                     ],
                   ),
                   // Table Rows
@@ -214,13 +236,18 @@ class CommandReceiptPdf {
                     return pw.TableRow(
                       children: [
                         _buildTableCell(
-                            lm.typeMesure?.libelle?.value ?? "Article"),
+                          lm.typeMesure?.libelle?.value ?? "Article",
+                        ),
                         _buildTableCell(lm.nom ?? ""),
                         _buildTableCell('1', align: pw.TextAlign.center),
-                        _buildTableCell(lm.montant.toAmount(unit: 'FCFA'),
-                            align: pw.TextAlign.right),
-                        _buildTableCell(lm.montant.toAmount(unit: 'FCFA'),
-                            align: pw.TextAlign.right),
+                        _buildTableCell(
+                          lm.montant.toAmount(unit: 'FCFA'),
+                          align: pw.TextAlign.right,
+                        ),
+                        _buildTableCell(
+                          lm.montant.toAmount(unit: 'FCFA'),
+                          align: pw.TextAlign.right,
+                        ),
                       ],
                     );
                   }),
@@ -242,7 +269,9 @@ class CommandReceiptPdf {
                       pw.Text(
                         'Exigences spéciales :',
                         style: pw.TextStyle(
-                            fontSize: 12, fontWeight: pw.FontWeight.bold),
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
                       ),
                       pw.SizedBox(height: 8),
                       pw.Text(
@@ -262,15 +291,22 @@ class CommandReceiptPdf {
                     width: 250,
                     child: pw.Column(
                       children: [
-                        _buildTotalRow('Sous-total:',
-                            mesure.montantTotal.toAmount(unit: "FCFA")),
-                        _buildTotalRow('Acompte versé:',
-                            mesure.avance.toAmount(unit: "FCFA"),
-                            color: greenColor),
+                        _buildTotalRow(
+                          'Sous-total:',
+                          mesure.montantTotal.toAmount(unit: "FCFA"),
+                        ),
+                        _buildTotalRow(
+                          'Acompte versé:',
+                          mesure.avance.toAmount(unit: "FCFA"),
+                          color: greenColor,
+                        ),
                         pw.Divider(color: PdfColors.black, thickness: 1),
-                        _buildTotalRow('Reste à payer:',
-                            mesure.resteArgent.toAmount(unit: "FCFA"),
-                            color: greenColor, isBold: true),
+                        _buildTotalRow(
+                          'Reste à payer:',
+                          mesure.resteArgent.toAmount(unit: "FCFA"),
+                          color: greenColor,
+                          isBold: true,
+                        ),
                       ],
                     ),
                   ),
@@ -284,20 +320,26 @@ class CommandReceiptPdf {
               // Footer
               pw.Text(
                 'Conditions de paiement',
-                style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
               pw.SizedBox(height: 5),
               pw.Text(
                 'Merci de votre confiance. Cette facture est générée automatiquement.',
-                style:
-                    const pw.TextStyle(fontSize: 8, color: PdfColors.grey700),
+                style: const pw.TextStyle(
+                  fontSize: 8,
+                  color: PdfColors.grey700,
+                ),
               ),
               pw.SizedBox(height: 5),
               pw.Text(
                 'Date de livraison prévue: ${mesure.dateRetrait?.toString().substring(0, 10) ?? ""}',
-                style:
-                    const pw.TextStyle(fontSize: 8, color: PdfColors.grey700),
+                style: const pw.TextStyle(
+                  fontSize: 8,
+                  color: PdfColors.grey700,
+                ),
               ),
             ],
           );
@@ -316,12 +358,14 @@ class CommandReceiptPdf {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          pw.Text(label,
-              style:
-                  const pw.TextStyle(color: PdfColors.grey700, fontSize: 10)),
-          pw.Text(value,
-              style:
-                  pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+          pw.Text(
+            label,
+            style: const pw.TextStyle(color: PdfColors.grey700, fontSize: 10),
+          ),
+          pw.Text(
+            value,
+            style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+          ),
         ],
       ),
     );
@@ -345,25 +389,33 @@ class CommandReceiptPdf {
     );
   }
 
-  static pw.Widget _buildTotalRow(String label, String value,
-      {PdfColor? color, bool isBold = false}) {
+  static pw.Widget _buildTotalRow(
+    String label,
+    String value, {
+    PdfColor? color,
+    bool isBold = false,
+  }) {
     return pw.Padding(
       padding: const pw.EdgeInsets.symmetric(vertical: 4),
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          pw.Text(label,
-              style: pw.TextStyle(
-                  fontSize: isBold ? 12 : 10,
-                  fontWeight:
-                      isBold ? pw.FontWeight.bold : pw.FontWeight.normal,
-                  color: color ?? PdfColors.black)),
-          pw.Text(value,
-              style: pw.TextStyle(
-                  fontSize: isBold ? 12 : 10,
-                  fontWeight:
-                      isBold ? pw.FontWeight.bold : pw.FontWeight.normal,
-                  color: color ?? PdfColors.black)),
+          pw.Text(
+            label,
+            style: pw.TextStyle(
+              fontSize: isBold ? 12 : 10,
+              fontWeight: isBold ? pw.FontWeight.bold : pw.FontWeight.normal,
+              color: color ?? PdfColors.black,
+            ),
+          ),
+          pw.Text(
+            value,
+            style: pw.TextStyle(
+              fontSize: isBold ? 12 : 10,
+              fontWeight: isBold ? pw.FontWeight.bold : pw.FontWeight.normal,
+              color: color ?? PdfColors.black,
+            ),
+          ),
         ],
       ),
     );

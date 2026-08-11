@@ -17,118 +17,124 @@ class EditionPersonnelPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder(
-        init: EditionPersonnelPageVctl(item),
-        builder: (ctl) {
-          return BodyEditionPage(
-            ctl,
-            item: item,
-            module: "personnel",
-            children: [
-              FieldSetContainer(
+      init: EditionPersonnelPageVctl(item),
+      builder: (ctl) {
+        return BodyEditionPage(
+          ctl,
+          item: item,
+          module: "personnel",
+          children: [
+            FieldSetContainer(
+              children: [
+                CTextFormField(
+                  externalLabel: "Nom",
+                  controller: ctl.nomCtl,
+                  require: true,
+                  textCapitalization: TextCapitalization.words,
+                ),
+                CTextFormField(
+                  externalLabel: "Prénom(s)",
+                  controller: ctl.prenomCtl,
+                  textCapitalization: TextCapitalization.words,
+                  require: true,
+                ),
+                Visibility(
+                  visible: item == null,
+                  child: CTextFormField(
+                    externalLabel: "Email",
+                    controller: ctl.emailCtl,
+                    require: true,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                ),
+                CDropDownFormField(
+                  enabled: item?.isAdmin == false || item == null,
+                  externalLabel: "Type d'utilisateur",
+                  selectedItem: ctl.typeUser,
+                  items: (e, f) => ctl.getTypeUsers(),
+                  require: true,
+                  itemAsString: (e) => e.libelle.value,
+                  onChanged: (e) {
+                    ctl.typeUser = e;
+                    ctl.boutique = null;
+                    ctl.atelier = null;
+                    ctl.update();
+                  },
+                ),
+              ],
+            ),
+            Visibility(
+              visible: item == null,
+              child: FieldSetContainer(
                 children: [
                   CTextFormField(
-                    externalLabel: "Nom",
-                    controller: ctl.nomCtl,
+                    externalLabel: "Mot de passe",
+                    controller: ctl.passwordCtl,
                     require: true,
-                    textCapitalization: TextCapitalization.words,
-                  ),
-                  CTextFormField(
-                    externalLabel: "Prénom(s)",
-                    controller: ctl.prenomCtl,
-                    textCapitalization: TextCapitalization.words,
-                    require: true,
-                  ),
-                  Visibility(
-                    visible: item == null,
-                    child: CTextFormField(
-                      externalLabel: "Email",
-                      controller: ctl.emailCtl,
-                      require: true,
-                      keyboardType: TextInputType.emailAddress,
+                    obscureText: ctl.passwordHided,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        ctl.passwordHided = !ctl.passwordHided;
+                        ctl.update();
+                      },
+                      icon: Icon(
+                        ternaryFn(
+                          condition: ctl.passwordHided,
+                          ifTrue: Icons.visibility,
+                          ifFalse: Icons.visibility_off,
+                        ),
+                      ),
                     ),
                   ),
-                  CDropDownFormField(
-                    enabled: item?.isAdmin == false || item == null,
-                    externalLabel: "Type d'utilisateur",
-                    selectedItem: ctl.typeUser,
-                    items: (e, f) => ctl.getTypeUsers(),
+                  CTextFormField(
+                    externalLabel: "Confirmation du mot de passe",
+                    controller: ctl.confirmPasswordCtl,
                     require: true,
-                    itemAsString: (e) => e.libelle.value,
-                    onChanged: (e) {
-                      ctl.typeUser = e;
-                      ctl.boutique = null;
-                      ctl.succursale = null;
-                      ctl.update();
+                    obscureText: ctl.confirmPasswordHided,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        ctl.confirmPasswordHided = !ctl.confirmPasswordHided;
+                        ctl.update();
+                      },
+                      icon: Icon(
+                        ternaryFn(
+                          condition: ctl.confirmPasswordHided,
+                          ifTrue: Icons.visibility,
+                          ifFalse: Icons.visibility_off,
+                        ),
+                      ),
+                    ),
+                    validator: (e) {
+                      if (e.value.isEmpty) {
+                        return "Ce champ est obligatoire";
+                      } else {
+                        if (e.value != ctl.passwordCtl.text) {
+                          return "Le mot de passe ne correspond pas";
+                        }
+                      }
+                      return null;
                     },
                   ),
                 ],
               ),
-              Visibility(
-                visible: item == null,
-                child: FieldSetContainer(
-                  children: [
-                    CTextFormField(
-                      externalLabel: "Mot de passe",
-                      controller: ctl.passwordCtl,
-                      require: true,
-                      obscureText: ctl.passwordHided,
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          ctl.passwordHided = !ctl.passwordHided;
-                          ctl.update();
-                        },
-                        icon: Icon(
-                          ternaryFn(
-                            condition: ctl.passwordHided,
-                            ifTrue: Icons.visibility,
-                            ifFalse: Icons.visibility_off,
-                          ),
-                        ),
-                      ),
-                    ),
-                    CTextFormField(
-                      externalLabel: "Confirmation du mot de passe",
-                      controller: ctl.confirmPasswordCtl,
-                      require: true,
-                      obscureText: ctl.confirmPasswordHided,
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          ctl.confirmPasswordHided = !ctl.confirmPasswordHided;
-                          ctl.update();
-                        },
-                        icon: Icon(
-                          ternaryFn(
-                            condition: ctl.confirmPasswordHided,
-                            ifTrue: Icons.visibility,
-                            ifFalse: Icons.visibility_off,
-                          ),
-                        ),
-                      ),
-                      validator: (e) {
-                        if (e.value.isEmpty) {
-                          return "Ce champ est obligatoire";
-                        } else {
-                          if (e.value != ctl.passwordCtl.text) {
-                            return "Le mot de passe ne correspond pas";
-                          }
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Visibility(
-                visible: ctl.typeUser != null,
-                child: FieldSetContainer(
-                  children: [
-                    CDropDownFormField(
+            ),
+            Visibility(
+              visible: ctl.typeUser != null,
+              child: FieldSetContainer(
+                children: [
+                  Visibility(
+                    visible:
+                        [
+                          TypeUserEnum.adb,
+                          TypeUserEnum.adsb,
+                        ].contains(ctl.typeUser?.typeEnum) ||
+                        item?.isAdmin == true,
+                    child: CDropDownFormField(
                       externalLabel: "Boutique",
-                      enabled: [TypeUserEnum.adb, TypeUserEnum.adsb]
-                              .contains(ctl.typeUser?.typeEnum) ||
-                          item?.isAdmin == false,
-                      require: [TypeUserEnum.adb, TypeUserEnum.adsb]
-                          .contains(ctl.typeUser?.typeEnum),
+                      require: [
+                        TypeUserEnum.adb,
+                        TypeUserEnum.adsb,
+                      ].contains(ctl.typeUser?.typeEnum),
                       selectedItem: ctl.boutique,
                       items: (e, f) => ctl.getBoutiques(),
                       itemAsString: (e) => e.libelle.value,
@@ -137,21 +143,31 @@ class EditionPersonnelPage extends StatelessWidget {
                         ctl.update();
                       },
                     ),
-                    CDropDownFormField(
-                      enabled: [TypeUserEnum.ads, TypeUserEnum.adsb]
-                          .contains(ctl.typeUser?.typeEnum),
-                      require: [TypeUserEnum.ads, TypeUserEnum.adsb]
-                          .contains(ctl.typeUser?.typeEnum),
-                      externalLabel: "Surcusale",
+                  ),
+                  Visibility(
+                    visible: [
+                      TypeUserEnum.ads,
+                      TypeUserEnum.adsb,
+                      TypeUserEnum.ac,
+                    ].contains(ctl.typeUser?.typeEnum),
+                    child: CDropDownFormField(
+                      require: [
+                        TypeUserEnum.ads,
+                        TypeUserEnum.adsb,
+                      ].contains(ctl.typeUser?.typeEnum),
+                      externalLabel: "Atelier",
                       items: (e, f) => ctl.getSuccursales(),
-                      selectedItem: ctl.succursale,
+                      selectedItem: ctl.atelier,
+                      itemAsString: (e) => e.libelle.value,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      },
+    );
     // Scaffold(
     //   appBar: AppBar(title: const Text("Edition de personnel")),
     //   body: ListView(

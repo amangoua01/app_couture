@@ -22,9 +22,7 @@ class ListPieceSubPage extends StatelessWidget {
       backgroundColor: const Color(0xFFF7F9FC),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          final res = await Get.to(
-            () => const EditionPieceCouturePage(),
-          );
+          final res = await Get.to(() => const EditionPieceCouturePage());
           if (res is LigneMesureDto) {
             ctl.mesure.lignesMesures.add(res);
             ctl.update();
@@ -42,9 +40,11 @@ class ListPieceSubPage extends StatelessWidget {
         items: ctl.mesure.lignesMesures,
         padding: const EdgeInsets.fromLTRB(0, 16, 0, 100),
         itemBuilder: (e, index) {
-          final valideMensurations = e.typeMesureDto?.mensurations
-                  .where((m) =>
-                      m.isActive && m.valeur.isNotEmpty && m.valeur != "0")
+          final valideMensurations =
+              e.typeMesureDto?.mensurations
+                  .where(
+                    (m) => m.isActive && m.valeur.isNotEmpty && m.valeur != "0",
+                  )
                   .toList() ??
               [];
 
@@ -144,8 +144,11 @@ class ListPieceSubPage extends StatelessWidget {
                               minimumSize: Size.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
-                            icon: const Icon(Icons.delete_outline_rounded,
-                                color: Colors.red, size: 20),
+                            icon: const Icon(
+                              Icons.delete_outline_rounded,
+                              color: Colors.red,
+                              size: 20,
+                            ),
                           ),
                         ],
                       ),
@@ -155,7 +158,9 @@ class ListPieceSubPage extends StatelessWidget {
                         const Gap(16),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.green.withAlpha(15),
                             borderRadius: BorderRadius.circular(8),
@@ -163,8 +168,11 @@ class ListPieceSubPage extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.payments_outlined,
-                                  size: 16, color: Colors.green),
+                              const Icon(
+                                Icons.payments_outlined,
+                                size: 16,
+                                color: Colors.green,
+                              ),
                               const Gap(6),
                               Text(
                                 "Montant : ${e.getCalcul}",
@@ -176,7 +184,7 @@ class ListPieceSubPage extends StatelessWidget {
                               ),
                             ],
                           ),
-                        )
+                        ),
                       ],
 
                       const Gap(16),
@@ -184,101 +192,123 @@ class ListPieceSubPage extends StatelessWidget {
                       const Gap(12),
 
                       // Tags Mensurations Detailed
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: PlaceholderBuilder(
-                              condition: valideMensurations.isNotEmpty,
-                              placeholder: const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Center(
-                                  child: Text(
-                                    "Aucune mensuration renseignée",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.redAccent,
+                      PlaceholderBuilder(
+                        condition: e.tailleStandard != null,
+                        placeholder: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: PlaceholderBuilder(
+                                condition: valideMensurations.isNotEmpty,
+                                placeholder: const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Text(
+                                      "Aucune mensuration renseignée",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.redAccent,
+                                      ),
                                     ),
                                   ),
                                 ),
+                                builder: () {
+                                  return Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children:
+                                        valideMensurations.map((m) {
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 10,
+                                              vertical: 6,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.shade100,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: Colors.grey.shade300,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  "${m.categorieMesure.libelle} : ",
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: Colors.grey[700],
+                                                  ),
+                                                ),
+                                                Text(
+                                                  m.valeur,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }).toList(),
+                                  );
+                                },
                               ),
-                              builder: () {
-                                return Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children: valideMensurations.map((m) {
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade100,
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                            color: Colors.grey.shade300),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            "${m.categorieMesure.libelle} : ",
-                                            style: TextStyle(
-                                                fontSize: 11,
-                                                color: Colors.grey[700]),
-                                          ),
-                                          Text(
-                                            m.valeur,
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
+                            ),
+                            const Gap(12),
+                            // Measure Button
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                final res = await Get.to(
+                                  () => EditionMensurationPage(e),
                                 );
+                                if (res is List<MensurationDto>) {
+                                  e.typeMesureDto!.mensurations = res;
+                                  ctl.update();
+                                }
                               },
-                            ),
-                          ),
-                          const Gap(12),
-                          // Measure Button
-                          ElevatedButton.icon(
-                            onPressed: () async {
-                              final res = await Get.to(
-                                () => EditionMensurationPage(e),
-                              );
-                              if (res is List<MensurationDto>) {
-                                e.typeMesureDto!.mensurations = res;
-                                ctl.update();
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              icon: SvgPicture.asset(
+                                "assets/images/svg/measure_meter.svg",
+                                height: 18,
+                                width: 18,
+                                colorFilter: const ColorFilter.mode(
+                                  Colors.white,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                              label: const Text(
+                                "Mesurer",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                            icon: SvgPicture.asset(
-                              "assets/images/svg/measure_meter.svg",
-                              height: 18,
-                              width: 18,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.white,
-                                BlendMode.srcIn,
-                              ),
+                          ],
+                        ),
+
+                        builder: () {
+                          return ListTile(
+                            title: Text(
+                              "Taille standard : ${e.tailleStandard?.libelle}",
                             ),
-                            label: const Text(
-                              "Mesurer",
-                              style: TextStyle(
-                                  fontSize: 13, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
                     ],
                   ),

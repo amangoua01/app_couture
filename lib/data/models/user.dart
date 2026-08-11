@@ -1,15 +1,14 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:ateliya/data/models/abstract/fichier.dart';
 import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/entreprise.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/settings.dart';
 import 'package:ateliya/data/models/subscriptions.dart';
-import 'package:ateliya/data/models/succursale.dart';
 import 'package:ateliya/data/models/type_user.dart';
 import 'package:ateliya/tools/components/cache.dart';
 import 'package:ateliya/tools/components/session_manager_view_controller.dart';
@@ -29,7 +28,7 @@ class User extends ModelJson {
   bool? isActive;
   int? pays;
   Boutique? boutique;
-  Succursale? succursale;
+  Atelier? atelier;
   Settings? settings;
   Subscriptions? activeSubscriptions;
   String? password;
@@ -38,28 +37,28 @@ class User extends ModelJson {
   String? myReferralCode;
   bool isDisplay = false;
 
-  User(
-      {super.id,
-      this.login,
-      this.nom,
-      this.prenoms,
-      this.fcmToken,
-      this.type,
-      String? logo,
-      this.roles,
-      this.isActive,
-      this.pays,
-      this.boutique,
-      this.succursale,
-      this.settings,
-      this.activeSubscriptions,
-      this.password,
-      this.entreprise,
-      this.hasBoutique = false,
-      this.hasSuccursale = false,
-      this.myReferralCode,
-      this.isDisplay = false})
-      : _logo = logo != null ? FichierLocal(path: logo) : null;
+  User({
+    super.id,
+    this.login,
+    this.nom,
+    this.prenoms,
+    this.fcmToken,
+    this.type,
+    String? logo,
+    this.roles,
+    this.isActive,
+    this.pays,
+    this.boutique,
+    this.atelier,
+    this.settings,
+    this.activeSubscriptions,
+    this.password,
+    this.entreprise,
+    this.hasBoutique = false,
+    this.hasSuccursale = false,
+    this.myReferralCode,
+    this.isDisplay = false,
+  }) : _logo = logo != null ? FichierLocal(path: logo) : null;
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -76,17 +75,20 @@ class User extends ModelJson {
     pays = json['pays'];
     boutique =
         json['boutique'] == null ? null : Boutique.fromJson(json['boutique']);
-    succursale = json['succursale'] == null
-        ? null
-        : Succursale.fromJson(json['succursale']);
+    atelier =
+        json['surccursale'] == null
+            ? null
+            : Atelier.fromJson(json['surccursale']);
     settings =
         json['settings'] != null ? Settings.fromJson(json['settings']) : null;
-    activeSubscriptions = json['activeSubscriptions'] != null
-        ? Subscriptions.fromJson(json['activeSubscriptions'])
-        : null;
-    entreprise = json['entreprise'] != null
-        ? Entreprise.fromJson(json['entreprise'])
-        : null;
+    activeSubscriptions =
+        json['activeSubscriptions'] != null
+            ? Subscriptions.fromJson(json['activeSubscriptions'])
+            : null;
+    entreprise =
+        json['entreprise'] != null
+            ? Entreprise.fromJson(json['entreprise'])
+            : null;
     hasBoutique = json['hasBoutique'] ?? false;
     hasSuccursale = json['hasSuccursale'] ?? false;
     myReferralCode = json['my_referral_code'];
@@ -99,13 +101,13 @@ class User extends ModelJson {
     if (forCache) {
       data['logo'] = (_logo as FichierServer?)?.toJson();
       data['boutique'] = boutique?.toJson();
-      data['succursale'] = succursale?.toJson();
+      data['succursale'] = atelier?.toJson();
       data['type'] = type!.toJson();
     } else {
       // data['logo'] =  (_logo is FichierServer) ? (_logo as FichierServer).toJson() : null;
       data['type'] = type!.id;
       data['boutique'] = boutique?.id;
-      data['succursale'] = succursale?.id;
+      data['succursale'] = atelier?.id;
     }
     data['id'] = id;
     data['login'] = login;
@@ -156,7 +158,7 @@ class User extends ModelJson {
       'is_active': isActive,
       'pays': pays,
       'boutique': boutique?.toJson(),
-      'succursale': succursale?.toJson(),
+      'succursale': atelier?.toJson(),
       'settings': settings?.toJson(),
       'activeSubscriptions': activeSubscriptions?.toJson(),
       'entreprise': entreprise?.toJson(),
@@ -192,7 +194,5 @@ class User extends ModelJson {
     return null;
   }
 
-  String get fullName {
-    return "${prenoms ?? ''} ${nom ?? ''}".trim();
-  }
+  String get fullName => "${prenoms ?? ''} ${nom ?? ''}".trim();
 }

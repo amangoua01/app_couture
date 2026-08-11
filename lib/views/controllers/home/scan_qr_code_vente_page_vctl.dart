@@ -1,6 +1,6 @@
 import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/api/mesure_api.dart';
-import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -49,7 +49,7 @@ class ScanQrCodeVentePageVctl extends AuthViewController {
 
       isScanning = true;
       final codeVal = code.value.trim();
-      if (getEntite().value is Succursale) {
+      if (getEntite().value is Atelier) {
         final res = await apiMesure.getOne(codeVal.toInt().value).load();
         if (res.status) {
           if (isFromVenteAndCommande) {

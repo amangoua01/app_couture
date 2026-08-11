@@ -3,7 +3,7 @@ import 'package:ateliya/data/models/abstract/model_form_data.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
-import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:http/http.dart' as http;
@@ -14,19 +14,20 @@ class Client extends ModelFormData<Client> {
   String? tel;
   Fichier? photo;
   Boutique? boutique;
-  Succursale? succursale;
+  Atelier? succursale;
   DateTime? createdAt;
   bool isActive = true;
 
-  Client(
-      {this.nom,
-      this.prenom,
-      this.tel,
-      this.boutique,
-      this.succursale,
-      this.photo,
-      this.createdAt,
-      this.isActive = true});
+  Client({
+    this.nom,
+    this.prenom,
+    this.tel,
+    this.boutique,
+    this.succursale,
+    this.photo,
+    this.createdAt,
+    this.isActive = true,
+  });
 
   Client.fromJson(Json json) {
     id = json["id"];
@@ -40,7 +41,7 @@ class Client extends ModelFormData<Client> {
       boutique = Boutique.fromJson(json["boutique"]);
     }
     if (json["succursale"] != null) {
-      succursale = Succursale.fromJson(json["succursale"]);
+      succursale = Atelier.fromJson(json["succursale"]);
     }
     createdAt = json["createdAt"].toString().toDateTime();
     isActive = json["isActive"] ?? true;

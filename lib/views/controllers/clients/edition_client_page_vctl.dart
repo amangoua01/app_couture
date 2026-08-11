@@ -2,10 +2,10 @@ import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/api/client_api.dart';
 import 'package:ateliya/api/succursale_api.dart';
 import 'package:ateliya/data/models/abstract/fichier.dart';
+import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
-import 'package:ateliya/data/models/succursale.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_bottom_image_picker.dart';
@@ -18,7 +18,7 @@ class EditionClientPageVctl extends EditionViewController<Client, ClientApi> {
   final prenomCtl = TextEditingController();
   final telCtl = TextEditingController();
   Boutique? boutique;
-  Succursale? succursale;
+  Atelier? succursale;
   Fichier? photo;
   final boutiqueApi = BoutiqueApi();
   final succursaleApi = SuccursaleApi();
@@ -58,7 +58,7 @@ class EditionClientPageVctl extends EditionViewController<Client, ClientApi> {
   void onInitCreation() {
     if (!user.isAdmin) {
       boutique = user.boutique;
-      succursale = user.succursale;
+      succursale = user.atelier;
     }
   }
 
@@ -89,7 +89,7 @@ class EditionClientPageVctl extends EditionViewController<Client, ClientApi> {
     return [];
   }
 
-  Future<List<Succursale>> fetchSuccursales() async {
+  Future<List<Atelier>> fetchSuccursales() async {
     final res = await succursaleApi.list();
     if (res.status) {
       return res.data!.items;

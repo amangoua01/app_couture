@@ -3,6 +3,7 @@ enum TypeUserEnum {
   ads("ADS"),
   adsb("ADSB"),
   adb("ADB"),
+  ac("AC"),
   sadm("SADM");
 
   final String code;

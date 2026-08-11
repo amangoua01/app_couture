@@ -1,16 +1,16 @@
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
-import 'package:share_plus/share_plus.dart' show Share;
 import 'package:ateliya/views/static/mall_ya/mall_commandes_recues_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_couvertures_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_dashboard_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_modeles_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_settings_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_status_page.dart';
-import 'package:ateliya/views/static/mall_ya/mes_commandes_page.dart';
 import 'package:ateliya/views/static/mall_ya/mes_adresses_page.dart';
+import 'package:ateliya/views/static/mall_ya/mes_commandes_page.dart';
 import 'package:ateliya/views/static/mall_ya/mes_favoris_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart' show Share;
 
 class MallYaMenuItem {
   final IconData icon;
@@ -43,8 +43,10 @@ class MallYaHomeVctl extends AuthViewController {
     } catch (e, stack) {
       print('❌ Share error: $e');
       print('📋 Stack: $stack');
-      Get.snackbar('Partage indisponible',
-          'Le partage n\'est pas supporté sur cet appareil.');
+      Get.snackbar(
+        'Partage indisponible',
+        'Le partage n\'est pas supporté sur cet appareil.',
+      );
     }
   }
 

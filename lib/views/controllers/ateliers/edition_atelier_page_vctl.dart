@@ -1,17 +1,17 @@
 import 'package:ateliya/api/succursale_api.dart';
-import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/cupertino.dart';
 
-class EditionSurcusalePageVctl
-    extends EditionViewController<Succursale, SuccursaleApi> {
+class EditionAtelierPageVctl
+    extends EditionViewController<Atelier, SuccursaleApi> {
   final libelleCtl = TextEditingController();
   final contactCtl = TextEditingController();
 
-  EditionSurcusalePageVctl(super.item) : super(api: SuccursaleApi());
+  EditionAtelierPageVctl(super.item) : super(api: SuccursaleApi());
 
   @override
   void onClose() {
@@ -21,11 +21,8 @@ class EditionSurcusalePageVctl
   }
 
   @override
-  Future<Succursale?> onCreate() async {
-    final succ = Succursale(
-      libelle: libelleCtl.text,
-      contact: contactCtl.text,
-    );
+  Future<Atelier?> onCreate() async {
+    final succ = Atelier(libelle: libelleCtl.text, contact: contactCtl.text);
     final res = await api.create(succ).load();
     if (res.status) {
       return res.data;
@@ -36,13 +33,13 @@ class EditionSurcusalePageVctl
   }
 
   @override
-  void onInitForm(Succursale item) {
+  void onInitForm(Atelier item) {
     libelleCtl.text = item.libelle.value;
     contactCtl.text = item.contact.value;
   }
 
   @override
-  Future<Succursale?> onUpdate(Succursale item) async {
+  Future<Atelier?> onUpdate(Atelier item) async {
     item.libelle = libelleCtl.text;
     item.contact = contactCtl.text;
     final res = await api.update(item).load();

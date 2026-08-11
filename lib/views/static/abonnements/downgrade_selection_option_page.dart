@@ -68,7 +68,7 @@ class DowngradeSelectionOptionPage extends StatelessWidget {
                   ),
                   const Gap(32),
                   const ForfaitConfigSection(title: "Différents Utilisateurs"),
-                  const ForfaitConfigSection(title: "Vos Succursales"),
+                  const ForfaitConfigSection(title: "Vos Ateliers"),
                   const ForfaitConfigSection(title: "Vos Boutiques"),
                 ],
               ),

@@ -33,7 +33,6 @@ class InfoUserSubPage extends StatelessWidget {
           ),
           CDropDownFormField<Client>(
             selectedItem: ctl.client,
-            require: true,
             items: (p0, p1) => ctl.fetchClients(),
             externalLabel: "Client",
             itemAsString: (e) => e.fullName,
@@ -70,7 +69,7 @@ class InfoUserSubPage extends StatelessWidget {
                 icon: const Icon(Icons.add),
                 onPressed: () => Get.to(() => const EditionClientPage()),
                 label: const Text("Ajouter un client"),
-              )
+              ),
             ],
           ),
           CTextFormField(

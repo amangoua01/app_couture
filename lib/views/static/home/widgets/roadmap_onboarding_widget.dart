@@ -5,7 +5,7 @@ import 'package:ateliya/views/static/home/widgets/build_section_card.dart';
 import 'package:ateliya/views/static/home/widgets/road_map_step.dart';
 import 'package:ateliya/views/static/modele/modele_list_page.dart';
 import 'package:ateliya/views/static/modele_boutique/modele_list_boutique_page.dart';
-import 'package:ateliya/views/static/surcursales/edition_surcusale_page.dart';
+import 'package:ateliya/views/static/ateliers/edition_atelier_page.dart';
 import 'package:ateliya/views/static/type_mesure/type_mesure_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -33,10 +33,7 @@ class RoadmapOnboardingWidget extends StatelessWidget {
         const Text(
           "Pour commencer, configurez votre espace de travail en choisissant le type de structure qui vous correspond.",
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey,
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey),
         ),
         const Gap(20),
         BuildSectionCard(
@@ -78,7 +75,8 @@ class RoadmapOnboardingWidget extends StatelessWidget {
         const Row(
           children: [
             Expanded(
-                child: Divider(color: AppColors.fieldBorder, thickness: 1)),
+              child: Divider(color: AppColors.fieldBorder, thickness: 1),
+            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -91,22 +89,23 @@ class RoadmapOnboardingWidget extends StatelessWidget {
               ),
             ),
             Expanded(
-                child: Divider(color: AppColors.fieldBorder, thickness: 1)),
+              child: Divider(color: AppColors.fieldBorder, thickness: 1),
+            ),
           ],
         ),
         const Gap(20),
         BuildSectionCard(
-          title: "Configuration Succursale (Atelier)",
+          title: "Configuration de l'Atelier",
           icon: Icons.precision_manufacturing_rounded,
           color: AppColors.secondary,
           steps: [
             RoadmapStep(
               number: "1",
-              title: "Créer une succursale",
+              title: "Créer un atelier",
               description: "Ajoutez votre atelier de production.",
               enabled: !ctl.user.hasSuccursale,
               onTap: () async {
-                final res = await Get.to(() => const EditionSurcusalePage());
+                final res = await Get.to(() => const EditionAtelierPage());
                 if (res != null) {
                   ctl.user.hasSuccursale = true;
                   ctl.update();

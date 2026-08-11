@@ -25,8 +25,11 @@ class MallEditionModelePage extends StatelessWidget {
             elevation: 0,
             leading: IconButton(
               onPressed: () => Get.back(),
-              icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white, size: 20),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
             title: const Text(
               'Modifier le modèle',
@@ -128,8 +131,7 @@ class MallEditionModelePage extends StatelessWidget {
                       height: 160,
                       child: CImagePickerField(
                         label: 'Photo',
-                        path: ctl.photo?.path ??
-                            item.modele?.photo?.fullUrl,
+                        path: ctl.photo?.path ?? item.modele?.photo?.fullUrl,
                         onChanged: ctl.setPhoto,
                         onDelete: () {
                           ctl.photo = null;
@@ -191,8 +193,10 @@ class _SectionCard extends StatelessWidget {
           ),
           if (subtitle != null) ...[
             const Gap(2),
-            Text(subtitle!,
-                style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(
+              subtitle!,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
           ],
           const Gap(14),
           child,
@@ -236,20 +240,25 @@ class _ToggleRow extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                      color: Color(0xFF062A22))),
-              Text(subtitle,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey)),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  color: Color(0xFF062A22),
+                ),
+              ),
+              Text(
+                subtitle,
+                style: const TextStyle(fontSize: 11, color: Colors.grey),
+              ),
             ],
           ),
         ),
         Switch.adaptive(
           value: value,
           onChanged: onChanged,
-          activeColor: AppColors.primary,
+          activeThumbColor: AppColors.primary,
         ),
       ],
     );

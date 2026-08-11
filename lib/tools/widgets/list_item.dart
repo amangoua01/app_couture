@@ -13,7 +13,7 @@ import 'package:lottie/lottie.dart';
 
 class ListItem<M extends ModelJson> extends StatelessWidget {
   final String title;
-  final String? subtitle;
+  final dynamic subtitle;
   final String? leadingImage;
   final ListViewController ctl;
   final int index;
@@ -65,11 +65,13 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
         },
         title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
         subtitle: subtitle != null
-            ? Text(
-                subtitle!,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              )
+            ? (subtitle is Widget
+                ? subtitle as Widget
+                : Text(
+                    subtitle.toString(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ))
             : null,
       ),
       builder: () {
@@ -91,11 +93,13 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
           },
           title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
           subtitle: subtitle != null
-              ? Text(
-                  subtitle!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                )
+              ? (subtitle is Widget
+                  ? subtitle as Widget
+                  : Text(
+                      subtitle.toString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ))
               : null,
           onTap: () async {
             var item = ctl.data.items[index];

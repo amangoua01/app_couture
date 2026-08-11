@@ -13,7 +13,7 @@ extension FutureExtension<T> on Future<T> {
       ..loadingStyle = EasyLoadingStyle.custom
       ..backgroundColor = Colors.transparent
       // ignore: deprecated_member_use
-      ..maskColor = Colors.black.withOpacity(0.8)
+      ..maskColor = Colors.black.withValues(alpha: 0.8)
       ..boxShadow = []
       ..indicatorColor = AppColors.primary
       ..textColor = Colors.white

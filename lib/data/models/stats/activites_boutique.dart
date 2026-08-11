@@ -20,7 +20,6 @@ class ActivitesBoutique extends ModelJson {
   }
 
   ActivitesBoutique.fromJson(Json json) {
-    print(json['activite']);
     activite = json['activite'];
     nombre = json['nombre'];
     revenus = json['revenus'];

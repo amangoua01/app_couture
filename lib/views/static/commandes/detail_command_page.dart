@@ -46,9 +46,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return const Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
+                body: Center(child: CircularProgressIndicator()),
               );
             }
 
@@ -81,8 +79,8 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                       onPressed: () async {
                         final res = await showDialog(
                           context: context,
-                          builder: (context) =>
-                              PaiementDialog(mesure: _mesure!),
+                          builder:
+                              (context) => PaiementDialog(mesure: _mesure!),
                         );
 
                         if (res != null && res is Mesure) {
@@ -133,9 +131,15 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                       children: [
                         _buildDateColumn("Dépôt", _mesure!.dateDepot),
                         Container(
-                            width: 1, height: 40, color: Colors.grey[200]),
-                        _buildDateColumn("Retrait prévu", _mesure!.dateRetrait,
-                            isHighlight: true),
+                          width: 1,
+                          height: 40,
+                          color: Colors.grey[200],
+                        ),
+                        _buildDateColumn(
+                          "Retrait prévu",
+                          _mesure!.dateRetrait,
+                          isHighlight: true,
+                        ),
                       ],
                     ),
                   ),
@@ -149,13 +153,18 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Progression du paiement",
-                                style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.bold)),
+                            Text(
+                              "Progression du paiement",
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: (_mesure!.isPaid
                                         ? Colors.green
@@ -166,9 +175,10 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                               child: Text(
                                 "${(_mesure!.pourcentage * 100).toInt()}%",
                                 style: TextStyle(
-                                  color: _mesure!.isPaid
-                                      ? Colors.green
-                                      : AppColors.primary,
+                                  color:
+                                      _mesure!.isPaid
+                                          ? Colors.green
+                                          : AppColors.primary,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -182,9 +192,11 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                             value: _mesure!.pourcentage,
                             minHeight: 10,
                             backgroundColor: Colors.grey[200],
-                            valueColor: AlwaysStoppedAnimation(_mesure!.isPaid
-                                ? Colors.green
-                                : AppColors.primary),
+                            valueColor: AlwaysStoppedAnimation(
+                              _mesure!.isPaid
+                                  ? Colors.green
+                                  : AppColors.primary,
+                            ),
                           ),
                         ),
                         const Gap(20),
@@ -192,18 +204,21 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             _buildAmountColumn(
-                                "Payé",
-                                _mesure!.montantPaye.toAmount(unit: "F"),
-                                Colors.black87),
+                              "Payé",
+                              _mesure!.montantPaye.toAmount(unit: "F"),
+                              Colors.black87,
+                            ),
                             _buildAmountColumn(
-                                "Reste",
-                                _mesure!.resteArgent.toAmount(unit: "F"),
-                                Colors.red),
+                              "Reste",
+                              _mesure!.resteArgent.toAmount(unit: "F"),
+                              Colors.red,
+                            ),
                             _buildAmountColumn(
-                                "Total",
-                                _mesure!.montantTotal.toAmount(unit: "F"),
-                                AppColors.primary,
-                                isBold: true),
+                              "Total",
+                              _mesure!.montantTotal.toAmount(unit: "F"),
+                              AppColors.primary,
+                              isBold: true,
+                            ),
                           ],
                         ),
                       ],
@@ -217,24 +232,30 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                     child: Row(
                       children: [
                         Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: _buildClientAvatar(_mesure!.client?.photo)),
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: _buildClientAvatar(_mesure!.client?.photo),
+                        ),
                         const Gap(15),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(_mesure!.client?.fullName ?? "Inconnu",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              Text(_mesure!.client?.tel ?? "Sans contact",
-                                  style: TextStyle(color: Colors.grey[600])),
+                              Text(
+                                _mesure!.client?.fullName ?? "Inconnu",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                _mesure!.client?.tel ?? "Sans contact",
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
                             ],
                           ),
                         ),
@@ -245,107 +266,118 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
 
                   // Articles Card
                   _buildSectionTitle("Articles"),
-                  ..._mesure!.lignesMesures.map((lm) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _buildCard(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                            lm.typeMesure?.libelle ?? "Article",
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16)),
-                                        if (lm.etat != null &&
-                                            lm.etat!.isNotEmpty) ...[
-                                          const Gap(6),
-                                          _buildEtatBadge(lm.etat!),
-                                        ],
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
+                  ..._mesure!.lignesMesures.map(
+                    (lm) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _buildCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text(lm.montant.toAmount(unit: "F"),
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.primary)),
-                                      const Gap(8),
-                                      InkWell(
-                                        onTap: () => _showEtatSelector(ctl, lm),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.primary
-                                                .withValues(alpha: 0.1),
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                          ),
-                                          child: const Icon(
-                                            Icons.edit_outlined,
-                                            size: 16,
-                                            color: AppColors.primary,
-                                          ),
+                                      Text(
+                                        lm.typeMesure?.libelle ?? "Article",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
                                         ),
                                       ),
+                                      if (lm.etat != null &&
+                                          lm.etat!.isNotEmpty) ...[
+                                        const Gap(6),
+                                        _buildEtatBadge(lm.etat!),
+                                      ],
                                     ],
                                   ),
-                                ],
-                              ),
-                              if (lm.photoModele != null ||
-                                  lm.photoPagne != null) ...[
-                                const Gap(10),
-                                const Divider(),
-                                const Gap(10),
-                                Row(
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    if (lm.photoModele != null) ...[
-                                      _buildImageThumb(
-                                          lm.photoModele, "Modèle"),
-                                      const Gap(10),
-                                    ],
-                                    if (lm.photoPagne != null)
-                                      _buildImageThumb(lm.photoPagne, "Pagne"),
-                                  ],
-                                )
-                              ],
-                              // Mensurations section
-                              if (lm.mensurations.isNotEmpty) ...[
-                                const Gap(10),
-                                const Divider(),
-                                const Gap(10),
-                                Row(
-                                  children: [
-                                    Icon(Icons.straighten,
-                                        size: 16, color: Colors.grey[600]),
-                                    const Gap(6),
                                     Text(
-                                      "Mensurations",
-                                      style: TextStyle(
-                                        fontSize: 13,
+                                      lm.montant.toAmount(unit: "F"),
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.grey[700],
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                    const Gap(8),
+                                    InkWell(
+                                      onTap: () => _showEtatSelector(ctl, lm),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(6),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary.withValues(
+                                            alpha: 0.1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.edit_outlined,
+                                          size: 16,
+                                          color: AppColors.primary,
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
-                                const Gap(10),
-                                Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children: lm.mensurations
-                                      .where((m) => m.isActive)
-                                      .map((mensuration) => Container(
+                              ],
+                            ),
+                            if (lm.photoModele != null ||
+                                lm.photoPagne != null) ...[
+                              const Gap(10),
+                              const Divider(),
+                              const Gap(10),
+                              Row(
+                                children: [
+                                  if (lm.photoModele != null) ...[
+                                    _buildImageThumb(lm.photoModele, "Modèle"),
+                                    const Gap(10),
+                                  ],
+                                  if (lm.photoPagne != null)
+                                    _buildImageThumb(lm.photoPagne, "Pagne"),
+                                ],
+                              ),
+                            ],
+                            // Mensurations section
+                            if (lm.mensurations.isNotEmpty) ...[
+                              const Gap(10),
+                              const Divider(),
+                              const Gap(10),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.straighten,
+                                    size: 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                  const Gap(6),
+                                  Text(
+                                    "Mensurations",
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Gap(10),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children:
+                                    lm.mensurations
+                                        .where((m) => m.isActive)
+                                        .map(
+                                          (mensuration) => Container(
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 12,
                                               vertical: 8,
@@ -364,7 +396,8 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Text(
-                                                  mensuration.categorieMesure
+                                                  mensuration
+                                                          .categorieMesure
                                                           ?.libelle ??
                                                       "Mesure",
                                                   style: TextStyle(
@@ -375,16 +408,17 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                                 ),
                                                 const Gap(6),
                                                 Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    horizontal: 6,
-                                                    vertical: 2,
-                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 6,
+                                                        vertical: 2,
+                                                      ),
                                                   decoration: BoxDecoration(
                                                     color: AppColors.primary,
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            4),
+                                                          4,
+                                                        ),
                                                   ),
                                                   child: Text(
                                                     mensuration.taille,
@@ -398,14 +432,16 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                                 ),
                                               ],
                                             ),
-                                          ))
-                                      .toList(),
-                                ),
-                              ]
+                                          ),
+                                        )
+                                        .toList(),
+                              ),
                             ],
-                          ),
+                          ],
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
 
                   if (_mesure!.paiementFactures.isNotEmpty) ...[
                     const Gap(15),
@@ -413,8 +449,9 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                     _buildCard(
                       child: Column(
                         children: [
-                          ..._mesure!.paiementFactures
-                              .map((p) => _buildPaymentRow(p)),
+                          ..._mesure!.paiementFactures.map(
+                            (p) => _buildPaymentRow(p),
+                          ),
                         ],
                       ),
                     ),
@@ -430,8 +467,11 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                         child: CButton(
                           title: 'Imprimer (BT)',
                           color: Colors.black87,
-                          icon: const Icon(Icons.print,
-                              color: Colors.white, size: 18),
+                          icon: const Icon(
+                            Icons.print,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                           onPressed: () => ctl.printReceipt(_mesure!),
                         ),
                       ),
@@ -439,8 +479,11 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                       Expanded(
                         child: CButton(
                           title: 'PDF',
-                          icon: const Icon(Icons.picture_as_pdf,
-                              color: Colors.white, size: 18),
+                          icon: const Icon(
+                            Icons.picture_as_pdf,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                           onPressed: () => ctl.exportPdf(_mesure!),
                         ),
                       ),
@@ -452,8 +495,11 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                   CButton(
                     title: 'Imprimer Mensurations (BT)',
                     color: AppColors.green,
-                    icon: const Icon(Icons.straighten,
-                        color: Colors.white, size: 18),
+                    icon: const Icon(
+                      Icons.straighten,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                     onPressed: () => ctl.printClientMensurations(_mesure!),
                   ),
                   const Gap(20),
@@ -474,17 +520,21 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4))
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: child,
     );
   }
 
-  Widget _buildDateColumn(String label, DateTime? date,
-      {bool isHighlight = false}) {
+  Widget _buildDateColumn(
+    String label,
+    DateTime? date, {
+    bool isHighlight = false,
+  }) {
     final formattedDate =
         date != null ? DateFormat('dd MMM yyyy', 'fr_FR').format(date) : "--";
     final formattedTime = date != null ? DateFormat('HH:mm').format(date) : "";
@@ -498,18 +548,23 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
           crossAxisAlignment: CrossAxisAlignment.baseline,
           textBaseline: TextBaseline.alphabetic,
           children: [
-            Text(formattedDate,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: isHighlight ? AppColors.primary : Colors.black87)),
+            Text(
+              formattedDate,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: isHighlight ? AppColors.primary : Colors.black87,
+              ),
+            ),
             if (formattedTime.isNotEmpty) ...[
               const Gap(5),
-              Text(formattedTime,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[400])),
-            ]
+              Text(
+                formattedTime,
+                style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+              ),
+            ],
           ],
-        )
+        ),
       ],
     );
   }
@@ -517,23 +572,31 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, bottom: 8),
-      child: Text(title,
-          style:
-              TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold)),
+      child: Text(
+        title,
+        style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold),
+      ),
     );
   }
 
-  Widget _buildAmountColumn(String label, String amount, Color color,
-      {bool isBold = false}) {
+  Widget _buildAmountColumn(
+    String label,
+    String amount,
+    Color color, {
+    bool isBold = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[500])),
-        Text(amount,
-            style: TextStyle(
-                fontSize: 16,
-                color: color,
-                fontWeight: isBold ? FontWeight.bold : FontWeight.w600)),
+        Text(
+          amount,
+          style: TextStyle(
+            fontSize: 16,
+            color: color,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
+          ),
+        ),
       ],
     );
   }
@@ -562,7 +625,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
           ),
         ),
         const Gap(4),
-        Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey))
+        Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
       ],
     );
   }
@@ -584,18 +647,27 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                  paiement.createdAt != null
-                      ? DateFormat('dd MMM yyyy HH:mm', 'fr_FR')
-                          .format(paiement.createdAt!)
-                      : "--",
-                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
-              Text("Ref: ${paiement.reference ?? '-'}",
-                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                paiement.createdAt != null
+                    ? DateFormat(
+                      'dd MMM yyyy HH:mm',
+                      'fr_FR',
+                    ).format(paiement.createdAt!)
+                    : "--",
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              Text(
+                "Ref: ${paiement.reference ?? '-'}",
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
             ],
           ),
-          Text(paiement.montant.toAmount(unit: "F"),
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: Colors.green)),
+          Text(
+            paiement.montant.toAmount(unit: "F"),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.green,
+            ),
+          ),
         ],
       ),
     );
@@ -681,8 +753,10 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                   title: Text(etat),
                   onTap: () async {
                     Get.back();
-                    final updatedMesure =
-                        await ctl.changeEtatMesure(lm.id!, etat);
+                    final updatedMesure = await ctl.changeEtatMesure(
+                      lm.id!,
+                      etat,
+                    );
                     if (updatedMesure != null) {
                       setState(() {
                         _mesure = updatedMesure;
@@ -731,8 +805,10 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                   title: Text(etat),
                   onTap: () async {
                     Get.back();
-                    final updatedMesure =
-                        await ctl.changeEtatFacture(mesure.id!, etat);
+                    final updatedMesure = await ctl.changeEtatFacture(
+                      mesure.id!,
+                      etat,
+                    );
                     if (updatedMesure != null) {
                       setState(() {
                         _mesure = updatedMesure;
@@ -752,8 +828,9 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
   void _showUpdateDetailsDialog(DetailCommandPageVctl ctl, Mesure mesure) {
     if (mesure.id == null) return;
 
-    final montantCtl =
-        TextEditingController(text: mesure.montantTotal.toString());
+    final montantCtl = TextEditingController(
+      text: mesure.montantTotal.toString(),
+    );
     DateTime? selectedDate = mesure.dateRetrait;
 
     showModalBottomSheet(
@@ -763,94 +840,112 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return StatefulBuilder(builder: (context, setModalState) {
-          return Padding(
-            padding: EdgeInsets.only(
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
                 left: 20,
                 right: 20,
-                top: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Modifier les détails",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const Gap(15),
-                TextField(
-                  controller: montantCtl,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "Montant total",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                top: 20,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Modifier les détails",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const Gap(15),
+                  TextField(
+                    controller: montantCtl,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Montant total",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
-                ),
-                const Gap(15),
-                ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  title: const Text("Date de retrait"),
-                  subtitle: Text(selectedDate != null
-                      ? DateFormat('dd MMM yyyy HH:mm', 'fr_FR')
-                          .format(selectedDate!)
-                      : "Sélectionner une date"),
-                  trailing: const Icon(Icons.calendar_today),
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: selectedDate ?? DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (date != null) {
-                      final time = await showTimePicker(
+                  const Gap(15),
+                  ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    title: const Text("Date de retrait"),
+                    subtitle: Text(
+                      selectedDate != null
+                          ? DateFormat(
+                            'dd MMM yyyy HH:mm',
+                            'fr_FR',
+                          ).format(selectedDate!)
+                          : "Sélectionner une date",
+                    ),
+                    trailing: const Icon(Icons.calendar_today),
+                    onTap: () async {
+                      final date = await showDatePicker(
                         context: context,
-                        initialTime: TimeOfDay.fromDateTime(
-                            selectedDate ?? DateTime.now()),
+                        initialDate: selectedDate ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
                       );
-                      if (time != null) {
-                        setModalState(() {
-                          selectedDate = DateTime(date.year, date.month,
-                              date.day, time.hour, time.minute);
-                        });
-                      }
-                    }
-                  },
-                ),
-                const Gap(20),
-                SizedBox(
-                  width: double.infinity,
-                  child: CButton(
-                    title: "Enregistrer",
-                    onPressed: () async {
-                      final montant = double.tryParse(montantCtl.text);
-                      if (montant == null || selectedDate == null) {
-                        Get.snackbar("Erreur",
-                            "Veuillez entrer un montant et une date valides");
-                        return;
-                      }
-                      Get.back();
-                      final updatedMesure = await ctl.updateDetails(
-                          mesure.id!, montant, selectedDate!);
-                      if (updatedMesure != null) {
-                        setState(() {
-                          _mesure = updatedMesure;
-                        });
+                      if (date != null) {
+                        final time = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.fromDateTime(
+                            selectedDate ?? DateTime.now(),
+                          ),
+                        );
+                        if (time != null) {
+                          setModalState(() {
+                            selectedDate = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                              time.hour,
+                              time.minute,
+                            );
+                          });
+                        }
                       }
                     },
                   ),
-                ),
-                const Gap(20),
-              ],
-            ),
-          );
-        });
+                  const Gap(20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: CButton(
+                      title: "Enregistrer",
+                      onPressed: () async {
+                        final montant = double.tryParse(montantCtl.text);
+                        if (montant == null || selectedDate == null) {
+                          Get.snackbar(
+                            "Erreur",
+                            "Veuillez entrer un montant et une date valides",
+                          );
+                          return;
+                        }
+                        Get.back();
+                        final updatedMesure = await ctl.updateDetails(
+                          mesure.id!,
+                          montant,
+                          selectedDate!,
+                        );
+                        if (updatedMesure != null) {
+                          setState(() {
+                            _mesure = updatedMesure;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  const Gap(20),
+                ],
+              ),
+            );
+          },
+        );
       },
     );
   }

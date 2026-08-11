@@ -52,36 +52,10 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
         onSelectionChanged: onSelectionChanged,
       ),
       actions: [
-        Obx(() {
-          final isConnected = _printerService?.isPrinterConnected.value ?? false;
-          return IconButton(
-            onPressed: () => Get.to(() => const PrintListPage()),
-            icon: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                const Icon(
-                  Icons.print_rounded,
-                  color: Colors.white,
-                  size: 26,
-                ),
-                Positioned(
-                  right: -2,
-                  top: -2,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: isConnected ? Colors.greenAccent : Colors.redAccent,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.primary, width: 1.5),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            tooltip: isConnected ? "Imprimante connectée" : "Imprimante déconnectée",
-          );
-        }),
+        _printerService == null
+            ? _buildPrinterButton(isConnected: false)
+            : Obx(() => _buildPrinterButton(
+                isConnected: _printerService!.isPrinterConnected.value)),
         Padding(
           padding: const EdgeInsets.only(right: 12),
           child: NotifBadgeIcon(
@@ -105,6 +79,36 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight + 4);
 
   User? get _user => Get.isRegistered<User>() ? Get.find<User>() : null;
+
+  Widget _buildPrinterButton({required bool isConnected}) {
+    return IconButton(
+      onPressed: () => Get.to(() => const PrintListPage()),
+      icon: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          const Icon(
+            Icons.print_rounded,
+            color: Colors.white,
+            size: 26,
+          ),
+          Positioned(
+            right: -2,
+            top: -2,
+            child: Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                color: isConnected ? Colors.greenAccent : Colors.redAccent,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.primary, width: 1.5),
+              ),
+            ),
+          ),
+        ],
+      ),
+      tooltip: isConnected ? "Imprimante connectée" : "Imprimante déconnectée",
+    );
+  }
 
   Widget _buildAvatar() {
     final photo = _user?.photoProfil;

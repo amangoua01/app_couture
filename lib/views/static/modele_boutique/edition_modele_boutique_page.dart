@@ -1,6 +1,7 @@
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
@@ -11,10 +12,14 @@ import 'package:ateliya/tools/widgets/messages/c_alert_dialog.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/views/controllers/modele_boutique/edition_modele_boutique_page_vctl.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
+import 'package:ateliya/tools/services/sound_service.dart';
 
 class EditionModeleBoutiquePage extends StatelessWidget {
   final ModeleBoutique? item;
@@ -94,6 +99,72 @@ class EditionModeleBoutiquePage extends StatelessWidget {
             controller: ctl.tailleCtl,
             enabled: ctl.user.isAdmin,
           ),
+          CTextFormField(
+            externalLabel: "Code barre",
+            controller: ctl.codeBarreCtl,
+            enabled: ctl.user.isAdmin,
+            keyboardType: TextInputType.number,
+            hintText: "Saisir ou générer un code barre",
+            onChanged: (_) => ctl.update(),
+            suffixIcon: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  tooltip: "Scanner",
+                  icon: const Icon(Icons.qr_code_scanner,
+                      color: AppColors.primary),
+                  onPressed: () async {
+                    final res = await SimpleBarcodeScanner.scanBarcode(
+                      context,
+                      barcodeAppBar: const BarcodeAppBar(
+                        appBarTitle: 'Scanner le code barre',
+                        centerTitle: true,
+                      ),
+                      isShowFlashIcon: true,
+                    );
+                    if (res != null && res != '-1') {
+                      SoundService.playBeep();
+                      ctl.codeBarreCtl.text = res;
+                      ctl.update();
+                    }
+                  },
+                ),
+                IconButton(
+                  tooltip: "Générer",
+                  icon: SvgPicture.asset(
+                    'assets/images/svg/generate_bar_code.svg',
+                  ),
+                  onPressed: ctl.generateRandomBarcode,
+                ),
+              ],
+            ),
+          ),
+          if (ctl.codeBarreCtl.text.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border:
+                        Border.all(color: AppColors.fieldBorder, width: 1.5),
+                  ),
+                  child: BarcodeWidget(
+                    barcode: Barcode.code128(),
+                    data: ctl.codeBarreCtl.text,
+                    width: 250,
+                    height: 70,
+                    style: const TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const CircleAvatar(

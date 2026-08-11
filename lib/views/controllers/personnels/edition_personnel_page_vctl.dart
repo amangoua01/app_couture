@@ -3,8 +3,8 @@ import 'package:ateliya/api/personnel_api.dart';
 import 'package:ateliya/api/succursale_api.dart';
 import 'package:ateliya/api/type_user_api.dart';
 import 'package:ateliya/data/dto/update_user_dto.dart';
+import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/data/models/boutique.dart';
-import 'package:ateliya/data/models/succursale.dart';
 import 'package:ateliya/data/models/type_user.dart';
 import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/tools/constants/env.dart';
@@ -23,7 +23,7 @@ class EditionPersonnelPageVctl
   final confirmPasswordCtl = TextEditingController();
   TypeUser? typeUser;
   Boutique? boutique;
-  Succursale? succursale;
+  Atelier? atelier;
   final typeUserApi = TypeUserApi();
   final boutiqueApi = BoutiqueApi();
   final succursaleApi = SuccursaleApi();
@@ -44,7 +44,7 @@ class EditionPersonnelPageVctl
       email: emailCtl.text,
       type: typeUser?.id,
       boutique: boutique?.id,
-      surccursale: succursale?.id,
+      atelier: atelier?.id,
       password: passwordCtl.text,
     );
     final res = await api.create(data.toUser()).load();
@@ -62,6 +62,7 @@ class EditionPersonnelPageVctl
     prenomCtl.text = item.prenoms.value;
     typeUser = item.type;
     boutique = item.boutique;
+    atelier = item.atelier;
   }
 
   @override
@@ -96,7 +97,7 @@ class EditionPersonnelPageVctl
     return [];
   }
 
-  Future<List<Succursale>> getSuccursales() async {
+  Future<List<Atelier>> getSuccursales() async {
     final res = await succursaleApi.list();
     if (res.status) {
       return res.data!.items;

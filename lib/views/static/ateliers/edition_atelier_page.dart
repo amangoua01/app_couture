@@ -1,22 +1,22 @@
-import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/tools/widgets/body_edition_page.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:ateliya/views/controllers/sucursales/edition_surcusale_page_vctl.dart';
+import 'package:ateliya/views/controllers/ateliers/edition_atelier_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class EditionSurcusalePage extends StatelessWidget {
-  final Succursale? item;
-  const EditionSurcusalePage({super.key, this.item});
+class EditionAtelierPage extends StatelessWidget {
+  final Atelier? item;
+  const EditionAtelierPage({super.key, this.item});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder(
-      init: EditionSurcusalePageVctl(item),
+      init: EditionAtelierPageVctl(item),
       builder: (ctl) {
         return BodyEditionPage(
           ctl,
-          module: "surcusale",
+          module: "atelier",
           children: [
             CTextFormField(
               externalLabel: "Nom",

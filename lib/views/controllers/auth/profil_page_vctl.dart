@@ -40,6 +40,15 @@ class ProfilPageVctl extends AuthViewController {
           logoEntreprisePath = logo;
         }
       }
+
+      if (user.photoProfil != null) {
+        if (user.photoProfil is FichierServer) {
+          final logo = user.photoProfil as FichierServer;
+          if (logo.path?.isNotEmpty == true) {
+            logoUserPath = logo;
+          }
+        }
+      }
       nomEntrepriseCtl.text = user.entreprise!.libelle.value;
       telephoneEntrepriseCtl.text = user.entreprise!.numero.value;
       emailEntrepriseCtl.text = user.entreprise!.email.value;
@@ -52,7 +61,8 @@ class ProfilPageVctl extends AuthViewController {
         id: user.id.value,
         nom: nomCtl.text,
         prenom: prenomCtl.text,
-        email: user.login.value,
+        photoProfil:
+            logoUserPath is FichierLocal ? logoUserPath as FichierLocal : null,
       );
 
       final res = await api.updateProfile(dto).load();
@@ -65,7 +75,7 @@ class ProfilPageVctl extends AuthViewController {
           message: "Profil mis à jour avec succès",
           isSuccess: true,
         );
-        Get.back();
+        Get.back(result: user);
       } else {
         CSnackbar.show(message: "Erreur lors de la mise à jour du profil");
       }
@@ -101,7 +111,7 @@ class ProfilPageVctl extends AuthViewController {
         message: "Entreprise mise à jour avec succès",
         isSuccess: true,
       );
-      Get.back();
+      Get.back(result: res.data!);
     } else {
       CSnackbar.show(message: res.message);
     }
