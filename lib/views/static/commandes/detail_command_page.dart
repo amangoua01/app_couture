@@ -10,6 +10,7 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/paiement_dialog.dart';
+import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/views/controllers/commandes/detail_command_page_vctl.dart'; // Added
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -347,96 +348,219 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                               ),
                             ],
                             // Mensurations section
-                            if (lm.mensurations.isNotEmpty) ...[
-                              const Gap(10),
-                              const Divider(),
-                              const Gap(10),
-                              Row(
+                            PlaceholderBuilder(
+                              condition: lm.tailleStandard?.libelle != null,
+                              placeholder: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(
-                                    Icons.straighten,
-                                    size: 16,
-                                    color: Colors.grey[600],
+                                  const Gap(10),
+                                  const Divider(),
+                                  const Gap(10),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.straighten,
+                                        size: 16,
+                                        color: Colors.grey[600],
+                                      ),
+                                      const Gap(6),
+                                      Text(
+                                        "Mensurations",
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const Gap(6),
-                                  Text(
-                                    "Mensurations",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[700],
-                                    ),
+                                  const Gap(10),
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children:
+                                        lm.mensurations
+                                            .where((m) => m.isActive)
+                                            .map(
+                                              (mensuration) => Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 8,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.primary
+                                                      .withValues(alpha: 0.08),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                    color: AppColors.primary
+                                                        .withValues(alpha: 0.2),
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      mensuration
+                                                              .categorieMesure
+                                                              ?.libelle ??
+                                                          "Mesure",
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.grey[700],
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    const Gap(6),
+                                                    Container(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 6,
+                                                            vertical: 2,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            AppColors.primary,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              4,
+                                                            ),
+                                                      ),
+                                                      child: Text(
+                                                        mensuration.taille,
+                                                        style: const TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
                                   ),
                                 ],
                               ),
-                              const Gap(10),
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children:
-                                    lm.mensurations
-                                        .where((m) => m.isActive)
-                                        .map(
-                                          (mensuration) => Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 8,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.primary
-                                                  .withValues(alpha: 0.08),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                color: AppColors.primary
-                                                    .withValues(alpha: 0.2),
-                                              ),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  mensuration
-                                                          .categorieMesure
-                                                          ?.libelle ??
-                                                      "Mesure",
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.grey[700],
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                const Gap(6),
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 6,
-                                                        vertical: 2,
-                                                      ),
-                                                  decoration: BoxDecoration(
-                                                    color: AppColors.primary,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          4,
-                                                        ),
-                                                  ),
-                                                  child: Text(
-                                                    mensuration.taille,
-                                                    style: const TextStyle(
-                                                      fontSize: 11,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                        .toList(),
-                              ),
-                            ],
+                              builder:
+                                  () => ListTile(
+                                    contentPadding: const EdgeInsets.only(
+                                      right: 10,
+                                    ),
+                                    title: Text(
+                                      "Taille standard",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                    trailing: Text(
+                                      lm.tailleStandard!.libelle!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: AppColors.primary,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                            ),
+                            // if (lm.mensurations.isNotEmpty) ...[
+                            //   const Gap(10),
+                            //   const Divider(),
+                            //   const Gap(10),
+                            //   Row(
+                            //     children: [
+                            //       Icon(
+                            //         Icons.straighten,
+                            //         size: 16,
+                            //         color: Colors.grey[600],
+                            //       ),
+                            //       const Gap(6),
+                            //       Text(
+                            //         "Mensurations",
+                            //         style: TextStyle(
+                            //           fontSize: 13,
+                            //           fontWeight: FontWeight.bold,
+                            //           color: Colors.grey[700],
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            //   const Gap(10),
+                            //   Wrap(
+                            //     spacing: 8,
+                            //     runSpacing: 8,
+                            //     children:
+                            //         lm.mensurations
+                            //             .where((m) => m.isActive)
+                            //             .map(
+                            //               (mensuration) => Container(
+                            //                 padding: const EdgeInsets.symmetric(
+                            //                   horizontal: 12,
+                            //                   vertical: 8,
+                            //                 ),
+                            //                 decoration: BoxDecoration(
+                            //                   color: AppColors.primary
+                            //                       .withValues(alpha: 0.08),
+                            //                   borderRadius:
+                            //                       BorderRadius.circular(8),
+                            //                   border: Border.all(
+                            //                     color: AppColors.primary
+                            //                         .withValues(alpha: 0.2),
+                            //                   ),
+                            //                 ),
+                            //                 child: Row(
+                            //                   mainAxisSize: MainAxisSize.min,
+                            //                   children: [
+                            //                     Text(
+                            //                       mensuration
+                            //                               .categorieMesure
+                            //                               ?.libelle ??
+                            //                           "Mesure",
+                            //                       style: TextStyle(
+                            //                         fontSize: 12,
+                            //                         color: Colors.grey[700],
+                            //                         fontWeight: FontWeight.w500,
+                            //                       ),
+                            //                     ),
+                            //                     const Gap(6),
+                            //                     Container(
+                            //                       padding:
+                            //                           const EdgeInsets.symmetric(
+                            //                             horizontal: 6,
+                            //                             vertical: 2,
+                            //                           ),
+                            //                       decoration: BoxDecoration(
+                            //                         color: AppColors.primary,
+                            //                         borderRadius:
+                            //                             BorderRadius.circular(
+                            //                               4,
+                            //                             ),
+                            //                       ),
+                            //                       child: Text(
+                            //                         mensuration.taille,
+                            //                         style: const TextStyle(
+                            //                           fontSize: 11,
+                            //                           color: Colors.white,
+                            //                           fontWeight:
+                            //                               FontWeight.bold,
+                            //                         ),
+                            //                       ),
+                            //                     ),
+                            //                   ],
+                            //                 ),
+                            //               ),
+                            //             )
+                            //             .toList(),
+                            //   ),
+                            // ],
                           ],
                         ),
                       ),

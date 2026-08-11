@@ -63,19 +63,34 @@ class InfoUserSubPage extends StatelessWidget {
             },
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton.icon(
-                icon: const Icon(Icons.add),
-                onPressed: () => Get.to(() => const EditionClientPage()),
-                label: const Text("Ajouter un client"),
+                icon: const Icon(Icons.cancel_outlined),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  textStyle: const TextStyle(fontSize: 10),
+                ),
+                onPressed: () {
+                  ctl.client = null;
+                  ctl.contactClientCtl.text = "";
+                  ctl.update();
+                },
+                label: const Text("Vider"),
+              ),
+              Expanded(
+                child: TextButton.icon(
+                  icon: const Icon(Icons.add),
+                  onPressed: () => Get.to(() => const EditionClientPage()),
+                  label: const Text("Ajouter un client"),
+                ),
               ),
             ],
           ),
           CTextFormField(
             controller: ctl.contactClientCtl,
             enabled: ctl.client != null,
-            require: true,
+            require: ctl.client != null,
             externalLabel: "Contact client",
             keyboardType: TextInputType.number,
           ),

@@ -33,6 +33,8 @@ class MallYaMenuItem {
 class MallYaHomeVctl extends AuthViewController {
   late final List<MallYaMenuItem> menuItems;
 
+  int currentIndex = 0;
+
   Future<void> shareBoutique() async {
     final code = user.entreprise?.codeMarchand ?? '';
     final url = 'https://malliya.ateliya.com/enterprise/$code';

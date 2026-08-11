@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:ateliya/data/dto/abstract/multi_part_dto_model.dart';
 import 'package:ateliya/data/dto/mesure/ligne_mesure_dto.dart';
-import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/atelier.dart';
+import 'package:ateliya/data/models/client.dart';
 import 'package:flutter/services.dart';
-import 'package:get/state_manager.dart';
 import 'package:http/http.dart' hide Client;
 
 class MesureDto extends MultiPartDtoModel {
@@ -35,6 +34,7 @@ class MesureDto extends MultiPartDtoModel {
                 "remise": m.remise,
                 "withOutTissu": m.withOutTissu,
                 "description": m.description,
+                "tailleStandardId": m.tailleStandard?.id,
                 "ligneMesures":
                     m.typeMesureDto?.mensurations
                         .map(
@@ -58,7 +58,9 @@ class MesureDto extends MultiPartDtoModel {
       "mesures": jsonEncode(mesuresJson),
     };
 
-    map.addAllIf(client?.id != null, {"clientId": client!.id!.toString()});
+    if (client?.id != null) {
+      map.addAll({"clientId": client!.id!.toString()});
+    }
 
     for (var i = 0; i < lignesMesures.length; i++) {
       final item = lignesMesures[i];

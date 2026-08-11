@@ -32,7 +32,7 @@ class EditionPieceCouturePageVctl extends AuthViewController {
   TailleStandard? selectedTailleStandard;
   bool isSurMesure = true;
 
-  EditionPieceCouturePageVctl(this.ligne) {
+EditionPieceCouturePageVctl(this.ligne) {
     if (ligne != null) {
       nomTenancierCtl.text = ligne!.nomClient.value;
       montantCtl.setDouble = ligne!.montant;

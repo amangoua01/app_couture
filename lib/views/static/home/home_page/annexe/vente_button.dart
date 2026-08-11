@@ -123,19 +123,8 @@ class VenteButton extends StatelessWidget {
                   ),
                 ),
                 SpeedDialChild(
+                  visible: ctl.user.isAdmin,
                   label: "Créer une dépense",
-                  visible: ctl.user.isAdmin,
-                  child: const Icon(
-                    Icons.money_off_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  backgroundColor: AppColors.yellow,
-                  onTap: ctl.goToDepense,
-                ),
-                SpeedDialChild(
-                  visible: ctl.user.isAdmin,
-                  label: "Dépenser",
                   child: SvgPicture.asset(
                     "assets/images/svg/depense.svg",
                     width: 20,

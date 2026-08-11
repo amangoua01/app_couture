@@ -643,7 +643,6 @@ class EditionVenteMultiplePage extends StatelessWidget {
                                 ? "[${selectedModele?.prixMinimal.toAmount() ?? 0}, ${selectedModele?.prixMax.toAmount() ?? 0}]"
                                 : "Prix de vente",
                         controller: prixCtl,
-                        enabled: selectedModele?.haveCommission == true,
                         keyboardType: TextInputType.number,
                         onChanged: (_) => setState(() {}),
                       ),
@@ -725,13 +724,21 @@ class EditionVenteMultiplePage extends StatelessWidget {
                         return;
                       }
 
+                      final pMin = selectedModele!.prixMinimal ?? 0;
+                      if (prix < pMin) {
+                        CMessageDialog.show(
+                          message:
+                              "Le prix unitaire doit être au moins de ${pMin.toAmount(unit: 'F')}",
+                        );
+                        return;
+                      }
+
                       if (selectedModele!.haveCommission == true) {
-                        final pMin = selectedModele!.prixMinimal ?? 0;
                         final pMax = selectedModele!.prixMax ?? 0;
-                        if (prix < pMin || prix > pMax) {
+                        if (prix > pMax) {
                           CMessageDialog.show(
                             message:
-                                "Le prix unitaire doit être compris entre ${pMin.toAmount(unit: 'F')} et ${pMax.toAmount(unit: 'F')}",
+                                "Le prix unitaire doit être au plus de ${pMax.toAmount(unit: 'F')}",
                           );
                           return;
                         }

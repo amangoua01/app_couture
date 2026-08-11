@@ -5,6 +5,7 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
+import 'package:ateliya/tools/services/sound_service.dart';
 import 'package:ateliya/tools/widgets/body_edition_page.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
@@ -19,7 +20,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
-import 'package:ateliya/tools/services/sound_service.dart';
 
 class EditionModeleBoutiquePage extends StatelessWidget {
   final ModeleBoutique? item;
@@ -29,268 +29,272 @@ class EditionModeleBoutiquePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder(
       init: EditionModeleBoutiquePageVctl(item),
-      builder: (ctl) => BodyEditionPage(
-        ctl,
-        module: "modèle boutique",
-        readOnly: !ctl.user.isAdmin,
-        item: item,
-        children: [
-          Row(
+      builder:
+          (ctl) => BodyEditionPage(
+            ctl,
+            module: "modèle boutique",
+            readOnly: !ctl.user.isAdmin,
+            item: item,
             children: [
-              ClipOval(
-                child: Container(
-                  width: 145,
-                  height: 145,
-                  color: Colors.grey.shade300,
-                  child: PlaceholderBuilder(
-                    placeholder: const Icon(
-                      Icons.image,
-                      color: Colors.grey,
-                      size: 30,
-                    ),
-                    condition: ctl.modele?.photo != null,
-                    builder: () {
-                      return Image.network(
-                        (ctl.modele!.photo as FichierServer).fullUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Center(
-                            child: Icon(
-                              Icons.broken_image_outlined,
-                              color: Colors.grey,
-                              size: 60,
-                            ),
+              Row(
+                children: [
+                  ClipOval(
+                    child: Container(
+                      width: 145,
+                      height: 145,
+                      color: Colors.grey.shade300,
+                      child: PlaceholderBuilder(
+                        placeholder: const Icon(
+                          Icons.image,
+                          color: Colors.grey,
+                          size: 30,
+                        ),
+                        condition: ctl.modele?.photo != null,
+                        builder: () {
+                          return Image.network(
+                            (ctl.modele!.photo as FichierServer).fullUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(
+                                  Icons.broken_image_outlined,
+                                  color: Colors.grey,
+                                  size: 60,
+                                ),
+                              );
+                            },
                           );
                         },
-                      );
-                    },
+                      ),
+                    ),
                   ),
+                ],
+              ),
+              const Gap(20),
+              CDropDownFormField(
+                externalLabel: "Modèle",
+                selectedItem: ctl.modele,
+                enabled: ctl.user.isAdmin,
+                itemAsString: (p0) => p0.libelle.value,
+                require: true,
+                items: (p0, p1) => ctl.getModeles(),
+                onChanged: (p0) {
+                  ctl.modele = p0;
+                  ctl.update();
+                },
+              ),
+              CDropDownFormField<Boutique>(
+                externalLabel: "Boutique",
+                selectedItem: ctl.boutique,
+                require: true,
+                enabled: ctl.user.isAdmin,
+                items: (p0, p1) => ctl.getBoutiques(),
+                onChanged: (p0) {
+                  ctl.boutique = p0;
+                  ctl.update();
+                },
+                itemAsString: (p0) => p0.libelle.value,
+              ),
+              CTextFormField(
+                externalLabel: "Taille",
+                controller: ctl.tailleCtl,
+                enabled: ctl.user.isAdmin,
+              ),
+              CTextFormField(
+                externalLabel: "Code barre",
+                controller: ctl.codeBarreCtl,
+                enabled: ctl.user.isAdmin,
+                keyboardType: TextInputType.number,
+                hintText: "Saisir ou générer un code barre",
+                onChanged: (_) => ctl.update(),
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      tooltip: "Scanner",
+                      icon: const Icon(
+                        Icons.qr_code_scanner,
+                        color: AppColors.primary,
+                      ),
+                      onPressed: () async {
+                        final res = await SimpleBarcodeScanner.scanBarcode(
+                          context,
+                          barcodeAppBar: const BarcodeAppBar(
+                            appBarTitle: 'Scanner le code barre',
+                            centerTitle: true,
+                          ),
+                          isShowFlashIcon: true,
+                        );
+                        if (res != null && res != '-1') {
+                          SoundService.playBeep();
+                          ctl.codeBarreCtl.text = res;
+                          ctl.update();
+                        }
+                      },
+                    ),
+                    IconButton(
+                      tooltip: "Générer",
+                      icon: SvgPicture.asset(
+                        'assets/images/svg/generate_bar_code.svg',
+                      ),
+                      onPressed: ctl.generateRandomBarcode,
+                    ),
+                  ],
+                ),
+              ),
+              if (ctl.codeBarreCtl.text.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.fieldBorder,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: BarcodeWidget(
+                        barcode: Barcode.code128(),
+                        data: ctl.codeBarreCtl.text,
+                        width: 250,
+                        height: 70,
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const CircleAvatar(child: Icon(Icons.color_lens)),
+                title: const Text("Couleur"),
+                trailing: const Icon(Icons.arrow_drop_down),
+                subtitle: PlaceholderWidget(
+                  condition: ctl.pickerColor != null,
+                  placeholder: const Text("Aucune couleur sélectionnée"),
+                  child: Container(
+                    height: 20,
+                    margin: const EdgeInsets.only(top: 5),
+                    decoration: BoxDecoration(
+                      color:
+                          ctl.pickerColor != null
+                              ? Color(ctl.pickerColor!)
+                              : Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                ),
+                onTap: () async {
+                  int? colorCode = ctl.pickerColor;
+                  await CAlertDialog.show(
+                    title: "Couleur",
+                    content: SingleChildScrollView(
+                      child: ColorPicker(
+                        pickerColor:
+                            colorCode != null ? Color(colorCode) : Colors.white,
+                        onColorChanged: (color) {
+                          colorCode = color.toARGB32();
+                          ctl.update();
+                        },
+                        enableAlpha: false,
+                        displayThumbColor: true,
+                        paletteType: PaletteType.hsvWithHue,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Get.back(),
+                        child: const Text("Annuler"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          ctl.pickerColor = colorCode;
+                          ctl.update();
+                          Get.back();
+                        },
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const Gap(10),
+              CTextFormField(
+                externalLabel: "Prix",
+                controller: ctl.prixCtl,
+                require: true,
+                enabled: ctl.user.isAdmin,
+                keyboardType: TextInputType.number,
+              ),
+              CTextFormField(
+                externalLabel: "Prix minimal",
+                controller: ctl.prixMinimalCtl,
+                require: true,
+                enabled: ctl.user.isAdmin,
+                keyboardType: TextInputType.number,
+                validator: (e) {
+                  if (e.toDouble().value > ctl.prixCtl.toDouble()) {
+                    return "Le prix minimal doit être inférieur au prix";
+                  }
+                  return null;
+                },
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text("Commission"),
+                subtitle: const Text(
+                  "Si activé, l'article pourra être vendu au dessus du prix minimal",
+                ),
+                value: ctl.haveCommission,
+                onChanged: (value) {
+                  ctl.haveCommission = value;
+                  if (value != true) {
+                    if (ctl.item == null) {
+                      ctl.prixMaxCtl.text = "0";
+                    } else {
+                      if (ctl.prixMaxCtl.text.isEmpty) {
+                        ctl.prixMaxCtl.text =
+                            (ctl.item!.prixMinimal ?? 0).toString();
+                      }
+                    }
+                  }
+                  ctl.update();
+                },
+              ),
+              const Gap(10),
+              CTextFormField(
+                externalLabel: "Prix maximal",
+                controller: ctl.prixMaxCtl,
+                require: ctl.haveCommission,
+                enabled: ctl.user.isAdmin && ctl.haveCommission,
+                keyboardType: TextInputType.number,
+                validator: (e) {
+                  if (ctl.haveCommission) {
+                    if (e.toDouble().value <= ctl.prixCtl.toDouble()) {
+                      return "Le prix maximal doit être supérieur au prix.";
+                    }
+                  }
+                  return null;
+                },
+              ),
+              Visibility(
+                visible: ctl.item == null,
+                child: CTextFormField(
+                  externalLabel: "Quantité",
+                  controller: ctl.quantiteCtl,
+                  enabled: ctl.user.isAdmin,
+                  require: true,
+                  keyboardType: TextInputType.number,
                 ),
               ),
             ],
           ),
-          const Gap(20),
-          CDropDownFormField(
-            externalLabel: "Modèle",
-            selectedItem: ctl.modele,
-            enabled: ctl.user.isAdmin,
-            itemAsString: (p0) => p0.libelle.value,
-            require: true,
-            items: (p0, p1) => ctl.getModeles(),
-            onChanged: (p0) {
-              ctl.modele = p0;
-              ctl.update();
-            },
-          ),
-          CDropDownFormField<Boutique>(
-            externalLabel: "Boutique",
-            selectedItem: ctl.boutique,
-            require: true,
-            enabled: ctl.user.isAdmin,
-            items: (p0, p1) => ctl.getBoutiques(),
-            onChanged: (p0) {
-              ctl.boutique = p0;
-              ctl.update();
-            },
-            itemAsString: (p0) => p0.libelle.value,
-          ),
-          CTextFormField(
-            externalLabel: "Taille",
-            controller: ctl.tailleCtl,
-            enabled: ctl.user.isAdmin,
-          ),
-          CTextFormField(
-            externalLabel: "Code barre",
-            controller: ctl.codeBarreCtl,
-            enabled: ctl.user.isAdmin,
-            keyboardType: TextInputType.number,
-            hintText: "Saisir ou générer un code barre",
-            onChanged: (_) => ctl.update(),
-            suffixIcon: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  tooltip: "Scanner",
-                  icon: const Icon(Icons.qr_code_scanner,
-                      color: AppColors.primary),
-                  onPressed: () async {
-                    final res = await SimpleBarcodeScanner.scanBarcode(
-                      context,
-                      barcodeAppBar: const BarcodeAppBar(
-                        appBarTitle: 'Scanner le code barre',
-                        centerTitle: true,
-                      ),
-                      isShowFlashIcon: true,
-                    );
-                    if (res != null && res != '-1') {
-                      SoundService.playBeep();
-                      ctl.codeBarreCtl.text = res;
-                      ctl.update();
-                    }
-                  },
-                ),
-                IconButton(
-                  tooltip: "Générer",
-                  icon: SvgPicture.asset(
-                    'assets/images/svg/generate_bar_code.svg',
-                  ),
-                  onPressed: ctl.generateRandomBarcode,
-                ),
-              ],
-            ),
-          ),
-          if (ctl.codeBarreCtl.text.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border:
-                        Border.all(color: AppColors.fieldBorder, width: 1.5),
-                  ),
-                  child: BarcodeWidget(
-                    barcode: Barcode.code128(),
-                    data: ctl.codeBarreCtl.text,
-                    width: 250,
-                    height: 70,
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const CircleAvatar(
-              child: Icon(Icons.color_lens),
-            ),
-            title: const Text("Couleur"),
-            trailing: const Icon(Icons.arrow_drop_down),
-            subtitle: PlaceholderWidget(
-              condition: ctl.pickerColor != null,
-              placeholder: const Text("Aucune couleur sélectionnée"),
-              child: Container(
-                height: 20,
-                margin: const EdgeInsets.only(top: 5),
-                decoration: BoxDecoration(
-                  color: ctl.pickerColor != null
-                      ? Color(ctl.pickerColor!)
-                      : Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-            ),
-            onTap: () async {
-              int? colorCode = ctl.pickerColor;
-              await CAlertDialog.show(
-                title: "Couleur",
-                content: SingleChildScrollView(
-                  child: ColorPicker(
-                    pickerColor:
-                        colorCode != null ? Color(colorCode) : Colors.white,
-                    onColorChanged: (color) {
-                      colorCode = color.toARGB32();
-                      ctl.update();
-                    },
-                    enableAlpha: false,
-                    displayThumbColor: true,
-                    paletteType: PaletteType.hsvWithHue,
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: const Text("Annuler"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      ctl.pickerColor = colorCode;
-                      ctl.update();
-                      Get.back();
-                    },
-                    child: const Text("OK"),
-                  ),
-                ],
-              );
-            },
-          ),
-          const Gap(10),
-          CTextFormField(
-            externalLabel: "Prix",
-            controller: ctl.prixCtl,
-            require: true,
-            enabled: ctl.user.isAdmin,
-            keyboardType: TextInputType.number,
-          ),
-          CTextFormField(
-            externalLabel: "Prix minimal",
-            controller: ctl.prixMinimalCtl,
-            require: true,
-            enabled: ctl.user.isAdmin,
-            keyboardType: TextInputType.number,
-            validator: (e) {
-              if (e.toDouble().value >= ctl.prixCtl.toDouble()) {
-                return "Le prix minimal doit être inférieur au prix";
-              }
-              return null;
-            },
-          ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text("Commission"),
-            subtitle: const Text(
-              "Si activé, l'article pourra être vendu au dessus du prix minimal",
-            ),
-            value: ctl.haveCommission,
-            onChanged: (value) {
-              ctl.haveCommission = value;
-              if (value != true) {
-                if (ctl.item == null) {
-                  ctl.prixMaxCtl.text = "0";
-                } else {
-                  if (ctl.prixMaxCtl.text.isEmpty) {
-                    ctl.prixMaxCtl.text =
-                        (ctl.item!.prixMinimal ?? 0).toString();
-                  }
-                }
-              }
-              ctl.update();
-            },
-          ),
-          const Gap(10),
-          CTextFormField(
-            externalLabel: "Prix maximal",
-            controller: ctl.prixMaxCtl,
-            require: ctl.haveCommission,
-            enabled: ctl.user.isAdmin && ctl.haveCommission,
-            keyboardType: TextInputType.number,
-            validator: (e) {
-              if (ctl.haveCommission) {
-                if (e.toDouble().value <= ctl.prixCtl.toDouble()) {
-                  return "Le prix maximal doit être supérieur au prix.";
-                }
-              }
-              return null;
-            },
-          ),
-          Visibility(
-            visible: ctl.item == null,
-            child: CTextFormField(
-              externalLabel: "Quantité",
-              controller: ctl.quantiteCtl,
-              enabled: ctl.user.isAdmin,
-              require: true,
-              keyboardType: TextInputType.number,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/mensuration.dart';
+import 'package:ateliya/data/models/taille_standard.dart';
 import 'package:ateliya/data/models/type_mesure.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
@@ -14,6 +15,7 @@ class LigneMesure extends ModelJson {
   double remise = 0;
   String? etat;
   List<Mensuration> mensurations = [];
+  TailleStandard? tailleStandard;
   TypeMesure? typeMesure;
   Fichier? photoModele;
   Fichier? photoPagne;
@@ -32,6 +34,7 @@ class LigneMesure extends ModelJson {
     this.photoPagne,
     this.createdAt,
     this.isActive = true,
+    this.tailleStandard,
   });
 
   LigneMesure.fromJson(Json json) {
@@ -41,9 +44,10 @@ class LigneMesure extends ModelJson {
     remise = json["remise"].toString().toDouble().value;
     etat = json["etat"];
     if (json["ligneMesures"] != null) {
-      mensurations = (json["ligneMesures"] as List)
-          .map((e) => Mensuration.fromJson(e))
-          .toList();
+      mensurations =
+          (json["ligneMesures"] as List)
+              .map((e) => Mensuration.fromJson(e))
+              .toList();
     }
     if (json["typeMesure"] != null) {
       typeMesure = TypeMesure.fromJson(json["typeMesure"]);
@@ -67,6 +71,9 @@ class LigneMesure extends ModelJson {
 
     createdAt = json["createdAt"].toString().toDateTime();
     isActive = json["isActive"] ?? true;
+    if (json["tailleStandard"] != null) {
+      tailleStandard = TailleStandard.fromJson(json["tailleStandard"]);
+    }
   }
 
   @override
@@ -74,18 +81,18 @@ class LigneMesure extends ModelJson {
 
   @override
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "nom": nom,
-        "montant": montant,
-        "remise": remise,
-        "etat": etat,
-        "ligneMesures": mensurations.map((e) => e.toJson()).toList(),
-        "typeMesure": typeMesure?.toJson(),
-        "photoModele": photoModele,
-        "photoPagne": photoPagne,
-        "createdAt": createdAt?.toIso8601String(),
-        "isActive": isActive,
-      };
+    "id": id,
+    "nom": nom,
+    "montant": montant,
+    "remise": remise,
+    "etat": etat,
+    "ligneMesures": mensurations.map((e) => e.toJson()).toList(),
+    "typeMesure": typeMesure?.toJson(),
+    "photoModele": photoModele,
+    "photoPagne": photoPagne,
+    "createdAt": createdAt?.toIso8601String(),
+    "isActive": isActive,
+  };
 
   double get total => montant - remise;
 }

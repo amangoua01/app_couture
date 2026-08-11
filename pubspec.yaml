@@ -38,6 +38,7 @@ dependencies:
   gap: ^3.0.1
   date_format: ^2.0.9
   shared_preferences: ^2.5.1
+  webview_flutter: ^4.10.0
 
 
   # The following adds the Cupertino Icons font to your application.
