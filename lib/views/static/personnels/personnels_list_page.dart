@@ -2,9 +2,12 @@ import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/body_list_view.dart';
 import 'package:ateliya/tools/widgets/list_item.dart';
+import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/views/controllers/personnels/personnels_list_page_vctl.dart';
 import 'package:ateliya/views/static/personnels/edition_personnel_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class PersonnelListPage extends StatelessWidget {
@@ -19,24 +22,49 @@ class PersonnelListPage extends StatelessWidget {
           ctl,
           title: "Personnel",
           createPage: const EditionPersonnelPage(),
-          itemBuilder: (_, i, selected) => ListItem(
-            ctl,
-            leadingImage:
-                ctl.data.items[i].photoProfil ?? "assets/images/svg/client.svg",
-            displayBadge: ctl.data.items[i].isActive == true,
-            backgroundColor: Colors.red,
-            badgeWidget: const Icon(Icons.lock, size: 10, color: Colors.white),
-            editionPage: EditionPersonnelPage(
-              item: ctl.data.items[i],
-            ),
-            index: i,
-            title: ternaryFn(
-              condition: ctl.user.id == ctl.data.items[i].id,
-              ifTrue: "Vous-même",
-              ifFalse: ctl.data.items[i].nom.value,
-            ),
-            subtitle: ctl.data.items[i].login,
-          ),
+          itemBuilder:
+              (_, i, selected) => ListItem(
+                ctl,
+                leadingImage:
+                    ctl.data.items[i].photoProfil ??
+                    "assets/images/svg/client.svg",
+                displayBadge: ctl.data.items[i].isActive == true,
+                backgroundColor: Colors.red,
+                badgeWidget: const Icon(
+                  Icons.lock,
+                  size: 10,
+                  color: Colors.white,
+                ),
+                editionPage: EditionPersonnelPage(item: ctl.data.items[i]),
+                index: i,
+                title: ternaryFn(
+                  condition: ctl.user.id == ctl.data.items[i].id,
+                  ifTrue: "Vous-même",
+                  ifFalse: ctl.data.items[i].nom.value,
+                ),
+                subtitle: ctl.data.items[i].login,
+                actions: [
+                  PopupMenuItem(
+                    child: const Row(
+                      children: [
+                        Icon(Icons.copy),
+                        Gap(10),
+                        Text("Copier l'email"),
+                      ],
+                    ),
+                    onTap: () async {
+                      final email = ctl.data.items[i].login;
+                      if (email != null && email.isNotEmpty) {
+                        await Clipboard.setData(ClipboardData(text: email));
+                        CSnackbar.show(
+                          message: "Email copié dans le presse-papiers !",
+                          isSuccess: true,
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
         );
       },
     );

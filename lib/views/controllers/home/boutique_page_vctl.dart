@@ -1,4 +1,5 @@
 import 'package:ateliya/api/boutique_api.dart';
+import 'package:ateliya/api/modele_boutique_api.dart';
 import 'package:ateliya/data/models/stock_modele_item.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
@@ -19,6 +20,7 @@ class BoutiquePageVctl extends AuthViewController {
   String _query = '';
 
   final api = BoutiqueApi();
+  final modeleBoutiqueApi = ModeleBoutiqueApi();
 
   Future<void> fetchData() async {
     if (getEntite().value.isNotEmpty) {
@@ -55,17 +57,25 @@ class BoutiquePageVctl extends AuthViewController {
     if (_query.isEmpty) {
       data = List.from(_allData);
     } else {
-      data = _allData.where((item) {
-        final libelle = (item.modele?.libelle ?? '').toLowerCase();
-        // Recherche aussi dans les tailles et prix du bilan
-        final tailles =
-            item.bilan.parTaille.keys.map((t) => t.toLowerCase()).join(' ');
-        final prix =
-            item.bilan.parPrix.keys.map((p) => p.toLowerCase()).join(' ');
-        return libelle.contains(_query) ||
-            tailles.contains(_query) ||
-            prix.contains(_query);
-      }).toList();
+      data =
+          _allData.where((item) {
+            final libelle = (item.modele?.libelle ?? '').toLowerCase();
+            // Recherche aussi dans les tailles et prix du bilan
+            final tailles = item.bilan.parTaille.keys
+                .map((t) => t.toLowerCase())
+                .join(' ');
+            final prix = item.bilan.parPrix.keys
+                .map((p) => p.toLowerCase())
+                .join(' ');
+            // Recherche dans les codes-barres des variantes
+            final codes = item.variantes
+                .map((v) => (v.codeBarre ?? '').toLowerCase())
+                .join(' ');
+            return libelle.contains(_query) ||
+                tailles.contains(_query) ||
+                prix.contains(_query) ||
+                codes.contains(_query);
+          }).toList();
     }
     update();
   }

@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/views/static/auth/login_page.dart';
 import 'package:ateliya/views/static/auth/register/register_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -14,9 +11,6 @@ class AuthHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final padding = MediaQuery.of(context).padding;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(

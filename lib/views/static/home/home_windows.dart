@@ -1,5 +1,6 @@
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/type_user_enum.dart';
 import 'package:ateliya/views/controllers/home/home_windows_vctl.dart';
 import 'package:ateliya/views/static/home/widgets/build_tab_item.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +25,9 @@ class HomeWindows extends StatelessWidget {
               duration: const Duration(milliseconds: 250),
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return FadeTransition(
-                  opacity:
-                      CurveTween(curve: Curves.easeInOut).animate(animation),
+                  opacity: CurveTween(
+                    curve: Curves.easeInOut,
+                  ).animate(animation),
                   child: child,
                 );
               },
@@ -34,37 +36,39 @@ class HomeWindows extends StatelessWidget {
                 child: ctl.pages[ctl.page],
               ),
             ),
-            floatingActionButton: isBoutique
-                ? FloatingActionButton(
-                    heroTag: "boutique",
-                    backgroundColor: AppColors.primary,
-                    elevation: 6,
-                    shape: CircleBorder(
-                      side: BorderSide(
-                        color: ctl.page == 4
-                            ? AppColors.yellow
-                            : Colors.transparent,
-                        width: 2.5,
-                      ),
-                    ),
-                    onPressed: () {
-                      ctl.page = 4;
-                      ctl.update();
-                    },
-                    child: AnimatedScale(
-                      scale: ctl.page == 4 ? 1.15 : 1.0,
-                      duration: const Duration(milliseconds: 200),
-                      child: SvgPicture.asset(
-                        "assets/images/svg/store.svg",
-                        width: 24,
-                        colorFilter: ColorFilter.mode(
-                          ctl.page == 4 ? AppColors.yellow : Colors.white,
-                          BlendMode.srcIn,
+            floatingActionButton:
+                isBoutique
+                    ? FloatingActionButton(
+                      heroTag: "boutique",
+                      backgroundColor: AppColors.primary,
+                      elevation: 6,
+                      shape: CircleBorder(
+                        side: BorderSide(
+                          color:
+                              ctl.page == 4
+                                  ? AppColors.yellow
+                                  : Colors.transparent,
+                          width: 2.5,
                         ),
                       ),
-                    ),
-                  )
-                : null,
+                      onPressed: () {
+                        ctl.page = 4;
+                        ctl.update();
+                      },
+                      child: AnimatedScale(
+                        scale: ctl.page == 4 ? 1.15 : 1.0,
+                        duration: const Duration(milliseconds: 200),
+                        child: SvgPicture.asset(
+                          "assets/images/svg/store.svg",
+                          width: 24,
+                          colorFilter: ColorFilter.mode(
+                            ctl.page == 4 ? AppColors.yellow : Colors.white,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                    )
+                    : null,
             floatingActionButtonLocation:
                 isBoutique ? FloatingActionButtonLocation.centerDocked : null,
             bottomNavigationBar: BottomAppBar(
@@ -73,36 +77,56 @@ class HomeWindows extends StatelessWidget {
               notchMargin: 8,
               color: Colors.white,
               elevation: 16,
-              shadowColor: Colors.black.withOpacity(0.15),
+              shadowColor: Colors.black.withValues(alpha: 0.15),
               clipBehavior: Clip.antiAlias,
               child: Container(
                 height: 64,
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    BuildTabItem(
-                        ctl: ctl,
-                        index: 0,
-                        icon: IcoFontIcons.uiHome,
-                        label: "Accueil"),
-                    BuildTabItem(
-                        ctl: ctl,
-                        index: 1,
-                        icon: FontAwesomeIcons.gauge,
-                        label: "Stats"),
-                    if (isBoutique) const SizedBox(width: 48),
-                    BuildTabItem(
-                        ctl: ctl,
-                        index: 2,
-                        icon: IcoFontIcons.list,
-                        label: "Activités"),
-                    BuildTabItem(
-                        ctl: ctl,
-                        index: 3,
-                        icon: IcoFontIcons.uiSettings,
-                        label: "Options"),
-                  ],
+                  children:
+                      ctl.user.type?.code == TypeUserEnum.ac.code
+                          ? [
+                            BuildTabItem(
+                              ctl: ctl,
+                              index: 0,
+                              icon: IcoFontIcons.uiHome,
+                              label: "Accueil",
+                            ),
+                            BuildTabItem(
+                              ctl: ctl,
+                              index: 3,
+                              icon: IcoFontIcons.uiSettings,
+                              label: "Options",
+                            ),
+                          ]
+                          : [
+                            BuildTabItem(
+                              ctl: ctl,
+                              index: 0,
+                              icon: IcoFontIcons.uiHome,
+                              label: "Accueil",
+                            ),
+                            BuildTabItem(
+                              ctl: ctl,
+                              index: 1,
+                              icon: FontAwesomeIcons.gauge,
+                              label: "Stats",
+                            ),
+                            if (isBoutique) const SizedBox(width: 48),
+                            BuildTabItem(
+                              ctl: ctl,
+                              index: 2,
+                              icon: IcoFontIcons.list,
+                              label: "Activités",
+                            ),
+                            BuildTabItem(
+                              ctl: ctl,
+                              index: 3,
+                              icon: IcoFontIcons.uiSettings,
+                              label: "Options",
+                            ),
+                          ],
                 ),
               ),
             ),

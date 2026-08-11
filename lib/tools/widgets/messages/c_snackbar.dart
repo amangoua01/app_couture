@@ -11,10 +11,7 @@ abstract class CSnackbar {
     if (overlay == null) return;
 
     final entry = OverlayEntry(
-      builder: (_) => _SnackbarWidget(
-        message: message,
-        isSuccess: isSuccess,
-      ),
+      builder: (_) => _SnackbarWidget(message: message, isSuccess: isSuccess),
     );
 
     Overlay.of(overlay).insert(entry);
@@ -112,7 +109,9 @@ class _SnackbarWidgetState extends State<_SnackbarWidget>
                       Text(
                         widget.message,
                         style: const TextStyle(
-                            color: Colors.white, fontSize: 12),
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),

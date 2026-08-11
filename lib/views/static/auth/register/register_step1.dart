@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
+import 'package:ateliya/tools/services/sound_service.dart';
 
 class RegisterStep1 extends StatelessWidget {
   const RegisterStep1({super.key});
@@ -66,7 +67,7 @@ class RegisterStep1 extends StatelessWidget {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppColors.primary.withOpacity(0.05)
+                          ? AppColors.primary.withValues(alpha: 0.05)
                           : null,
                       border: Border(
                         bottom: BorderSide(
@@ -148,9 +149,16 @@ class RegisterStep1 extends StatelessWidget {
                 icon:
                     const Icon(Icons.qr_code_scanner, color: AppColors.primary),
                 onPressed: () async {
-                  final res =
-                      await Get.to(() => const SimpleBarcodeScannerPage());
-                  if (res is String && res != '-1') {
+                  final res = await SimpleBarcodeScanner.scanBarcode(
+                    context,
+                    barcodeAppBar: const BarcodeAppBar(
+                      appBarTitle: 'Scanner le code barre',
+                      centerTitle: true,
+                    ),
+                    isShowFlashIcon: true,
+                  );
+                  if (res != null && res != '-1') {
+                    SoundService.playBeep();
                     ctl.codeParrainCtl.text = res;
                   }
                 },

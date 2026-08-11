@@ -1,6 +1,5 @@
 import 'package:ateliya/api/abstract/crud_web_controller.dart';
 import 'package:ateliya/data/models/abstract/model.dart';
-import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/material.dart';

@@ -65,7 +65,7 @@ class HeaderHomePage extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: AppColors.primary.withOpacity(0.9),
+                        color: AppColors.primary.withValues(alpha: 0.9),
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),

@@ -244,7 +244,7 @@ class EditionClientPage extends StatelessWidget {
                               ctl.user.isAdmin,
                           child: CDropDownFormField(
                             selectedItem: ctl.succursale,
-                            externalLabel: "Succursale",
+                            externalLabel: "Atelier",
                             itemAsString: (e) => e.libelle.value,
                             items: (e, f) => ctl.fetchSuccursales(),
                             onChanged: (e) {

@@ -17,18 +17,23 @@ class FactureApi extends CrudWebController<Facture> {
   String get module => "facture";
 
   Future<DataResponse<Mesure>> ajouterPaiement(
-      int mesureId, double montant, String reference, int succursaleId) async {
+    int mesureId,
+    double montant,
+    String reference,
+    int succursaleId,
+  ) async {
     try {
       final date = DateFormat('yyyy-MM-dd').format(DateTime.now());
       final response = await client.post(
         urlBuilder(api: "facture/$mesureId", module: "paiement"),
         headers: authHeaders,
-        body: {
-          "montant": montant,
-          "datePaiment": date,
-          "succursaleId": succursaleId,
-          "moyenPaiment": reference,
-        }.parseToJson(),
+        body:
+            {
+              "montant": montant,
+              "datePaiment": date,
+              "succursaleId": succursaleId,
+              "moyenPaiment": reference,
+            }.parseToJson(),
       );
 
       final json = jsonDecode(response.body);
@@ -36,7 +41,8 @@ class FactureApi extends CrudWebController<Facture> {
         return DataResponse.success(data: Mesure.fromJson(json["data"]));
       } else {
         return DataResponse.error(
-            message: json["message"] ?? "Erreur lors du paiement");
+          message: json["message"] ?? "Erreur lors du paiement",
+        );
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -44,7 +50,10 @@ class FactureApi extends CrudWebController<Facture> {
   }
 
   Future<DataResponse<Mesure>> updateDetails(
-      int id, double montantTotal, String dateRetrait) async {
+    int id,
+    double montantTotal,
+    String dateRetrait,
+  ) async {
     try {
       final response = await client.post(
         urlBuilder(api: "$id/update-details"),
@@ -60,7 +69,8 @@ class FactureApi extends CrudWebController<Facture> {
         return DataResponse.success(data: Mesure.fromJson(json["data"] ?? {}));
       } else {
         return DataResponse.error(
-            message: json["message"] ?? "Erreur lors de la mise à jour");
+          message: json["message"] ?? "Erreur lors de la mise à jour",
+        );
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -96,7 +106,8 @@ class FactureApi extends CrudWebController<Facture> {
       final json = jsonDecode(response.body);
       if (response.statusCode == 200) {
         return DataResponse.success(
-            data: FacturesGrouped.fromJson(json['data'] ?? {}));
+          data: FacturesGrouped.fromJson(json['data'] ?? {}),
+        );
       } else {
         return DataResponse.error(message: json['message'] ?? "Erreur");
       }
@@ -119,20 +130,18 @@ class FactureApi extends CrudWebController<Facture> {
       final body = <String, dynamic>{};
       if (dateDebut != null) body['dateDebut'] = dateDebut;
       if (dateFin != null) body['dateFin'] = dateFin;
-      if (nomClient != null && nomClient.isNotEmpty)
+      if (nomClient != null && nomClient.isNotEmpty) {
         body['nomClient'] = nomClient;
-      if (numeroClient != null && numeroClient.isNotEmpty)
+      }
+      if (numeroClient != null && numeroClient.isNotEmpty) {
         body['numeroClient'] = numeroClient;
+      }
       if (etatFacture != null) body['etatFacture'] = etatFacture;
 
       final response = await client.post(
         urlBuilder(
           api: "advanced/$succursaleId",
-          params: {
-            "with_pagination": "true",
-            "page": "$page",
-            "type": type,
-          },
+          params: {"with_pagination": "true", "page": "$page", "type": type},
         ),
         headers: authHeaders,
         body: jsonEncode(body),
@@ -183,8 +192,10 @@ class FactureApi extends CrudWebController<Facture> {
         return DataResponse.success(data: TransactionResponse.fromJson(json));
       } else {
         return DataResponse.error(
-            message: json['message'] ??
-                "Erreur lors de la récupération des transactions");
+          message:
+              json['message'] ??
+              "Erreur lors de la récupération des transactions",
+        );
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);

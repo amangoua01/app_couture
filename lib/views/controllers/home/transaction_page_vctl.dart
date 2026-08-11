@@ -38,7 +38,7 @@ class TransactionPageVctl extends AuthViewController {
           return '${df.format(selectedRange!.start)} – ${df.format(selectedRange!.end)}';
         }
         return 'Plage de dates';
-      case TransactionFilterMode.jour:
+      // case TransactionFilterMode.jour:
       default:
         return DateFormat('d MMMM yyyy', 'fr').format(focusedDay).capitalize();
     }
@@ -60,7 +60,7 @@ class TransactionPageVctl extends AuthViewController {
         }
         final today = DateTime.now();
         return (_fmt.format(today), _fmt.format(today));
-      case TransactionFilterMode.jour:
+      // case TransactionFilterMode.jour:
       default:
         final d = _fmt.format(focusedDay);
         return (d, d);
@@ -97,13 +97,13 @@ class TransactionPageVctl extends AuthViewController {
 
     final (dateDebut, dateFin) = _dateRange;
 
-    final DataResponse<TransactionResponse> res =
-        await factureApi.getTransactions(
-      entityId: entity.id.value,
-      type: entity.type.name,
-      dateDebut: dateDebut,
-      dateFin: dateFin,
-    );
+    final DataResponse<TransactionResponse> res = await factureApi
+        .getTransactions(
+          entityId: entity.id.value,
+          type: entity.type.name,
+          dateDebut: dateDebut,
+          dateFin: dateFin,
+        );
 
     isLoading = false;
     if (res.status) {
@@ -122,10 +122,11 @@ class TransactionPageVctl extends AuthViewController {
 
   void onPageChanged(DateTime focused) {
     focusedDay = focused;
-    if (mode == TransactionFilterMode.mois)
+    if (mode == TransactionFilterMode.mois) {
       fetchData();
-    else
+    } else {
       update();
+    }
   }
 
   void selectMonth() {

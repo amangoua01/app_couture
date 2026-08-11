@@ -51,13 +51,16 @@ class EntrepriseStatsSubPage extends StatelessWidget {
                 ),
                 const Gap(8),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.secondary.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                        color: AppColors.secondary.withValues(alpha: 0.3)),
+                      color: AppColors.secondary.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: const Text(
                     "Période sélectionnée",
@@ -76,12 +79,13 @@ class EntrepriseStatsSubPage extends StatelessWidget {
                   runSpacing: 4,
                   children: [
                     _InfoRow(
-                        label: "Recettes nettes : ",
-                        value:
-                            (kpis.recettesNettes ?? 0).toAmount(unit: "Fcfa")),
+                      label: "Recettes nettes : ",
+                      value: (kpis.recettesNettes ?? 0).toAmount(unit: "Fcfa"),
+                    ),
                     _InfoRow(
-                        label: "Ticket moyen : ",
-                        value: (kpis.ticketMoyen ?? 0).toAmount(unit: "Fcfa")),
+                      label: "Ticket moyen : ",
+                      value: (kpis.ticketMoyen ?? 0).toAmount(unit: "Fcfa"),
+                    ),
                   ],
                 ),
               ],
@@ -100,37 +104,44 @@ class EntrepriseStatsSubPage extends StatelessWidget {
             crossAxisSpacing: 14,
             mainAxisSpacing: 14,
             childAspectRatio: 1.3,
-            children: activities.isNotEmpty
-                ? activities
-                    .map((act) => BuildCardActivity(
-                          icon: _iconForActivity(act.activite),
-                          value: (act.nombre ?? 0).toString(),
-                          label: act.activite ?? "",
-                          iconColor: AppColors.primary,
-                        ))
-                    .toList()
-                : [
-                    const BuildCardActivity(
+            children:
+                activities.isNotEmpty
+                    ? activities
+                        .map(
+                          (act) => BuildCardActivity(
+                            icon: _iconForActivity(act.activite),
+                            value: (act.nombre ?? 0).toString(),
+                            label: act.activite ?? "",
+                            iconColor: AppColors.primary,
+                          ),
+                        )
+                        .toList()
+                    : [
+                      const BuildCardActivity(
                         icon: Icons.receipt_long_outlined,
                         value: "0",
                         label: "Factures clients",
-                        iconColor: AppColors.primary),
-                    const BuildCardActivity(
+                        iconColor: AppColors.primary,
+                      ),
+                      const BuildCardActivity(
                         icon: Icons.edit_outlined,
                         value: "0",
                         label: "Prises de mesures",
-                        iconColor: AppColors.secondary),
-                    const BuildCardActivity(
+                        iconColor: AppColors.secondary,
+                      ),
+                      const BuildCardActivity(
                         icon: Icons.payments_outlined,
                         value: "0",
                         label: "Paiements reçus",
-                        iconColor: AppColors.green),
-                    const BuildCardActivity(
+                        iconColor: AppColors.green,
+                      ),
+                      const BuildCardActivity(
                         icon: Icons.people_outline,
                         value: "0",
                         label: "Clients actifs",
-                        iconColor: AppColors.primary),
-                  ],
+                        iconColor: AppColors.primary,
+                      ),
+                    ],
           ),
         ),
         const Gap(24),
@@ -139,12 +150,15 @@ class EntrepriseStatsSubPage extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Caisse & Opérations",
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.primary,
-                    letterSpacing: -0.2)),
+            const Text(
+              "Caisse & Opérations",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: AppColors.primary,
+                letterSpacing: -0.2,
+              ),
+            ),
             const Gap(12),
             GridView.count(
               shrinkWrap: true,
@@ -155,24 +169,28 @@ class EntrepriseStatsSubPage extends StatelessWidget {
               childAspectRatio: 1.3,
               children: [
                 BuildCardActivity(
-                    icon: Icons.account_balance_wallet_outlined,
-                    value: kpis.caisse.toAmount(),
-                    label: "Solde caisse (FCFA)",
-                    iconColor: AppColors.primary),
+                  icon: Icons.account_balance_wallet_outlined,
+                  value: kpis.caisse.toAmount(),
+                  label: "Solde caisse (FCFA)",
+                  iconColor: AppColors.primary,
+                ),
                 BuildCardActivity(
-                    icon: Icons.show_chart,
-                    value: "${kpis.tauxRecouvrement ?? 0}%",
-                    label: "Taux recouvrement",
-                    iconColor: AppColors.secondary),
+                  icon: Icons.show_chart,
+                  value: "${kpis.tauxRecouvrement ?? 0}%",
+                  label: "Taux recouvrement",
+                  iconColor: AppColors.secondary,
+                ),
                 BuildCardActivity(
-                    icon: Icons.attach_money,
-                    value: kpis.totalDepenses.toAmount(),
-                    label: "Dépenses totales",
-                    iconColor: AppColors.secondary),
+                  icon: Icons.attach_money,
+                  value: kpis.totalDepenses.toAmount(),
+                  label: "Dépenses totales",
+                  iconColor: AppColors.secondary,
+                ),
                 BuildMouvementCard(
-                    entree: kpis.totalMouvementsEntrants.toAmount(),
-                    sortie: kpis.totalMouvementsSortants.toAmount(),
-                    label: "Mouvements (FCFA)"),
+                  entree: kpis.totalMouvementsEntrants.toAmount(),
+                  sortie: kpis.totalMouvementsSortants.toAmount(),
+                  label: "Mouvements (FCFA)",
+                ),
               ],
             ),
           ],
@@ -187,8 +205,9 @@ class EntrepriseStatsSubPage extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(18),
-              border:
-                  Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
+              border: Border.all(
+                color: AppColors.primary.withValues(alpha: 0.05),
+              ),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.primary.withValues(alpha: 0.04),
@@ -199,23 +218,28 @@ class EntrepriseStatsSubPage extends StatelessWidget {
             ),
             child: Column(
               children: [
-                ...activities.map((act) => BuildSummuryItem(
-                      label: act.activite ?? "",
-                      value: "${(act.revenus ?? 0).toAmount()} FCFA",
-                      color: AppColors.primary,
-                    )),
+                ...activities.map(
+                  (act) => BuildSummuryItem(
+                    label: act.activite ?? "",
+                    value: "${(act.revenus ?? 0).toAmount()} FCFA",
+                    color: AppColors.primary,
+                  ),
+                ),
                 BuildSummuryItem(
-                    label: "Dépenses",
-                    value: "-${kpis.totalDepenses.toAmount()} FCFA",
-                    color: AppColors.secondary),
+                  label: "Dépenses",
+                  value: "-${kpis.totalDepenses.toAmount()} FCFA",
+                  color: AppColors.secondary,
+                ),
                 Divider(
-                    height: 28,
-                    color: AppColors.fieldBorder.withValues(alpha: 0.6)),
+                  height: 28,
+                  color: AppColors.fieldBorder.withValues(alpha: 0.6),
+                ),
                 BuildSummuryItem(
-                    label: "Recettes nettes",
-                    value: "${(kpis.recettesNettes ?? 0).toAmount()} FCFA",
-                    color: AppColors.green,
-                    isBold: true),
+                  label: "Recettes nettes",
+                  value: "${(kpis.recettesNettes ?? 0).toAmount()} FCFA",
+                  color: AppColors.green,
+                  isBold: true,
+                ),
               ],
             ),
           ),
@@ -249,8 +273,9 @@ class EntrepriseStatsSubPage extends StatelessWidget {
     if (a.contains('paiement')) return Icons.payments_outlined;
     if (a.contains('client')) return Icons.people_outline;
     if (a.contains('vente')) return Icons.shopping_bag_outlined;
-    if (a.contains('réservation') || a.contains('reservation'))
+    if (a.contains('réservation') || a.contains('reservation')) {
       return Icons.calendar_today_outlined;
+    }
     return Icons.analytics_outlined;
   }
 }
@@ -261,8 +286,9 @@ class _TopModelesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxVentes =
-        modeles.map((m) => m.ventes ?? 0).fold(0, (a, b) => a > b ? a : b);
+    final maxVentes = modeles
+        .map((m) => m.ventes ?? 0)
+        .fold(0, (a, b) => a > b ? a : b);
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -277,25 +303,26 @@ class _TopModelesCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        children: modeles.asMap().entries.map((e) {
-          final isLast = e.key == modeles.length - 1;
-          return Column(
-            children: [
-              _TopModeleItem(
-                rank: e.key + 1,
-                modele: e.value,
-                maxVentes: maxVentes,
-              ),
-              if (!isLast)
-                Divider(
-                  height: 1,
-                  indent: 16,
-                  endIndent: 16,
-                  color: AppColors.fieldBorder.withValues(alpha: 0.6),
-                ),
-            ],
-          );
-        }).toList(),
+        children:
+            modeles.asMap().entries.map((e) {
+              final isLast = e.key == modeles.length - 1;
+              return Column(
+                children: [
+                  _TopModeleItem(
+                    rank: e.key + 1,
+                    modele: e.value,
+                    maxVentes: maxVentes,
+                  ),
+                  if (!isLast)
+                    Divider(
+                      height: 1,
+                      indent: 16,
+                      endIndent: 16,
+                      color: AppColors.fieldBorder.withValues(alpha: 0.6),
+                    ),
+                ],
+              );
+            }).toList(),
       ),
     );
   }
@@ -305,8 +332,11 @@ class _TopModeleItem extends StatelessWidget {
   final int rank;
   final TopModeleVendu modele;
   final int maxVentes;
-  const _TopModeleItem(
-      {required this.rank, required this.modele, required this.maxVentes});
+  const _TopModeleItem({
+    required this.rank,
+    required this.modele,
+    required this.maxVentes,
+  });
 
   Color get _barColor {
     if (rank == 1) return AppColors.secondary;
@@ -371,8 +401,11 @@ class _TopModeleItem extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.shopping_bag_outlined,
-                      size: 12, color: AppColors.secondary),
+                  const Icon(
+                    Icons.shopping_bag_outlined,
+                    size: 12,
+                    color: AppColors.secondary,
+                  ),
                   const Gap(3),
                   Text(
                     "$ventes ventes",
@@ -411,14 +444,21 @@ class _InfoRow extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(label,
-            style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.55), fontSize: 12)),
-        Text(value,
-            style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold)),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.55),
+            fontSize: 12,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ],
     );
   }

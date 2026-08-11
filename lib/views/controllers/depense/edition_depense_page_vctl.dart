@@ -7,7 +7,6 @@ import 'package:ateliya/data/models/caisse.dart';
 import 'package:ateliya/data/models/famille_depense.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
-import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -111,7 +110,8 @@ class EditionDepensePageVctl extends GetxController {
 
   Future<void> submit() async {
     if (selectedFamille == null) {
-      CMessageDialog.show(message: "Veuillez sélectionner une famille de dépense");
+      CMessageDialog.show(
+          message: "Veuillez sélectionner une famille de dépense");
       return;
     }
 
@@ -121,7 +121,8 @@ class EditionDepensePageVctl extends GetxController {
     }
 
     if (ligneRows.isEmpty) {
-      CMessageDialog.show(message: "Veuillez ajouter au moins une ligne de paiement");
+      CMessageDialog.show(
+          message: "Veuillez ajouter au moins une ligne de paiement");
       return;
     }
 
@@ -132,7 +133,8 @@ class EditionDepensePageVctl extends GetxController {
 
       for (var row in ligneRows) {
         if (row.caisse == null || row.montantCtl.text.isEmpty) {
-          CMessageDialog.show(message: "Veuillez compléter toutes les lignes de paiement");
+          CMessageDialog.show(
+              message: "Veuillez compléter toutes les lignes de paiement");
           return;
         }
 
@@ -140,7 +142,9 @@ class EditionDepensePageVctl extends GetxController {
         double caisseBalance = double.tryParse(row.caisse?.montant ?? "0") ?? 0;
 
         if (lineAmount > caisseBalance) {
-          CMessageDialog.show(message: "Le montant dépasse le solde de la caisse ${row.caisse?.entite?.libelle} (${row.caisse?.type})");
+          CMessageDialog.show(
+              message:
+                  "Le montant dépasse le solde de la caisse ${row.caisse?.entite?.libelle} (${row.caisse?.type})");
           return;
         }
 
@@ -153,7 +157,9 @@ class EditionDepensePageVctl extends GetxController {
       }
 
       if (linesSum != totalAmount) {
-        CMessageDialog.show(message: "La somme des lignes ($linesSum) doit être égale au montant total ($totalAmount)");
+        CMessageDialog.show(
+            message:
+                "La somme des lignes ($linesSum) doit être égale au montant total ($totalAmount)");
         return;
       }
 
@@ -167,7 +173,8 @@ class EditionDepensePageVctl extends GetxController {
       final res = await depenseApi.createOne(dto).load();
       if (res.status) {
         Get.back(result: true);
-        CMessageDialog.show(message: "Dépense enregistrée avec succès", isSuccess: true);
+        CMessageDialog.show(
+            message: "Dépense enregistrée avec succès", isSuccess: true);
       } else {
         CMessageDialog.show(message: res.message);
       }

@@ -1,5 +1,4 @@
 import 'package:ateliya/data/models/stats/kpis.dart';
-import 'package:ateliya/data/models/stats/kpis.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/widgets/build_card_activity.dart';

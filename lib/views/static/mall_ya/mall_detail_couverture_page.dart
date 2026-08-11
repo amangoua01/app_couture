@@ -29,7 +29,7 @@ class MallDetailCouverturePage extends StatelessWidget {
       CSnackbar.show(message: 'Slide supprimé avec succès', isSuccess: true);
       Get.back(result: 'deleted');
     } else {
-      CSnackbar.show(message: res.message ?? 'Erreur inconnue');
+      CSnackbar.show(message: res.message);
     }
   }
 

@@ -6,7 +6,6 @@ import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/data/models/stock_modele_item.dart';
 import 'package:ateliya/tools/extensions/future.dart';
-import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:ateliya/views/static/ravitaillement/ravitaillement_list_page.dart';
@@ -54,8 +53,9 @@ class EditionRavitaillementVctl extends AuthViewController {
         stockItems = res.data ?? [];
       } else {
         CSnackbar.show(
-            message: "Erreur lors du chargement des articles",
-            isSuccess: false);
+          message: "Erreur lors du chargement des articles",
+          isSuccess: false,
+        );
       }
     } catch (_) {}
 
@@ -69,7 +69,9 @@ class EditionRavitaillementVctl extends AuthViewController {
   }
 
   static LigneRavitaillementForm createLigne(
-      ModeleBoutique modele, String qty) {
+    ModeleBoutique modele,
+    String qty,
+  ) {
     return LigneRavitaillementForm()
       ..modele = modele
       ..quantiteCtl.text = qty;
@@ -94,14 +96,17 @@ class EditionRavitaillementVctl extends AuthViewController {
       final ligne = lignes[i];
       if (ligne.modele == null) {
         CSnackbar.show(
-            message: 'Ligne ${i + 1} : sélectionnez un article',
-            isSuccess: false);
+          message: 'Ligne ${i + 1} : sélectionnez un article',
+          isSuccess: false,
+        );
         return;
       }
       final qty = int.tryParse(ligne.quantiteCtl.text) ?? 0;
       if (qty <= 0) {
         CSnackbar.show(
-            message: 'Ligne ${i + 1} : quantité invalide', isSuccess: false);
+          message: 'Ligne ${i + 1} : quantité invalide',
+          isSuccess: false,
+        );
         return;
       }
     }
@@ -112,22 +117,21 @@ class EditionRavitaillementVctl extends AuthViewController {
       return;
     }
 
-    final lignesPayload = lignes
-        .map(
-          (l) => LigneMouvementStockDto(
-            modeleBoutiqueId: l.modele!.id!,
-            quantite: int.tryParse(l.quantiteCtl.text) ?? 1,
-          ),
-        )
-        .toList();
-    final res = await _stockApi
-        .entreeStock(
-          MouvementStockDto(
-            boutiqueId: entite.id!,
-            lignes: lignesPayload,
-          ),
-        )
-        .load();
+    final lignesPayload =
+        lignes
+            .map(
+              (l) => LigneMouvementStockDto(
+                modeleBoutiqueId: l.modele!.id!,
+                quantite: int.tryParse(l.quantiteCtl.text) ?? 1,
+              ),
+            )
+            .toList();
+    final res =
+        await _stockApi
+            .entreeStock(
+              MouvementStockDto(boutiqueId: entite.id!, lignes: lignesPayload),
+            )
+            .load();
 
     if (res.status) {
       CSnackbar.show(
@@ -137,8 +141,7 @@ class EditionRavitaillementVctl extends AuthViewController {
       final confirmed = await Get.to(() => const RavitaillementListPage());
       Get.back(result: confirmed == true ? true : null);
     } else {
-      CSnackbar.show(
-          message: res.message ?? "Une erreur est survenue", isSuccess: false);
+      CSnackbar.show(message: res.message, isSuccess: false);
     }
   }
 

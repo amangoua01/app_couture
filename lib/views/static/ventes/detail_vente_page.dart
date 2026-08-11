@@ -1,5 +1,6 @@
 import 'package:ateliya/data/models/vente.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
@@ -216,7 +217,13 @@ class DetailVentePage extends StatelessWidget {
                                       ),
                                       const Gap(8),
                                       Text(
-                                        ligne.montant.value.toAmount(unit: "F"),
+                                        ternaryBuilder(
+                                          condition:
+                                              ligne.modeleBoutique == null,
+                                          ifTrue: "0.0",
+                                          ifFalse: () =>
+                                              ligne.modeleBoutique!.prix,
+                                        ).toAmount(unit: "F"),
                                         style: const TextStyle(
                                           fontSize: 13,
                                           color: Colors.grey,
@@ -262,7 +269,7 @@ class DetailVentePage extends StatelessWidget {
                                 ),
                                 const Gap(4),
                                 Text(
-                                  ligne.total.toAmount(unit: "F"),
+                                  ligne.montant.toAmount(unit: "F"),
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -298,6 +305,10 @@ class DetailVentePage extends StatelessWidget {
                       ),
                       _buildSummaryRow(
                         "Montant Total",
+                        // (vente.paiementBoutiqueLignes.fold(
+                        //             0.0, (double e, f) => e + f.total.value) +
+                        //         vente.remiseTotale)
+                        //     .toAmount(unit: "F"),
                         (vente.montant.value + vente.remiseTotale)
                             .toAmount(unit: "F"),
                         isBold: false,

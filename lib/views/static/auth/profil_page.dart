@@ -4,13 +4,15 @@ import 'package:ateliya/data/models/fichier_local.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:ateliya/tools/widgets/c_tab_bar.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/c_tab_bar.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
+import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/views/controllers/auth/profil_page_vctl.dart';
 import 'package:ateliya/views/static/auth/update_password_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -63,8 +65,9 @@ class ProfilPage extends StatelessWidget {
                                         shape: BoxShape.circle,
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black
-                                                .withValues(alpha: 0.08),
+                                            color: Colors.black.withValues(
+                                              alpha: 0.08,
+                                            ),
                                             blurRadius: 15,
                                             offset: const Offset(0, 5),
                                           ),
@@ -74,10 +77,14 @@ class ProfilPage extends StatelessWidget {
                                       child: ClipOval(
                                         child: _buildAvatarImage(
                                           fichier: ctl.logoUserPath,
-                                          fallbackUrl: ctl.user.photoProfil
-                                                  .value.isNotEmpty
-                                              ? ctl.user.photoProfil.value
-                                              : null,
+                                          fallbackUrl:
+                                              ctl
+                                                      .user
+                                                      .photoProfil
+                                                      .value
+                                                      .isNotEmpty
+                                                  ? ctl.user.photoProfil.value
+                                                  : null,
                                         ),
                                       ),
                                     ),
@@ -87,12 +94,15 @@ class ProfilPage extends StatelessWidget {
                                         color: AppColors.primary,
                                         shape: BoxShape.circle,
                                         border: Border.all(
-                                            color: Colors.white, width: 2),
+                                          color: Colors.white,
+                                          width: 2,
+                                        ),
                                       ),
                                       child: const Icon(
-                                          Icons.camera_alt_rounded,
-                                          size: 20,
-                                          color: Colors.white),
+                                        Icons.camera_alt_rounded,
+                                        size: 20,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -105,24 +115,29 @@ class ProfilPage extends StatelessWidget {
                                 Text(
                                   ctl.user.fullName,
                                   style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 const Gap(4),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 4),
+                                    horizontal: 12,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: AppColors.primary
-                                        .withValues(alpha: 0.1),
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.1,
+                                    ),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
                                     ctl.user.login.value,
                                     style: const TextStyle(
-                                        color: AppColors.primary,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600),
+                                      color: AppColors.primary,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -160,12 +175,37 @@ class ProfilPage extends StatelessWidget {
                                         TextCapitalization.words,
                                     margin: const EdgeInsets.only(bottom: 16),
                                   ),
-                                  CTextFormField(
-                                    initialValue: ctl.user.login.value,
-                                    enabled: false,
-                                    externalLabel: 'Email (Non modifiable)',
-                                    margin: EdgeInsets.zero,
-                                    fillColor: Colors.grey[50], // champ grisé
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Expanded(
+                                        child: CTextFormField(
+                                          initialValue: ctl.user.login.value,
+                                          enabled: false,
+                                          externalLabel:
+                                              'Email (Non modifiable)',
+                                          margin: EdgeInsets.zero,
+                                          fillColor:
+                                              Colors.grey[50], // champ grisé
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () async {
+                                          final email = ctl.user.login.value;
+                                          if (email.isNotEmpty) {
+                                            await Clipboard.setData(
+                                              ClipboardData(text: email),
+                                            );
+                                            CSnackbar.show(
+                                              message:
+                                                  "Email copié dans le presse-papiers !",
+                                              isSuccess: true,
+                                            );
+                                          }
+                                        },
+                                        icon: const Icon(Icons.copy),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -179,23 +219,32 @@ class ProfilPage extends StatelessWidget {
                             const Gap(10),
 
                             TextButton.icon(
-                              onPressed: () =>
-                                  Get.to(() => const UpdatePasswordPage()),
-                              icon: const Icon(Icons.lock_outline_rounded,
-                                  size: 18, color: AppColors.primary),
+                              onPressed:
+                                  () =>
+                                      Get.to(() => const UpdatePasswordPage()),
+                              icon: const Icon(
+                                Icons.lock_outline_rounded,
+                                size: 18,
+                                color: AppColors.primary,
+                              ),
                               label: const Text(
                                 'Changer mon mot de passe',
                                 style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.w600),
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               style: TextButton.styleFrom(
-                                backgroundColor:
-                                    AppColors.primary.withValues(alpha: 0.05),
+                                backgroundColor: AppColors.primary.withValues(
+                                  alpha: 0.05,
+                                ),
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 12),
+                                  horizontal: 20,
+                                  vertical: 12,
+                                ),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30)),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
                               ),
                             ),
                             const Gap(50),
@@ -230,7 +279,9 @@ class ProfilPage extends StatelessWidget {
                             key: ctl.entrepriseFormKey,
                             child: ListView(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 24),
+                                horizontal: 20,
+                                vertical: 24,
+                              ),
                               children: [
                                 Center(
                                   child: GestureDetector(
@@ -247,8 +298,9 @@ class ProfilPage extends StatelessWidget {
                                             shape: BoxShape.circle,
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black
-                                                    .withValues(alpha: 0.08),
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.08,
+                                                ),
                                                 blurRadius: 15,
                                                 offset: const Offset(0, 5),
                                               ),
@@ -258,12 +310,16 @@ class ProfilPage extends StatelessWidget {
                                           child: ClipOval(
                                             child: _buildAvatarImage(
                                               fichier: ctl.logoEntreprisePath,
-                                              fallbackUrl: (ctl.user.entreprise
-                                                      ?.logo is FichierServer)
-                                                  ? (ctl.user.entreprise?.logo
-                                                          as FichierServer)
-                                                      .fullUrl
-                                                  : null,
+                                              fallbackUrl:
+                                                  (ctl.user.entreprise?.logo
+                                                          is FichierServer)
+                                                      ? (ctl
+                                                                  .user
+                                                                  .entreprise
+                                                                  ?.logo
+                                                              as FichierServer)
+                                                          .fullUrl
+                                                      : null,
                                             ),
                                           ),
                                         ),
@@ -274,13 +330,15 @@ class ProfilPage extends StatelessWidget {
                                               color: AppColors.primary,
                                               shape: BoxShape.circle,
                                               border: Border.all(
-                                                  color: Colors.white,
-                                                  width: 2),
+                                                color: Colors.white,
+                                                width: 2,
+                                              ),
                                             ),
                                             child: const Icon(
-                                                Icons.camera_alt_rounded,
-                                                size: 20,
-                                                color: Colors.white),
+                                              Icons.camera_alt_rounded,
+                                              size: 20,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                       ],
                                     ),
@@ -293,8 +351,9 @@ class ProfilPage extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(16),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black
-                                            .withValues(alpha: 0.02),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.02,
+                                        ),
                                         blurRadius: 10,
                                         offset: const Offset(0, 4),
                                       ),
@@ -308,8 +367,9 @@ class ProfilPage extends StatelessWidget {
                                         controller: ctl.nomEntrepriseCtl,
                                         externalLabel: "Nom de l'entreprise",
                                         require: true,
-                                        margin:
-                                            const EdgeInsets.only(bottom: 16),
+                                        margin: const EdgeInsets.only(
+                                          bottom: 16,
+                                        ),
                                         fillColor:
                                             !isAdmin ? Colors.grey[50] : null,
                                       ),
@@ -320,8 +380,9 @@ class ProfilPage extends StatelessWidget {
                                         require: true,
                                         keyboardType:
                                             TextInputType.emailAddress,
-                                        margin:
-                                            const EdgeInsets.only(bottom: 16),
+                                        margin: const EdgeInsets.only(
+                                          bottom: 16,
+                                        ),
                                         fillColor:
                                             !isAdmin ? Colors.grey[50] : null,
                                       ),

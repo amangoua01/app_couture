@@ -83,7 +83,7 @@ class RegisterPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: ctl.currentPage == 1
                                     ? AppColors.secondary
-                                    : Colors.white.withOpacity(0.3),
+                                    : Colors.white.withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             ),
@@ -98,7 +98,7 @@ class RegisterPage extends StatelessWidget {
                             "Étape ${ctl.currentPage + 1}/2",
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha: 0.7),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -108,7 +108,7 @@ class RegisterPage extends StatelessWidget {
                                 : "Entreprise",
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha: 0.7),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -135,7 +135,7 @@ class RegisterPage extends StatelessWidget {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -2),
                 ),

@@ -4,7 +4,6 @@ import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
-import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/views/controllers/depense/edition_depense_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';

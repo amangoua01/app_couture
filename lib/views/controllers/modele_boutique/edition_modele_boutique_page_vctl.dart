@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/api/modele_api.dart';
 import 'package:ateliya/api/modele_boutique_api.dart';
@@ -9,7 +11,6 @@ import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
-import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_snackbar.dart';
 import 'package:ateliya/views/controllers/abstract/edition_view_controller.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class EditionModeleBoutiquePageVctl
   final tailleCtl = TextEditingController();
   final prixCtl = TextEditingController(text: "0");
   final prixMinimalCtl = TextEditingController(text: "0");
+  final codeBarreCtl = TextEditingController();
   final modeleApi = ModeleApi();
   final boutiqueApi = BoutiqueApi();
   Boutique? boutique;
@@ -29,6 +31,22 @@ class EditionModeleBoutiquePageVctl
   final prixMaxCtl = TextEditingController(text: "0");
 
   EditionModeleBoutiquePageVctl(super.item) : super(api: ModeleBoutiqueApi());
+
+  void generateRandomBarcode() {
+    final random = Random();
+    String code = "200";
+    for (int i = 0; i < 9; i++) {
+      code += random.nextInt(10).toString();
+    }
+    int sum = 0;
+    for (int i = 0; i < 12; i++) {
+      int digit = int.parse(code[i]);
+      sum += (i % 2 == 0) ? digit : digit * 3;
+    }
+    int checksum = (10 - (sum % 10)) % 10;
+    codeBarreCtl.text = "$code$checksum";
+    update();
+  }
 
   @override
   Future<ModeleBoutique?> onCreate() async {
@@ -42,6 +60,8 @@ class EditionModeleBoutiquePageVctl
       color: pickerColor,
       haveCommission: haveCommission,
       prixMax: (haveCommission ? prixMaxCtl : prixMinimalCtl).toDouble(),
+      codeBarre:
+          codeBarreCtl.text.trim().isEmpty ? null : codeBarreCtl.text.trim(),
     );
     final res = await api.create(data).load();
     if (res.status) {
@@ -66,6 +86,7 @@ class EditionModeleBoutiquePageVctl
     pickerColor = item.color;
     haveCommission = item.haveCommission ?? false;
     prixMaxCtl.text = item.prixMax.value.toString();
+    codeBarreCtl.text = item.codeBarre ?? "";
   }
 
   @override
@@ -78,6 +99,8 @@ class EditionModeleBoutiquePageVctl
     item.color = pickerColor;
     item.haveCommission = haveCommission;
     item.prixMax = prixMaxCtl.toDouble();
+    item.codeBarre =
+        codeBarreCtl.text.trim().isEmpty ? null : codeBarreCtl.text.trim();
     final res = await api.update(item).load();
     if (res.status) {
       CSnackbar.show(

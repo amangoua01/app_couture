@@ -60,7 +60,7 @@ class MallEditionModeleVctl extends AuthViewController {
       CSnackbar.show(message: 'Modèle mis à jour avec succès', isSuccess: true);
       Get.back(result: true);
     } else {
-      CSnackbar.show(message: res.message ?? 'Erreur inconnue');
+      CSnackbar.show(message: res.message);
     }
   }
 

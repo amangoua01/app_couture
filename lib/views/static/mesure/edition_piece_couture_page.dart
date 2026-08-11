@@ -1,6 +1,6 @@
 import 'package:ateliya/data/dto/autre_image_mesure_dto.dart';
-import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/data/dto/mesure/ligne_mesure_dto.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
@@ -23,9 +23,7 @@ class EditionPieceCouturePage extends StatelessWidget {
       init: EditionPieceCouturePageVctl(ligne),
       builder: (ctl) {
         return Scaffold(
-          appBar: AppBar(
-            title: const Text("Edition de pièce à coudre"),
-          ),
+          appBar: AppBar(title: const Text("Edition de pièce à coudre")),
           body: Form(
             key: ctl.formKey,
             child: ListView(
@@ -39,12 +37,41 @@ class EditionPieceCouturePage extends StatelessWidget {
                   },
                   items: (p0, p1) => ctl.fetchTypeMesures(),
                   itemAsString: (p0) => p0.libelle.value,
-                  externalLabel: "Type mesure",
+                  externalLabel: "Type pièce",
                   require: true,
+                ),
+                CheckboxListTile(
+                  value: ctl.isSurMesure,
+                  onChanged: (e) {
+                    ctl.isSurMesure = e ?? false;
+                    if (!ctl.isSurMesure) {
+                      ctl.selectedTailleStandard = null;
+                    }
+                    ctl.update();
+                  },
+                  title: const Text("Pièce sur mesure"),
+                  subtitle: const Text(
+                    "Pièce sur mesure ou par taille standard ?",
+                  ),
+                  contentPadding: EdgeInsets.zero,
+                ),
+                Visibility(
+                  visible: !ctl.isSurMesure,
+                  child: CDropDownFormField(
+                    selectedItem: ctl.selectedTailleStandard,
+                    externalLabel: "Taille",
+                    onChanged: (e) {
+                      ctl.selectedTailleStandard = e;
+                      ctl.update();
+                    },
+                    items: (e, f) => ctl.fetchTailleStandards(),
+                    itemAsString: (e) => e.libelle.value,
+                    require: !ctl.isSurMesure,
+                  ),
                 ),
                 CTextFormField(
                   controller: ctl.nomTenancierCtl,
-                  externalLabel: "Nom tenantier",
+                  externalLabel: "Nom tenancier",
                   textCapitalization: TextCapitalization.words,
                 ),
                 Row(
@@ -151,23 +178,28 @@ class EditionPieceCouturePage extends StatelessWidget {
                         ),
                         title: const Text("D'autres pagnes/tissus ?"),
                         subtitle: Text(
-                            "${ctl.autreImagesMesure.length} pagne/tissu(s)"),
+                          "${ctl.autreImagesMesure.length} pagne/tissu(s)",
+                        ),
                         trailing: CircleAvatar(
                           child: IconButton(
                             icon: const Icon(Icons.add_circle),
                             onPressed: () {
                               ctl.autreImagesMesure.add(AutreImageMesureDto());
                               ctl.update();
-                              Future.delayed(const Duration(milliseconds: 100),
-                                  () {
-                                if (ctl.autreImagesPageCtl.hasClients) {
-                                  ctl.autreImagesPageCtl.animateToPage(
-                                    ctl.autreImagesMesure.length - 1,
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeOut,
-                                  );
-                                }
-                              });
+                              Future.delayed(
+                                const Duration(milliseconds: 100),
+                                () {
+                                  if (ctl.autreImagesPageCtl.hasClients) {
+                                    ctl.autreImagesPageCtl.animateToPage(
+                                      ctl.autreImagesMesure.length - 1,
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      curve: Curves.easeOut,
+                                    );
+                                  }
+                                },
+                              );
                             },
                           ),
                         ),
@@ -186,8 +218,9 @@ class EditionPieceCouturePage extends StatelessWidget {
                             itemBuilder: (context, i) {
                               final item = ctl.autreImagesMesure[i];
                               return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                ),
                                 child: buildImageSelection(item, i, ctl),
                               );
                             },
@@ -202,17 +235,20 @@ class EditionPieceCouturePage extends StatelessWidget {
                               ctl.autreImagesMesure.length,
                               (index) => AnimatedContainer(
                                 duration: const Duration(milliseconds: 200),
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 4),
-                                width: ctl.currentAutreImageIndex == index
-                                    ? 12
-                                    : 8,
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                ),
+                                width:
+                                    ctl.currentAutreImageIndex == index
+                                        ? 12
+                                        : 8,
                                 height: 8,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(4),
-                                  color: ctl.currentAutreImageIndex == index
-                                      ? AppColors.primary
-                                      : Colors.grey.shade300,
+                                  color:
+                                      ctl.currentAutreImageIndex == index
+                                          ? AppColors.primary
+                                          : Colors.grey.shade300,
                                 ),
                               ),
                             ),
@@ -237,8 +273,11 @@ class EditionPieceCouturePage extends StatelessWidget {
     );
   }
 
-  Widget buildImageSelection(AutreImageMesureDto autreImage, int index,
-      EditionPieceCouturePageVctl ctl) {
+  Widget buildImageSelection(
+    AutreImageMesureDto autreImage,
+    int index,
+    EditionPieceCouturePageVctl ctl,
+  ) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -246,7 +285,7 @@ class EditionPieceCouturePage extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -314,7 +353,9 @@ class EditionPieceCouturePage extends StatelessWidget {
                   Text(
                     "${autreImage.quantite}",
                     style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.add_circle_outline, size: 24),

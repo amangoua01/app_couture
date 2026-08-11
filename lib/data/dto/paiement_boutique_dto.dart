@@ -3,13 +3,13 @@ import 'package:ateliya/data/dto/paiement_boutique/ligne_paiement_boutique_dto.d
 
 class PaiementBoutiqueDto extends DtoModel {
   final DateTime datePaiment;
-  final int clientId, boutiqueId;
+  final int? clientId, boutiqueId;
   final List<LignePaiementBoutiqueDto> lignes;
   final String moyenPaiement;
 
   PaiementBoutiqueDto({
     required this.datePaiment,
-    required this.clientId,
+    this.clientId,
     required this.lignes,
     required this.boutiqueId,
     this.moyenPaiement = "Espèces",
@@ -17,9 +17,9 @@ class PaiementBoutiqueDto extends DtoModel {
 
   @override
   Map<String, dynamic> toJson() => {
-        'datePaiment': datePaiment.toIso8601String(),
-        'clientId': clientId,
-        'lignes': lignes.map((e) => e.toJson()).toList(),
-        'moyenPaiement': moyenPaiement,
-      };
+    'datePaiment': datePaiment.toIso8601String(),
+    'clientId': clientId,
+    'lignes': lignes.map((e) => e.toJson()).toList(),
+    'moyenPaiement': moyenPaiement,
+  };
 }

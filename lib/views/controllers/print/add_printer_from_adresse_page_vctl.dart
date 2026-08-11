@@ -8,11 +8,13 @@ import 'package:ateliya/tools/models/blue_device.dart';
 import 'package:ateliya/tools/services/sound_service.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
+import 'package:ateliya/views/controllers/abstract/printer_manager_view_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
-class AddPrinterFromAdressePageVctl extends GetxController {
+class AddPrinterFromAdressePageVctl extends GetxController
+    with PrinterManagerViewMixin {
   final adresseCtl = TextEditingController();
 
   Future<void> connect() async {
@@ -36,12 +38,15 @@ class AddPrinterFromAdressePageVctl extends GetxController {
       if (res) {
         await SoundService.playBeep();
 
-        // Création du device
+        // Création du device et enregistrement global
         final printer = BlueDevice(
           name: "Imprimante Manuelle",
           address: address,
           isConnected: true,
         );
+
+        // Enregistre globalement (notifie aussi le PrinterConnectionService)
+        selectedPrinter = printer;
 
         // Sauvegarde dans l'historique
         await _saveToHistory(printer);

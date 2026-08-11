@@ -21,7 +21,6 @@ class ApprovisionnerCaissePageVctl extends GetxController {
   final descriptionCtl = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-
   ModePaiementEnum modePaiement = ModePaiementEnum.especes;
   SensMouvementCaisseEnum sens = SensMouvementCaisseEnum.entree;
 
@@ -29,6 +28,8 @@ class ApprovisionnerCaissePageVctl extends GetxController {
 
   Caisse? selectedCaisse;
   final montantBottomSheetCtl = TextEditingController();
+
+  ApprovisionnerCaissePageVctl(this.sens);
 
   void resetBottomSheet() {
     selectedCaisse = null;

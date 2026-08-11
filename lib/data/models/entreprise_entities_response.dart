@@ -1,9 +1,9 @@
+import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/data/models/boutique.dart';
-import 'package:ateliya/data/models/succursale.dart';
 
 class EntrepriseEntitiesResponse {
   List<Boutique> boutiques = [];
-  List<Succursale> surcusales = [];
+  List<Atelier> ateliers = [];
 
   EntrepriseEntitiesResponse();
 
@@ -15,13 +15,13 @@ class EntrepriseEntitiesResponse {
       }
     }
     if (json['surccursales'] is List) {
-      surcusales = <Succursale>[];
+      ateliers = <Atelier>[];
       for (var v in (json['surccursales'] as List)) {
-        surcusales.add(Succursale.fromJson(v));
+        ateliers.add(Atelier.fromJson(v));
       }
     }
   }
 
-  bool get isEmpty => boutiques.isEmpty && surcusales.isEmpty;
+  bool get isEmpty => boutiques.isEmpty && ateliers.isEmpty;
   bool get isNotEmpty => !isEmpty;
 }

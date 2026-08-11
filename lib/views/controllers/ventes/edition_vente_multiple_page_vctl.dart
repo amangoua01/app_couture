@@ -1,5 +1,6 @@
 import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/api/client_api.dart';
+import 'package:ateliya/api/modele_boutique_api.dart';
 import 'package:ateliya/data/dto/paiement_boutique/ligne_paiement_boutique_dto.dart';
 import 'package:ateliya/data/dto/paiement_boutique_dto.dart';
 import 'package:ateliya/data/models/boutique.dart';
@@ -21,6 +22,7 @@ class EditionVenteMultiplePageVctl extends AuthViewController
 
   final clientApi = ClientApi();
   final boutiqueApi = BoutiqueApi();
+  final modeleBoutiqueApi = ModeleBoutiqueApi();
 
   Client? client;
   Boutique? boutique;
@@ -50,8 +52,12 @@ class EditionVenteMultiplePageVctl extends AuthViewController
     return res.data!.expand((item) => item.variantes).toList();
   }
 
-  void ajouterAuPanier(ModeleBoutique modele, int qte, double prix,
-      [double remise = 0]) {
+  void ajouterAuPanier(
+    ModeleBoutique modele,
+    int qte,
+    double prix, [
+    double remise = 0,
+  ]) {
     if (qte <= 0) return;
 
     final existingIndex = panier.indexWhere((p) => p.modele.id == modele.id);
@@ -99,10 +105,10 @@ class EditionVenteMultiplePageVctl extends AuthViewController
   double get totalGeneral => panier.fold(0.0, (sum, item) => sum + item.total);
 
   Future<void> submit() async {
-    if (client == null) {
-      CMessageDialog.show(message: "Veuillez sélectionner un client.");
-      return;
-    }
+    // if (client == null) {
+    //   CMessageDialog.show(message: "Veuillez sélectionner un client.");
+    //   return;
+    // }
     if (panier.isEmpty) {
       // On pourrait autoriser vide ? Non, pas de sens.
       CMessageDialog.show(message: "Le panier est vide.");
@@ -111,19 +117,20 @@ class EditionVenteMultiplePageVctl extends AuthViewController
 
     final dto = PaiementBoutiqueDto(
       datePaiment: dateVenteCtl.dateTime!,
-      clientId: client!.id!,
+      clientId: client?.id,
       boutiqueId: boutique!.id!,
       moyenPaiement: moyenPaiement,
-      lignes: panier
-          .map(
-            (p) => LignePaiementBoutiqueDto(
-              boutiqueModeleId: p.modele.id!,
-              quantite: p.quantite,
-              montant: p.prixUnitaire,
-              remise: p.remise,
-            ),
-          )
-          .toList(),
+      lignes:
+          panier
+              .map(
+                (p) => LignePaiementBoutiqueDto(
+                  boutiqueModeleId: p.modele.id!,
+                  quantite: p.quantite,
+                  montant: p.prixUnitaire,
+                  remise: p.remise,
+                ),
+              )
+              .toList(),
     );
 
     final res = await boutiqueApi.makePaiement(dto).load();

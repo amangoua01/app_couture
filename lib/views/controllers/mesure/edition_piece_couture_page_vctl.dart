@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:ateliya/api/taille_standard_api.dart';
 import 'package:ateliya/api/type_mesure_api.dart';
 import 'package:ateliya/data/dto/autre_image_mesure_dto.dart';
 import 'package:ateliya/data/dto/mesure/ligne_mesure_dto.dart';
 import 'package:ateliya/data/dto/mesure/type_mesure_dto.dart';
+import 'package:ateliya/data/models/taille_standard.dart';
 import 'package:ateliya/data/models/type_mesure.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
@@ -16,7 +18,7 @@ class EditionPieceCouturePageVctl extends AuthViewController {
   final nomTenancierCtl = TextEditingController();
   final formKey = GlobalKey<FormState>();
   TypeMesure? selectedTypeMesure;
-  final montantCtl = TextEditingController();
+  final montantCtl = TextEditingController(text: "0");
   File? pagneImageFile;
   File? modeleImageFile;
   final remiseCtl = TextEditingController(text: "0");
@@ -26,8 +28,11 @@ class EditionPieceCouturePageVctl extends AuthViewController {
   final autreImagesMesure = <AutreImageMesureDto>[];
   final autreImagesPageCtl = PageController();
   int currentAutreImageIndex = 0;
+  final tailleStandardApi = TailleStandardApi();
+  TailleStandard? selectedTailleStandard;
+  bool isSurMesure = true;
 
-  EditionPieceCouturePageVctl(this.ligne) {
+EditionPieceCouturePageVctl(this.ligne) {
     if (ligne != null) {
       nomTenancierCtl.text = ligne!.nomClient.value;
       montantCtl.setDouble = ligne!.montant;
@@ -38,6 +43,8 @@ class EditionPieceCouturePageVctl extends AuthViewController {
       modeleImageFile =
           ligne!.modeleImagePath != null ? File(ligne!.modeleImagePath!) : null;
       autreImagesMesure.addAll(ligne!.autresImages);
+      isSurMesure = ligne!.tailleStandard == null;
+      selectedTailleStandard = ligne!.tailleStandard;
     }
   }
 
@@ -58,6 +65,7 @@ class EditionPieceCouturePageVctl extends AuthViewController {
       ligne!.withOutTissu = !hasImagePagne;
       ligne!.autresImages = [];
       ligne!.autresImages.addAll(autreImagesMesure);
+      ligne!.tailleStandard = selectedTailleStandard;
 
       Get.back(result: ligne!);
     }
@@ -73,6 +81,14 @@ class EditionPieceCouturePageVctl extends AuthViewController {
     final res = await typeMesureApi.list();
     if (res.status) {
       return res.data!.items.where((e) => e.categories.isNotEmpty).toList();
+    }
+    return [];
+  }
+
+  Future<List<TailleStandard>> fetchTailleStandards() async {
+    final res = await tailleStandardApi.list();
+    if (res.status) {
+      return res.data!;
     }
     return [];
   }

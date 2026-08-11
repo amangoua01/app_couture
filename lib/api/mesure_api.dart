@@ -67,4 +67,22 @@ class MesureApi extends WebController {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+
+  Future<DataResponse<Mesure>> getOne(int id) async {
+    try {
+      final res = await client.get(
+        urlBuilder(api: "facture/get/one/$id", module: "mesure"),
+        headers: authHeaders,
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: Mesure.fromJson(data["data"]));
+      } else {
+        return DataResponse.error(
+            message: data["message"] ?? res.reasonPhrase ?? "Erreur inconnu");
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 }

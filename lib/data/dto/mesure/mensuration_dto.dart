@@ -14,15 +14,12 @@ class MensurationDto extends DtoModel {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      "categorieMesure": categorieMesure,
-      "valeur": valeur,
-    };
+    return {"categorieMesure": categorieMesure, "valeur": valeur};
   }
 
   MensurationDto clone() => MensurationDto(
-        categorieMesure: categorieMesure,
-        valeur: valeur,
-        isActive: isActive,
-      );
+    categorieMesure: categorieMesure,
+    valeur: valeur,
+    isActive: isActive,
+  );
 }

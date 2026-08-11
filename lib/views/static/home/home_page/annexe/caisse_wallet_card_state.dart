@@ -1,4 +1,5 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/sens_mouvement_caisse_enum.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
@@ -6,6 +7,7 @@ import 'package:ateliya/tools/widgets/c_card.dart';
 import 'package:ateliya/views/controllers/home/home_page_vctl.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 
 class CaisseWalletCard extends StatelessWidget {
@@ -111,7 +113,7 @@ class CaisseWalletCard extends StatelessWidget {
                           curve: Curves.easeOutCubic,
                           builder: (context, value, _) {
                             return AutoSizeText(
-                              value.toAmount(unit: "Fcfa"),
+                              value.toAmount(unit: "F"),
                               minFontSize: 18,
                               maxFontSize: 26,
                               maxLines: 1,
@@ -141,7 +143,7 @@ class CaisseWalletCard extends StatelessWidget {
             const Gap(5),
             obscureBalance
                 ? AutoSizeText(
-                    "Dépenses : •••••• Fcfa",
+                    "Dépenses : •••••• F",
                     minFontSize: 11,
                     maxFontSize: 13,
                     maxLines: 1,
@@ -178,28 +180,51 @@ class CaisseWalletCard extends StatelessWidget {
                   Expanded(
                     child: CButton(
                       height: 35,
-                      icon: const Icon(Icons.add_rounded,
-                          size: 16, color: AppColors.primary),
+                      icon: SvgPicture.asset("assets/images/svg/deposit.svg"),
                       color: AppColors.secondary,
                       textColor: AppColors.primary,
                       title: "Déposer",
-                      onPressed: ctl.goToDeposit,
+                      onPressed: () => ctl.goToMouvementCaisse(
+                        SensMouvementCaisseEnum.entree,
+                      ),
                     ),
                   ),
                   const Gap(10),
                   Expanded(
                     child: CButton(
                       height: 35,
-                      icon: const Icon(Icons.remove_rounded,
-                          size: 16, color: Colors.white),
+                      icon: SvgPicture.asset(
+                        "assets/images/svg/withdraw.svg",
+                        width: 20,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
                       color: Colors.transparent,
                       textColor: Colors.white,
                       border: BorderSide(
                           color: Colors.white.withValues(alpha: 0.3)),
-                      title: "Dépense",
-                      onPressed: ctl.goToDepense,
+                      title: "Retirer",
+                      onPressed: () => ctl.goToMouvementCaisse(
+                        SensMouvementCaisseEnum.sortie,
+                      ),
                     ),
                   ),
+                  const Gap(10),
+                  // Expanded(
+                  //   child: CButton(
+                  //     height: 35,
+                  //     icon: const Icon(Icons.remove_rounded,
+                  //         size: 16, color: Colors.white),
+                  //     color: Colors.transparent,
+                  //     textColor: Colors.white,
+                  //     border: BorderSide(
+                  //         color: Colors.white.withValues(alpha: 0.3)),
+                  //     title: "Dépense",
+                  //     onPressed: ctl.goToDepense,
+                  //   ),
+                  // ),
                 ],
               ),
             ],

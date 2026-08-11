@@ -55,18 +55,16 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
         urlBuilder(
           api: 'boutique/$boutiqueId',
           module: 'stock',
-          params: {
-            'page': page.toString(),
-            'limit': limit.toString(),
-          },
+          params: {'page': page.toString(), 'limit': limit.toString()},
         ),
         headers: authHeaders,
       );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        final list = (data['data'] as List? ?? [])
-            .map((e) => RavitaillementStock.fromJson(e))
-            .toList();
+        final list =
+            (data['data'] as List? ?? [])
+                .map((e) => RavitaillementStock.fromJson(e))
+                .toList();
         return DataResponse.success(data: list);
       } else {
         return DataResponse.error(
@@ -83,7 +81,8 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
   /// [boutiqueId] : ID de la boutique concernée.
   /// [lignes] : liste de { 'modeleBoutiqueId': int, 'quantite': int }.
   Future<DataResponse<bool>> entreeStock(
-      MouvementStockDto mouvementStockDto) async {
+    MouvementStockDto mouvementStockDto,
+  ) async {
     try {
       final res = await client.post(
         urlBuilder(api: 'entree', module: 'stock'),
@@ -161,7 +160,8 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
   ///
   /// POST /stock/transfert
   Future<DataResponse<bool>> transfertStock(
-      TransfertStockDto transfertStockDto) async {
+    TransfertStockDto transfertStockDto,
+  ) async {
     try {
       final res = await client.post(
         urlBuilder(api: 'transfert', module: 'stock'),
@@ -185,7 +185,8 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
   ///
   /// POST /stock/sortie-directe
   Future<DataResponse<bool>> sortieDirecte(
-      MouvementStockDto mouvementStockDto) async {
+    MouvementStockDto mouvementStockDto,
+  ) async {
     try {
       final res = await client.post(
         urlBuilder(api: 'sortie-directe', module: 'stock'),
@@ -198,6 +199,30 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
       } else {
         return DataResponse.error(
           message: data['message'] ?? "Erreur lors de la sortie de stock",
+        );
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  Future<DataResponse<ModeleBoutique>> getModeleBoutiqueByBarcode(
+    String barcode,
+  ) async {
+    try {
+      final res = await client.get(
+        urlBuilder(api: 'codebar/$barcode'),
+        headers: authHeaders,
+      );
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(
+          data: ModeleBoutique.fromJson(data['data']),
+        );
+      } else {
+        return DataResponse.error(
+          message:
+              data['message'] ?? 'Erreur lors de la récupération de l\'article',
         );
       }
     } catch (e, st) {

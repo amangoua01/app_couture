@@ -26,7 +26,7 @@ class BuildSectionCard extends StatelessWidget {
         border: Border.all(color: AppColors.fieldBorder, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.015),
+            color: Colors.black.withValues(alpha: 0.015),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -38,7 +38,7 @@ class BuildSectionCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.05),
+              color: color.withValues(alpha: 0.05),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -54,7 +54,7 @@ class BuildSectionCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: color.withOpacity(0.15)),
+                    border: Border.all(color: color.withValues(alpha: 0.15)),
                   ),
                   child: Icon(icon, color: color, size: 20),
                 ),
@@ -86,7 +86,7 @@ class BuildSectionCard extends StatelessWidget {
                         height: 28,
                         decoration: BoxDecoration(
                           color: step.enabled
-                              ? color.withOpacity(0.1)
+                              ? color.withValues(alpha: 0.1)
                               : Colors.grey[100],
                           shape: BoxShape.circle,
                         ),

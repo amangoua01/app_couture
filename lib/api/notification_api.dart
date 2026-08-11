@@ -37,7 +37,8 @@ class NotificationApi extends WebController {
         return DataResponse.success(data: notifications);
       } else {
         return DataResponse.error(
-            message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue');
+          message: data['message'] ?? res.reasonPhrase ?? 'Erreur inconnue',
+        );
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -57,10 +58,9 @@ class NotificationApi extends WebController {
         return DataResponse.success(data: true);
       } else {
         return DataResponse.error(
-          message: data['message'] ??
-              res.reasonPhrase.defaultValue(
-                'Erreur inconnue',
-              ),
+          message:
+              data['message'] ??
+              res.reasonPhrase.defaultValue('Erreur inconnue'),
         );
       }
     } catch (e, st) {
@@ -81,10 +81,9 @@ class NotificationApi extends WebController {
         return DataResponse.success(data: data['data']["count"] ?? 0);
       } else {
         return DataResponse.error(
-          message: data['message'] ??
-              res.reasonPhrase.defaultValue(
-                'Erreur inconnue',
-              ),
+          message:
+              data['message'] ??
+              res.reasonPhrase.defaultValue('Erreur inconnue'),
         );
       }
     } catch (e, st) {
@@ -105,10 +104,9 @@ class NotificationApi extends WebController {
         return DataResponse.success(data: true);
       } else {
         return DataResponse.error(
-          message: data['message'] ??
-              res.reasonPhrase.defaultValue(
-                'Erreur inconnue',
-              ),
+          message:
+              data['message'] ??
+              res.reasonPhrase.defaultValue('Erreur inconnue'),
         );
       }
     } catch (e, st) {
@@ -120,10 +118,7 @@ class NotificationApi extends WebController {
     try {
       final res = await client.post(
         urlBuilder(api: 'delete/all/items'),
-        headers: {
-          ...authHeaders,
-          'Content-Type': 'application/json',
-        },
+        headers: {...authHeaders, 'Content-Type': 'application/json'},
         body: jsonEncode({'ids': ids}),
       );
 
@@ -133,7 +128,8 @@ class NotificationApi extends WebController {
         return DataResponse.success(data: true);
       } else {
         return DataResponse.error(
-          message: data['message'] ??
+          message:
+              data['message'] ??
               res.reasonPhrase.defaultValue('Erreur inconnue'),
         );
       }

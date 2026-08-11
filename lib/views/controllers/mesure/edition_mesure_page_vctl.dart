@@ -3,7 +3,7 @@ import 'package:ateliya/api/mesure_api.dart';
 import 'package:ateliya/data/dto/mesure/mesure_dto.dart';
 import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/mesure.dart';
-import 'package:ateliya/data/models/succursale.dart';
+import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
 import 'package:ateliya/tools/models/prise_mesure_step.dart';
@@ -43,10 +43,7 @@ class EditionMesurePageVctl extends AuthViewController
       title: "Informations de paiement",
       subtitle: "Informations sur les paiements",
     ),
-    PriseMesureStep(
-      title: "Récapitulatif",
-      subtitle: "Informations finales",
-    ),
+    PriseMesureStep(title: "Récapitulatif", subtitle: "Informations finales"),
   ];
 
   var mesure = MesureDto();
@@ -63,14 +60,16 @@ class EditionMesurePageVctl extends AuthViewController
         case 0:
           if (!mesure.isValide) {
             CMessageDialog.show(
-              message: "Veuillez ajouter des pièces"
+              message:
+                  "Veuillez ajouter des pièces"
                   " et leurs mensurations pour continuer.",
             );
             return;
           } else {
             if (!mesure.isMensurationValide) {
               CMessageDialog.show(
-                message: "Veuillez completer toutes "
+                message:
+                    "Veuillez completer toutes "
                     "les mensurations pour continuer.",
               );
               return;
@@ -123,13 +122,14 @@ class EditionMesurePageVctl extends AuthViewController
 
   Future<void> submit() async {
     final res = await CChoiceMessageDialog.show(
-        message: "Confirmez-vous la validation de cette mesure ?");
+      message: "Confirmez-vous la validation de cette mesure ?",
+    );
 
     if (res == true) {
-      if ((getEntite().value is Succursale)) {
+      if ((getEntite().value is Atelier)) {
         mesure.client = client;
         mesure.dateRetrait = dateRetraitCtl.dateTime;
-        mesure.succursale = (getEntite().value as Succursale);
+        mesure.succursale = (getEntite().value as Atelier);
         mesure.avance = avanceCtl.toDouble();
         mesure.remiseGlobale = remiseGlobaleCtl.toDouble();
         mesure.dateRetrait = dateRetraitCtl.dateTime;
@@ -168,7 +168,8 @@ class EditionMesurePageVctl extends AuthViewController
         }
       } else {
         CMessageDialog.show(
-          message: "Veuillez selectionner "
+          message:
+              "Veuillez selectionner "
               "une succursale pour effectuer cette action.",
         );
       }
