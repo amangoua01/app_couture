@@ -1,3 +1,5 @@
+import 'package:ateliya/tools/components/field_popup.dart';
+import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
@@ -153,7 +155,7 @@ class EditionRavitaillementPage extends StatelessWidget {
                   ],
                 ),
                 const Gap(16),
-                DropdownSearch<ModeleBoutique>(
+                CDropDownFormField<ModeleBoutique>(
                   items:
                       (filter, _) =>
                           ctl.allVariantes
@@ -175,30 +177,16 @@ class EditionRavitaillementPage extends StatelessWidget {
                     final stock = ' (stock : ${v.quantite ?? 0})';
                     return '$nom$taille$stock';
                   },
-                  popupProps: PopupProps.menu(
-                    showSearchBox: true,
-                    searchFieldProps: const TextFieldProps(
-                      decoration: InputDecoration(
-                        hintText: 'Rechercher par nom ou taille…',
-                        prefixIcon: Icon(Icons.search),
-                      ),
-                    ),
+                  popupProps: FieldPopup.bottomSheet(
+                    searchHint: "Rechercher par nom ou taille…",
                     itemBuilder:
                         (_, item, isSelected, __) => _ArticleDropdownItem(
                           item: item,
                           isSelected: isSelected,
                         ),
                   ),
-                  decoratorProps: const DropDownDecoratorProps(
-                    decoration: InputDecoration(
-                      labelText: 'Sélectionner un article *',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
+                  labelText: 'Sélectionner un article',
+                  require: true,
                   onChanged: (v) => setState(() => selectedModele = v),
                 ),
                 const Gap(16),

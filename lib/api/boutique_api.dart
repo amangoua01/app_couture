@@ -211,4 +211,24 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
   }
+
+  /// Utilisé par le scan QR des reçus boutique : le QR imprimé encode
+  /// désormais l'id (court) plutôt que la référence (longue), pour un scan
+  /// aussi rapide que celui des commandes atelier.
+  Future<DataResponse<Vente>> getVenteById(int id) async {
+    try {
+      final res = await client.get(
+        urlBuilder(api: "paiement/$id", module: "vente"),
+        headers: authHeaders,
+      );
+      final json = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        return DataResponse.success(data: Vente.fromJson(json['data']));
+      } else {
+        return DataResponse.error(message: json['message']);
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
 }

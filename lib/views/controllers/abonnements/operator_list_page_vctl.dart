@@ -5,21 +5,36 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 
 class OperatorListPageVctl extends GetxController {
   final api = OperateurApi();
-  List<Operateur> operateurs = [];
-  bool isLoading = false;
+  static List<Operateur>? _cachedOperateurs;
+  List<Operateur> operateurs = _cachedOperateurs ?? [];
+  bool isLoading = _cachedOperateurs == null;
+
+  /// Précharge en arrière-plan les opérateurs pour une ouverture instantanée
+  static Future<void> prefetch() async {
+    if (_cachedOperateurs != null && _cachedOperateurs!.isNotEmpty) return;
+    try {
+      final res = await OperateurApi().list();
+      if (res.status) {
+        _cachedOperateurs =
+            res.data!.map((e) => Operateur.fromJson(e)).toList();
+      }
+    } catch (_) {}
+  }
 
   Future<void> getOperateurs() async {
-    isLoading = true;
-    update();
+    if (operateurs.isEmpty) {
+      isLoading = true;
+      update();
+    }
     final res = await api.list();
     isLoading = false;
-    update();
     if (res.status) {
       operateurs = res.data!.map((e) => Operateur.fromJson(e)).toList();
-      update();
-    } else {
+      _cachedOperateurs = operateurs;
+    } else if (operateurs.isEmpty) {
       CMessageDialog.show(message: res.message);
     }
+    update();
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:ateliya/api/facture_api.dart';
 import 'package:ateliya/data/models/mesure.dart';
+import 'package:ateliya/tools/components/data_cache.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/widgets/date_time_editing_controller.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
@@ -23,7 +24,6 @@ class CommandeListVctl extends AuthViewController {
   final dateFin = DateTimeEditingController();
   final nomClientCtrl = TextEditingController();
   final numeroClientCtrl = TextEditingController();
-  String? etatFacture;
 
   late int _tabIndex = initialTab;
   int get tabIndex => _tabIndex;
@@ -35,7 +35,7 @@ class CommandeListVctl extends AuthViewController {
   // 5 tabs alignés exactement sur les valeurs type de l'API
   static const tabs = [
     ('NONTERMINEE', 'Non terminées'),
-    ('SOLDEESNONTERMINEE', 'Soldées non term.'),
+    ('SOLDEESNONTERMINEE', 'Soldées, non terminées'),
     ('TERMINEE', 'Terminées'),
     ('LIVRER', 'Livrées'),
     ('RETIRE', 'Retirées'),
@@ -43,17 +43,42 @@ class CommandeListVctl extends AuthViewController {
 
   String get _currentType => tabs[_tabIndex].$1;
 
+  String get _cacheKey => "commandes:${getEntite().value.id.value}:$_currentType";
+
+  bool get _hasActiveFilters =>
+      dateDebut.dateTime != null ||
+      dateFin.dateTime != null ||
+      nomClientCtrl.text.trim().isNotEmpty ||
+      numeroClientCtrl.text.trim().isNotEmpty;
+
   @override
   void onInit() {
     super.onInit();
     getList();
   }
 
+  /// Onglet sans filtre actif : on réaffiche la dernière liste connue pour
+  /// cet onglet pendant que le réseau répond, au lieu de bloquer l'écran sur
+  /// un spinner à chaque changement d'onglet ou réouverture de l'écran.
   Future<void> getList() async {
-    isLoading = true;
     currentPage = 1;
     items.clear();
-    update();
+
+    final cacheable = !_hasActiveFilters;
+    if (cacheable) {
+      final cached = await DataCache.readList(_cacheKey);
+      if (cached != null && cached.isNotEmpty) {
+        items = cached.map((e) => Mesure.fromJson(e)).toList();
+        isLoading = false;
+        update();
+      } else {
+        isLoading = true;
+        update();
+      }
+    } else {
+      isLoading = true;
+      update();
+    }
 
     final dateDebutStr = dateDebut.dateTime?.toIso8601String().split('T').first;
     final dateFinStr = dateFin.dateTime?.toIso8601String().split('T').first;
@@ -66,7 +91,6 @@ class CommandeListVctl extends AuthViewController {
       dateFin: dateFinStr,
       nomClient: nomClientCtrl.text.trim(),
       numeroClient: numeroClientCtrl.text.trim(),
-      etatFacture: etatFacture,
     );
 
     isLoading = false;
@@ -74,7 +98,10 @@ class CommandeListVctl extends AuthViewController {
     if (res.status) {
       items = res.data?.items ?? [];
       totalPages = res.data?.totalPages ?? 1;
-    } else {
+      if (cacheable) {
+        DataCache.write(_cacheKey, items.map((e) => e.toJson()).toList());
+      }
+    } else if (items.isEmpty) {
       CMessageDialog.show(message: res.message);
     }
 
@@ -98,7 +125,6 @@ class CommandeListVctl extends AuthViewController {
       dateFin: dateFinStr,
       nomClient: nomClientCtrl.text.trim(),
       numeroClient: numeroClientCtrl.text.trim(),
-      etatFacture: etatFacture,
     );
 
     isLoadingMore = false;
@@ -119,7 +145,6 @@ class CommandeListVctl extends AuthViewController {
     dateFin.clear();
     nomClientCtrl.clear();
     numeroClientCtrl.clear();
-    etatFacture = null;
     getList();
   }
 }

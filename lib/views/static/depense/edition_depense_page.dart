@@ -7,25 +7,52 @@ import 'package:ateliya/tools/widgets/ligne_card.dart';
 import 'package:ateliya/views/controllers/depense/edition_depense_page_vctl.dart';
 import 'package:ateliya/views/static/depense/bottom_sheet_depense.dart';
 import 'package:ateliya/views/static/depense/form_depense.dart';
+import 'package:ateliya/services/gemini_assistant_service.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class EditionDepensePage extends StatelessWidget {
-  const EditionDepensePage({super.key});
+  final DepenseExtractionResult? initialData;
+  const EditionDepensePage({super.key, this.initialData});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder(
-      init: EditionDepensePageVctl(),
+      init: EditionDepensePageVctl(initialData: initialData),
       builder: (ctl) {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-            title: const Text(
-              "Nouvelle dépense",
-            ),
+            title: const Text("Nouvelle dépense"),
             elevation: 0,
+            actions: [
+              if (ctl.isAiPrefilled)
+                Container(
+                  margin: const EdgeInsets.only(right: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondary.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.secondary.withValues(alpha: 0.3)),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.auto_awesome, size: 14, color: Color(0xFF92671A)),
+                      Gap(4),
+                      Text(
+                        "IA Gemini",
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF92671A),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () => BottomSheetDepense.show(context, ctl),
@@ -47,9 +74,12 @@ class EditionDepensePage extends StatelessWidget {
             ),
             child: SafeArea(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 child: CButton(
+                  isLoading: ctl.isLoading,
                   onPressed: ctl.submit,
                   title: "Enregistrer la dépense",
                 ),
@@ -63,6 +93,37 @@ class EditionDepensePage extends StatelessWidget {
               child: ListView(
                 physics: const BouncingScrollPhysics(),
                 children: [
+                  if (ctl.isAiPrefilled) ...[
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0FDF4),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: const Color(0xFF86EFAC)),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(
+                            Icons.check_circle_outline_rounded,
+                            color: Color(0xFF16A34A),
+                            size: 20,
+                          ),
+                          Gap(10),
+                          Expanded(
+                            child: Text(
+                              "Champs pré-remplis automatiquement par Gemini. Vérifiez et ajustez si besoin.",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF15803D),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   FormDepense(ctl: ctl),
                   const Gap(24),
                   Row(
@@ -70,8 +131,11 @@ class EditionDepensePage extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.payments_outlined,
-                              size: 20, color: AppColors.primary),
+                          const Icon(
+                            Icons.payments_outlined,
+                            size: 20,
+                            color: AppColors.primary,
+                          ),
                           const Gap(8),
                           Text(
                             "Modes de règlement",
@@ -85,7 +149,9 @@ class EditionDepensePage extends StatelessWidget {
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(12),
@@ -159,7 +225,7 @@ class EditionDepensePage extends StatelessWidget {
                       margin: EdgeInsets.zero,
                       hintText: "Saisir une description (facultatif)",
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

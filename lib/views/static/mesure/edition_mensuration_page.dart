@@ -1,3 +1,4 @@
+import 'package:ateliya/views/static/mesure/sub_pages/gemini_mensuration_only_sheet.dart';
 import 'package:ateliya/data/dto/mesure/ligne_mesure_dto.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -22,6 +23,20 @@ class EditionMensurationPage extends StatelessWidget {
           backgroundColor: Colors.grey[50], // Fond de page légèrement gris
           appBar: AppBar(
             title: const Text("Mesures"),
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            backgroundColor: const Color(0xFFDC2626),
+            icon: const Icon(Icons.mic, color: Colors.white),
+            label: const Text("Dicter (IA)", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            onPressed: () {
+              GeminiMensurationOnlySheet.show(
+                context,
+                typePiece: ctl.ligne.typeMesureDto?.libelle ?? "Vêtement",
+                onMensurationsExtracted: (extracted) {
+                  ctl.updateMensurations(extracted);
+                },
+              );
+            },
           ),
           body: Form(
             key: ctl.formKey,

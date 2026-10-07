@@ -1,7 +1,9 @@
 import 'package:ateliya/data/models/caisse.dart';
+import 'package:ateliya/tools/components/field_popup.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/caisse_option_tile.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/views/controllers/caisse/approvisionner_caisse_page_vctl.dart';
@@ -52,8 +54,14 @@ class BottomSheetDepot {
               selectedItem: ctl.selectedCaisse,
               onChanged: (e) => ctl.onCaisseSelected(e),
               items: (filter, loadProps) => ctl.getCaisses(),
-              itemAsString: (item) =>
-                  "${item.entite!.libelle.value} (${item.montant!.toAmount(unit: 'F')})",
+              itemAsString:
+                  (item) =>
+                      "${item.entite!.libelle.value} (${caisseTypeLabel(item.type)})",
+              popupProps: FieldPopup.menu<Caisse>(
+                itemBuilder:
+                    (context, item, isDisabled, isSelected) =>
+                        CaisseOptionTile(caisse: item, isSelected: isSelected),
+              ),
             ),
             CTextFormField(
               externalLabel: "Montant",

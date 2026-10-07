@@ -20,7 +20,7 @@ class HomeWindows extends StatelessWidget {
           final entite = ctl.getEntite().value;
           final isBoutique = entite is Boutique;
           return Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.scaffoldBg,
             body: AnimatedSwitcher(
               duration: const Duration(milliseconds: 250),
               transitionBuilder: (Widget child, Animation<double> animation) {
@@ -110,7 +110,7 @@ class HomeWindows extends StatelessWidget {
                             BuildTabItem(
                               ctl: ctl,
                               index: 1,
-                              icon: FontAwesomeIcons.gauge,
+                              icon: FontAwesomeIcons.gauge.data,
                               label: "Stats",
                             ),
                             if (isBoutique) const SizedBox(width: 48),

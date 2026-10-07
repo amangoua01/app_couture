@@ -13,27 +13,37 @@ class AbonnementsListPageVctl extends GetxController {
 
   final api = AbonnementApi();
 
+  void _applyData(Map<String, dynamic> data) {
+    if (data['abonnementActif'] != null) {
+      abonnementActif = Abonnement.fromJson(data['abonnementActif']);
+    } else {
+      abonnementActif = null;
+    }
+
+    final kpis = data['kpis'] ?? {};
+    totalAbonnement = kpis['totalAbonnement'] ?? 0;
+    nombreAbonnementActif = kpis['nombreAbonnementActif'] ?? 0;
+    nombreAbonnementPasse = kpis['nombreAbonnementPasse'] ?? 0;
+    nombreAbonnementPending = kpis['nombreAbonnementPending'] ?? 0;
+  }
+
   Future<void> fetchAbonnements() async {
-    isLoading = true;
+    // Réaffiche le dernier résumé connu le temps que le réseau réponde.
+    final cached = await api.readCachedSummary();
+    if (cached != null) {
+      _applyData(cached);
+      update();
+    }
+
+    isLoading = cached == null;
     update();
+
     final res = await api.list();
     isLoading = false;
     if (res.status) {
-      final data = res.data!;
-      if (data['abonnementActif'] != null) {
-        abonnementActif = Abonnement.fromJson(data['abonnementActif']);
-      } else {
-        abonnementActif = null;
-      }
-
-      final kpis = data['kpis'] ?? {};
-      totalAbonnement = kpis['totalAbonnement'] ?? 0;
-      nombreAbonnementActif = kpis['nombreAbonnementActif'] ?? 0;
-      nombreAbonnementPasse = kpis['nombreAbonnementPasse'] ?? 0;
-      nombreAbonnementPending = kpis['nombreAbonnementPending'] ?? 0;
-
+      _applyData(res.data!);
       update();
-    } else {
+    } else if (cached == null) {
       CMessageDialog.show(message: res.message);
     }
   }

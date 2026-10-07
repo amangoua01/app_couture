@@ -2,7 +2,6 @@ import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/api/mesure_api.dart';
 import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/tools/extensions/future.dart';
-import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
@@ -48,32 +47,59 @@ class ScanQrCodeVentePageVctl extends AuthViewController {
       if (code == null || code.value.isEmpty) return;
 
       isScanning = true;
-      final codeVal = code.value.trim();
-      if (getEntite().value is Atelier) {
-        final res = await apiMesure.getOne(codeVal.toInt().value).load();
-        if (res.status) {
-          if (isFromVenteAndCommande) {
-            Get.off(() => DetailCommandPage(mesure: res.data!));
-          } else {
-            Get.back(result: res.data!);
-          }
-        } else {
+      // Un échec silencieux ici (JSON inattendu, etc.) laissait avant
+      // isScanning bloqué à true pour toujours : plus aucun scan suivant
+      // n'était traité, et rien ne s'affichait à l'écran. Le try/catch/
+      // finally garantit qu'on retombe toujours sur un état exploitable.
+      var navigatedAway = false;
+      try {
+        // Les deux types de reçus encodent désormais un simple id
+        // numérique (court, rapide à scanner) plutôt qu'une référence
+        // texte potentiellement longue.
+        final scannedId = code.value.trim().toInt();
+        if (scannedId == null) {
           await pauseCamera();
-          await CMessageDialog.show(message: res.message);
-          isScanning = false;
-          await resumeCamera();
+          await CMessageDialog.show(
+            message: "Ce QR code ne correspond pas à un reçu Ateliya.",
+          );
+          return;
         }
-      } else {
-        final res = await api.getVenteByRef(codeVal).load();
-        if (res.status) {
-          if (isFromVenteAndCommande) {
-            Get.off(() => DetailVentePage(vente: res.data!));
+
+        if (getEntite().value is Atelier) {
+          final res = await apiMesure.getOne(scannedId).load();
+          if (res.status) {
+            navigatedAway = true;
+            if (isFromVenteAndCommande) {
+              Get.off(() => DetailCommandPage(mesure: res.data!));
+            } else {
+              Get.back(result: res.data!);
+            }
           } else {
-            Get.back(result: res.data!);
+            await pauseCamera();
+            await CMessageDialog.show(message: res.message);
           }
         } else {
-          await pauseCamera();
-          await CMessageDialog.show(message: res.message);
+          final res = await api.getVenteById(scannedId).load();
+          if (res.status) {
+            navigatedAway = true;
+            if (isFromVenteAndCommande) {
+              Get.off(() => DetailVentePage(vente: res.data!));
+            } else {
+              Get.back(result: res.data!);
+            }
+          } else {
+            await pauseCamera();
+            await CMessageDialog.show(message: res.message);
+          }
+        }
+      } catch (e) {
+        debugPrint('Erreur lors du traitement du QR code scanné: $e');
+        await pauseCamera();
+        await CMessageDialog.show(
+          message: "Ce QR code n'a pas pu être lu correctement.",
+        );
+      } finally {
+        if (!navigatedAway) {
           isScanning = false;
           await resumeCamera();
         }

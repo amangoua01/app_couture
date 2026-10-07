@@ -22,6 +22,21 @@ class EditionMensurationPageVctl extends GetxController {
     );
   }
 
+  void updateMensurations(List<MensurationDto> extracted) {
+    for (var m in mensurations) {
+      final key = m.categorieMesure.libelle?.toLowerCase().trim() ?? '';
+      for (var ext in extracted) {
+        final extKey = (ext.categorieMesure.libelle)?.toLowerCase().trim() ?? '';
+        if (extKey.contains(key) || key.contains(extKey)) {
+          m.valeur = ext.valeur;
+          m.isActive = true;
+          break;
+        }
+      }
+    }
+    update();
+  }
+
   Future<void> submit() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();

@@ -24,7 +24,14 @@ class EditionMesurePageVctl extends AuthViewController
     strokeCap: StrokeCap.round,
     exportBackgroundColor: Colors.blue,
   );
-  final dateRetraitCtl = DateTimeEditingController();
+
+  /// Délai de retrait proposé par défaut, à défaut d'une date saisie.
+  static DateTime get _defaultDateRetrait =>
+      DateTime.now().add(const Duration(days: 7));
+
+  final dateRetraitCtl = DateTimeEditingController.dateTime(
+    _defaultDateRetrait,
+  );
   final pageCtl = PageController();
   final avanceCtl = TextEditingController();
   final remiseGlobaleCtl = TextEditingController();
@@ -112,7 +119,13 @@ class EditionMesurePageVctl extends AuthViewController
   }
 
   Future<List<Client>> fetchClients() async {
-    final res = await clientApi.list();
+    // Affiche la dernière liste connue le temps que le réseau réponde, pour
+    // ne pas bloquer la saisie sur un aller-retour réseau à chaque pièce.
+    final cached = await clientApi.readCachedList();
+    if (cached != null && cached.isNotEmpty) {
+      return cached.items;
+    }
+    final res = await clientApi.list(useCache: true);
     if (res.status) {
       return res.data!.items;
     } else {
@@ -180,7 +193,7 @@ class EditionMesurePageVctl extends AuthViewController
     mesure = MesureDto();
     page = 0;
     pageCtl.jumpToPage(page);
-    dateRetraitCtl.clear();
+    dateRetraitCtl.dateTime = _defaultDateRetrait;
     avanceCtl.clear();
     remiseGlobaleCtl.clear();
     signatureCtl.clear();

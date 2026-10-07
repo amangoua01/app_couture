@@ -52,6 +52,7 @@ void main() async {
     appRunner: () {
       runApp(
         GetMaterialApp(
+          defaultTransition: Transition.cupertino,
           title: Env.appName,
           theme: AppTheme.light,
           locale: const Locale("fr", "FR"),

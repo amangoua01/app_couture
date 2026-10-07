@@ -67,13 +67,13 @@ class CTextFormField extends StatelessWidget {
     this.obscureText = false,
     this.requireText = "Ce champ est obligatoire",
     this.keyboardType,
-    this.contentPadding = const EdgeInsets.all(17),
+    this.contentPadding = FieldBorder.contentPadding,
     this.autofocus = false,
     this.readOnly = false,
     this.textAlign = TextAlign.start,
     this.obscuringCharacter = '•',
     this.style,
-    this.fillColor = Colors.white,
+    this.fillColor,
     this.filled = true,
     super.key,
     this.initialValue,
@@ -102,7 +102,7 @@ class CTextFormField extends StatelessWidget {
                     : ((externalLabel.value.isEmpty)
                         ? ""
                         : externalLabel! + (require ? "*" : "")),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: FieldBorder.labelStyle,
               ),
             ),
           ),
@@ -150,9 +150,15 @@ class CTextFormField extends StatelessWidget {
               contentPadding: contentPadding,
               border: border ?? FieldBorder.enabled,
               enabledBorder: border ?? FieldBorder.enabled,
+              focusedBorder: border ?? FieldBorder.focused,
               errorBorder: errorBorder ?? FieldBorder.error,
+              focusedErrorBorder: errorBorder ?? FieldBorder.focusedError,
               disabledBorder: disabledBorder ?? FieldBorder.disabled,
-              fillColor: fillColor,
+              hintStyle: FieldBorder.hintStyle,
+              fillColor: fillColor ??
+                  (enabled == false
+                      ? FieldBorder.disabledFillColor
+                      : Colors.white),
               filled: filled,
               labelStyle: labelStyle,
             ),

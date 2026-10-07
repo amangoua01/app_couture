@@ -16,6 +16,9 @@ abstract class Env {
 
   static const defaultDevise = Currency("Fcfa", code: "XOF", decimalDigits: 0);
 
+  static const String geminiApiKey =
+      "AQ.Ab8RN6IXoCkvRHVQxMF1WmjSc3PkvgW739nn1yeVrUhfN_JByg";
+
   static const AppEnv env = AppEnv.dev;
 
   static NetwordConfig get baseUrl => env.networdConfig;

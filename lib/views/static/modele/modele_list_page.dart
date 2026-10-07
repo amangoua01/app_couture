@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/body_list_view.dart';
@@ -19,16 +20,29 @@ class ModeleListPage extends StatelessWidget {
           ctl,
           title: "Modèles",
           createPage: const EditionModelePage(),
-          itemBuilder: (_, i, selected) => ListItem(ctl,
-              leadingImage: (ctl.data.items[i].photo == null)
-                  ? "assets/images/svg/modele.svg"
-                  : (ctl.data.items[i].photo is FichierServer)
-                      ? (ctl.data.items[i].photo as FichierServer).fullUrl!
-                      : null,
-              subtitle: "Quantité: ${ctl.data.items[i].quantiteGlobale}",
-              editionPage: EditionModelePage(item: ctl.data.items[i]),
-              index: i,
-              title: ctl.data.items[i].libelle.value),
+          itemBuilder: (_, i, selected) => Card(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: AppColors.primary.withOpacity(0.15), width: 1.5),
+              ),
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: ListItem(ctl,
+                  leadingImage: (ctl.data.items[i].photo == null)
+                      ? "assets/images/svg/modele.svg"
+                      : (ctl.data.items[i].photo is FichierServer)
+                          ? (ctl.data.items[i].photo as FichierServer).fullUrl!
+                          : null,
+                  subtitle: "Quantité: ${ctl.data.items[i].quantiteGlobale}",
+                  editionPage: EditionModelePage(item: ctl.data.items[i]),
+                  index: i,
+                  title: ctl.data.items[i].libelle.value
+                ),
+              ),
+            ),
         );
       },
     );

@@ -15,6 +15,7 @@ class AccueilData extends ModelJson {
   List<Abonnement> abonnements = [];
   List<Mesure> commandes = [];
   List<Vente> meilleuresVentes = [];
+  bool subscriptionExpired = false;
 
   Kpis get kpis => Kpis(
         clientsActifs: settings?.nombreUser ?? 0,
@@ -30,6 +31,7 @@ class AccueilData extends ModelJson {
     this.abonnements = const [],
     this.commandes = const [],
     this.meilleuresVentes = const [],
+    this.subscriptionExpired = false,
   });
 
   AccueilData.fromJson(Json json) {
@@ -52,6 +54,7 @@ class AccueilData extends ModelJson {
           .map((e) => Vente.fromJson(e))
           .toList();
     }
+    subscriptionExpired = json["subscriptionExpired"] == true;
   }
 
   @override
@@ -65,6 +68,7 @@ class AccueilData extends ModelJson {
         "abonnements": abonnements.map((e) => e.toJson()).toList(),
         "commandes": commandes.map((e) => e.toJson()).toList(),
         "meilleuresVentes": meilleuresVentes.map((e) => e.toJson()).toList(),
+        "subscriptionExpired": subscriptionExpired,
       };
   
   

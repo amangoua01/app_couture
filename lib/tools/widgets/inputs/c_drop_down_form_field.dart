@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ateliya/tools/components/field_border.dart';
+import 'package:ateliya/tools/components/field_popup.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class CDropDownFormField<T> extends StatelessWidget {
   final bool enabled;
   final String Function(T)? itemAsString;
   final Future<List<T>> Function()? asyncItems;
-  final PopupProps<T> popupProps;
+  final PopupProps<T>? popupProps;
   final bool Function(T, T)? compareFn;
   final bool Function(T, String)? filterFn;
   final FutureOr<List<T>> Function(String, LoadProps?)? items;
@@ -36,14 +37,14 @@ class CDropDownFormField<T> extends StatelessWidget {
       this.externalLabel,
       this.validator,
       this.fillColor = Colors.white,
-      this.contentPadding = const EdgeInsets.all(17),
+      this.contentPadding = FieldBorder.contentPadding,
       this.filterFn,
       this.compareFn,
       this.selectedItem,
       this.asyncItems,
       this.enabled = true,
       this.itemAsString,
-      this.popupProps = const PopupProps.menu(),
+      this.popupProps,
       this.items,
       this.maxLines = 1,
       this.onChanged,
@@ -73,7 +74,7 @@ class CDropDownFormField<T> extends StatelessWidget {
                     : ((externalLabel.value.isEmpty)
                         ? ""
                         : externalLabel! + (require ? "*" : "")),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: FieldBorder.labelStyle,
               ),
             ),
           ),
@@ -84,7 +85,7 @@ class CDropDownFormField<T> extends StatelessWidget {
             itemAsString: itemAsString,
             items: items,
             selectedItem: selectedItem,
-            popupProps: popupProps,
+            popupProps: popupProps ?? FieldPopup.menu<T>(),
             compareFn: compareFn ?? (a, b) => a == b,
             validator: (value) {
               if (validator != null) {
@@ -108,9 +109,12 @@ class CDropDownFormField<T> extends StatelessWidget {
                     (require && hintText != null) ? "$hintText" : hintText,
                 prefixIcon: prefixIcon,
                 filled: true,
+                hintStyle: FieldBorder.hintStyle,
                 errorBorder: border ?? FieldBorder.error,
-                focusedBorder: border ?? FieldBorder.enabled,
+                focusedErrorBorder: border ?? FieldBorder.focusedError,
+                focusedBorder: border ?? FieldBorder.focused,
                 enabledBorder: border ?? FieldBorder.enabled,
+                disabledBorder: border ?? FieldBorder.disabled,
                 border: border ?? FieldBorder.enabled,
               ),
             ),

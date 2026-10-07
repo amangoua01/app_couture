@@ -65,12 +65,8 @@ class BodyListView<T> extends StatelessWidget {
         appBar: AppBar(
           title: Text(title),
           centerTitle: true,
-          bottom: PreferredSize(
-            preferredSize: ternaryFn(
-              condition: ctl.isSearching,
-              ifTrue: const Size.fromHeight(100),
-              ifFalse: const Size.fromHeight(0),
-            ),
+          bottom: !ctl.isSearching ? null : PreferredSize(
+            preferredSize: const Size.fromHeight(80),
             child: Visibility(
               visible: ctl.isSearching,
               child: Padding(

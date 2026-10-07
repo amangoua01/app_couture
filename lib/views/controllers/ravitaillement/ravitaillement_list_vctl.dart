@@ -16,6 +16,17 @@ class RavitaillementListVctl extends AuthViewController {
   int _page = 1;
   bool hasMore = true;
 
+  DateTimeRange dateRange = DateTimeRange(
+    start: DateTime(DateTime.now().year, DateTime.now().month, 1),
+    end: DateTime.now().add(const Duration(days: 30)),
+  );
+
+  void updateDateRange(DateTimeRange range) {
+    dateRange = range;
+    fetchData();
+  }
+
+
   @override
   void onReady() {
     super.onReady();
@@ -29,16 +40,31 @@ class RavitaillementListVctl extends AuthViewController {
     if (refresh) {
       _page = 1;
       hasMore = true;
+
+      // Réaffiche la dernière page connue le temps que le réseau réponde,
+      // au lieu de vider l'écran à chaque ouverture.
+      if (items.isEmpty) {
+        final cached = await api.readCachedStock(entite.id!);
+        if (cached != null) {
+          items = cached;
+          update();
+        }
+      }
     }
 
-    isLoading = true;
+    isLoading = items.isEmpty;
     errorMessage = null;
     update();
+
+    final dateDebut = dateRange.start.toIso8601String().split('T')[0];
+    final dateFin = dateRange.end.toIso8601String().split('T')[0];
 
     final res = await api.getListStock(
       boutiqueId: entite.id!,
       page: _page,
       limit: 20,
+      dateDebut: dateDebut,
+      dateFin: dateFin,
     );
 
     isLoading = false;
@@ -131,8 +157,10 @@ class RavitaillementListVctl extends AuthViewController {
           TextButton(
             onPressed: () => Get.back<String>(result: ctl.text.trim()),
             style: TextButton.styleFrom(foregroundColor: confirmColor),
-            child: Text(confirmLabel,
-                style: const TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              confirmLabel,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),

@@ -688,8 +688,13 @@ mixin PrinterManagerViewMixin {
     ]);
 
     bytes += generator.emptyLines(1);
-    if (vente.reference != null) {
-      bytes += generator.qrcode(vente.reference.value, size: QRSize.size8);
+    // L'id numérique (court) plutôt que la référence texte (longue, ex:
+    // "PMT-xxxxxxxx") : encoder la référence forçait un code QR bien plus
+    // dense pour la même taille physique imprimée (déjà au maximum), donc
+    // beaucoup plus lent/difficile à scanner que celui des commandes
+    // atelier, qui encode déjà juste l'id.
+    if (vente.id != null) {
+      bytes += generator.qrcode(vente.id.toString(), size: QRSize.size8);
     }
     bytes += generator.emptyLines(1);
     bytes += generator.text(

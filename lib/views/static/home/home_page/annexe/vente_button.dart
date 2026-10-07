@@ -29,19 +29,24 @@ class VenteButton extends StatelessWidget {
               condition:
                   ctl.getEntite().value.type == EntiteEntrepriseType.boutique,
               placeholder: ScrollingFabAnimated(
-                width: 190,
+                width: 150,
+                // Le package applique un padding horizontal fixe de 15px de
+                // chaque côté de l'icône (30px), non paramétrable : en
+                // dessous de ~52 (30 + icône 18 + marge), le bouton replié
+                // en cercle déborde de son propre padding interne.
+                height: 52,
                 color: AppColors.secondary,
                 text: const Text(
                   "Créer une mesure",
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 12,
                   ),
                 ),
                 icon: SvgPicture.asset(
                   "assets/images/svg/mesure.svg",
-                  width: 25,
+                  width: 18,
                   colorFilter: const ColorFilter.mode(
                     Colors.white,
                     BlendMode.srcIn,
@@ -51,19 +56,20 @@ class VenteButton extends StatelessWidget {
                 scrollController: ctl.scrollCtl,
               ),
               child: ScrollingFabAnimated(
-                width: 190,
+                width: 150,
+                height: 52,
                 color: AppColors.secondary,
                 text: const Text(
                   "Faire une vente",
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 13,
                   ),
                 ),
                 icon: SvgPicture.asset(
                   "assets/images/svg/atelier.svg",
-                  width: 25,
+                  width: 18,
                   colorFilter: const ColorFilter.mode(
                     Colors.white,
                     BlendMode.srcIn,

@@ -27,13 +27,14 @@ class ApprovisionnerCaissePage extends StatelessWidget {
       builder: (ctl) {
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: AppBar(title: const Text("Nouveau dépôt")),
+          appBar: AppBar(title: Text(ctl.sens == SensMouvementCaisseEnum.entree ? "Nouveau dépôt" : "Nouveau retrait")),
+          
           floatingActionButton: FloatingActionButton(
             onPressed: () => BottomSheetDepot.show(ctl),
             elevation: 4,
             backgroundColor: AppColors.secondary,
             foregroundColor: Colors.white,
-            child: const Icon(Icons.add),
+            child: const Icon(Icons.add_card_rounded),
           ),
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
@@ -51,7 +52,7 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 child: CButton(
-                  title: "Enregistrer le dépôt",
+                  title: ctl.sens == SensMouvementCaisseEnum.entree ? "Enregistrer le dépôt" : "Enregistrer le retrait",
                   onPressed: ctl.submit,
                 ),
               ),
@@ -65,18 +66,11 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                 physics: const BouncingScrollPhysics(),
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey.shade100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.15), width: 1.5),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,21 +88,7 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                             }
                           },
                         ),
-                        CDropDownFormField<SensMouvementCaisseEnum>(
-                          externalLabel: "Sens",
-                          selectedItem: ctl.sens,
-                          enabled: false,
-                          fillColor: Colors.grey.shade100,
-                          items: (filter, loadProps) async =>
-                              SensMouvementCaisseEnum.values,
-                          itemAsString: (item) => item.label,
-                          onChanged: (e) {
-                            if (e != null) {
-                              ctl.sens = e;
-                              ctl.update();
-                            }
-                          },
-                        ),
+                        
                         CTextFormField(
                           externalLabel: "Description",
                           controller: ctl.descriptionCtl,
@@ -204,19 +184,72 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                     ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.zero,
                       itemCount: ctl.lines.length,
                       separatorBuilder: (context, index) => const Gap(12),
                       itemBuilder: (context, index) {
                         final line = ctl.lines[index];
-                        return LigneCard(
-                          index: index,
-                          title: line.caisse!.entite!.libelle.value,
-                          subtitle:
-                              "${ctl.sens.label.value} • ${ctl.modePaiement.label.value}",
-                          montant: line.montantCtl.text,
-                          isEntree: ctl.sens == SensMouvementCaisseEnum.entree,
-                          onDelete: () => ctl.removeLine(index),
+                        final isEntree = ctl.sens == SensMouvementCaisseEnum.entree;
+                        final currentEntiteId = ctl.getEntite().value.id;
+                        final isCurrentCaisse = line.caisse?.entite?.id == currentEntiteId;
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: isCurrentCaisse ? AppColors.primary.withValues(alpha: 0.04) : Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                                color: isCurrentCaisse ? AppColors.primary.withValues(alpha: 0.3) : AppColors.primary.withValues(alpha: 0.15), 
+                                width: isCurrentCaisse ? 2.0 : 1.5),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  line.caisse?.entite?.libelle.value ?? "Caisse",
+                                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: Color(0xFF0F2620)),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const Gap(8),
+                              Expanded(
+                                flex: 4,
+                                child: TextFormField(
+                                  controller: line.montantCtl,
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w800,
+                                    color: isEntree ? AppColors.primary : Colors.red,
+                                  ),
+                                  decoration: InputDecoration(
+                                    hintText: "0",
+                                    suffixText: " F",
+                                    filled: true,
+                                    fillColor: isCurrentCaisse ? Colors.white : AppColors.primary.withValues(alpha: 0.03),
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    isDense: true,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  onChanged: (_) => ctl.update(),
+                                ),
+                              ),
+                              if (ctl.lines.length > 1) ...[
+                                const Gap(4),
+                                IconButton(
+                                  icon: const Icon(Icons.close_rounded, color: Colors.red, size: 20),
+                                  onPressed: () => ctl.removeLine(index),
+                                  constraints: const BoxConstraints(),
+                                  padding: EdgeInsets.zero,
+                                ),
+                              ],
+                            ],
+                          ),
                         );
                       },
                     ),

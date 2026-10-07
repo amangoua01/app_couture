@@ -29,95 +29,79 @@ class MouvementCaisseListPage extends StatelessWidget {
               // ── Header Période de filtrage (Uniformisé) ───────────────────────
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.05),
-                      width: 1,
+                child: GestureDetector(
+                  onTap: () => _showDatePicker(context, ctl),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.03),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: AppColors.primary.withValues(alpha: 0.15),
+                        width: 1.5,
+                      ),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.02),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.calendar_today_rounded,
-                          size: 16,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const Gap(12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Période de filtrage",
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color:
-                                    AppColors.primary.withValues(alpha: 0.45),
-                                letterSpacing: 0.1,
-                              ),
-                            ),
-                            const Gap(2),
-                            Text(
-                              "${DateFormat('dd/MM/yyyy').format(ctl.dateRange.start)} - ${DateFormat('dd/MM/yyyy').format(ctl.dateRange.end)}",
-                              style: const TextStyle(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: () => _showDatePicker(context, ctl),
-                        icon: const Icon(Icons.keyboard_arrow_down_rounded,
-                            size: 16),
-                        label: const Text(
-                          "Modifier",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w800, fontSize: 12),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.primary,
-                          side: BorderSide(
-                            color: AppColors.primary.withValues(alpha: 0.15),
-                            width: 1.2,
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.primary.withValues(alpha: 0.1)),
                           ),
-                          shape: RoundedRectangleBorder(
+                          child: const Icon(
+                            Icons.calendar_month_rounded,
+                            size: 18,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const Gap(14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Période de filtrage",
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.primary.withValues(alpha: 0.5),
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                              const Gap(3),
+                              Text(
+                                "${DateFormat('dd/MM/yyyy').format(ctl.dateRange.start)}  -  ${DateFormat('dd/MM/yyyy').format(ctl.dateRange.end)}",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          child: const Text(
+                            "Modifier",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 11,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-
-              // ── Liste des mouvements ──────────────────────────────────
               Expanded(
                 child: PlaceholderWidget(
                   condition: !ctl.isLoading,
@@ -196,23 +180,14 @@ class _MouvementTile extends StatelessWidget {
     final color = isEntree ? Colors.green.shade600 : Colors.red.shade600;
     final icon = isEntree ? Icons.north_east_rounded : Icons.south_west_rounded;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.04),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: color.withOpacity(0.2), width: 1.5),
       ),
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Row(
@@ -231,11 +206,14 @@ class _MouvementTile extends StatelessWidget {
 
             // Détails du mouvement
             Expanded(
+              flex: 5,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     item.reference ?? "Mouvement",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Color(0xFF0F231F),
                       fontWeight: FontWeight.w800,
@@ -285,18 +263,24 @@ class _MouvementTile extends StatelessWidget {
             const Gap(12),
 
             // Montant et libellé
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  "${isEntree ? '+' : '-'} ${item.montant?.toAmount(unit: 'F') ?? '0 F'}",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 15,
-                    color: color,
-                    letterSpacing: -0.2,
+            Expanded(
+              flex: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "${isEntree ? '+' : '-'} ${item.montant?.toAmount(unit: 'F') ?? '0 F'}",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 15,
+                        color: color,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
                   ),
-                ),
                 const Gap(4),
                 Container(
                   padding:
@@ -315,6 +299,7 @@ class _MouvementTile extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
             ),
           ],
         ),

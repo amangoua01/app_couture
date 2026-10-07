@@ -283,7 +283,13 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        lm.typeMesure?.libelle ?? "Article",
+                                        (() {
+  final nom = lm.nom;
+  if (nom != null && nom.trim().isNotEmpty) return nom;
+  final lib = lm.typeMesure?.libelle;
+  if (lib != null && lib.trim().isNotEmpty) return lib;
+  return "Article";
+})(),
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,

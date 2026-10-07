@@ -1,3 +1,4 @@
+import "package:ateliya/views/controllers/abstract/auth_view_controller.dart";
 import 'package:ateliya/api/caisse_api.dart';
 import 'package:ateliya/data/dto/ligne_mouvement_caisse_dto.dart';
 import 'package:ateliya/data/dto/mouvement_caisse_dto.dart';
@@ -16,7 +17,7 @@ class MouvementCaisseLine {
   final montantCtl = TextEditingController();
 }
 
-class ApprovisionnerCaissePageVctl extends GetxController {
+class ApprovisionnerCaissePageVctl extends AuthViewController {
   final api = CaisseApi();
   final descriptionCtl = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -30,6 +31,27 @@ class ApprovisionnerCaissePageVctl extends GetxController {
   final montantBottomSheetCtl = TextEditingController();
 
   ApprovisionnerCaissePageVctl(this.sens);
+
+  @override
+  void onReady() {
+    super.onReady();
+    _initDefaultCaisse();
+  }
+
+  Future<void> _initDefaultCaisse() async {
+    final caisses = await getCaisses();
+    final currentEntiteId = getEntite().value.id;
+    for (var caisse in caisses) {
+      if (caisse.entite?.id == currentEntiteId) {
+        lines.add(createLine(caisse, ""));
+        update();
+        break;
+      }
+    }
+    // Si aucune caisse ne correspond ou pas de caisses, on ajoute une ligne vide ? 
+    // Non, le user veut sélectionner, ou on ajoute si ça existe.
+  }
+
 
   void resetBottomSheet() {
     selectedCaisse = null;
@@ -46,7 +68,12 @@ class ApprovisionnerCaissePageVctl extends GetxController {
       return false;
     }
     if (montantBottomSheetCtl.text.isEmpty) {
-      CMessageDialog.show(message: 'Veuillez saisir un montant');
+      CMessageDialog.show(message: "Veuillez saisir un montant");
+      return false;
+    }
+    // Prevent duplicate caisse
+    if (lines.any((line) => line.caisse?.id == selectedCaisse!.id)) {
+      CMessageDialog.show(message: "Cette caisse est déjà ajoutée dans la liste");
       return false;
     }
     lines.add(createLine(selectedCaisse!, montantBottomSheetCtl.text));
