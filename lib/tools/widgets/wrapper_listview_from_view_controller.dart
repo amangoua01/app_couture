@@ -1,5 +1,4 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
-import 'package:ateliya/tools/components/card_style.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/tools/widgets/shimmer_listtile.dart';
@@ -7,33 +6,6 @@ import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
-/// Le trait qui sépare deux lignes à l'intérieur d'une même carte ; décalé
-/// pour ne pas passer sous l'avatar de la ligne.
-Widget _rowDivider(BuildContext context, int index) =>
-    Divider(height: 1, indent: 70, color: Colors.grey[150]);
-
-/// Habille une liste en une seule carte continue (plutôt que des cartes
-/// isolées par ligne), pour un rendu dense et structuré.
-class _ListSurface extends StatelessWidget {
-  final Widget child;
-  final EdgeInsetsGeometry margin;
-
-  const _ListSurface({
-    required this.child,
-    this.margin = const EdgeInsets.fromLTRB(12, 10, 12, 20),
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: margin,
-      decoration: CardStyle.decoration(),
-      clipBehavior: Clip.antiAlias,
-      child: child,
-    );
-  }
-}
 
 class WrapperListviewFromViewController<M extends ModelJson>
     extends StatelessWidget {
@@ -50,14 +22,11 @@ class WrapperListviewFromViewController<M extends ModelJson>
   Widget build(BuildContext context) {
     return PlaceholderBuilder(
       condition: !ctl.isLoading,
-      placeholder: _ListSurface(
-        child: ListView.separated(
-          padding: EdgeInsets.zero,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: 8,
-          separatorBuilder: _rowDivider,
-          itemBuilder: (context, index) => const ShimmerListtile(),
-        ),
+      placeholder: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 8,
+        itemBuilder: (context, index) => const ShimmerListtile(),
       ),
       builder:
           () => PlaceholderBuilder(
@@ -84,15 +53,12 @@ class WrapperListviewFromViewController<M extends ModelJson>
             builder:
                 () => PlaceholderBuilder(
                   condition: ctl.selected == null,
-                  placeholder: _ListSurface(
-                    child: ListView.separated(
-                      padding: EdgeInsets.zero,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      controller: ctl.scrollCtl,
-                      itemCount: ctl.data.length,
-                      separatorBuilder: _rowDivider,
-                      itemBuilder: itemBuilder,
-                    ),
+                  placeholder: ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: ctl.scrollCtl,
+                    itemCount: ctl.data.length,
+                    itemBuilder: itemBuilder,
                   ),
                   builder: () {
                     return RefreshIndicator(
@@ -100,21 +66,12 @@ class WrapperListviewFromViewController<M extends ModelJson>
                       child: Column(
                         children: [
                           Expanded(
-                            child: _ListSurface(
-                              margin: const EdgeInsets.fromLTRB(
-                                12,
-                                10,
-                                12,
-                                100,
-                              ),
-                              child: ListView.separated(
-                                padding: EdgeInsets.zero,
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                controller: ctl.scrollCtl,
-                                itemCount: ctl.data.length,
-                                separatorBuilder: _rowDivider,
-                                itemBuilder: itemBuilder,
-                              ),
+                            child: ListView.builder(
+                              padding: const EdgeInsets.fromLTRB(0, 8, 0, 100),
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              controller: ctl.scrollCtl,
+                              itemCount: ctl.data.length,
+                              itemBuilder: itemBuilder,
                             ),
                           ),
                           Visibility(

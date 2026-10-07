@@ -1,4 +1,5 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
+import 'package:ateliya/tools/components/card_style.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -13,8 +14,10 @@ import 'package:lottie/lottie.dart';
 
 /// Ligne de liste utilisée par la quasi-totalité des écrans de listes.
 ///
-/// Rendue comme une carte autonome (plutôt qu'une ligne de tableau classique)
-/// pour que toutes les listes de l'app partagent le même habillage visuel.
+/// Chaque ligne est sa propre carte (bordure + ombre légère, comme l'écran
+/// Personnel), pas une ligne au sein d'une grande surface continue : plus
+/// aéré, et c'est ce look qui sert désormais de référence pour tout
+/// l'écran Options.
 class ListItem<M extends ModelJson> extends StatelessWidget {
   final String title;
   final dynamic subtitle;
@@ -91,20 +94,16 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
     final isChecked = _isSelectionMode && ctl.isSelected(index);
 
     return Container(
-      // La carte vient de la surface qui regroupe toute la liste (voir
-      // WrapperListviewFromViewController) ; cette ligne ne porte qu'une
-      // teinte quand elle est sélectionnée.
-      color:
-          (selected || isChecked)
-              ? AppColors.primary.withValues(alpha: 0.05)
-              : null,
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      decoration: CardStyle.decoration(selected: selected || isChecked),
+      clipBehavior: Clip.antiAlias,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: _handleTap,
           onLongPress: _isSelectionMode ? null : _toggleSelection,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(
               children: [
                 PlaceholderBuilder(
@@ -124,7 +123,8 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
                   builder:
                       () => Padding(
                         padding: const EdgeInsets.only(right: 12),
-                        child: leadingWidget ??
+                        child:
+                            leadingWidget ??
                             Badge(
                               label: badgeWidget,
                               backgroundColor: backgroundColor,

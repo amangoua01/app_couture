@@ -1,16 +1,19 @@
+import 'package:ateliya/tools/components/card_style.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:shimmer/shimmer.dart';
 
-/// Silhouette de chargement d'une ligne, affichée à l'intérieur de la même
-/// carte-surface que les vraies lignes pour éviter tout saut visuel.
+/// Silhouette de chargement d'une ligne, dans la même carte individuelle que
+/// les vraies lignes (voir ListItem) pour éviter tout saut visuel.
 class ShimmerListtile extends StatelessWidget {
   const ShimmerListtile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      decoration: CardStyle.decoration(),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Shimmer.fromColors(
         baseColor: Colors.grey.shade300,
         highlightColor: Colors.grey.shade100,
