@@ -111,7 +111,8 @@ class BoutiqueApi extends CrudWebController<Boutique> {
   // https://backend.ateliya.com/api/modeleBoutique/modele/by/boutique/1
 
   Future<DataResponse<List<StockModeleItem>>> getModeleBoutiqueByBoutiqueId(
-      int id) async {
+    int id,
+  ) async {
     try {
       final res = await client.get(
         urlBuilder(api: "/modele/by/boutique/$id", module: "modeleBoutique"),
@@ -120,9 +121,11 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       var data = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return DataResponse.success(
-            data: (data["data"] as List).map((e) {
-          return StockModeleItem.fromJson(e);
-        }).toList());
+          data:
+              (data["data"] as List).map((e) {
+                return StockModeleItem.fromJson(e);
+              }).toList(),
+        );
       } else {
         return DataResponse.error(
           message: data["message"] ?? res.reasonPhrase.value,
@@ -145,9 +148,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       );
       var resData = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        return DataResponse.success(
-          data: Vente.fromJson(resData["data"]),
-        );
+        return DataResponse.success(data: Vente.fromJson(resData["data"]));
       } else {
         return DataResponse.error(message: resData["message"]);
       }
@@ -157,7 +158,9 @@ class BoutiqueApi extends CrudWebController<Boutique> {
   }
 
   Future<DataResponse<List<Vente>>> getVentes(
-      int id, Map<String, dynamic> data) async {
+    int id,
+    Map<String, dynamic> data,
+  ) async {
     try {
       final res = await client.post(
         urlBuilder(api: "boutique/$id", module: "vente"),
@@ -166,12 +169,13 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       );
       final json = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        final list = (json['data']['data'] as List)
-            .map((e) => Vente.fromJson(e))
-            .toList();
+        final list =
+            (json['data']['data'] as List)
+                .map((e) => Vente.fromJson(e))
+                .toList();
         return DataResponse.success(data: list);
       } else {
-        return DataResponse.error(message: json['message']);
+        return DataResponse.error(message: json['message'] ?? "Erreur");
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -188,7 +192,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       if (res.statusCode == 200) {
         return DataResponse.success(data: true);
       } else {
-        return DataResponse.error(message: json['message']);
+        return DataResponse.error(message: json['message'] ?? "Erreur");
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -205,7 +209,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       if (res.statusCode == 200) {
         return DataResponse.success(data: Vente.fromJson(json['data']));
       } else {
-        return DataResponse.error(message: json['message']);
+        return DataResponse.error(message: json['message'] ?? "Erreur");
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -225,7 +229,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       if (res.statusCode == 200) {
         return DataResponse.success(data: Vente.fromJson(json['data']));
       } else {
-        return DataResponse.error(message: json['message']);
+        return DataResponse.error(message: json['message'] ?? "Erreur");
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);

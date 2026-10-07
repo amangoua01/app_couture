@@ -28,7 +28,9 @@ class PersonnelApi extends CrudWebController<User> {
         return DataResponse.success(data: null);
       }
       final data = jsonDecode(res.body);
-      return DataResponse.error(message: data["message"] ?? res.reasonPhrase);
+      return DataResponse.error(
+        message: data["message"] ?? res.reasonPhrase ?? "Erreur inconnue",
+      );
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
     }

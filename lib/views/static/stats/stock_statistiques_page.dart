@@ -28,36 +28,42 @@ class StockStatistiquesPage extends StatelessWidget {
           child: Scaffold(
             backgroundColor: Colors.grey[50],
             appBar: AppBar(
-              title: const Text("Suivi de Stock",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              title: const Text(
+                "Suivi de Stock",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               elevation: 0,
               centerTitle: true,
             ),
-            body: ctl.isLoading && ctl.data == null
-                ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.primary))
-                : Column(
-                    children: [
-                      const CTabBar(
-                        tabs: [
-                          "Général",
-                          "Mouvements",
-                          "Inventaire",
-                          "Par Taille"
-                        ],
+            body:
+                ctl.isLoading && ctl.data == null
+                    ? const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
                       ),
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            _GeneralView(ctl: ctl),
-                            _HistoriqueMouvementsView(ctl: ctl),
-                            _InventaireView(ctl: ctl),
-                            _StockParTailleView(ctl: ctl),
+                    )
+                    : Column(
+                      children: [
+                        const CTabBar(
+                          tabs: [
+                            "Général",
+                            "Mouvements",
+                            "Inventaire",
+                            "Par Taille",
                           ],
                         ),
-                      ),
-                    ],
-                  ),
+                        Expanded(
+                          child: TabBarView(
+                            children: [
+                              _GeneralView(ctl: ctl),
+                              _HistoriqueMouvementsView(ctl: ctl),
+                              _InventaireView(ctl: ctl),
+                              _StockParTailleView(ctl: ctl),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
           ),
         );
       },
@@ -117,94 +123,86 @@ class _GeneralView extends StatelessWidget {
             ),
           ),
           PlaceholderBuilder(
-              condition: ctl.periodIndex == 3,
-              builder: () {
-                return Column(
-                  children: [
-                    const Gap(20),
-                    GestureDetector(
-                      onTap: () => CBottomSheet.show(
-                        child: SelectDashPeriodSubPage(DateTimeRange(
-                            start: ctl.params.dateDebut ?? DateTime.now(),
-                            end: ctl.params.dateFin ?? DateTime.now())),
-                      ).then((e) {
-                        if (e is DateTimeRange) {
-                          ctl.updatePeriod(PeriodStat.periode,
-                              debut: e.start, fin: e.end);
-                        }
-                      }),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 15),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.primary),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.calendar_today,
-                                    color: AppColors.primary, size: 20),
-                                const Gap(10),
-                                Text(
-                                  DateTimeRange(
-                                          start: ctl.params.dateDebut ??
-                                              DateTime.now(),
-                                          end: ctl.params.dateFin ??
-                                              DateTime.now())
-                                      .toFrenchDate,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primary),
-                                ),
-                              ],
+            condition: ctl.periodIndex == 3,
+            builder: () {
+              return Column(
+                children: [
+                  const Gap(20),
+                  GestureDetector(
+                    onTap:
+                        () => CBottomSheet.show(
+                          child: SelectDashPeriodSubPage(
+                            DateTimeRange(
+                              start: ctl.params.dateDebut ?? DateTime.now(),
+                              end: ctl.params.dateFin ?? DateTime.now(),
                             ),
-                            const Icon(Icons.arrow_drop_down,
-                                color: AppColors.primary),
-                          ],
-                        ),
+                          ),
+                        ).then((e) {
+                          if (e is DateTimeRange) {
+                            ctl.updatePeriod(
+                              PeriodStat.periode,
+                              debut: e.start,
+                              fin: e.end,
+                            );
+                          }
+                        }),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 15,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.primary),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.calendar_today,
+                                color: AppColors.primary,
+                                size: 20,
+                              ),
+                              const Gap(10),
+                              Text(
+                                DateTimeRange(
+                                  start: ctl.params.dateDebut ?? DateTime.now(),
+                                  end: ctl.params.dateFin ?? DateTime.now(),
+                                ).toFrenchDate,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Icon(
+                            Icons.arrow_drop_down,
+                            color: AppColors.primary,
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                );
-              }),
+                  ),
+                ],
+              );
+            },
+          ),
           const Gap(25),
 
-          _DesignStatCard(
-            label: "Stock Actuel Total",
-            value: "${kpis.stockActuelTotal ?? 0}",
-            icon: Icons.inventory_2_outlined,
-            color: AppColors.primary,
-            isMainCard: true,
+          _StockOverviewPanel(kpis: kpis),
+          const Gap(24),
+          if ((ctl.data?.stockParModele ?? []).isNotEmpty) ...[
+            _StockRepartitionDonut(items: ctl.data!.stockParModele!),
+            const Gap(30),
+          ],
+          const Text(
+            "Évolution du Stock",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          const Gap(15),
-          Row(
-            children: [
-              Expanded(
-                child: _DesignStatCard(
-                  label: "Entrées",
-                  value: "+${kpis.qteEntreeTotale ?? 0}",
-                  icon: Icons.arrow_downward_rounded,
-                  color: Colors.green,
-                ),
-              ),
-              const Gap(15),
-              Expanded(
-                child: _DesignStatCard(
-                  label: "Sorties",
-                  value: "-${kpis.qteSortieTotale ?? 0}",
-                  icon: Icons.arrow_upward_rounded,
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-          const Gap(30),
-          const Text("Évolution du Stock",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const Gap(15),
           Container(
             height: 250,
@@ -224,19 +222,23 @@ class _GeneralView extends StatelessWidget {
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: false,
-                    getDrawingHorizontalLine: (value) =>
-                        FlLine(color: Colors.grey[200], strokeWidth: 1)),
+                  show: true,
+                  drawVerticalLine: false,
+                  getDrawingHorizontalLine:
+                      (value) =>
+                          FlLine(color: Colors.grey[200], strokeWidth: 1),
+                ),
                 borderData: FlBorderData(show: false),
                 titlesData: FlTitlesData(
                   rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   leftTitles: const AxisTitles(
-                      sideTitles:
-                          SideTitles(showTitles: true, reservedSize: 30)),
+                    sideTitles: SideTitles(showTitles: true, reservedSize: 30),
+                  ),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -253,9 +255,13 @@ class _GeneralView extends StatelessWidget {
                           }
                           return Padding(
                             padding: const EdgeInsets.only(top: 10),
-                            child: Text(dateText,
-                                style: const TextStyle(
-                                    fontSize: 10, color: Colors.grey)),
+                            child: Text(
+                              dateText,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey,
+                              ),
+                            ),
                           );
                         }
                         return const SizedBox();
@@ -265,23 +271,33 @@ class _GeneralView extends StatelessWidget {
                 ),
                 lineBarsData: [
                   LineChartBarData(
-                    spots: evolution
-                        .asMap()
-                        .entries
-                        .map((e) => FlSpot(e.key.toDouble(),
-                            e.value.qteEntree?.toDouble() ?? 0))
-                        .toList(),
+                    spots:
+                        evolution
+                            .asMap()
+                            .entries
+                            .map(
+                              (e) => FlSpot(
+                                e.key.toDouble(),
+                                e.value.qteEntree?.toDouble() ?? 0,
+                              ),
+                            )
+                            .toList(),
                     color: Colors.green,
                     isCurved: true,
                     dotData: const FlDotData(show: false),
                   ),
                   LineChartBarData(
-                    spots: evolution
-                        .asMap()
-                        .entries
-                        .map((e) => FlSpot(e.key.toDouble(),
-                            e.value.qteSortie?.toDouble() ?? 0))
-                        .toList(),
+                    spots:
+                        evolution
+                            .asMap()
+                            .entries
+                            .map(
+                              (e) => FlSpot(
+                                e.key.toDouble(),
+                                e.value.qteSortie?.toDouble() ?? 0,
+                              ),
+                            )
+                            .toList(),
                     color: Colors.red,
                     isCurved: true,
                     dotData: const FlDotData(show: false),
@@ -320,23 +336,27 @@ class _RepartitionDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Détails des Mouvements",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text(
+          "Détails des Mouvements",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
         const Gap(15),
         Row(
           children: [
             Expanded(
               child: _MoveDetailsCard(
-                  title: "Entrées",
-                  summary: repartition.entrees,
-                  color: Colors.green),
+                title: "Entrées",
+                summary: repartition.entrees,
+                color: Colors.green,
+              ),
             ),
             const Gap(15),
             Expanded(
               child: _MoveDetailsCard(
-                  title: "Sorties",
-                  summary: repartition.sorties,
-                  color: Colors.red),
+                title: "Sorties",
+                summary: repartition.sorties,
+                color: Colors.red,
+              ),
             ),
           ],
         ),
@@ -350,33 +370,45 @@ class _MoveDetailsCard extends StatelessWidget {
   final StockMovementSummary? summary;
   final Color color;
 
-  const _MoveDetailsCard(
-      {required this.title, this.summary, required this.color});
+  const _MoveDetailsCard({
+    required this.title,
+    this.summary,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style: TextStyle(
-                  color: color, fontWeight: FontWeight.bold, fontSize: 14)),
+          Text(
+            title,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
           const Divider(),
           _TableRow(
-              label: "Mouvements", value: "${summary?.nbMouvements ?? 0}"),
+            label: "Mouvements",
+            value: "${summary?.nbMouvements ?? 0}",
+          ),
           _TableRow(label: "Confirmés", value: "${summary?.confirmes ?? 0}"),
           _TableRow(label: "En attente", value: "${summary?.enAttente ?? 0}"),
           if ((summary?.rejetes ?? 0) > 0)
             _TableRow(
-                label: "Rejetés",
-                value: "${summary?.rejetes ?? 0}",
-                color: Colors.red),
+              label: "Rejetés",
+              value: "${summary?.rejetes ?? 0}",
+              color: Colors.red,
+            ),
         ],
       ),
     );
@@ -431,74 +463,101 @@ class _HistoriqueMouvementsView extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.type ?? '',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, color: color)),
-                          Text(item.date ?? '',
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.grey)),
+                          Text(
+                            item.type ?? '',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: color,
+                            ),
+                          ),
+                          Text(
+                            item.date ?? '',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
                         ],
                       ),
                     ],
                   ),
                   _SmallLabel(
-                      text: item.statut ?? '',
-                      color: item.statut == 'CONFIRME'
-                          ? Colors.green
-                          : Colors.orange),
+                    text: item.statut ?? '',
+                    color:
+                        item.statut == 'CONFIRME'
+                            ? Colors.green
+                            : Colors.orange,
+                  ),
                 ],
               ),
               if (item.commentaire != null && item.commentaire!.isNotEmpty) ...[
                 const Gap(10),
-                Text(item.commentaire!,
-                    style: const TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: 12,
-                        color: Colors.black54)),
+                Text(
+                  item.commentaire!,
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 12,
+                    color: Colors.black54,
+                  ),
+                ),
               ],
               if (item.lignes != null && item.lignes!.isNotEmpty) ...[
                 const Gap(10),
                 const Divider(height: 1),
                 Theme(
-                  data: Theme.of(context)
-                      .copyWith(dividerColor: Colors.transparent),
+                  data: Theme.of(
+                    context,
+                  ).copyWith(dividerColor: Colors.transparent),
                   child: ExpansionTile(
                     tilePadding: EdgeInsets.zero,
-                    title: Text("${item.lignes!.length} articles concernés",
-                        style: const TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.bold)),
-                    children: item.lignes!.map((ligne) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(ligne.modeleLibelle ?? '',
-                                      style: const TextStyle(
+                    title: Text(
+                      "${item.lignes!.length} articles concernés",
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    children:
+                        item.lignes!.map((ligne) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        ligne.modeleLibelle ?? '',
+                                        style: const TextStyle(
                                           fontSize: 13,
-                                          fontWeight: FontWeight.w500)),
-                                  Text(
-                                      "Stock : ${ligne.quantiteAvant ?? 0} ➔ ${ligne.quantiteApres ?? 0}",
-                                      style: const TextStyle(
-                                          fontSize: 11, color: Colors.grey)),
-                                ],
-                              ),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Text(
+                                        "Stock : ${ligne.quantiteAvant ?? 0} ➔ ${ligne.quantiteApres ?? 0}",
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  "${isSortie ? '-' : '+'}${ligne.quantiteMouvement ?? 0}",
+                                  style: TextStyle(
+                                    color: color,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              "${isSortie ? '-' : '+'}${ligne.quantiteMouvement ?? 0}",
-                              style: TextStyle(
-                                  color: color,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
+                          );
+                        }).toList(),
                   ),
                 ),
               ],
@@ -537,44 +596,71 @@ class _InventaireView extends StatelessWidget {
           child: Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-              tilePadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              title: Text(group.libelle.value,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text("${group.nbVariantes ?? 0} variantes",
-                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              tilePadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
+              title: Text(
+                group.libelle.value,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                "${group.nbVariantes ?? 0} variantes",
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
               trailing: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Text("Total: ${group.stockTotal ?? 0}",
-                      style: const TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold))),
-              children: (group.variantes ?? []).map((v) {
-                return Container(
-                  decoration: BoxDecoration(
-                      border:
-                          Border(top: BorderSide(color: Colors.grey.shade100))),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                    leading: const Icon(Icons.checkroom,
-                        color: Colors.grey, size: 20),
-                    title: Text("Taille : ${v.taille.value}",
-                        style: const TextStyle(fontSize: 14)),
-                    subtitle: Text(
-                        "${v.couleur != null ? "${v.couleur.value} • " : ""}${v.prix != null ? v.prix.value.toAmount() : ""}",
-                        style: const TextStyle(fontSize: 12)),
-                    trailing: Text("${v.stock ?? 0} EN STOCK",
-                        style: const TextStyle(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  "Total: ${group.stockTotal ?? 0}",
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              children:
+                  (group.variantes ?? []).map((v) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: Colors.grey.shade100),
+                        ),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
+                        leading: const Icon(
+                          Icons.checkroom,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
+                        title: Text(
+                          "Taille : ${v.taille.value}",
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        subtitle: Text(
+                          "${v.couleur != null ? "${v.couleur.value} • " : ""}${v.prix != null ? v.prix.value.toAmount() : ""}",
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        trailing: Text(
+                          "${v.stock ?? 0} EN STOCK",
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
-                            color: Colors.black87)),
-                  ),
-                );
-              }).toList(),
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
             ),
           ),
         );
@@ -583,23 +669,184 @@ class _InventaireView extends StatelessWidget {
   }
 }
 
-class _DesignStatCard extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final bool isMainCard;
-
-  const _DesignStatCard({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-    this.isMainCard = false,
-  });
+/// Panneau sombre en dégradé, avec une grille de KPI — même langage visuel
+/// que le reste de l'app (fond dégradé primary → primaryDark) plutôt que
+/// des cartes blanches génériques.
+class _StockOverviewPanel extends StatelessWidget {
+  final StockKpis kpis;
+  const _StockOverviewPanel({required this.kpis});
 
   @override
   Widget build(BuildContext context) {
+    final sansStock = kpis.nbModelesSansStock ?? 0;
+    final enAttente = kpis.nbMouvementsEnAttente ?? 0;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.primaryDark],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Vue d'ensemble",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
+            ),
+          ),
+          const Gap(16),
+          Row(
+            children: [
+              Expanded(
+                child: _KpiTile(
+                  label: "Stock actuel",
+                  value: "${kpis.stockActuelTotal ?? 0}",
+                ),
+              ),
+              const Gap(12),
+              Expanded(
+                child: _KpiTile(
+                  label: "Modèles en boutique",
+                  value: "${kpis.nbModelesBoutique ?? 0}",
+                ),
+              ),
+            ],
+          ),
+          const Gap(12),
+          Row(
+            children: [
+              Expanded(
+                child: _KpiTile(
+                  label: "Sans stock",
+                  value: "$sansStock",
+                  accent: sansStock > 0 ? const Color(0xFFE57373) : null,
+                ),
+              ),
+              const Gap(12),
+              Expanded(
+                child: _KpiTile(
+                  label: "Mouvements en attente",
+                  value: "$enAttente",
+                  accent: enAttente > 0 ? AppColors.secondary : null,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _KpiTile extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color? accent;
+
+  const _KpiTile({required this.label, required this.value, this.accent});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              if (accent != null) ...[
+                Container(
+                  width: 7,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    color: accent,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const Gap(6),
+              ],
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.75),
+                    fontSize: 11.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Gap(6),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Répartition du stock par modèle, en donut — les 4 plus gros modèles
+/// nommés, le reste regroupé sous "Autres" pour garder la légende lisible.
+class _StockRepartitionDonut extends StatelessWidget {
+  final List<StockParModele> items;
+  const _StockRepartitionDonut({required this.items});
+
+  static const _palette = [
+    AppColors.primary,
+    AppColors.secondary,
+    Color(0xFF6FA88A),
+    Color(0xFFB08968),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final sorted = [...items]
+      ..sort((a, b) => (b.stockTotal ?? 0).compareTo(a.stockTotal ?? 0));
+    final top = sorted.take(4).toList();
+    final reste = sorted
+        .skip(4)
+        .fold<int>(0, (sum, e) => sum + (e.stockTotal ?? 0));
+    final total = sorted.fold<int>(0, (sum, e) => sum + (e.stockTotal ?? 0));
+    if (total == 0) return const SizedBox.shrink();
+
+    final slices = [
+      for (var i = 0; i < top.length; i++)
+        (
+          label: top[i].libelle ?? 'Modèle',
+          value: top[i].stockTotal ?? 0,
+          color: _palette[i % _palette.length],
+        ),
+      if (reste > 0)
+        (label: "Autres", value: reste, color: Colors.grey.shade300),
+    ];
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -617,31 +864,74 @@ class _DesignStatCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Text(
+            "Répartition par modèle",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const Gap(16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
+              SizedBox(
+                width: 130,
+                height: 130,
+                child: PieChart(
+                  PieChartData(
+                    sectionsSpace: 2,
+                    centerSpaceRadius: 36,
+                    sections: [
+                      for (final s in slices)
+                        PieChartSectionData(
+                          value: s.value.toDouble(),
+                          color: s.color,
+                          radius: 26,
+                          showTitle: false,
+                        ),
+                    ],
+                  ),
                 ),
-                child: Icon(icon, color: color, size: 20),
+              ),
+              const Gap(20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final s in slices)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 9,
+                              height: 9,
+                              decoration: BoxDecoration(
+                                color: s.color,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const Gap(8),
+                            Expanded(
+                              child: Text(
+                                s.label,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 12.5),
+                              ),
+                            ),
+                            Text(
+                              "${((s.value / total) * 100).round()}%",
+                              style: const TextStyle(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ],
           ),
-          const Gap(15),
-          Text(value,
-              style: TextStyle(
-                  fontSize: isMainCard ? 28 : 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87)),
-          const Gap(4),
-          Text(label,
-              style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -657,45 +947,55 @@ class _SummaryTable extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.grey.shade200)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Résumé",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const Text(
+            "Résumé",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
           const Gap(15),
           _TableRow(
-              label: "Modèles en boutique",
-              value: "${kpis.nbModelesBoutique ?? 0}"),
+            label: "Modèles en boutique",
+            value: "${kpis.nbModelesBoutique ?? 0}",
+          ),
           const Divider(height: 20),
           _TableRow(
-              label: "Modèles sans stock",
-              value: "${kpis.nbModelesSansStock ?? 0}",
-              color: Colors.orange),
+            label: "Modèles sans stock",
+            value: "${kpis.nbModelesSansStock ?? 0}",
+            color: Colors.orange,
+          ),
           const Divider(height: 20),
           _TableRow(
-              label: "Mouvements Total",
-              value: "${kpis.nbMouvementsTotal ?? 0}"),
+            label: "Mouvements Total",
+            value: "${kpis.nbMouvementsTotal ?? 0}",
+          ),
           _TableRow(
-              label: " • Dont Entrées",
-              value: "${kpis.nbEntrees ?? 0}",
-              color: Colors.green),
+            label: " • Dont Entrées",
+            value: "${kpis.nbEntrees ?? 0}",
+            color: Colors.green,
+          ),
           _TableRow(
-              label: " • Dont Sorties",
-              value: "${kpis.nbSorties ?? 0}",
-              color: Colors.red),
+            label: " • Dont Sorties",
+            value: "${kpis.nbSorties ?? 0}",
+            color: Colors.red,
+          ),
           const Divider(height: 20),
           _TableRow(
-              label: "Mouvements en attente",
-              value: "${kpis.nbMouvementsEnAttente ?? 0}",
-              color: Colors.blue),
+            label: "Mouvements en attente",
+            value: "${kpis.nbMouvementsEnAttente ?? 0}",
+            color: Colors.blue,
+          ),
           const Divider(height: 20),
           _TableRow(
-              label: "Solde Net (Entrées-Sorties)",
-              value: "${kpis.soldeNet ?? 0}",
-              isBold: true),
+            label: "Solde Net (Entrées-Sorties)",
+            value: "${kpis.soldeNet ?? 0}",
+            isBold: true,
+          ),
         ],
       ),
     );
@@ -708,11 +1008,12 @@ class _TableRow extends StatelessWidget {
   final Color? color;
   final bool isBold;
 
-  const _TableRow(
-      {required this.label,
-      required this.value,
-      this.color,
-      this.isBold = false});
+  const _TableRow({
+    required this.label,
+    required this.value,
+    this.color,
+    this.isBold = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -720,11 +1021,14 @@ class _TableRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: TextStyle(fontSize: 13, color: Colors.grey[700])),
-        Text(value,
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
-                color: color ?? Colors.black87)),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
+            color: color ?? Colors.black87,
+          ),
+        ),
       ],
     );
   }
@@ -740,9 +1044,10 @@ class _ChartLegend extends StatelessWidget {
     return Row(
       children: [
         Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
         const Gap(6),
         Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
       ],
@@ -780,30 +1085,43 @@ class _StockParTailleView extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Taille: ${item.taille.value}",
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text(
+                    "Taille: ${item.taille.value}",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const Gap(4),
-                  Text("${item.nbModeleBoutique ?? 0} modèles concernés",
-                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text(
+                    "${item.nbModeleBoutique ?? 0} modèles concernés",
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
                 ],
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12)),
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Column(
                   children: [
-                    Text("${item.stockTotal ?? 0}",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: AppColors.primary)),
-                    const Text("Total",
-                        style:
-                            TextStyle(fontSize: 10, color: AppColors.primary)),
+                    Text(
+                      "${item.stockTotal ?? 0}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const Text(
+                      "Total",
+                      style: TextStyle(fontSize: 10, color: AppColors.primary),
+                    ),
                   ],
                 ),
               ),
@@ -825,11 +1143,17 @@ class _SmallLabel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(4)),
-      child: Text(text,
-          style: TextStyle(
-              color: color, fontSize: 10, fontWeight: FontWeight.bold)),
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 }

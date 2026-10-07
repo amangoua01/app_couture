@@ -56,7 +56,7 @@ class VenteButton extends StatelessWidget {
                 scrollController: ctl.scrollCtl,
               ),
               child: ScrollingFabAnimated(
-                width: 150,
+                width: 140,
                 height: 52,
                 color: AppColors.secondary,
                 text: const Text(
@@ -64,11 +64,14 @@ class VenteButton extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                    fontSize: 12,
                   ),
                 ),
+                // "atelier.svg" ne représentait pas une vente (copié-collé
+                // depuis le bouton voisin) : une icône boutique/caisse est
+                // plus parlante pour cette action.
                 icon: SvgPicture.asset(
-                  "assets/images/svg/atelier.svg",
+                  "assets/images/svg/shop.svg",
                   width: 18,
                   colorFilter: const ColorFilter.mode(
                     Colors.white,
