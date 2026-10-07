@@ -25,6 +25,8 @@ class Kpis extends ModelJson {
   int? facturesActives;
   int? mesuresEnCours;
   int? revenusFactures;
+  double? delaiMoyenLivraisonJours;
+  int? piecesEnRetard;
 
   Kpis({
     this.chiffreAffaires = 0,
@@ -48,6 +50,8 @@ class Kpis extends ModelJson {
     this.facturesActives,
     this.mesuresEnCours,
     this.revenusFactures,
+    this.delaiMoyenLivraisonJours,
+    this.piecesEnRetard,
   });
 
   @override
@@ -77,6 +81,9 @@ class Kpis extends ModelJson {
     facturesActives = json['facturesActives'];
     mesuresEnCours = json['mesuresEnCours'];
     revenusFactures = json['revenusFactures'];
+    delaiMoyenLivraisonJours =
+        (json['delaiMoyenLivraisonJours'] as num?)?.toDouble();
+    piecesEnRetard = json['piecesEnRetard'];
   }
 
   @override
@@ -103,6 +110,8 @@ class Kpis extends ModelJson {
     data['facturesActives'] = facturesActives;
     data['mesuresEnCours'] = mesuresEnCours;
     data['revenusFactures'] = revenusFactures;
+    data['delaiMoyenLivraisonJours'] = delaiMoyenLivraisonJours;
+    data['piecesEnRetard'] = piecesEnRetard;
     return data;
   }
 }

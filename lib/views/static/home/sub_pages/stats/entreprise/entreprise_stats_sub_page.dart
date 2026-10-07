@@ -191,6 +191,26 @@ class EntrepriseStatsSubPage extends StatelessWidget {
                   sortie: kpis.totalMouvementsSortants.toAmount(),
                   label: "Mouvements (FCFA)",
                 ),
+                // Propres à l'atelier : absents (null) côté boutique, donc
+                // simplement masqués là-bas plutôt que de montrer un "0 j"
+                // qui n'aurait aucun sens.
+                if (kpis.delaiMoyenLivraisonJours != null)
+                  BuildCardActivity(
+                    icon: Icons.local_shipping_outlined,
+                    value: "${kpis.delaiMoyenLivraisonJours} j",
+                    label: "Délai moyen de livraison",
+                    iconColor: AppColors.primary,
+                  ),
+                if (kpis.piecesEnRetard != null)
+                  BuildCardActivity(
+                    icon: Icons.warning_amber_rounded,
+                    value: "${kpis.piecesEnRetard}",
+                    label: "Pièces en retard",
+                    iconColor:
+                        (kpis.piecesEnRetard ?? 0) > 0
+                            ? Colors.red
+                            : AppColors.green,
+                  ),
               ],
             ),
           ],
@@ -244,11 +264,14 @@ class EntrepriseStatsSubPage extends StatelessWidget {
             ),
           ),
         ),
-        // ── Top modèles vendus ──────────────────────────────────────────
+        // ── Top modèles vendus / types de pièce cousus ──────────────────
         if ((data.topModelesVendus ?? []).isNotEmpty) ...[
           const Gap(24),
           SectionContainer(
-            title: "Top modèles vendus",
+            title:
+                kpis.delaiMoyenLivraisonJours != null
+                    ? "Pièces les plus cousues"
+                    : "Top modèles vendus",
             child: _TopModelesCard(modeles: data.topModelesVendus!),
           ),
         ],
