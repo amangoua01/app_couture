@@ -8,6 +8,7 @@ import 'package:ateliya/views/static/modele_boutique/modele_list_boutique_page.d
 import 'package:ateliya/views/static/ateliers/edition_atelier_page.dart';
 import 'package:ateliya/views/static/type_mesure/type_mesure_list_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -18,24 +19,80 @@ class RoadmapOnboardingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
       children: [
-        const Text(
-          "Bienvenue sur Ateliya !",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: AppColors.primary,
+        // Bannière d'accueil : un bloc de couleur franche plutôt qu'une
+        // icône pâle sur fond blanc, pour que l'écran ait un peu d'éclat
+        // dès le premier regard.
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 24),
+          padding: const EdgeInsets.fromLTRB(22, 24, 18, 24),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            gradient: const LinearGradient(
+              colors: [AppColors.primary, AppColors.primaryDark],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "Bienvenue sur Ateliya !",
+                      style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const Gap(8),
+                    Text(
+                      "Configurez votre espace de travail en choisissant le type de structure qui vous correspond.",
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white.withValues(alpha: 0.85),
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Gap(14),
+              Container(
+                width: 60,
+                height: 60,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.14),
+                ),
+                child: SvgPicture.asset(
+                  "assets/images/svg/atelier.svg",
+                  height: 30,
+                  width: 30,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        const Gap(10),
-        const Text(
-          "Pour commencer, configurez votre espace de travail en choisissant le type de structure qui vous correspond.",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14, color: Colors.grey),
-        ),
-        const Gap(20),
         BuildSectionCard(
           title: "Configuration Boutique",
           icon: Icons.storefront_rounded,
@@ -46,6 +103,7 @@ class RoadmapOnboardingWidget extends StatelessWidget {
               title: "Créer une boutique",
               description: "Définissez votre point de vente principal.",
               enabled: !ctl.user.hasBoutique,
+              done: ctl.user.hasBoutique,
               onTap: () async {
                 final res = await Get.to(() => const EditionBoutiquePage());
                 if (res != null) {
@@ -104,6 +162,7 @@ class RoadmapOnboardingWidget extends StatelessWidget {
               title: "Créer un atelier",
               description: "Ajoutez votre atelier de production.",
               enabled: !ctl.user.hasSuccursale,
+              done: ctl.user.hasSuccursale,
               onTap: () async {
                 final res = await Get.to(() => const EditionAtelierPage());
                 if (res != null) {

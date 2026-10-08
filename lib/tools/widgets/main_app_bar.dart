@@ -8,13 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String enterpriseTitle;
   final VoidCallback onSelectionChanged;
   final int notifCount;
   final VoidCallback onNotifRefresh;
   const MainAppBar({
     super.key,
-    required this.enterpriseTitle,
     required this.onSelectionChanged,
     required this.notifCount,
     required this.onNotifRefresh,
@@ -48,7 +46,6 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       title: EnterpriseSelectorAppBarTitle(
-        title: enterpriseTitle,
         onSelectionChanged: onSelectionChanged,
       ),
       actions: [

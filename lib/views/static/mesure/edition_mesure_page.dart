@@ -18,7 +18,7 @@ class EditionMesurePage extends StatelessWidget {
       init: EditionMesurePageVctl(),
       builder: (ctl) {
         return Scaffold(
-          backgroundColor: const Color(0xFFF5F7FA),
+          backgroundColor: AppColors.scaffoldBg,
           appBar: AppBar(title: const Text("Nouvelle commande")),
           bottomNavigationBar: SafeArea(
             child: Container(
@@ -49,9 +49,10 @@ class EditionMesurePage extends StatelessWidget {
                   SizedBox(
                     width: 130,
                     child: CButton(
-                      title: ctl.page + 1 == ctl.pages.length
-                          ? "Valider"
-                          : "Suivant",
+                      title:
+                          ctl.page + 1 == ctl.pages.length
+                              ? "Valider"
+                              : "Suivant",
                       onPressed: ctl.nextPage,
                       color: AppColors.primary,
                       icon: Icon(
@@ -69,87 +70,15 @@ class EditionMesurePage extends StatelessWidget {
           ),
           body: Column(
             children: [
-              // Custom Stepper
-              Container(
-                color: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(ctl.pages.length, (index) {
-                      final isActive = index == ctl.page;
-                      final isPast = index < ctl.page;
-                      final isLast = index == ctl.pages.length - 1;
-
-                      return Row(
-                        children: [
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            width: isActive ? 32 : 28,
-                            height: isActive ? 32 : 28,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: isActive || isPast
-                                  ? AppColors.primary
-                                  : Colors.grey[200],
-                              boxShadow: isActive
-                                  ? [
-                                      BoxShadow(
-                                          color: AppColors.primary
-                                              .withValues(alpha: 0.4),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 4))
-                                    ]
-                                  : [],
-                            ),
-                            child: Center(
-                              child: isPast
-                                  ? const Icon(Icons.check,
-                                      size: 16, color: Colors.white)
-                                  : Text(
-                                      "${index + 1}",
-                                      style: TextStyle(
-                                        color: isActive || isPast
-                                            ? Colors.white
-                                            : Colors.grey[600],
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                          if (isActive) ...[
-                            const Gap(8),
-                            Text(
-                              ctl.pages[index].title,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                  fontSize: 13),
-                            ),
-                          ],
-                          if (!isLast)
-                            Container(
-                              width: isActive ? 15 : 25,
-                              height: 2,
-                              margin: const EdgeInsets.symmetric(horizontal: 6),
-                              color: isPast
-                                  ? AppColors.primary.withValues(alpha: 0.5)
-                                  : Colors.grey[200],
-                            ),
-                        ],
-                      );
-                    }),
-                  ),
-                ),
-              ),
+              _StepHeader(ctl: ctl),
 
               // Contenu principal
               Expanded(
                 child: Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -184,6 +113,95 @@ class EditionMesurePage extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// En-tête d'étape : titre + repère "Étape X/N" au-dessus d'une barre de
+/// progression segmentée. Remplace les cercles numérotés précédents, qui ne
+/// montraient le titre que de l'étape active et laissaient les autres
+/// muettes — ici le trajet complet reste visible d'un coup d'œil.
+class _StepHeader extends StatelessWidget {
+  final EditionMesurePageVctl ctl;
+  const _StepHeader({required this.ctl});
+
+  @override
+  Widget build(BuildContext context) {
+    final step = ctl.pages[ctl.page];
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      step.title,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textDark,
+                      ),
+                    ),
+                    const Gap(2),
+                    Text(
+                      step.subtitle,
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  "${ctl.page + 1}/${ctl.pages.length}",
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Gap(14),
+          Row(
+            children: List.generate(ctl.pages.length, (index) {
+              final isDone = index <= ctl.page;
+              return Expanded(
+                child: Container(
+                  height: 5,
+                  margin: EdgeInsets.only(
+                    right: index == ctl.pages.length - 1 ? 0 : 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color:
+                        isDone
+                            ? AppColors.primary
+                            : AppColors.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 }

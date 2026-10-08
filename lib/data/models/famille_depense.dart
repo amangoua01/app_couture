@@ -7,20 +7,28 @@ class FamilleDepense extends Model<FamilleDepense> {
   String? createdAt;
   bool? isActive;
 
+  /// Null côté serveur = type global, visible par toutes les entreprises.
+  /// Non-null = type privé créé par une entreprise (la nôtre, puisque le
+  /// serveur ne nous montre jamais les types privés d'une autre).
+  bool isGlobal;
+
   FamilleDepense({
     super.id,
     this.libelle,
     this.groupeDepense,
     this.createdAt,
     this.isActive,
+    this.isGlobal = true,
   });
 
-  FamilleDepense.fromJson(Map<String, dynamic> json) {
+  FamilleDepense.fromJson(Map<String, dynamic> json)
+    : isGlobal = json['entreprise'] == null {
     id = json['id'];
     libelle = json['libelle'];
-    groupeDepense = json['groupeDepense'] != null
-        ? GroupeDepense.fromJson(json['groupeDepense'])
-        : null;
+    groupeDepense =
+        json['groupeDepense'] != null
+            ? GroupeDepense.fromJson(json['groupeDepense'])
+            : null;
     createdAt = json['createdAt'];
     isActive = json['isActive'];
   }

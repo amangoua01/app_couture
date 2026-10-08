@@ -9,6 +9,9 @@ abstract class AppTheme {
     useMaterial3: false,
     primaryColor: AppColors.primary,
     primarySwatch: Colors.green,
+    // Un canvas légèrement gris plutôt que blanc : les cartes blanches de
+    // chaque écran s'y détachent au lieu de se fondre dans le fond.
+    scaffoldBackgroundColor: AppColors.scaffoldBg,
     textTheme: const TextTheme(
       titleLarge: TextStyle(fontSize: 20),
       titleMedium: TextStyle(fontSize: 15),

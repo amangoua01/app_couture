@@ -71,7 +71,7 @@ class MesureApi extends WebController {
   Future<DataResponse<Mesure>> getOne(int id) async {
     try {
       final res = await client.get(
-        urlBuilder(api: "facture/get/one/$id", module: "mesure"),
+        urlBuilder(api: "get/one/$id"),
         headers: authHeaders,
       );
       final data = jsonDecode(res.body);

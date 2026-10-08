@@ -9,6 +9,7 @@ class CButton extends StatelessWidget {
   final double radius, height, highlightElevation;
   final Color color, textColor;
   final bool enabled;
+  final bool isLoading;
   final FontWeight fontWeight;
   final Widget? icon;
   final Color disabledColor;
@@ -20,6 +21,7 @@ class CButton extends StatelessWidget {
     this.disabledColor = AppColors.primary,
     this.icon,
     this.enabled = true,
+    this.isLoading = false,
     this.color = AppColors.primary,
     this.textColor = Colors.white,
     this.radius = 10,
@@ -43,24 +45,19 @@ class CButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(radius),
       ),
       disabledColor: disabledColor.withAlpha(100),
-      onPressed: (enabled) ? onPressed : null,
-      child: PlaceholderBuilder(
-        condition: icon != null,
-        placeholder: Text(
-          title,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: textColor,
-            fontWeight: fontWeight,
-          ),
-        ),
-        builder: () {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              icon!,
-              const Gap(10),
-              Text(
+      onPressed: (enabled && !isLoading) ? onPressed : null,
+      child: isLoading
+          ? SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.2,
+                valueColor: AlwaysStoppedAnimation<Color>(textColor),
+              ),
+            )
+          : PlaceholderBuilder(
+              condition: icon != null,
+              placeholder: Text(
                 title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -68,10 +65,24 @@ class CButton extends StatelessWidget {
                   fontWeight: fontWeight,
                 ),
               ),
-            ],
-          );
-        },
-      ),
+              builder: () {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    icon!,
+                    const Gap(10),
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: textColor,
+                        fontWeight: fontWeight,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
     );
   }
 }

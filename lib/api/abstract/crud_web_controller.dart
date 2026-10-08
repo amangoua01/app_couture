@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ateliya/api/abstract/web_controller.dart';
+import 'package:ateliya/tools/components/data_cache.dart';
 import 'package:ateliya/data/models/abstract/model.dart';
 import 'package:ateliya/data/models/abstract/model_form_data.dart';
 import 'package:ateliya/data/models/abstract/model_json.dart';
@@ -23,10 +24,41 @@ abstract class CrudWebController<T extends Model> extends WebController {
     this.deleteMultipleApi = "delete/all/items",
   });
 
+  /// Préfixe des entrées de cache de ce module.
+  String get cachePrefix => "list:$module:";
+
+  /// Clé d'une page de liste, isolée par entité pour ne jamais mélanger
+  /// les données de deux boutiques ou ateliers.
+  String cacheKeyFor({String? scope, int? id, int? page}) =>
+      "$cachePrefix${scope ?? ''}:${id ?? ''}:${page ?? 1}";
+
+  /// Dernière liste connue, sans appel réseau.
+  Future<PaginatedData<T>?> readCachedList({String? scope, int? id}) async {
+    final raw = await DataCache.readList(cacheKeyFor(scope: scope, id: id));
+    if (raw == null) return null;
+    try {
+      return PaginatedData<T>(
+        items: raw.map<T>((e) => item.fromJson(e)).toList(),
+        page: 1,
+      );
+    } catch (_) {
+      // Un modèle qui a changé de forme rend l'entrée inutilisable.
+      return null;
+    }
+  }
+
+  /// Vide le cache du module après une écriture.
+  Future<void> invalidateCache() => DataCache.invalidate(cachePrefix);
+
   Future<DataResponse<PaginatedData<T>>> list({
     int? id,
     int? page,
     String? search,
+    String? cacheScope,
+    bool useCache = false,
+    /// Filtres propres à un écran, ajoutés à l'URL (ex: restreindre les
+    /// ouvriers à l'atelier actif).
+    Map<String, String>? extraQuery,
   }) async {
     try {
       Uri url;
@@ -36,10 +68,12 @@ abstract class CrudWebController<T extends Model> extends WebController {
         url = urlBuilder(api: "$listApi/$id");
       }
 
-      if (page != null) {
-        url = url.replace(queryParameters: {
-          "page": "$page",
-        });
+      final queryParams = <String, String>{};
+      if (page != null) queryParams["page"] = "$page";
+      if (search != null && search.isNotEmpty) queryParams["search"] = search;
+      if (extraQuery != null) queryParams.addAll(extraQuery);
+      if (queryParams.isNotEmpty) {
+        url = url.replace(queryParameters: queryParams);
       }
 
       final res = await client.get(url, headers: authHeaders);
@@ -47,6 +81,13 @@ abstract class CrudWebController<T extends Model> extends WebController {
       var data = jsonDecode(res.body);
       if (res.statusCode == 200) {
         if ((data as Map).containsKey("data")) data = data["data"];
+        // Seule la première page non filtrée est réutilisable à l'ouverture.
+        if (useCache && (page ?? 1) == 1 && (search == null || search.isEmpty)) {
+          await DataCache.write(
+            cacheKeyFor(scope: cacheScope, id: id, page: 1),
+            data,
+          );
+        }
         return DataResponse.success(
           data: PaginatedData<T>(
             items: (data as List).map<T>((e) => item.fromJson(e)).toList(),
@@ -82,6 +123,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
       }
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
+        await invalidateCache();
         return DataResponse.success(data: item.fromJson(data["data"]));
       } else {
         return DataResponse.error(
@@ -112,6 +154,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
       }
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
+        await invalidateCache();
         return DataResponse.success(data: item.fromJson(data["data"]));
       } else {
         return DataResponse.error(
@@ -130,6 +173,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
         headers: authHeaders,
       );
       if (res.statusCode == 200) {
+        await invalidateCache();
         return DataResponse.success(data: true);
       } else {
         final data = jsonDecode(res.body);
@@ -150,6 +194,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
         body: jsonEncode({"ids": ids}),
       );
       if (res.statusCode == 200) {
+        await invalidateCache();
         return DataResponse.success(data: true);
       } else {
         final data = jsonDecode(res.body);

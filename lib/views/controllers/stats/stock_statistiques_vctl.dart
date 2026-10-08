@@ -27,7 +27,15 @@ class StockStatistiquesVctl extends AuthViewController {
       return;
     }
 
-    isLoading = true;
+    // Réaffiche les dernières statistiques connues pour cette période le
+    // temps que le réseau réponde.
+    final cached = await _api.readCachedStockStatistiques(entite.id!, params);
+    if (cached != null) {
+      data = cached;
+      update();
+    }
+
+    isLoading = cached == null;
     update();
 
     final res = await _api.getStockStatistiques(entite.id!, params);

@@ -6,6 +6,10 @@ import 'package:ateliya/tools/widgets/build_mouvement_card.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
+/// Taux recouvrement et Stock total boutique sont déjà dans le panneau
+/// "Vue d'ensemble" ci-dessus : seuls la caisse et les mouvements (absents
+/// de ce panneau) restent ici, pour éviter d'afficher deux fois les mêmes
+/// chiffres sur un même écran.
 class CaisseStockSection extends StatelessWidget {
   final Kpis kpis;
   const CaisseStockSection({super.key, required this.kpis});
@@ -35,16 +39,6 @@ class CaisseStockSection extends StatelessWidget {
                 value: kpis.caisse.toAmount(),
                 label: "Solde caisse (FCFA)",
                 iconColor: AppColors.primary),
-            BuildCardActivity(
-                icon: Icons.show_chart,
-                value: "${kpis.tauxRecouvrement ?? 0}%",
-                label: "Taux recouvrement",
-                iconColor: AppColors.secondary),
-            BuildCardActivity(
-                icon: Icons.inventory_2_outlined,
-                value: (kpis.stockTotalBoutique ?? 0).toString(),
-                label: "Stock total boutique",
-                iconColor: AppColors.green),
             BuildMouvementCard(
                 entree: kpis.totalMouvementsEntrants.toAmount(),
                 sortie: kpis.totalMouvementsSortants.toAmount(),

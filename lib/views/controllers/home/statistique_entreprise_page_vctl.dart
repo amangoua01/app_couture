@@ -1,13 +1,16 @@
 import 'package:ateliya/api/statistique_api.dart';
 import 'package:ateliya/data/models/stats/statistiques_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/constants/period_stat.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
 import 'package:ateliya/tools/models/period_stat_req.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
+import 'package:ateliya/views/static/stats/bilan_pdf_preview_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class StatistiqueEntreprisePageVctl extends AuthViewController {
   int periodIndex = 0;
@@ -24,6 +27,17 @@ class StatistiqueEntreprisePageVctl extends AuthViewController {
     params.filtre = PeriodStat.values[indexPeriod];
     periodIndex = indexPeriod;
 
+    // S'adapte à l'entité active (boutique ou atelier) : le backend agrège
+    // alors toutes les boutiques OU tous les ateliers de l'entreprise avec
+    // les KPI propres à ce type, plutôt que de tout mélanger.
+    final entiteType = getEntite().value.type;
+    params.espaceType =
+        entiteType == EntiteEntrepriseType.boutique
+            ? "boutique"
+            : entiteType == EntiteEntrepriseType.succursale
+            ? "succursale"
+            : null;
+
     if (range != null) {
       dateRange = range;
       params.dateDebut = range.start;
@@ -39,15 +53,28 @@ class StatistiqueEntreprisePageVctl extends AuthViewController {
       }
     }
 
-    isLoading = true;
+    // Réaffiche les dernières statistiques connues pour cette période le
+    // temps que le réseau réponde.
+    final cached = await api.readCachedDashboardData(params);
+    final hasContent = cached != null;
+    if (hasContent) {
+      data = cached;
+      update();
+    }
+
+    isLoading = !hasContent;
     update();
 
-    var res = await api.getDashboardData(params).load();
+    // Le voile de chargement bloquant ne sert qu'au tout premier chargement :
+    // une fois des données affichées, on rafraîchit en silence.
+    final request = api.getDashboardData(params);
+    var res = await (hasContent ? request : request.load());
 
     // Retry une fois en cas d'erreur réseau
     if (!res.status) {
       await Future.delayed(const Duration(seconds: 1));
-      res = await api.getDashboardData(params).load();
+      final retryRequest = api.getDashboardData(params);
+      res = await (hasContent ? retryRequest : retryRequest.load());
     }
 
     isLoading = false;
@@ -56,8 +83,31 @@ class StatistiqueEntreprisePageVctl extends AuthViewController {
       update();
     } else {
       update();
-      CMessageDialog.show(message: res.message);
+      if (!hasContent) CMessageDialog.show(message: res.message);
     }
+  }
+
+  String get periodeLabel {
+    switch (periodIndex) {
+      case 0:
+        return "journalier (${dateRange.toFrenchDate})";
+      case 1:
+        return "mensuel";
+      case 2:
+        return "annuel";
+      default:
+        return dateRange.toFrenchDate;
+    }
+  }
+
+  void exportBilanPdf() {
+    Get.to(
+      () => BilanPdfPreviewPage(
+        data: data,
+        periodeLabel: periodeLabel,
+        entreprise: user.entreprise,
+      ),
+    );
   }
 
   Future<void> pickDateRange(BuildContext context) async {

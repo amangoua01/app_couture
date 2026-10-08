@@ -6,6 +6,7 @@ import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
+import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/inputs/c_bottom_image_picker.dart';
@@ -56,7 +57,16 @@ class EditionClientPageVctl extends EditionViewController<Client, ClientApi> {
 
   @override
   void onInitCreation() {
-    if (!user.isAdmin) {
+    // Préremplit avec l'entité actuellement sélectionnée dans l'app (et pas
+    // seulement l'affectation propre à l'utilisateur) : un admin qui gère
+    // plusieurs boutiques/ateliers doit retrouver celle qu'il est en train
+    // de consulter déjà sélectionnée, pas une liste vide à choisir.
+    final entite = getEntite().value;
+    if (entite.type == EntiteEntrepriseType.boutique) {
+      boutique = entite as Boutique;
+    } else if (entite.type == EntiteEntrepriseType.succursale) {
+      succursale = entite as Atelier;
+    } else if (!user.isAdmin) {
       boutique = user.boutique;
       succursale = user.atelier;
     }

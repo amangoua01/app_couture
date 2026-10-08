@@ -1,3 +1,4 @@
+import 'package:ateliya/data/models/ligne_module_abonnement.dart';
 import 'package:ateliya/data/models/module_abonnement.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -23,7 +24,7 @@ class _ForfaitListPageState extends State<ForfaitListPage> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: 0.85);
+    _pageController = PageController(viewportFraction: 0.87);
   }
 
   @override
@@ -38,160 +39,162 @@ class _ForfaitListPageState extends State<ForfaitListPage> {
       init: ForfaitListPageVctl(),
       builder: (ctl) {
         return Scaffold(
-          backgroundColor: const Color(0xFFF4F7F9),
+          backgroundColor: const Color(0xFFF7FAF8),
+          appBar: AppBar(
+            title: const Text("Formules & Abonnements"),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: AppColors.secondary.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.workspace_premium_rounded,
+                          color: AppColors.secondary,
+                          size: 16,
+                        ),
+                        Gap(4),
+                        Text(
+                          "PRO",
+                          style: TextStyle(
+                            color: AppColors.secondary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           body: ctl.isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
+                )
               : ctl.forfaits.isEmpty
                   ? _buildEmptyState(context)
-                  : Stack(
-                      children: [
-                        // Dark Premium Background Header
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          height: 340,
-                          child: Container(
-                            color: AppColors.primary,
-                            child: Stack(
+                  : SafeArea(
+                      child: Column(
+                        children: [
+                          const Gap(8),
+                          // En-tête éditorial chic
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Column(
                               children: [
-                                Positioned(
-                                  right: -40,
-                                  top: 40,
-                                  child: Icon(
-                                    Icons.auto_awesome,
-                                    size: 180,
-                                    color: Colors.white.withValues(alpha: 0.08),
+                                const Text(
+                                  "Élevez le standard de votre atelier",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 21,
+                                    fontWeight: FontWeight.w900,
+                                    color: Color(0xFF0A2B23),
+                                    letterSpacing: -0.4,
+                                    height: 1.2,
+                                  ),
+                                ),
+                                const Gap(6),
+                                Text(
+                                  "Des formules pensées pour digitaliser vos commandes, mesures et collaborateurs en toute sérénité.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey.shade600,
+                                    height: 1.35,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
+                          const Gap(14),
 
-                        SafeArea(
-                          bottom: false,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Interactive Back Button & Header Text
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                child: IconButton(
-                                  icon: const Icon(Icons.arrow_back_ios_new,
-                                      color: Colors.white),
-                                  onPressed: () => Get.back(),
+                          // Indicateur de pagination raffiné
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              ctl.forfaits.length,
+                              (index) => AnimatedContainer(
+                                duration: const Duration(milliseconds: 250),
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 3),
+                                height: 5,
+                                width: _currentPage == index ? 24 : 6,
+                                decoration: BoxDecoration(
+                                  color: _currentPage == index
+                                      ? AppColors.primary
+                                      : AppColors.primary.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      "Boostez votre activité !",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.w900,
-                                        letterSpacing: -0.5,
-                                      ),
-                                    ),
-                                    const Gap(8),
-                                    Text(
-                                      "Choisissez la formule qui correspond le mieux aux besoins de votre atelier.",
-                                      style: TextStyle(
-                                        color: Colors.white.withValues(alpha: 0.78),
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w400,
-                                        height: 1.4,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const Gap(32),
+                            ),
+                          ),
+                          const Gap(14),
 
-                              // Horizontal Carousel
-                              Expanded(
-                                child: PageView.builder(
-                                  controller: _pageController,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: ctl.forfaits.length,
-                                  onPageChanged: (index) {
-                                    setState(() {
-                                      _currentPage = index;
-                                    });
-                                  },
-                                  itemBuilder: (context, i) {
-                                    final forfait = ctl.forfaits[i];
-                                    final isPremium = forfait.libelle.value
-                                            .toLowerCase()
-                                            .contains('pro') ||
-                                        forfait.libelle.value
-                                            .toLowerCase()
-                                            .contains('bus');
+                          // Carrousel de cartes
+                          Expanded(
+                            child: PageView.builder(
+                              controller: _pageController,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: ctl.forfaits.length,
+                              onPageChanged: (index) {
+                                setState(() {
+                                  _currentPage = index;
+                                });
+                              },
+                              itemBuilder: (context, i) {
+                                final forfait = ctl.forfaits[i];
+                                final isPopular = i == 0 ||
+                                    forfait.libelle.value
+                                        .toLowerCase()
+                                        .contains('pro') ||
+                                    forfait.libelle.value
+                                        .toLowerCase()
+                                        .contains('bus');
 
-                                    return AnimatedBuilder(
-                                      animation: _pageController,
-                                      builder: (context, child) {
-                                        double value = 1.0;
-                                        if (_pageController
-                                            .position.haveDimensions) {
-                                          value = _pageController.page! - i;
-                                          value = (1 - (value.abs() * 0.15))
-                                              .clamp(0.85, 1.0);
-                                        } else {
-                                          value = i == 0 ? 1.0 : 0.85;
-                                        }
-                                        return Center(
-                                          child: SizedBox(
-                                            height: Curves.easeOut
-                                                    .transform(value) *
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.65,
-                                            width: double.infinity,
-                                            child: child,
-                                          ),
-                                        );
-                                      },
-                                      child: _PlanCard(
-                                          forfait: forfait,
-                                          isPremium: isPremium),
+                                return AnimatedBuilder(
+                                  animation: _pageController,
+                                  builder: (context, child) {
+                                    double value = 1.0;
+                                    if (_pageController
+                                        .position.haveDimensions) {
+                                      value = _pageController.page! - i;
+                                      value = (1 - (value.abs() * 0.08))
+                                          .clamp(0.92, 1.0);
+                                    } else {
+                                      value = i == 0 ? 1.0 : 0.92;
+                                    }
+                                    return Center(
+                                      child: Transform.scale(
+                                        scale: value,
+                                        child: child,
+                                      ),
                                     );
                                   },
-                                ),
-                              ),
-                              const Gap(24),
-                              // Pagination Dots
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(
-                                  ctl.forfaits.length,
-                                  (index) => AnimatedContainer(
-                                    duration: const Duration(milliseconds: 300),
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 4),
-                                    height: 8,
-                                    width: _currentPage == index ? 24 : 8,
-                                    decoration: BoxDecoration(
-                                      color: _currentPage == index
-                                          ? AppColors.primary
-                                          : Colors.grey.shade300,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
+                                  child: _AteliyaPlanCard(
+                                    forfait: forfait,
+                                    isPopular: isPopular,
+                                    index: i,
                                   ),
-                                ),
-                              ),
-                              const Gap(32),
-                            ],
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      ],
+                          const Gap(14),
+                        ],
+                      ),
                     ),
         );
       },
@@ -206,28 +209,31 @@ class _ForfaitListPageState extends State<ForfaitListPage> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.primary.withAlpha(25),
+              color: AppColors.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.card_membership_rounded,
-                size: 64, color: AppColors.primary),
+            child: const Icon(
+              Icons.card_membership_rounded,
+              size: 56,
+              color: AppColors.primary,
+            ),
           ),
-          const Gap(24),
+          const Gap(20),
           const Text(
-            'Aucune offre pour le moment',
+            'Aucune formule disponible',
             style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0F2620),
+            ),
           ),
           const Gap(8),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Text(
-              'Nos forfaits sont en cours de mise à jour. Nous revenons très vite !',
+              'Nos offres d\'abonnement sont actuellement en cours d\'actualisation.',
               textAlign: TextAlign.center,
-              style:
-                  TextStyle(fontSize: 14, color: Colors.grey[600], height: 1.4),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
         ],
@@ -236,268 +242,430 @@ class _ForfaitListPageState extends State<ForfaitListPage> {
   }
 }
 
-class _PlanCard extends StatelessWidget {
+class _AteliyaPlanCard extends StatelessWidget {
   final ModuleAbonnement forfait;
-  final bool isPremium;
+  final bool isPopular;
+  final int index;
 
-  const _PlanCard({required this.forfait, required this.isPremium});
+  const _AteliyaPlanCard({
+    required this.forfait,
+    required this.isPopular,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(26),
         border: Border.all(
-          color: isPremium
-              ? AppColors.primary
-              : AppColors.primary.withValues(alpha: 0.1),
-          width: isPremium ? 2 : 1.2,
+          color: isPopular
+              ? AppColors.secondary.withValues(alpha: 0.55)
+              : AppColors.primary.withValues(alpha: 0.12),
+          width: isPopular ? 1.8 : 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: isPremium
-                ? AppColors.primary.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.02),
+            color: isPopular
+                ? AppColors.secondary.withValues(alpha: 0.1)
+                : AppColors.primary.withValues(alpha: 0.04),
             blurRadius: 18,
             offset: const Offset(0, 6),
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        forfait.libelle.value.toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.w900,
-                          color: AppColors.primary,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                      const Gap(4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          "${forfait.duree} mois",
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                    ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // En-tête : Badge Atelier & Pill de Période
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Badge de catégorie Ateliya
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isPopular
+                      ? AppColors.secondary.withValues(alpha: 0.12)
+                      : AppColors.primary.withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isPopular
+                        ? AppColors.secondary.withValues(alpha: 0.3)
+                        : AppColors.primary.withValues(alpha: 0.1),
                   ),
                 ),
-                if (isPremium)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.2),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isPopular
+                          ? Icons.star_rounded
+                          : Icons.check_circle_outline_rounded,
+                      size: 13,
+                      color: isPopular
+                          ? AppColors.secondary
+                          : AppColors.primary,
                     ),
-                    child: const Text(
-                      "POPULAIRE",
+                    const Gap(5),
+                    Text(
+                      isPopular ? "RECOMMANDÉ" : "FORMULE ATELIER",
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w900,
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w800,
+                        color: isPopular
+                            ? AppColors.secondary
+                            : AppColors.primary,
                         letterSpacing: 0.5,
                       ),
                     ),
-                  ),
-              ],
-            ),
-            const Gap(20),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  forfait.montant.toAmount(unit: ""),
-                  style: const TextStyle(
-                    fontSize: 34,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0xFF0F231F),
-                    letterSpacing: -1,
-                  ),
+                  ],
                 ),
-                const Gap(4),
-                Text(
-                  "FCFA",
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.primary.withValues(alpha: 0.5),
-                  ),
-                ),
-              ],
-            ),
-            const Gap(16),
-            Divider(color: AppColors.primary.withValues(alpha: 0.06), height: 1),
-            const Gap(16),
+              ),
 
-            // Expanded Features List to take available space
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              // Pilule de durée avec icône calendrier
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F3),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (forfait.ligneModules.isNotEmpty) ...[
-                      ...forfait.ligneModules.map((line) {
-                        final isIncluded = line.quantite.value != '0' &&
-                            !line.description.value.toLowerCase().contains('non');
-                        final itemColor = isIncluded
-                            ? const Color(0xFF0F231F)
-                            : const Color(0xFF90A39E);
-
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 2),
-                                child: Icon(
-                                  isIncluded
-                                      ? Icons.check_circle_rounded
-                                      : Icons.remove_circle_outline_rounded,
-                                  size: 18,
-                                  color: isIncluded
-                                      ? Colors.green.shade600
-                                      : Colors.grey.shade400,
-                                ),
-                              ),
-                              const Gap(10),
-                              Expanded(
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: TextStyle(
-                                      fontSize: 13.5,
-                                      color: itemColor,
-                                      height: 1.35,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: "${line.libelle.value} ",
-                                        style: TextStyle(
-                                          fontWeight: isIncluded
-                                              ? FontWeight.w700
-                                              : FontWeight.w500,
-                                        ),
-                                      ),
-                                      if (line.quantite.value != '0')
-                                        TextSpan(
-                                          text: "(${line.quantite.value})",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w900,
-                                            color: isIncluded
-                                                ? AppColors.primary
-                                                : Colors.grey,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
-                    ] else
-                      Text(
-                        forfait.description.value,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.primary.withValues(alpha: 0.7),
-                          height: 1.4,
-                        ),
+                    const Icon(
+                      Icons.calendar_month_outlined,
+                      size: 12,
+                      color: AppColors.primary,
+                    ),
+                    const Gap(4),
+                    Text(
+                      "${forfait.duree} mois",
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w800,
                       ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const Gap(14),
+
+          // Titre de la formule
+          Text(
+            forfait.libelle.value.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 19,
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF07241D),
+              letterSpacing: 0.2,
+            ),
+          ),
+          const Gap(6),
+
+          // Prix et devise
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                forfait.montant.toAmount(unit: ""),
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.primary,
+                  letterSpacing: -0.6,
+                ),
+              ),
+              const Gap(5),
+              const Text(
+                "FCFA",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.secondary,
+                ),
+              ),
+              const Gap(6),
+              Text(
+                "/ mois",
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey.shade500,
+                ),
+              ),
+            ],
+          ),
+          const Gap(8),
+
+          // Accroche valeur personnalisée couture
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.04),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.auto_awesome,
+                  size: 14,
+                  color: AppColors.secondary,
+                ),
+                const Gap(6),
+                Expanded(
+                  child: Text(
+                    "Gestion complète commandes, mesures & stocks",
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Gap(14),
+
+          // Séparateur Modules stylisé
+          Row(
+            children: [
+              Expanded(
+                child: Divider(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  thickness: 1,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  "CAPACITÉS & QUOTAS",
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primary.withValues(alpha: 0.45),
+                    letterSpacing: 1.1,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Divider(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  thickness: 1,
+                ),
+              ),
+            ],
+          ),
+          const Gap(10),
+
+          // Capsules de modules fluides
+          Expanded(
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: forfait.ligneModules.isNotEmpty
+                  ? forfait.ligneModules
+                      .map((mod) => _buildModuleCapsule(context, mod))
+                      .toList()
+                  : [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          forfait.description.value.isNotEmpty
+                              ? forfait.description.value
+                              : "Tous les modules nécessaires pour la gestion de votre atelier sont inclus.",
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      )
+                    ],
+            ),
+          ),
+          const Gap(12),
+
+          // Bouton d'action "Choisir cette formule" aux couleurs Ateliya
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    AppColors.primary,
+                    Color(0xFF135043),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.28),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ElevatedButton(
+                onPressed: () => Get.to(() => OperatorListPage(forfait)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.flash_on_rounded,
+                      color: AppColors.yellow,
+                      size: 19,
+                    ),
+                    Gap(8),
+                    Text(
+                      "Choisir cette formule",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
 
-            const Gap(14),
-            // Bottom Action Buttons
-            Column(
+  // Capsule de module élégante aux teintes Ateliya
+  Widget _buildModuleCapsule(BuildContext context, LigneModuleAbonnement mod) {
+    final lowerLib = mod.libelle.value.toLowerCase();
+    String friendlyTitle = mod.libelle.value;
+    IconData iconData = Icons.layers_outlined;
+
+    if (lowerLib.contains('sms')) {
+      friendlyTitle = "Notifications SMS clients";
+      iconData = Icons.sms_outlined;
+    } else if (lowerLib.contains('user') || lowerLib.contains('utilisat')) {
+      friendlyTitle = "Comptes collaborateurs";
+      iconData = Icons.people_outline_rounded;
+    } else if (lowerLib.contains('succursale') || lowerLib.contains('atelier')) {
+      friendlyTitle = "Ateliers & Succursales";
+      iconData = Icons.storefront_outlined;
+    } else if (lowerLib.contains('boutique')) {
+      friendlyTitle = "Boutiques de vente";
+      iconData = Icons.shopping_bag_outlined;
+    } else if (lowerLib.contains('mall')) {
+      friendlyTitle = "Marketplace Mall Ateliya";
+      iconData = Icons.public_outlined;
+    }
+
+    final String qty = mod.quantite.value;
+    final bool isIncluded = qty != '0' &&
+        !mod.description.value.toLowerCase().contains('non');
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: isIncluded
+            ? const Color(0xFFF3F7F5)
+            : Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isIncluded
+              ? AppColors.primary.withValues(alpha: 0.06)
+              : Colors.transparent,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Pastille icône avec quantité intégrée
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: isIncluded ? AppColors.primary : Colors.grey.shade400,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Get.to(() => OperatorListPage(forfait)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      "Souscrire",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                      ),
+                Icon(
+                  iconData,
+                  size: 13,
+                  color: Colors.white,
+                ),
+                if (isIncluded && qty.isNotEmpty && qty != '0') ...[
+                  const Gap(4),
+                  Text(
+                    qty,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
-                ),
-                const Gap(8),
-                SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                    onPressed: () => CBottomSheet.show(
-                      child: DetailForfaitSubPage(forfait),
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      "Voir les détails",
-                      style: TextStyle(
-                        color: AppColors.primary.withValues(alpha: 0.6),
-                        fontWeight: FontWeight.w800,
-                        fontSize: 13.5,
-                      ),
-                    ),
-                  ),
-                ),
+                ],
               ],
             ),
-          ],
-        ),
+          ),
+          const Gap(10),
+          // Titre
+          Expanded(
+            child: Text(
+              friendlyTitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: isIncluded ? FontWeight.w700 : FontWeight.w500,
+                color: isIncluded
+                    ? const Color(0xFF0F2620)
+                    : Colors.grey.shade400,
+              ),
+            ),
+          ),
+          // Icône d'information (i)
+          InkWell(
+            onTap: () {
+              CBottomSheet.show(
+                child: DetailForfaitSubPage(forfait),
+                isScrollControlled: true,
+              );
+            },
+            borderRadius: BorderRadius.circular(20),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                Icons.info_outline_rounded,
+                size: 16,
+                color: isIncluded
+                    ? AppColors.primary.withValues(alpha: 0.5)
+                    : Colors.grey.shade400,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

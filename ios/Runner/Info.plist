@@ -1,79 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
-	<string>Ateliya</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>Ateliya</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>MinimumOSVersion</key>
-	<string>15.0</string>
-	<!-- Permissions pour accéder à la caméra et à la galerie -->
-	<key>NSCameraUsageDescription</key>
-	<string>Ateliya utilise votre caméra pour scanner les codes-barres des articles et prendre des photos des modèles pour vos commandes, facilitant la gestion de votre inventaire.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Ateliya accède à votre galerie pour vous permettre de sélectionner des photos à associer à vos produits ou à vos commandes clients.</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Ateliya utilise le Bluetooth pour se connecter à vos imprimantes thermiques et imprimer instantanément vos reçus et factures clients.</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Ateliya utilise le Bluetooth pour se connecter à vos imprimantes thermiques et imprimer instantanément vos reçus et factures clients.</string>
-	<key>FlutterDeepLinkingEnabled</key>
-	<true/>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLName</key>
-			<string>redirectionurl.ateliya.com</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>ateliya</string>
-			</array>
-		</dict>
-	</array>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>itms-apps</string>
-	</array>
-</dict>
+	<dict>
+		<key>CFBundleDevelopmentRegion</key>
+		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>CFBundleDisplayName</key>
+		<string>Ateliya</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>Ateliya</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>$(FLUTTER_BUILD_NAME)</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>CFBundleVersion</key>
+		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>LSRequiresIPhoneOS</key>
+		<true/>
+		<key>UILaunchStoryboardName</key>
+		<string>LaunchScreen</string>
+		<key>UIMainStoryboardFile</key>
+		<string>Main</string>
+		<key>UISupportedInterfaceOrientations</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>UISupportedInterfaceOrientations~ipad</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>CADisableMinimumFrameDurationOnPhone</key>
+		<true/>
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+		<true/>
+		<key>MinimumOSVersion</key>
+		<string>15.0</string>
+		<!-- Permissions pour accéder à la caméra et à la galerie -->
+		<key>NSCameraUsageDescription</key>
+		<string>Ateliya utilise votre caméra pour scanner les codes-barres des articles et prendre des photos des modèles pour vos commandes, facilitant la gestion de votre inventaire.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Ateliya accède à votre galerie pour vous permettre de sélectionner des photos à associer à vos produits ou à vos commandes clients.</string>
+		<key>NSBluetoothAlwaysUsageDescription</key>
+		<string>Ateliya utilise le Bluetooth pour se connecter à vos imprimantes thermiques et imprimer instantanément vos reçus et factures clients.</string>
+		<key>NSBluetoothPeripheralUsageDescription</key>
+		<string>Ateliya utilise le Bluetooth pour se connecter à vos imprimantes thermiques et imprimer instantanément vos reçus et factures clients.</string>
+		<key>FlutterDeepLinkingEnabled</key>
+		<true/>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>redirectionurl.ateliya.com</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>ateliya</string>
+				</array>
+			</dict>
+		</array>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>itms-apps</string>
+		</array>
+		<key>UIStatusBarHidden</key>
+		<false/>
+	</dict>
 </plist>

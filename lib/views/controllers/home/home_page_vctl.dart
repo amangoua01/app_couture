@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:ateliya/api/accueil_api.dart';
 import 'package:ateliya/api/boutique_api.dart';
 import 'package:ateliya/data/models/accueil_data.dart';
+import 'package:ateliya/services/sync_service.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/constants/sens_mouvement_caisse_enum.dart';
 import 'package:ateliya/tools/extensions/future.dart';
@@ -35,20 +36,43 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
     update();
   }
 
+  /// Vrai tant qu'aucune réponse réseau n'est encore arrivée pour cette entité.
+  bool isFirstLoad = true;
+
   Future<void> loadData() async {
     final entite = getEntite().value;
     loadUnreadCount();
     if (entite.isNotEmpty) {
-      final res = await api.getAccueilData(entite.id!, entite.type).load();
-      presentSubscription = false;
-      update();
+      // Réaffiche le dernier tableau de bord connu avant l'appel réseau.
+      var hasContent = !isFirstLoad;
+      if (isFirstLoad) {
+        final cached = await api.readCached(entite.id!, entite.type);
+        if (cached != null) {
+          data = cached;
+          presentSubscription = cached.subscriptionExpired;
+          hasContent = true;
+          update();
+        }
+      }
+
+      // Le voile de chargement n'a de sens que si l'écran est encore vide :
+      // sinon on rafraîchit en silence sous les données déjà affichées.
+      final request = api.getAccueilData(entite.id!, entite.type);
+      final res = await (hasContent ? request : request.load());
+      isFirstLoad = false;
       if (res.status) {
         data = res.data!;
+        presentSubscription = data.subscriptionExpired;
         update();
       } else {
         if (res.detailErrors == "endSubscription") {
+          // Ancien backend : l'accueil était refusé au lieu d'être signalé.
           presentSubscription = true;
           update();
+        } else if (hasContent && await SyncService.isOffline()) {
+          // Hors-ligne avec un tableau de bord déjà affiché (cache ou
+          // chargement précédent) : pas besoin d'un message d'erreur
+          // générique par-dessus des données encore valables.
         } else {
           CMessageDialog.show(message: res.message);
         }

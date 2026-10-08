@@ -76,6 +76,7 @@ class CommandeListPage extends StatelessWidget {
                 CTabBar(
                   tabs: CommandeListVctl.tabs.map((t) => t.$2).toList(),
                   onTabChanged: (index) => ctl.tabIndex = index,
+                  isScrollable: true,
                 ),
                 Expanded(
                   child: PlaceholderBuilder(
@@ -262,30 +263,6 @@ class _FilterSheet extends StatelessWidget {
         CTextFormField(
           controller: ctl.numeroClientCtrl,
           externalLabel: 'Numéro de téléphone',
-        ),
-        const Gap(10),
-        // Dropdown pour état facture
-        DropdownButtonFormField<String>(
-          initialValue: ctl.etatFacture,
-          decoration: const InputDecoration(
-            labelText: 'État de la commande (facture)',
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          ),
-          items: const [
-            DropdownMenuItem(value: null, child: Text('Tous (Toutes dates)')),
-            DropdownMenuItem(value: 'EN_COURS', child: Text('En cours')),
-            DropdownMenuItem(
-              value: 'NON_COMMENCE',
-              child: Text('Non commencé'),
-            ),
-            DropdownMenuItem(value: 'TERMINE', child: Text('Terminé')),
-            DropdownMenuItem(value: 'SOLDE', child: Text('Soldé')),
-          ],
-          onChanged: (v) {
-            ctl.etatFacture = v;
-            ctl.update();
-          },
         ),
         const Gap(20),
         CButton(

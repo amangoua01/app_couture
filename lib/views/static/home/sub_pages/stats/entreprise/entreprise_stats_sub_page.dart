@@ -1,3 +1,5 @@
+import 'package:ateliya/data/models/stats/comparaison_entite.dart';
+import 'package:ateliya/data/models/stats/revenus_quotidiens.dart';
 import 'package:ateliya/data/models/stats/statistiques_boutique.dart';
 import 'package:ateliya/data/models/stats/top_modele_vendu.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
@@ -5,8 +7,10 @@ import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/widgets/build_card_activity.dart';
 import 'package:ateliya/tools/widgets/build_mouvement_card.dart';
 import 'package:ateliya/tools/widgets/build_summury_item.dart';
-import 'package:ateliya/tools/widgets/c_card.dart';
 import 'package:ateliya/tools/widgets/section_container.dart';
+import 'package:ateliya/tools/widgets/stats/gradient_overview_panel.dart';
+import 'package:ateliya/tools/widgets/stats/repartition_donut.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -23,15 +27,33 @@ class EntrepriseStatsSubPage extends StatelessWidget {
     final content = ListView(
       padding: const EdgeInsets.all(12),
       children: [
-        // ── Card CA Global ──────────────────────────────────────────────
-        CCard(
-          child: Padding(
-            padding: const EdgeInsets.all(15),
-            child: Column(
+        // ── Vue d'ensemble ───────────────────────────────────────────────
+        GradientOverviewPanel(
+          title: "Vue d'ensemble",
+          trailing: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            decoration: BoxDecoration(
+              color: AppColors.secondary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: AppColors.secondary.withValues(alpha: 0.3),
+              ),
+            ),
+            child: const Text(
+              "Période sélectionnée",
+              style: TextStyle(
+                color: AppColors.secondary,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          rows: [
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "CHIFFRE D'AFFAIRES GLOBAL",
+                  "CHIFFRE D'AFFAIRES",
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 10,
@@ -39,60 +61,119 @@ class EntrepriseStatsSubPage extends StatelessWidget {
                     letterSpacing: 1.2,
                   ),
                 ),
-                const Gap(8),
+                const Gap(6),
                 Text(
                   kpis.chiffreAffaires.toAmount(unit: "Fcfa"),
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 30,
+                    fontSize: 28,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.8,
                   ),
                 ),
-                const Gap(8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondary.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: AppColors.secondary.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: const Text(
-                    "Période sélectionnée",
-                    style: TextStyle(
-                      color: AppColors.secondary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+              ],
+            ),
+            KpiTileRow(
+              tiles: [
+                KpiTile(
+                  label: "Recettes nettes",
+                  value: (kpis.recettesNettes ?? 0).toAmount(unit: "Fcfa"),
                 ),
-                const Gap(4),
-                Divider(color: Colors.white.withValues(alpha: 0.9)),
-                const Gap(4),
-                Wrap(
-                  spacing: 18,
-                  runSpacing: 4,
-                  children: [
-                    _InfoRow(
-                      label: "Recettes nettes : ",
-                      value: (kpis.recettesNettes ?? 0).toAmount(unit: "Fcfa"),
-                    ),
-                    _InfoRow(
-                      label: "Ticket moyen : ",
-                      value: (kpis.ticketMoyen ?? 0).toAmount(unit: "Fcfa"),
-                    ),
-                  ],
+                KpiTile(
+                  label: "Ticket moyen",
+                  value: (kpis.ticketMoyen ?? 0).toAmount(unit: "Fcfa"),
+                  onInfoTap: () => _showTicketMoyenInfo(context),
                 ),
               ],
             ),
-          ),
+            KpiTileRow(
+              tiles: [
+                KpiTile(
+                  label: "Dépenses",
+                  value: kpis.totalDepenses.toAmount(unit: "Fcfa"),
+                ),
+                KpiTile(
+                  label: "Taux de recouvrement",
+                  value: "${kpis.tauxRecouvrement ?? 0}%",
+                ),
+              ],
+            ),
+            if (kpis.delaiMoyenLivraisonJours != null)
+              KpiTileRow(
+                tiles: [
+                  KpiTile(
+                    label: "Délai moyen de livraison",
+                    value: "${kpis.delaiMoyenLivraisonJours} j",
+                  ),
+                  KpiTile(
+                    label: "Pièces en retard",
+                    value: "${kpis.piecesEnRetard ?? 0}",
+                    accent:
+                        (kpis.piecesEnRetard ?? 0) > 0
+                            ? const Color(0xFFE57373)
+                            : null,
+                  ),
+                ],
+              ),
+            if (kpis.stockTotalBoutique != null)
+              KpiTileRow(
+                tiles: [
+                  KpiTile(
+                    label: "Stock total boutique",
+                    value: "${kpis.stockTotalBoutique ?? 0}",
+                  ),
+                  KpiTile(
+                    label: "Ventes sur la période",
+                    value: "${kpis.nbVentesBoutique ?? 0}",
+                  ),
+                ],
+              ),
+          ],
         ),
         const Gap(24),
+
+        // ── Répartition des revenus ──────────────────────────────────────
+        if (activities.any((a) => (a.revenus ?? 0) > 0)) ...[
+          RepartitionDonut(
+            title: "Répartition des revenus",
+            slices: [
+              for (var i = 0; i < activities.length; i++)
+                if ((activities[i].revenus ?? 0) > 0)
+                  DonutSlice(
+                    label: activities[i].activite ?? "Autre",
+                    value: activities[i].revenus!,
+                    color:
+                        RepartitionDonut.palette[i %
+                            RepartitionDonut.palette.length],
+                  ),
+            ],
+          ),
+          const Gap(24),
+        ],
+
+        // ── Comparaison boutiques / ateliers ──────────────────────────────
+        // N'a de sens qu'à partir de 2 entités : avec une seule, il n'y a
+        // rien à comparer.
+        if ((data.comparaisonEntites ?? []).length > 1) ...[
+          SectionContainer(
+            title: "Classement par chiffre d'affaires",
+            child: _ComparaisonEntitesCard(
+              entites: data.comparaisonEntites!,
+            ),
+          ),
+          const Gap(24),
+        ],
+
+        // ── Revenus par jour ─────────────────────────────────────────────
+        // Masqué entièrement sans données plutôt que d'afficher un
+        // graphique vide (confus, ressemble à un bug).
+        if (data.revenusQuotidiens.isNotEmpty) ...[
+          SectionContainer(
+            title: "Revenus",
+            child: _RevenusBarChart(items: data.revenusQuotidiens),
+          ),
+          const Gap(24),
+        ],
 
         // ── Activité globale ────────────────────────────────────────────
         SectionContainer(
@@ -147,6 +228,10 @@ class EntrepriseStatsSubPage extends StatelessWidget {
         const Gap(24),
 
         // ── Caisse & Opérations ─────────────────────────────────────────
+        // Taux recouvrement / Dépenses / Délai / Retard sont déjà dans le
+        // panneau "Vue d'ensemble" ci-dessus : seuls la caisse et les
+        // mouvements (absents de ce panneau) restent ici, pour éviter
+        // d'afficher deux fois les mêmes chiffres sur un même écran.
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -173,18 +258,6 @@ class EntrepriseStatsSubPage extends StatelessWidget {
                   value: kpis.caisse.toAmount(),
                   label: "Solde caisse (FCFA)",
                   iconColor: AppColors.primary,
-                ),
-                BuildCardActivity(
-                  icon: Icons.show_chart,
-                  value: "${kpis.tauxRecouvrement ?? 0}%",
-                  label: "Taux recouvrement",
-                  iconColor: AppColors.secondary,
-                ),
-                BuildCardActivity(
-                  icon: Icons.attach_money,
-                  value: kpis.totalDepenses.toAmount(),
-                  label: "Dépenses totales",
-                  iconColor: AppColors.secondary,
                 ),
                 BuildMouvementCard(
                   entree: kpis.totalMouvementsEntrants.toAmount(),
@@ -244,11 +317,14 @@ class EntrepriseStatsSubPage extends StatelessWidget {
             ),
           ),
         ),
-        // ── Top modèles vendus ──────────────────────────────────────────
+        // ── Top modèles vendus / types de pièce cousus ──────────────────
         if ((data.topModelesVendus ?? []).isNotEmpty) ...[
           const Gap(24),
           SectionContainer(
-            title: "Top modèles vendus",
+            title:
+                kpis.delaiMoyenLivraisonJours != null
+                    ? "Pièces les plus cousues"
+                    : "Top modèles vendus",
             child: _TopModelesCard(modeles: data.topModelesVendus!),
           ),
         ],
@@ -277,6 +353,27 @@ class EntrepriseStatsSubPage extends StatelessWidget {
       return Icons.calendar_today_outlined;
     }
     return Icons.analytics_outlined;
+  }
+
+  void _showTicketMoyenInfo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Ticket moyen"),
+            content: const Text(
+              "Montant moyen encaissé par vente sur la période sélectionnée "
+              "(chiffre d'affaires ÷ nombre de ventes). Plus il est élevé, "
+              "plus chaque client dépense en moyenne.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Compris"),
+              ),
+            ],
+          ),
+    );
   }
 }
 
@@ -434,32 +531,242 @@ class _TopModeleItem extends StatelessWidget {
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  const _InfoRow({required this.label, required this.value});
+class _ComparaisonEntitesCard extends StatelessWidget {
+  final List<ComparaisonEntite> entites;
+  const _ComparaisonEntitesCard({required this.entites});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.55),
-            fontSize: 12,
+    final maxCa = entites
+        .map((e) => e.chiffreAffaires)
+        .fold(0, (a, b) => a > b ? a : b);
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
+        ],
+      ),
+      child: Column(
+        children:
+            entites.asMap().entries.map((e) {
+              final isLast = e.key == entites.length - 1;
+              return Column(
+                children: [
+                  _ComparaisonEntiteItem(
+                    rank: e.key + 1,
+                    entite: e.value,
+                    maxCa: maxCa,
+                  ),
+                  if (!isLast)
+                    Divider(
+                      height: 1,
+                      indent: 16,
+                      endIndent: 16,
+                      color: AppColors.fieldBorder.withValues(alpha: 0.6),
+                    ),
+                ],
+              );
+            }).toList(),
+      ),
     );
   }
 }
+
+class _ComparaisonEntiteItem extends StatelessWidget {
+  final int rank;
+  final ComparaisonEntite entite;
+  final int maxCa;
+  const _ComparaisonEntiteItem({
+    required this.rank,
+    required this.entite,
+    required this.maxCa,
+  });
+
+  Color get _barColor {
+    if (rank == 1) return AppColors.secondary;
+    if (rank == 2) return AppColors.green;
+    return AppColors.primary.withValues(alpha: 0.35);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ca = entite.chiffreAffaires;
+    final ratio = maxCa > 0 ? ca / maxCa : 0.0;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            width: 26,
+            height: 26,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.06),
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              "$rank",
+              style: const TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 11,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+          const Gap(10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      entite.isBoutique
+                          ? Icons.storefront_outlined
+                          : Icons.content_cut_outlined,
+                      size: 13,
+                      color: AppColors.primary.withValues(alpha: 0.5),
+                    ),
+                    const Gap(5),
+                    Expanded(
+                      child: Text(
+                        entite.nom ?? "-",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Gap(6),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: ratio,
+                    minHeight: 5,
+                    backgroundColor: AppColors.ligthGrey,
+                    valueColor: AlwaysStoppedAnimation<Color>(_barColor),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Gap(14),
+          Text(
+            "${ca.toAmount()} FCFA",
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: AppColors.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Revenus par jour, en barres — remplace l'absence totale de graphique
+/// qu'avait cet écran jusqu'ici (uniquement des chiffres et des grilles).
+class _RevenusBarChart extends StatelessWidget {
+  final List<RevenusQuotidiens> items;
+  const _RevenusBarChart({required this.items});
+
+  @override
+  Widget build(BuildContext context) {
+    final maxY = items
+        .map((e) => e.revenus.toDouble())
+        .fold<double>(0, (a, b) => a > b ? a : b);
+    // Pas plus d'une dizaine d'étiquettes affichées même avec 30 jours de
+    // données, sinon elles se chevauchent et deviennent illisibles.
+    final labelStep = (items.length / 8).ceil().clamp(1, items.length);
+
+    return Container(
+      height: 220,
+      padding: const EdgeInsets.fromLTRB(12, 20, 16, 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: BarChart(
+        BarChartData(
+          maxY: maxY == 0 ? 1 : maxY * 1.2,
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: false,
+            getDrawingHorizontalLine:
+                (value) => FlLine(color: Colors.grey.shade100, strokeWidth: 1),
+          ),
+          borderData: FlBorderData(show: false),
+          titlesData: FlTitlesData(
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            leftTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 24,
+                getTitlesWidget: (val, meta) {
+                  final i = val.toInt();
+                  if (i < 0 || i >= items.length || i % labelStep != 0) {
+                    return const SizedBox();
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      items[i].jour ?? '',
+                      style: TextStyle(
+                        fontSize: 9.5,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          barGroups: [
+            for (var i = 0; i < items.length; i++)
+              BarChartGroupData(
+                x: i,
+                barRods: [
+                  BarChartRodData(
+                    toY: items[i].revenus.toDouble(),
+                    color: AppColors.primary,
+                    width: items.length > 15 ? 6 : 12,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

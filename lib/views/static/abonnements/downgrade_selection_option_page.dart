@@ -20,22 +20,33 @@ class DowngradeSelectionOptionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F9FC),
+      backgroundColor: const Color(0xFFF6F8F7),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F9FC),
+        backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87),
+          icon: Container(
+            padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 16,
+              color: Color(0xFF0F2620),
+            ),
+          ),
           onPressed: () => Get.back(),
         ),
         title: const Text(
           "Configuration du forfait",
           style: TextStyle(
-            color: Colors.black87,
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
+            color: Color(0xFF0F2620),
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
           ),
         ),
       ),
@@ -51,22 +62,22 @@ class DowngradeSelectionOptionPage extends StatelessWidget {
                   const Text(
                     "Personnalisez votre plan",
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 22,
                       fontWeight: FontWeight.w900,
-                      color: Colors.black87,
-                      letterSpacing: -0.5,
+                      color: Color(0xFF0F2620),
+                      letterSpacing: -0.4,
                     ),
                   ),
-                  const Gap(8),
+                  const Gap(6),
                   Text(
                     "Veuillez sélectionner les éléments à conserver dans votre nouveau forfait.",
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 14,
                       color: Colors.grey[600],
                       height: 1.4,
                     ),
                   ),
-                  const Gap(32),
+                  const Gap(24),
                   const ForfaitConfigSection(title: "Différents Utilisateurs"),
                   const ForfaitConfigSection(title: "Vos Ateliers"),
                   const ForfaitConfigSection(title: "Vos Boutiques"),
@@ -74,16 +85,16 @@ class DowngradeSelectionOptionPage extends StatelessWidget {
               ),
             ),
 
-            // Fixed bottom bar for action button
+            // Barre d'action inférieure
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(24)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withAlpha(5),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, -4),
                   ),
@@ -93,22 +104,54 @@ class DowngradeSelectionOptionPage extends StatelessWidget {
                 top: false,
                 child: SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Get.to(() => AbonnementPaymentPage(
-                          forfait: forfait,
-                          operateur: operateur,
-                        )),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
+                  height: 54,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          AppColors.primary,
+                          Color(0xFF135043),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.28),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    child: const Text("Passer au paiement",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: ElevatedButton(
+                      onPressed: () => Get.to(() => AbonnementPaymentPage(
+                            forfait: forfait,
+                            operateur: operateur,
+                          )),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.white,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Passer au paiement",
+                            style: TextStyle(
+                              fontSize: 15.5,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          Gap(8),
+                          Icon(Icons.arrow_forward_rounded, size: 18),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),

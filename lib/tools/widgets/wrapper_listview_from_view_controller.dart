@@ -23,74 +23,78 @@ class WrapperListviewFromViewController<M extends ModelJson>
     return PlaceholderBuilder(
       condition: !ctl.isLoading,
       placeholder: ListView.builder(
-        itemCount: 20,
+        padding: const EdgeInsets.symmetric(vertical: 8),
         physics: const NeverScrollableScrollPhysics(),
+        itemCount: 8,
         itemBuilder: (context, index) => const ShimmerListtile(),
       ),
-      builder: () => PlaceholderBuilder(
-        condition: ctl.data.isNotEmpty,
-        placeholder: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset("assets/images/deco3.png", width: 200),
-              ListTile(
-                title: Text(
-                  "Aucune données trouvées",
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              TextButton(
-                onPressed: () => ctl.getList(search: ctl.search),
-                child: const Text("Réessayer"),
-              ),
-            ],
-          ),
-        ),
-        builder: () => PlaceholderBuilder(
-          condition: ctl.selected == null,
-          placeholder: ListView.builder(
-            physics: const AlwaysScrollableScrollPhysics(),
-            controller: ctl.scrollCtl,
-            itemCount: ctl.data.length,
-            itemBuilder: itemBuilder,
-          ),
-          builder: () {
-            return RefreshIndicator(
-              onRefresh: ctl.getList,
+      builder:
+          () => PlaceholderBuilder(
+            condition: ctl.data.isNotEmpty,
+            placeholder: Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.only(bottom: 150),
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      controller: ctl.scrollCtl,
-                      itemCount: ctl.data.length,
-                      itemBuilder: itemBuilder,
+                  Image.asset("assets/images/deco3.png", width: 200),
+                  ListTile(
+                    title: Text(
+                      "Aucune données trouvées",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
-                  Visibility(
-                    visible: ctl.isMoreLoading,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 30),
-                      child: const SpinKitWave(
-                        color: AppColors.primary,
-                        size: 25.0,
-                        type: SpinKitWaveType.center,
-                      ).animate().slide(
-                            duration: 200.ms,
-                            curve: Curves.decelerate,
-                            begin: const Offset(0, 2),
-                          ),
-                    ),
+                  TextButton(
+                    onPressed: () => ctl.getList(search: ctl.search),
+                    child: const Text("Réessayer"),
                   ),
                 ],
               ),
-            );
-          },
-        ),
-      ),
+            ),
+            builder:
+                () => PlaceholderBuilder(
+                  condition: ctl.selected == null,
+                  placeholder: ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: ctl.scrollCtl,
+                    itemCount: ctl.data.length,
+                    itemBuilder: itemBuilder,
+                  ),
+                  builder: () {
+                    return RefreshIndicator(
+                      onRefresh: ctl.getList,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                              padding: const EdgeInsets.fromLTRB(0, 8, 0, 100),
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              controller: ctl.scrollCtl,
+                              itemCount: ctl.data.length,
+                              itemBuilder: itemBuilder,
+                            ),
+                          ),
+                          Visibility(
+                            visible: ctl.isMoreLoading,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 30),
+                              child: const SpinKitWave(
+                                color: AppColors.primary,
+                                size: 25.0,
+                                type: SpinKitWaveType.center,
+                              ).animate().slide(
+                                duration: 200.ms,
+                                curve: Curves.decelerate,
+                                begin: const Offset(0, 2),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+          ),
     );
   }
 }

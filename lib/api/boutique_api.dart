@@ -6,6 +6,7 @@ import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
 import 'package:ateliya/data/models/stock_modele_item.dart';
 import 'package:ateliya/data/models/vente.dart';
+import 'package:ateliya/tools/components/data_cache.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -110,8 +111,28 @@ class BoutiqueApi extends CrudWebController<Boutique> {
 
   // https://backend.ateliya.com/api/modeleBoutique/modele/by/boutique/1
 
+  String _stockBoutiqueCacheKey(int boutiqueId) => "stockBoutique:$boutiqueId";
+
+  /// Dernier stock connu de la boutique, pour un affichage immédiat.
+  ///
+  /// La liste complète d'une boutique fournie est longue à parvenir : sans
+  /// cela, chaque passage sur l'écran imposait d'attendre le réseau avant de
+  /// voir quoi que ce soit, y compris quand rien n'avait changé.
+  Future<List<StockModeleItem>?> readCachedModeleBoutique(
+    int boutiqueId,
+  ) async {
+    final raw = await DataCache.readList(_stockBoutiqueCacheKey(boutiqueId));
+    if (raw == null) return null;
+    try {
+      return raw.map((e) => StockModeleItem.fromJson(e)).toList();
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<DataResponse<List<StockModeleItem>>> getModeleBoutiqueByBoutiqueId(
-      int id) async {
+    int id,
+  ) async {
     try {
       final res = await client.get(
         urlBuilder(api: "/modele/by/boutique/$id", module: "modeleBoutique"),
@@ -119,10 +140,11 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       );
       var data = jsonDecode(res.body);
       if (res.statusCode == 200) {
+        final rawList = data["data"] as List? ?? [];
+        await DataCache.write(_stockBoutiqueCacheKey(id), rawList);
         return DataResponse.success(
-            data: (data["data"] as List).map((e) {
-          return StockModeleItem.fromJson(e);
-        }).toList());
+          data: rawList.map((e) => StockModeleItem.fromJson(e)).toList(),
+        );
       } else {
         return DataResponse.error(
           message: data["message"] ?? res.reasonPhrase.value,
@@ -145,9 +167,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       );
       var resData = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        return DataResponse.success(
-          data: Vente.fromJson(resData["data"]),
-        );
+        return DataResponse.success(data: Vente.fromJson(resData["data"]));
       } else {
         return DataResponse.error(message: resData["message"]);
       }
@@ -157,7 +177,9 @@ class BoutiqueApi extends CrudWebController<Boutique> {
   }
 
   Future<DataResponse<List<Vente>>> getVentes(
-      int id, Map<String, dynamic> data) async {
+    int id,
+    Map<String, dynamic> data,
+  ) async {
     try {
       final res = await client.post(
         urlBuilder(api: "boutique/$id", module: "vente"),
@@ -166,12 +188,13 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       );
       final json = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        final list = (json['data']['data'] as List)
-            .map((e) => Vente.fromJson(e))
-            .toList();
+        final list =
+            (json['data']['data'] as List)
+                .map((e) => Vente.fromJson(e))
+                .toList();
         return DataResponse.success(data: list);
       } else {
-        return DataResponse.error(message: json['message']);
+        return DataResponse.error(message: json['message'] ?? "Erreur");
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -188,7 +211,7 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       if (res.statusCode == 200) {
         return DataResponse.success(data: true);
       } else {
-        return DataResponse.error(message: json['message']);
+        return DataResponse.error(message: json['message'] ?? "Erreur");
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -205,7 +228,29 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       if (res.statusCode == 200) {
         return DataResponse.success(data: Vente.fromJson(json['data']));
       } else {
-        return DataResponse.error(message: json['message']);
+        return DataResponse.error(message: json['message'] ?? "Erreur");
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  /// Utilisé par le scan QR des reçus boutique : le QR imprimé encode
+  /// désormais l'id (court) plutôt que la référence (longue), pour un scan
+  /// aussi rapide que celui des commandes atelier.
+  Future<DataResponse<Vente>> getVenteById(int id) async {
+    try {
+      final res = await client.get(
+        urlBuilder(api: "paiement/$id", module: "vente"),
+        headers: authHeaders,
+      );
+      final json = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        // Cette route renvoie l'entité directement à la racine du JSON
+        // (pas d'enveloppe `{"data": ...}` comme le reste de l'API).
+        return DataResponse.success(data: Vente.fromJson(json));
+      } else {
+        return DataResponse.error(message: json['message'] ?? "Erreur");
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);

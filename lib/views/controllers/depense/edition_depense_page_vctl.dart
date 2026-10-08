@@ -1,23 +1,47 @@
 import 'package:ateliya/api/caisse_api.dart';
+import 'package:ateliya/api/charge_api.dart';
 import 'package:ateliya/api/depense_api.dart';
 import 'package:ateliya/api/famille_depense_api.dart';
 import 'package:ateliya/data/dto/depense_dto.dart';
 import 'package:ateliya/data/dto/ligne_depense_dto.dart';
 import 'package:ateliya/data/models/caisse.dart';
+import 'package:ateliya/data/models/charge.dart';
 import 'package:ateliya/data/models/famille_depense.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
+import 'package:ateliya/services/gemini_assistant_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class EditionDepensePageVctl extends GetxController {
+  final DepenseExtractionResult? initialData;
+  EditionDepensePageVctl({this.initialData});
+
   final formKey = GlobalKey<FormState>();
   final montantCtl = TextEditingController();
   final descriptionCtl = TextEditingController();
   FamilleDepense? selectedFamille;
   Caisse? selectedCaisse;
+  Charge? selectedCharge;
+  bool isLoading = false;
+  bool isAiPrefilled = false;
+
+  /// Une dépense part soit d'une charge récurrente (type et montant
+  /// hérités), soit d'une saisie libre : les deux parcours sont exclusifs
+  /// plutôt que mélangés dans un même formulaire.
+  bool isFromCharge = false;
+
+  void setFromCharge(bool value) {
+    if (isFromCharge == value) return;
+    isFromCharge = value;
+    selectedCharge = null;
+    selectedFamille = null;
+    montantCtl.clear();
+    update();
+  }
 
   final familleDepenseApi = FamilleDepenseApi();
+  final chargeApi = ChargeApi();
   final caisseApi = CaisseApi();
   final depenseApi = DepenseApi();
 
@@ -27,6 +51,22 @@ class EditionDepensePageVctl extends GetxController {
       return res.data!.items;
     }
     return [];
+  }
+
+  Future<List<Charge>> getCharges() async {
+    final res = await chargeApi.list();
+    return res.status ? res.data! : [];
+  }
+
+  /// Pré-remplit le type et le montant à partir d'une charge récurrente ;
+  /// l'utilisateur garde la main pour tout ajuster avant de valider.
+  void applyCharge(Charge? charge) {
+    selectedCharge = charge;
+    if (charge != null) {
+      selectedFamille = charge.familleDepense ?? selectedFamille;
+      montantCtl.text = charge.montant ?? montantCtl.text;
+    }
+    update();
   }
 
   Future<List<Caisse>> getCaisses() async {
@@ -43,8 +83,63 @@ class EditionDepensePageVctl extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadCaisses();
     montantCtl.addListener(update);
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    await loadCaisses();
+    if (initialData != null) {
+      await applyExtraction(initialData!);
+    }
+  }
+
+  Future<void> applyExtraction(DepenseExtractionResult data) async {
+    isAiPrefilled = true;
+    if (data.montant != null) {
+      montantCtl.text = data.montant.toString();
+    }
+    if (data.description != null && data.description!.isNotEmpty) {
+      descriptionCtl.text = data.description!;
+    }
+
+    try {
+      final familles = await getFamilles();
+      if (familles.isNotEmpty) {
+        if (data.suggestionCategorie != null) {
+          final query = data.suggestionCategorie!.toLowerCase();
+          final match = familles.firstWhereOrNull((f) {
+            final lib = (f.libelle ?? '').toLowerCase();
+            return lib.contains(query) || query.contains(lib);
+          });
+          selectedFamille = match ?? familles.first;
+        } else {
+          selectedFamille = familles.first;
+        }
+      }
+    } catch (_) {}
+
+    try {
+      if (caisses.isNotEmpty && data.montant != null) {
+        Caisse? matchedCaisse;
+        if (data.caisse != null) {
+          final q = data.caisse!.toLowerCase();
+          matchedCaisse = caisses.firstWhereOrNull((c) {
+            final lib = (c.entite?.libelle ?? '').toLowerCase();
+            final type = (c.type ?? '').toLowerCase();
+            return lib.contains(q) || type.contains(q);
+          });
+        }
+        matchedCaisse ??= caisses.first;
+
+        ligneRows.clear();
+        final line = createLine(matchedCaisse, data.montant.toString());
+        line.montantCtl.addListener(update);
+        ligneRows.add(line);
+      }
+    } catch (_) {}
+
+    update();
   }
 
   @override
@@ -109,9 +204,13 @@ class EditionDepensePageVctl extends GetxController {
   }
 
   Future<void> submit() async {
-    if (selectedFamille == null) {
-      CMessageDialog.show(
-          message: "Veuillez sélectionner une famille de dépense");
+    if (isFromCharge) {
+      if (selectedCharge == null) {
+        CMessageDialog.show(message: "Veuillez sélectionner une charge");
+        return;
+      }
+    } else if (selectedFamille == null) {
+      CMessageDialog.show(message: "Veuillez sélectionner un type de dépense");
       return;
     }
 
@@ -122,7 +221,8 @@ class EditionDepensePageVctl extends GetxController {
 
     if (ligneRows.isEmpty) {
       CMessageDialog.show(
-          message: "Veuillez ajouter au moins une ligne de paiement");
+        message: "Veuillez ajouter au moins une ligne de paiement",
+      );
       return;
     }
 
@@ -134,7 +234,8 @@ class EditionDepensePageVctl extends GetxController {
       for (var row in ligneRows) {
         if (row.caisse == null || row.montantCtl.text.isEmpty) {
           CMessageDialog.show(
-              message: "Veuillez compléter toutes les lignes de paiement");
+            message: "Veuillez compléter toutes les lignes de paiement",
+          );
           return;
         }
 
@@ -143,38 +244,55 @@ class EditionDepensePageVctl extends GetxController {
 
         if (lineAmount > caisseBalance) {
           CMessageDialog.show(
-              message:
-                  "Le montant dépasse le solde de la caisse ${row.caisse?.entite?.libelle} (${row.caisse?.type})");
+            message:
+                "Le montant dépasse le solde de la caisse ${row.caisse?.entite?.libelle} (${row.caisse?.type})",
+          );
           return;
         }
 
         linesSum += lineAmount;
 
-        lignesDto.add(LignesDepenseDto(
-          caisseId: row.caisse!.id,
-          montant: row.montantCtl.text,
-        ));
+        lignesDto.add(
+          LignesDepenseDto(
+            caisseId: row.caisse!.id,
+            montant: row.montantCtl.text,
+          ),
+        );
       }
 
       if (linesSum != totalAmount) {
         CMessageDialog.show(
-            message:
-                "La somme des lignes ($linesSum) doit être égale au montant total ($totalAmount)");
+          message:
+              "La somme des lignes ($linesSum) doit être égale au montant total ($totalAmount)",
+        );
         return;
       }
 
       final dto = DepenseDto(
         montant: montantCtl.text,
         description: descriptionCtl.text,
-        familleDepenseId: selectedFamille!.id,
+        familleDepenseId: selectedFamille?.id,
+        chargeId: selectedCharge?.id,
         lignes: lignesDto,
       );
 
+      isLoading = true;
+      update();
+
       final res = await depenseApi.createOne(dto).load();
+
+      isLoading = false;
+      update();
+
       if (res.status) {
-        Get.back(result: true);
+        // L'objet créé (pas juste `true`) : c'est ce que BodyListView
+        // insère en tête de la liste des dépenses pour l'actualiser sans
+        // nouvel appel réseau.
+        Get.back(result: res.data);
         CMessageDialog.show(
-            message: "Dépense enregistrée avec succès", isSuccess: true);
+          message: "Dépense enregistrée avec succès",
+          isSuccess: true,
+        );
       } else {
         CMessageDialog.show(message: res.message);
       }

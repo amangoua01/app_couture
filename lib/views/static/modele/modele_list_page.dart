@@ -19,16 +19,21 @@ class ModeleListPage extends StatelessWidget {
           ctl,
           title: "Modèles",
           createPage: const EditionModelePage(),
-          itemBuilder: (_, i, selected) => ListItem(ctl,
-              leadingImage: (ctl.data.items[i].photo == null)
-                  ? "assets/images/svg/modele.svg"
-                  : (ctl.data.items[i].photo is FichierServer)
-                      ? (ctl.data.items[i].photo as FichierServer).fullUrl!
-                      : null,
-              subtitle: "Quantité: ${ctl.data.items[i].quantiteGlobale}",
-              editionPage: EditionModelePage(item: ctl.data.items[i]),
-              index: i,
-              title: ctl.data.items[i].libelle.value),
+          itemBuilder:
+              (_, i, selected) => ListItem(
+                ctl,
+                leadingImage:
+                    (ctl.data.items[i].photo == null)
+                        ? "assets/images/svg/modele.svg"
+                        : (ctl.data.items[i].photo is FichierServer)
+                        ? (ctl.data.items[i].photo as FichierServer).fullUrl!
+                        : null,
+                subtitle: "Quantité: ${ctl.data.items[i].quantiteGlobale}",
+                editionPage: EditionModelePage(item: ctl.data.items[i]),
+                index: i,
+                title: ctl.data.items[i].libelle.value,
+                selected: selected,
+              ),
         );
       },
     );

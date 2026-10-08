@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/components/data_cache.dart';
 import 'package:ateliya/tools/constants/cache_key.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -91,12 +92,27 @@ abstract class Cache {
     }
   }
 
+  /// Supprime toutes les clés partageant un préfixe (cache de données).
+  static Future<bool> removeWithPrefix(String prefix) async {
+    try {
+      var pref = await _getPrefs();
+      final keys = pref.getKeys().where((k) => k.startsWith(prefix)).toList();
+      for (var key in keys) {
+        await pref.remove(key);
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   static Future<bool> clear() async {
     try {
       var pref = await _getPrefs();
       for (var e in CacheKey.values.where((e) => e.deletable)) {
         pref.remove(e.name);
       }
+      await removeWithPrefix(DataCache.prefix);
       return true;
     } catch (e) {
       return false;

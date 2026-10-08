@@ -1,5 +1,6 @@
 import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/data/models/stats/activites_boutique.dart';
+import 'package:ateliya/data/models/stats/comparaison_entite.dart';
 import 'package:ateliya/data/models/stats/kpis.dart';
 import 'package:ateliya/data/models/stats/modele_stock_stat.dart';
 import 'package:ateliya/data/models/stats/periode.dart';
@@ -20,6 +21,7 @@ class StatistiquesBoutique extends ModelJson {
   List<ModeleStockStat>? topModelesEnStock;
   List<ModeleStockStat>? modelesStock;
   List<TopModeleVendu>? topModelesVendus;
+  List<ComparaisonEntite>? comparaisonEntites;
 
   StatistiquesBoutique({
     this.entityId,
@@ -33,6 +35,7 @@ class StatistiquesBoutique extends ModelJson {
     this.topModelesEnStock,
     this.modelesStock,
     this.topModelesVendus,
+    this.comparaisonEntites,
   }) : kpis = kpis ?? Kpis();
 
   @override
@@ -89,6 +92,13 @@ class StatistiquesBoutique extends ModelJson {
         topModelesVendus!.add(TopModeleVendu.fromJson(v));
       });
     }
+
+    if (json['comparaisonEntites'] != null) {
+      comparaisonEntites = <ComparaisonEntite>[];
+      json['comparaisonEntites'].forEach((v) {
+        comparaisonEntites!.add(ComparaisonEntite.fromJson(v));
+      });
+    }
   }
 
   @override
@@ -118,6 +128,10 @@ class StatistiquesBoutique extends ModelJson {
     if (topModelesVendus != null) {
       data['topModelesVendus'] =
           topModelesVendus!.map((v) => v.toJson()).toList();
+    }
+    if (comparaisonEntites != null) {
+      data['comparaisonEntites'] =
+          comparaisonEntites!.map((v) => v.toJson()).toList();
     }
 
     return data;

@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/components/field_border.dart';
+import 'package:ateliya/tools/components/field_popup.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +24,7 @@ class CDropDownFormField<T> extends StatelessWidget {
   final bool enabled;
   final String Function(T)? itemAsString;
   final Future<List<T>> Function()? asyncItems;
-  final PopupProps<T> popupProps;
+  final PopupProps<T>? popupProps;
   final bool Function(T, T)? compareFn;
   final bool Function(T, String)? filterFn;
   final FutureOr<List<T>> Function(String, LoadProps?)? items;
@@ -30,20 +32,25 @@ class CDropDownFormField<T> extends StatelessWidget {
   final Color fillColor;
   final String? externalLabel;
 
+  /// Permet de retirer la croix d'effacement quand l'écran offre déjà un autre
+  /// moyen d'annuler la saisie — deux croix côte à côte prêtent à confusion.
+  final bool showClearButton;
+
   const CDropDownFormField(
       {this.controller,
       this.baseStyle,
       this.externalLabel,
+      this.showClearButton = true,
       this.validator,
       this.fillColor = Colors.white,
-      this.contentPadding = const EdgeInsets.all(17),
+      this.contentPadding = FieldBorder.contentPadding,
       this.filterFn,
       this.compareFn,
       this.selectedItem,
       this.asyncItems,
       this.enabled = true,
       this.itemAsString,
-      this.popupProps = const PopupProps.menu(),
+      this.popupProps,
       this.items,
       this.maxLines = 1,
       this.onChanged,
@@ -58,6 +65,12 @@ class CDropDownFormField<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Une teinte de marque diluée dès qu'une valeur est choisie (pas
+    // seulement au focus) fait comprendre d'un coup d'œil que ce champ
+    // n'est plus vide — avec une ombre douce assortie pour le détacher
+    // légèrement du fond.
+    final hasValue = selectedItem != null;
+
     return Container(
       margin: margin,
       child: Column(
@@ -73,45 +86,78 @@ class CDropDownFormField<T> extends StatelessWidget {
                     : ((externalLabel.value.isEmpty)
                         ? ""
                         : externalLabel! + (require ? "*" : "")),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: FieldBorder.labelStyle,
               ),
             ),
           ),
-          DropdownSearch<T>(
-            onChanged: onChanged,
-            enabled: enabled,
-            filterFn: filterFn,
-            itemAsString: itemAsString,
-            items: items,
-            selectedItem: selectedItem,
-            popupProps: popupProps,
-            compareFn: compareFn ?? (a, b) => a == b,
-            validator: (value) {
-              if (validator != null) {
-                return validator!(value);
-              } else {
-                if (require && value == null) {
-                  return "Ce champ est obligatoire";
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(FieldBorder.radius),
+              boxShadow: hasValue
+                  ? [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.06),
+                        blurRadius: 14,
+                        offset: const Offset(0, 5),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: DropdownSearch<T>(
+              onChanged: onChanged,
+              enabled: enabled,
+              filterFn: filterFn,
+              itemAsString: itemAsString,
+              items: items,
+              selectedItem: selectedItem,
+              popupProps: popupProps ?? FieldPopup.menu<T>(),
+              compareFn: compareFn ?? (a, b) => a == b,
+              suffixProps: DropdownSuffixProps(
+                // Sans ça, une fois un élément choisi, impossible de
+                // revenir à "aucune sélection" sans réouvrir le menu — un
+                // simple "x" fin plutôt que l'icône "clear" épaisse par
+                // défaut du package.
+                clearButtonProps: ClearButtonProps(
+                  isVisible: showClearButton,
+                  icon: Icon(Icons.close_rounded, size: 19, color: Colors.grey[400]),
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                ),
+                dropdownButtonProps: DropdownButtonProps(
+                  iconOpened: Icon(Icons.unfold_more_rounded, color: Colors.grey[400]),
+                  iconClosed: Icon(Icons.unfold_more_rounded, color: Colors.grey[400]),
+                ),
+              ),
+              validator: (value) {
+                if (validator != null) {
+                  return validator!(value);
+                } else {
+                  if (require && value == null) {
+                    return "Ce champ est obligatoire";
+                  }
+                  return null;
                 }
-                return null;
-              }
-            },
-            decoratorProps: DropDownDecoratorProps(
-              baseStyle: baseStyle,
-              decoration: InputDecoration(
-                fillColor: fillColor,
-                contentPadding: contentPadding,
-                suffixIcon: suffixIcon,
-                labelText:
-                    (require && labelText != null) ? "$labelText*" : labelText,
-                hintText:
-                    (require && hintText != null) ? "$hintText" : hintText,
-                prefixIcon: prefixIcon,
-                filled: true,
-                errorBorder: border ?? FieldBorder.error,
-                focusedBorder: border ?? FieldBorder.enabled,
-                enabledBorder: border ?? FieldBorder.enabled,
-                border: border ?? FieldBorder.enabled,
+              },
+              decoratorProps: DropDownDecoratorProps(
+                baseStyle: baseStyle,
+                decoration: InputDecoration(
+                  fillColor: fillColor,
+                  contentPadding: contentPadding,
+                  suffixIcon: suffixIcon,
+                  labelText:
+                      (require && labelText != null) ? "$labelText*" : labelText,
+                  hintText:
+                      (require && hintText != null) ? "$hintText" : hintText,
+                  prefixIcon: prefixIcon,
+                  filled: true,
+                  hintStyle: FieldBorder.hintStyle,
+                  errorBorder: border ?? FieldBorder.error,
+                  focusedErrorBorder: border ?? FieldBorder.focusedError,
+                  focusedBorder: border ?? FieldBorder.focused,
+                  enabledBorder: border ?? (hasValue ? FieldBorder.selected : FieldBorder.enabled),
+                  disabledBorder: border ?? FieldBorder.disabled,
+                  border: border ?? (hasValue ? FieldBorder.selected : FieldBorder.enabled),
+                ),
               ),
             ),
           ),

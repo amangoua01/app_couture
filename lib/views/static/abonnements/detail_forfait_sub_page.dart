@@ -12,95 +12,100 @@ class DetailForfaitSubPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPremium = forfait.code.value.toLowerCase().contains('pro') ||
-        forfait.code.value.toLowerCase().contains('bus');
+    final title = forfait.libelle.value.isNotEmpty
+        ? forfait.libelle.value
+        : forfait.code.value;
 
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(24),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          const Gap(10),
+          Container(
+            width: 44,
+            height: 5,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          const Gap(16),
+
           Flexible(
             child: ListView(
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+              padding: const EdgeInsets.fromLTRB(22, 0, 22, 28),
               children: [
-                // Header section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              forfait.code.value.toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w900,
-                                color: AppColors.primary,
-                                letterSpacing: 1.2,
-                              ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 19,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFF0F2620),
+                              letterSpacing: -0.2,
                             ),
-                            if (isPremium) ...[
-                              const Gap(10),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withAlpha(20),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: const Text(
-                                  "PRO",
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ]
-                          ],
-                        ),
-                        const Gap(4),
-                        Text(
-                          "Détails de l'abonnement",
-                          style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500),
-                        )
-                      ],
+                          ),
+                          const Gap(2),
+                          Text(
+                            "Détail des fonctionnalités et quotas de l'atelier",
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close_rounded, color: Colors.grey[400]),
+                      icon: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 18,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
                       onPressed: () => Get.back(),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),
+                const Gap(16),
 
-                const Gap(24),
-
-                // Pricing summary card
+                // Carte récapitulative du tarif
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withAlpha(10),
-                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                        color: AppColors.primary.withAlpha(30), width: 1.5),
+                      color: AppColors.primary.withValues(alpha: 0.15),
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,13 +113,16 @@ class DetailForfaitSubPage extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Tarif",
+                          Text(
+                            "TARIF FORMULE",
                             style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w600),
+                              fontSize: 10.5,
+                              color: Colors.grey.shade500,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.6,
+                            ),
                           ),
+                          const Gap(3),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.baseline,
                             textBaseline: TextBaseline.alphabetic,
@@ -122,146 +130,194 @@ class DetailForfaitSubPage extends StatelessWidget {
                               Text(
                                 forfait.montant.toAmount(unit: ""),
                                 style: const TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black87),
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColors.primary,
+                                ),
                               ),
                               const Gap(4),
-                              const Text("FCFA",
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.grey)),
+                              const Text(
+                                "FCFA",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.secondary,
+                                ),
+                              ),
                             ],
                           ),
                         ],
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const Text(
-                            "Engagement",
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w600),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          "${forfait.duree} mois d'accès",
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
                           ),
-                          Text(
-                            "${forfait.duree} mois",
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87),
-                          ),
-                        ],
-                      )
+                        ),
+                      ),
                     ],
-                  ),
-                ),
-
-                const Gap(24),
-                const Divider(height: 1),
-                const Gap(24),
-
-                const Text(
-                  "Avantages inclus",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
                   ),
                 ),
                 const Gap(20),
 
-                // Features list
-                ...forfait.ligneModuleAvantages.map((e) => Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
+                const Text(
+                  "Modules inclus dans cette formule",
+                  style: TextStyle(
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF0F2620),
+                  ),
+                ),
+                const Gap(12),
+
+                // Liste des avantages
+                if (forfait.ligneModuleAvantages.isNotEmpty)
+                  ...forfait.ligneModuleAvantages.map((e) {
+                    final bool hasValue = e.value.toString() != "null" &&
+                        e.value.toString() != "0" &&
+                        !e.description.value.toLowerCase().contains("non");
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: hasValue
+                            ? const Color(0xFFF3F7F5)
+                            : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: hasValue
+                              ? AppColors.primary.withValues(alpha: 0.06)
+                              : Colors.transparent,
+                        ),
+                      ),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Icon(Icons.check_circle_rounded,
-                                size: 24,
-                                color: isPremium
-                                    ? AppColors.primary
-                                    : Colors.green),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: hasValue
+                                  ? AppColors.primary
+                                  : Colors.grey.shade400,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              hasValue ? "${e.value}" : "-",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
                           ),
-                          const Gap(16),
+                          const Gap(12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        e.libelle.value,
-                                        style: const TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black87),
-                                      ),
-                                    ),
-                                    if (e.value.toString() != "null" &&
-                                        e.value.toString().isNotEmpty)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: Text(
-                                          e.value.toString(),
-                                          style: const TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black87),
-                                        ),
-                                      ),
-                                  ],
+                                Text(
+                                  e.libelle.value,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: hasValue
+                                        ? const Color(0xFF0F2620)
+                                        : Colors.grey.shade500,
+                                  ),
                                 ),
-                                if (e.description.value.isNotEmpty) ...[
-                                  const Gap(6),
+                                if (e.description.value.isNotEmpty)
                                   Text(
                                     e.description.value,
                                     style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.grey[600],
-                                        height: 1.4),
+                                      fontSize: 11.5,
+                                      color: Colors.grey.shade600,
+                                    ),
                                   ),
-                                ]
                               ],
                             ),
                           ),
                         ],
                       ),
-                    )),
+                    );
+                  })
+                else
+                  Text(
+                    forfait.description.value.isNotEmpty
+                        ? forfait.description.value
+                        : "Accédez à tous les modules nécessaires pour la gestion de votre atelier.",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
 
-                const Gap(16),
+                const Gap(22),
 
-                // Subscribe button
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.back(); // close the bottom sheet
-                      Get.to(() => OperatorListPage(forfait));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
+                  height: 50,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          AppColors.primary,
+                          Color(0xFF135043),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.28),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    child: const Text("S'abonner maintenant",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold)),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Get.back();
+                        Get.to(() => OperatorListPage(forfait));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.flash_on_rounded,
+                            color: AppColors.yellow,
+                            size: 19,
+                          ),
+                          Gap(8),
+                          Text(
+                            "Souscrire à cette formule",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],

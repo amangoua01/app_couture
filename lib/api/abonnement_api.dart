@@ -2,11 +2,20 @@ import 'dart:convert';
 
 import 'package:ateliya/api/abstract/web_controller.dart';
 import 'package:ateliya/data/models/module_abonnement.dart';
+import 'package:ateliya/tools/components/data_cache.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 
 class AbonnementApi extends WebController {
   @override
   String get module => "abonnement";
+
+  static const _summaryCacheKey = "abonnements:summary";
+
+  /// Dernier résumé d'abonnement connu, affiché avant la réponse réseau.
+  Future<Map<String, dynamic>?> readCachedSummary() async {
+    final raw = await DataCache.read(_summaryCacheKey);
+    return raw is Map ? Map<String, dynamic>.from(raw) : null;
+  }
 
   Future<DataResponse<Map<String, dynamic>>> list() async {
     try {
@@ -16,9 +25,9 @@ class AbonnementApi extends WebController {
       );
       final body = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        return DataResponse.success(
-          data: body['data'] as Map<String, dynamic>,
-        );
+        final data = body['data'] as Map<String, dynamic>;
+        await DataCache.write(_summaryCacheKey, data);
+        return DataResponse.success(data: data);
       } else {
         return DataResponse.error(message: body['message']);
       }
@@ -36,9 +45,10 @@ class AbonnementApi extends WebController {
       final body = jsonDecode(res.body);
       if (res.statusCode == 200) {
         return DataResponse.success(
-          data: (body['data'] as List)
-              .map((e) => ModuleAbonnement.fromJson(e))
-              .toList(),
+          data:
+              (body['data'] as List)
+                  .map((e) => ModuleAbonnement.fromJson(e))
+                  .toList(),
         );
       } else {
         return DataResponse.error(message: body['message']);
@@ -80,7 +90,8 @@ class AbonnementApi extends WebController {
         return DataResponse.success(data: resBody['data']["redirectUrl"]);
       } else {
         return DataResponse.error(
-            message: resBody['message'] ?? "Erreur lors du paiement");
+          message: resBody['message'] ?? "Erreur lors du paiement",
+        );
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);

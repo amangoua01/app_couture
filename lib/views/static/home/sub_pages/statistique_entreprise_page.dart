@@ -1,11 +1,11 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
+import 'package:ateliya/tools/widgets/stats/period_toggle_pill.dart';
 import 'package:ateliya/views/controllers/home/statistique_entreprise_page_vctl.dart';
 import 'package:ateliya/views/static/home/sub_pages/stats/entreprise/entreprise_stats_sub_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class StatistiqueEntreprisePage extends StatelessWidget {
   const StatistiqueEntreprisePage({super.key});
@@ -19,6 +19,13 @@ class StatistiqueEntreprisePage extends StatelessWidget {
             backgroundColor: Colors.white,
             appBar: AppBar(
               title: const Text("Statistiques Globales"),
+              actions: [
+                IconButton(
+                  tooltip: "Télécharger le bilan",
+                  onPressed: ctl.isLoading ? null : ctl.exportBilanPdf,
+                  icon: const Icon(Icons.picture_as_pdf_outlined),
+                ),
+              ],
             ),
             body: Padding(
               padding: const EdgeInsets.all(12),
@@ -27,29 +34,36 @@ class StatistiqueEntreprisePage extends StatelessWidget {
                   Column(
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          ToggleSwitch(
-                            inactiveBgColor: AppColors.secondary,
-                            activeBgColor: const [AppColors.primary],
-                            activeFgColor: Colors.white,
-                            inactiveFgColor:
-                                Colors.white.withValues(alpha: 0.7),
-                            minWidth: 96.0,
-                            cornerRadius: 14,
-                            initialLabelIndex: ctl.selectedIndex,
-                            labels: const ["Jour", "Mois", "Année"],
-                            onToggle: (index) {
-                              ctl.selectedIndex = index ?? 0;
-                              ctl.fetchStats(indexPeriod: index ?? 0);
-                            },
+                          Expanded(
+                            child: PeriodTogglePill(
+                              labels: const ["Jour", "Mois", "Année"],
+                              initialIndex: ctl.selectedIndex.clamp(0, 2),
+                              onToggle: (index) {
+                                ctl.selectedIndex = index ?? 0;
+                                ctl.fetchStats(indexPeriod: index ?? 0);
+                              },
+                            ),
                           ),
                           const Gap(10),
-                          IconButton(
-                            onPressed: () => ctl.pickDateRange(context),
-                            icon: const Icon(
-                              Icons.calendar_month,
-                              color: AppColors.primary,
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.grey.shade200),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 10,
+                                ),
+                              ],
+                            ),
+                            child: IconButton(
+                              onPressed: () => ctl.pickDateRange(context),
+                              icon: const Icon(
+                                Icons.calendar_month,
+                                color: AppColors.primary,
+                              ),
                             ),
                           ),
                         ],

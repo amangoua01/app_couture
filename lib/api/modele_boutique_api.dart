@@ -6,11 +6,25 @@ import 'package:ateliya/data/dto/transfert_stock_dto.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/data/models/modele_boutique_details.dart';
 import 'package:ateliya/data/models/ravitaillement_stock.dart';
+import 'package:ateliya/tools/components/data_cache.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/models/data_response.dart';
 
 class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
   ModeleBoutiqueApi() : super(listApi: "/entreprise");
+
+  String _stockCacheKey(int boutiqueId) => "ravitaillement:$boutiqueId";
+
+  /// Dernière page de ravitaillements connue pour cette boutique.
+  Future<List<RavitaillementStock>?> readCachedStock(int boutiqueId) async {
+    final raw = await DataCache.readList(_stockCacheKey(boutiqueId));
+    if (raw == null) return null;
+    try {
+      return raw.map((e) => RavitaillementStock.fromJson(e)).toList();
+    } catch (_) {
+      return null;
+    }
+  }
 
   @override
   ModeleBoutique get item => ModeleBoutique();
@@ -49,22 +63,31 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
     required int boutiqueId,
     int page = 1,
     int limit = 20,
+    String? dateDebut,
+    String? dateFin,
   }) async {
     try {
       final res = await client.get(
         urlBuilder(
-          api: 'boutique/$boutiqueId',
-          module: 'stock',
-          params: {'page': page.toString(), 'limit': limit.toString()},
+          api: "boutique/$boutiqueId",
+          module: "stock",
+          params: {
+            "page": page.toString(),
+            "limit": limit.toString(),
+            if (dateDebut != null) "dateDebut": dateDebut,
+            if (dateFin != null) "dateFin": dateFin,
+          },
         ),
         headers: authHeaders,
       );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
+        final rawList = data['data'] as List? ?? [];
+        if (page == 1) {
+          await DataCache.write(_stockCacheKey(boutiqueId), rawList);
+        }
         final list =
-            (data['data'] as List? ?? [])
-                .map((e) => RavitaillementStock.fromJson(e))
-                .toList();
+            rawList.map((e) => RavitaillementStock.fromJson(e)).toList();
         return DataResponse.success(data: list);
       } else {
         return DataResponse.error(
@@ -118,6 +141,9 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
       );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
+        // La route n'indique pas la boutique concernée : on invalide tout
+        // le cache de ravitaillements plutôt que de risquer un statut figé.
+        await DataCache.invalidate("ravitaillement:");
         return DataResponse.success(data: true);
       } else {
         return DataResponse.error(
@@ -145,6 +171,7 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
       );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
+        await DataCache.invalidate("ravitaillement:");
         return DataResponse.success(data: true);
       } else {
         return DataResponse.error(

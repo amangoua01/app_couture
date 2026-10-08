@@ -1,3 +1,4 @@
+import 'package:ateliya/services/sync_service.dart';
 import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/services/deep_link_service.dart';
 import 'package:ateliya/tools/services/notification_service.dart';
@@ -29,6 +30,7 @@ void main() async {
 
     await NotificationService.setup();
     DeepLinkService.init();
+    SyncService().initNetworkListener();
 
     // Service de surveillance de connexion imprimante (vit pendant toute l'app)
     Get.put(PrinterConnectionService());
@@ -52,6 +54,7 @@ void main() async {
     appRunner: () {
       runApp(
         GetMaterialApp(
+          defaultTransition: Transition.cupertino,
           title: Env.appName,
           theme: AppTheme.light,
           locale: const Locale("fr", "FR"),

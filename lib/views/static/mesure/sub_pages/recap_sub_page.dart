@@ -3,6 +3,7 @@ import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
 import 'package:ateliya/views/controllers/mesure/edition_mesure_page_vctl.dart';
+import 'package:ateliya/views/static/mesure/sub_pages/edit_montant_piece_dialog.dart';
 import 'package:flutter/material.dart';
 
 class RecapSubPage extends StatelessWidget {
@@ -66,17 +67,16 @@ class RecapSubPage extends StatelessWidget {
                       child: Text(e.typeMesureDto!.libelle),
                     ),
                   ),
-                  SizedBox(
-                    height: 50,
-                    child: Center(
-                      child: Text(e.montant.toAmount()),
-                    ),
+                  // Montant et remise ouvrent le même dialogue d'édition
+                  // rapide que sur l'écran de liste des pièces : pas besoin
+                  // de rouvrir la fiche complète pour corriger un prix ici.
+                  _EditableCell(
+                    value: e.montant.toAmount(),
+                    onTap: () => editMontantPiece(ctl, e),
                   ),
-                  SizedBox(
-                    height: 50,
-                    child: Center(
-                      child: Text(e.remise.toAmount()),
-                    ),
+                  _EditableCell(
+                    value: e.remise.toAmount(),
+                    onTap: () => editMontantPiece(ctl, e),
                   ),
                   SizedBox(
                     height: 50,
@@ -249,6 +249,40 @@ class RecapSubPage extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EditableCell extends StatelessWidget {
+  final String value;
+  final VoidCallback onTap;
+
+  const _EditableCell({required this.value, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(value),
+                const SizedBox(width: 4),
+                const Icon(
+                  Icons.edit_rounded,
+                  size: 13,
+                  color: AppColors.primary,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

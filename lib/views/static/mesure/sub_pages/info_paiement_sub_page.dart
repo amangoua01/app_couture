@@ -22,6 +22,7 @@ class InfoPaiementSubPage extends StatelessWidget {
           CTextFormField(
             externalLabel: "Avance",
             controller: ctl.avanceCtl,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: (e) {
               if (e.toDouble().value >
                   (ctl.mesure.montantTotal -
@@ -34,6 +35,7 @@ class InfoPaiementSubPage extends StatelessWidget {
           CTextFormField(
             externalLabel: "Remise globale",
             controller: ctl.remiseGlobaleCtl,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: (e) {
               if (e.toDouble().value > ctl.mesure.montantTotal) {
                 return "La remise globale ne peut pas exceder le montant total";
@@ -56,20 +58,14 @@ class InfoPaiementSubPage extends StatelessWidget {
                   TextButton.icon(
                     onPressed: ctl.signatureCtl.clear,
                     label: const Text("Effacer"),
-                    icon: const Icon(
-                      IcoFontIcons.eraser,
-                      size: 17,
-                    ),
+                    icon: const Icon(IcoFontIcons.eraser, size: 17),
                   ),
                 ],
               ),
               const Gap(7),
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey,
-                    width: 1,
-                  ),
+                  border: Border.all(color: Colors.grey, width: 1),
                 ),
                 height: 250,
                 child: Signature(

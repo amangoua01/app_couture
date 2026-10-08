@@ -18,14 +18,16 @@ class BoutiquesListPage extends StatelessWidget {
           ctl,
           title: "Boutiques",
           createPage: const EditionBoutiquePage(),
-          itemBuilder: (_, i, selected) => ListItem(
-            ctl,
-            leadingImage: "assets/images/svg/boutique.svg",
-            editionPage: EditionBoutiquePage(item: ctl.data.items[i]),
-            index: i,
-            title: ctl.data.items[i].libelle.value,
-            subtitle: ctl.data.items[i].contact,
-          ),
+          itemBuilder:
+              (_, i, selected) => ListItem(
+                ctl,
+                leadingImage: "assets/images/svg/boutique.svg",
+                editionPage: EditionBoutiquePage(item: ctl.data.items[i]),
+                index: i,
+                title: ctl.data.items[i].libelle.value,
+                subtitle: ctl.data.items[i].contact,
+                selected: selected,
+              ),
         );
       },
     );

@@ -26,6 +26,7 @@ class AteliersListPage extends StatelessWidget {
                 index: i,
                 title: ctl.data.items[i].libelle.value,
                 subtitle: ctl.data.items[i].contact,
+                selected: selected,
               ),
         );
       },

@@ -19,19 +19,22 @@ class ClientListePage extends StatelessWidget {
           ctl,
           title: "Clients",
           createPage: const EditionClientPage(),
-          itemBuilder: (e, i, selected) => ListItem(
-            ctl,
-            leadingImage: (ctl.data.items[i].photo == null)
-                ? "assets/images/svg/client.svg"
-                : (ctl.data.items[i].photo is FichierServer)
-                    ? (ctl.data.items[i].photo as FichierServer).fullUrl!
-                    : null,
-            editionPage: EditionClientPage(item: ctl.data.items[i]),
-            index: i,
-            title: ctl.data.items[i].fullName,
-            subtitle: ctl.data.items[i].tel.value,
-            selected: selected,
-          ),
+          enableSearch: true,
+          itemBuilder:
+              (e, i, selected) => ListItem(
+                ctl,
+                leadingImage:
+                    (ctl.data.items[i].photo == null)
+                        ? "assets/images/svg/client.svg"
+                        : (ctl.data.items[i].photo is FichierServer)
+                        ? (ctl.data.items[i].photo as FichierServer).fullUrl!
+                        : null,
+                editionPage: EditionClientPage(item: ctl.data.items[i]),
+                index: i,
+                title: ctl.data.items[i].fullName,
+                subtitle: ctl.data.items[i].tel.value,
+                selected: selected,
+              ),
         );
       },
     );

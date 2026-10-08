@@ -15,10 +15,13 @@ abstract class Env {
   static const String defaultPassword = "admin93K";
 
   static const defaultDevise = Currency("Fcfa", code: "XOF", decimalDigits: 0);
-
+  
   static const AppEnv env = AppEnv.prod;
 
   static NetwordConfig get baseUrl => env.networdConfig;
+
+  /// Clé Gemini de l'environnement courant (voir [AppEnv]).
+  static String get geminiApiKey => env.geminiApiKey;
 
   static const nbItemInListPage = 10;
   static const supportMail = "support@ateliya.com";

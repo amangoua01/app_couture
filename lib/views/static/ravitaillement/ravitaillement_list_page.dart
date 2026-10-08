@@ -5,12 +5,15 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
+import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
 import 'package:ateliya/tools/widgets/shimmer_listtile.dart';
 import 'package:ateliya/views/controllers/ravitaillement/ravitaillement_list_vctl.dart';
 import 'package:ateliya/views/static/ravitaillement/edition_ravitaillement_page.dart';
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class RavitaillementListPage extends StatelessWidget {
   const RavitaillementListPage({super.key});
@@ -20,85 +23,249 @@ class RavitaillementListPage extends StatelessWidget {
     return GetBuilder(
       init: RavitaillementListVctl(),
       builder: (ctl) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Ravitaillements'),
-            actions: [
-              if (!ctl.isLoading)
-                IconButton(
-                  icon: const Icon(Icons.refresh_rounded),
-                  tooltip: 'Actualiser',
-                  onPressed: () => ctl.fetchData(),
+        final enAttenteList = ctl.items.where((i) => i.isEnAttente).toList();
+        final historiqueList = ctl.items.where((i) => !i.isEnAttente).toList();
+
+        return DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            backgroundColor: const Color(0xFFF8FAF9),
+            appBar: AppBar(
+              title: const Text('Ravitaillements'),
+              actions: [
+                if (!ctl.isLoading)
+                  IconButton(
+                    icon: const Icon(Icons.refresh_rounded),
+                    tooltip: 'Actualiser',
+                    onPressed: () => ctl.fetchData(),
+                  ),
+              ],
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(60),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: TabBar(
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      dividerColor: Colors.transparent,
+                      indicator: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      labelColor: AppColors.primary,
+                      unselectedLabelColor: Colors.grey[600],
+                      labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                      tabs: const [
+                        Tab(text: "En attente", height: 38),
+                        Tab(text: "Historique", height: 38),
+                      ],
+                    ),
+                  ),
                 ),
-            ],
-          ),
-          floatingActionButton: Visibility(
-            visible: ctl.user.isAdmin,
-            child: FloatingActionButton(
-              onPressed: () async {
-                final res =
-                    await Get.to(() => const EditionRavitaillementPage());
-                if (res == true) ctl.fetchData();
-              },
-              child: const Icon(Icons.add_rounded),
+              ),
             ),
-          ),
-          body: ctl.isLoading
-              ? ListView.builder(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: 8,
-                  itemBuilder: (_, __) => const ShimmerListtile(),
-                )
-              : ctl.errorMessage != null
-                  ? EmptyDataWidget(
-                      message: ctl.errorMessage!,
-                      onRefresh: () => ctl.fetchData(),
-                    )
-                  : ctl.items.isEmpty
-                      ? EmptyDataWidget(
-                          message: 'Aucun ravitaillement enregistré',
-                          onRefresh: () => ctl.fetchData(),
-                        )
-                      : RefreshIndicator(
-                          onRefresh: () => ctl.fetchData(),
-                          child: NotificationListener<ScrollNotification>(
-                            onNotification: (n) {
-                              if (n is ScrollEndNotification &&
-                                  n.metrics.extentAfter < 100) {
-                                ctl.loadMore();
-                              }
-                              return false;
-                            },
-                            child: ListView.separated(
-                              padding:
-                                  const EdgeInsets.fromLTRB(12, 12, 12, 100),
-                              itemCount:
-                                  ctl.items.length + (ctl.hasMore ? 1 : 0),
-                              separatorBuilder: (_, __) => const Gap(10),
-                              itemBuilder: (_, i) {
-                                if (i >= ctl.items.length) {
-                                  return const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16),
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  );
-                                }
-                                return _RavitaillementCard(
-                                  item: ctl.items[i],
-                                  ctl: ctl,
-                                );
-                              },
+            floatingActionButton: Visibility(
+              visible: ctl.user.isAdmin,
+              child: FloatingActionButton(
+                onPressed: () async {
+                  final res =
+                      await Get.to(() => const EditionRavitaillementPage());
+                  if (res == true) ctl.fetchData();
+                },
+                child: const Icon(Icons.add_rounded),
+              ),
+            ),
+            body: Column(
+              children: [
+                // ── Filtre de date ─────────────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+                  child: GestureDetector(
+                    onTap: () => _showDatePicker(context, ctl),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.03),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.15),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.primary.withValues(alpha: 0.1)),
+                            ),
+                            child: const Icon(
+                              Icons.calendar_month_rounded,
+                              size: 18,
+                              color: AppColors.primary,
                             ),
                           ),
+                          const Gap(14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Période de filtrage",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.primary.withValues(alpha: 0.5),
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                                const Gap(3),
+                                Text(
+                                  "${DateFormat('dd/MM/yyyy').format(ctl.dateRange.start)}  -  ${DateFormat('dd/MM/yyyy').format(ctl.dateRange.end)}",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w900,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Text(
+                              "Modifier",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // ── Contenu ───────────────────────────────────────────────────
+                Expanded(
+                  child: ctl.isLoading
+                      ? ListView.builder(
+                          padding: const EdgeInsets.all(12),
+                          itemCount: 8,
+                          itemBuilder: (_, __) => const ShimmerListtile(),
+                        )
+                      : TabBarView(
+                          children: [
+                            _buildList(ctl, enAttenteList),
+                            _buildList(ctl, historiqueList),
+                          ],
                         ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
-}
 
-// ─────────────────────────────────────────────────────────────────────────────
+  Widget _buildList(RavitaillementListVctl ctl, List<RavitaillementStock> items) {
+    if (items.isEmpty) {
+      return EmptyDataWidget(
+        message: 'Aucun ravitaillement trouvé',
+        onRefresh: ctl.fetchData,
+      );
+    }
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (!ctl.isLoading &&
+            scrollInfo.metrics.pixels >=
+                scrollInfo.metrics.maxScrollExtent - 200) {
+          ctl.loadMore();
+        }
+        return true;
+      },
+      child: ListView.separated(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 80),
+        itemCount: items.length + (ctl.hasMore ? 1 : 0),
+        separatorBuilder: (_, __) => const Gap(12),
+        itemBuilder: (context, index) {
+          if (index == items.length) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+          final item = items[index];
+          return _RavitaillementCard(item: item, ctl: ctl);
+        },
+      ),
+    );
+  }
+
+  void _showDatePicker(BuildContext context, RavitaillementListVctl ctl) {
+    CBottomSheet.show(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Text(
+                "Filtrer par date",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const Divider(height: 1),
+            const Gap(8),
+            CalendarDatePicker2(
+              config: CalendarDatePicker2Config(
+                calendarType: CalendarDatePicker2Type.range,
+                selectedDayHighlightColor: AppColors.primary,
+              ),
+              value: [ctl.dateRange.start, ctl.dateRange.end],
+              onValueChanged: (dates) {
+                if (dates.length >= 2) {
+                  ctl.updateDateRange(
+                    DateTimeRange(
+                      start: dates[0],
+                      end: dates[1],
+                    ),
+                  );
+                  Get.back();
+                }
+              },
+            ),
+            const Gap(20),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _RavitaillementCard extends StatelessWidget {
   final RavitaillementStock item;
@@ -113,7 +280,7 @@ class _RavitaillementCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.15), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),

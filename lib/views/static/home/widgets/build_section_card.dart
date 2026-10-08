@@ -22,39 +22,31 @@ class BuildSectionCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.fieldBorder, width: 1),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: color.withValues(alpha: 0.12), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.015),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: color.withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.05),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-              border: const Border(
-                bottom: BorderSide(color: AppColors.fieldBorder, width: 1),
-              ),
-            ),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.06)),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(6),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: color.withValues(alpha: 0.15)),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: color.withValues(alpha: 0.2)),
                   ),
                   child: Icon(icon, color: color, size: 20),
                 ),
@@ -72,59 +64,137 @@ class BuildSectionCard extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8),
+          // Toutes les lignes partagent ce Material : sans lui, InkWell peint
+          // son ondulation derrière le fond du Container ci-dessus et reste
+          // invisible au tap.
+          Material(
+            color: Colors.transparent,
             child: Column(
-              children: steps.asMap().entries.map((entry) {
-                final step = entry.value;
-                return Column(
-                  children: [
-                    ListTile(
-                      minVerticalPadding: 12,
-                      leading: Container(
-                        width: 28,
-                        height: 28,
-                        decoration: BoxDecoration(
-                          color: step.enabled
-                              ? color.withValues(alpha: 0.1)
-                              : Colors.grey[100],
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          step.number,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: step.enabled ? color : Colors.grey[900],
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        step.title,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          color: step.enabled ? Colors.black : Colors.grey,
-                        ),
-                      ),
-                      subtitle: Text(
-                        step.description,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      trailing: Icon(Icons.arrow_forward_ios_rounded,
-                          color: Colors.grey[400], size: 14),
-                      onTap: step.enabled ? step.onTap : null,
-                    ),
-                  ],
-                );
-              }).toList(),
+              children: [
+                for (var i = 0; i < steps.length; i++) ...[
+                  _StepRow(step: steps[i], color: color),
+                  if (i < steps.length - 1)
+                    Divider(height: 1, indent: 60, color: Colors.grey[100]),
+                ],
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _StepRow extends StatelessWidget {
+  final RoadmapStep step;
+  final Color color;
+
+  const _StepRow({required this.step, required this.color});
+
+  static const _success = Color(0xFF1C9A5B);
+
+  @override
+  Widget build(BuildContext context) {
+    // Trois états distincts : terminée (pastille verte + coche), disponible
+    // (pastille colorée + numéro, cliquable) et verrouillée (grise + cadenas,
+    // non cliquable) — avant, "verrouillée" et "terminée" avaient le même
+    // rendu gris, ce qui ne permettait pas de voir ce qui avait déjà été
+    // fait.
+    final isLocked = !step.enabled && !step.done;
+
+    return InkWell(
+      onTap: step.enabled ? step.onTap : null,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color:
+                    step.done
+                        ? _success
+                        : (step.enabled ? color.withValues(alpha: 0.1) : Colors.grey[100]),
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child:
+                  step.done
+                      ? const Icon(Icons.check_rounded, color: Colors.white, size: 16)
+                      : Text(
+                        step.number,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: step.enabled ? color : Colors.grey[400],
+                          fontSize: 13,
+                        ),
+                      ),
+            ),
+            const Gap(14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          step.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color:
+                                isLocked ? Colors.grey : AppColors.textDark,
+                          ),
+                        ),
+                      ),
+                      if (step.done) ...[
+                        const Gap(6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 1,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _success.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            "Terminé",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: _success,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const Gap(2),
+                  Text(
+                    step.description,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Gap(10),
+            if (step.enabled)
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: color.withValues(alpha: 0.5),
+                size: 14,
+              )
+            else if (isLocked)
+              Icon(Icons.lock_outline_rounded, color: Colors.grey[300], size: 15),
+          ],
+        ),
       ),
     );
   }

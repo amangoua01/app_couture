@@ -13,6 +13,21 @@ import 'package:url_launcher/url_launcher.dart';
 class SettingPageVctl extends AuthViewController {
   final apiAuth = AuthApi();
 
+  /// Filtre appliqué au menu des réglages.
+  final searchCtl = TextEditingController();
+  String searchQuery = "";
+
+  void onSearchChanged(String value) {
+    searchQuery = value;
+    update();
+  }
+
+  @override
+  void onClose() {
+    searchCtl.dispose();
+    super.onClose();
+  }
+
   Future<void> logoutUser() async {
     final rep = await CChoiceMessageDialog.show(
       message: "Voulez-vous vraiment vous déconnecter ?",

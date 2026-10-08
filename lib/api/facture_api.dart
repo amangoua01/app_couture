@@ -165,6 +165,30 @@ class FactureApi extends CrudWebController<Facture> {
     }
   }
 
+  /// Historique des commandes (avec pièces et mensurations) déjà passées
+  /// par un client, pour permettre de reprendre ses mesures sur une
+  /// nouvelle commande sans tout ressaisir.
+  Future<DataResponse<List<Mesure>>> getFacturesByClient(int clientId) async {
+    try {
+      final response = await client.get(
+        urlBuilder(api: "client/$clientId"),
+        headers: authHeaders,
+      );
+
+      final json = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final data = json['data'] as List? ?? [];
+        return DataResponse.success(
+          data: data.map((x) => Mesure.fromJson(x)).toList(),
+        );
+      } else {
+        return DataResponse.error(message: json['message'] ?? "Erreur");
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
   Future<DataResponse<TransactionResponse>> getTransactions({
     required int entityId,
     required String type,

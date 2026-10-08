@@ -46,13 +46,16 @@ class EditionClientPage extends StatelessWidget {
             ),
             child: SafeArea(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 child: CButton(
                   onPressed: ctl.submit,
-                  title: isEdit
-                      ? "Enregistrer les modifications"
-                      : "Enregistrer le client",
+                  title:
+                      isEdit
+                          ? "Enregistrer les modifications"
+                          : "Enregistrer le client",
                 ),
               ),
             ),
@@ -84,23 +87,28 @@ class EditionClientPage extends StatelessWidget {
                           child: CircleAvatar(
                             radius: 65,
                             backgroundColor: Colors.grey.shade200,
-                            backgroundImage: (ctl.photo == null)
-                                ? null
-                                : (ctl.photo is FichierServer)
+                            backgroundImage:
+                                (ctl.photo == null)
+                                    ? null
+                                    : (ctl.photo is FichierServer)
                                     ? NetworkImage(
-                                        (ctl.photo as FichierServer).fullUrl!,
-                                      )
+                                      (ctl.photo as FichierServer).fullUrl!,
+                                    )
                                     : FileImage(
-                                        (ctl.photo as FichierLocal).file,
-                                      ) as ImageProvider,
+                                          (ctl.photo as FichierLocal).file,
+                                        )
+                                        as ImageProvider,
                             child: Visibility(
                               visible: ctl.photo == null,
                               child: const Center(
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.person_rounded,
-                                        color: Colors.grey, size: 40),
+                                    Icon(
+                                      Icons.person_rounded,
+                                      color: Colors.grey,
+                                      size: 40,
+                                    ),
                                     Gap(4),
                                     Text(
                                       "Photo",
@@ -174,13 +182,11 @@ class EditionClientPage extends StatelessWidget {
                       ),
                       CTextFormField(
                         externalLabel: "Prénom(s)",
-                        require: true,
                         controller: ctl.prenomCtl,
                         textCapitalization: TextCapitalization.words,
                       ),
                       CTextFormField(
                         externalLabel: "Téléphone",
-                        require: true,
                         controller: ctl.telCtl,
                         keyboardType: TextInputType.number,
                         margin: EdgeInsets.zero,
@@ -192,10 +198,15 @@ class EditionClientPage extends StatelessWidget {
 
                 // Card 2: Boutique / Succursale
                 Visibility(
-                  visible: [TypeUserEnum.adb, TypeUserEnum.adsb]
-                          .contains(ctl.user.typeEnum) ||
-                      [TypeUserEnum.adsb, TypeUserEnum.ads]
-                          .contains(ctl.user.typeEnum) ||
+                  visible:
+                      [
+                        TypeUserEnum.adb,
+                        TypeUserEnum.adsb,
+                      ].contains(ctl.user.typeEnum) ||
+                      [
+                        TypeUserEnum.adsb,
+                        TypeUserEnum.ads,
+                      ].contains(ctl.user.typeEnum) ||
                       ctl.user.isAdmin,
                   child: Container(
                     padding: const EdgeInsets.all(20),
@@ -224,8 +235,11 @@ class EditionClientPage extends StatelessWidget {
                         ),
                         const Gap(16),
                         Visibility(
-                          visible: [TypeUserEnum.adb, TypeUserEnum.adsb]
-                                  .contains(ctl.user.typeEnum) ||
+                          visible:
+                              [
+                                TypeUserEnum.adb,
+                                TypeUserEnum.adsb,
+                              ].contains(ctl.user.typeEnum) ||
                               ctl.user.isAdmin,
                           child: CDropDownFormField(
                             selectedItem: ctl.boutique,
@@ -239,8 +253,11 @@ class EditionClientPage extends StatelessWidget {
                           ),
                         ),
                         Visibility(
-                          visible: [TypeUserEnum.adsb, TypeUserEnum.ads]
-                                  .contains(ctl.user.typeEnum) ||
+                          visible:
+                              [
+                                TypeUserEnum.adsb,
+                                TypeUserEnum.ads,
+                              ].contains(ctl.user.typeEnum) ||
                               ctl.user.isAdmin,
                           child: CDropDownFormField(
                             selectedItem: ctl.succursale,

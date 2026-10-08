@@ -27,6 +27,12 @@ class User {
 
 class BodyListView<T> extends StatelessWidget {
   final String title;
+
+  /// Seconde ligne sous le titre, pour dire sur quoi porte la liste.
+  ///
+  /// Une liste filtrée sans l'annoncer donne l'impression que des éléments ont
+  /// disparu : c'est là qu'on précise, par exemple, l'atelier concerné.
+  final String? subtitle;
   final ListViewController ctl;
   final Widget? Function(BuildContext, int, bool isSelected) itemBuilder;
   final Widget? createPage;
@@ -46,6 +52,7 @@ class BodyListView<T> extends StatelessWidget {
     required this.itemBuilder,
     this.createPage,
     required this.title,
+    this.subtitle,
     this.enableMultipleDeletion = true,
     this.enableSearch = false,
     super.key,
@@ -63,14 +70,27 @@ class BodyListView<T> extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: subtitle == null
+              ? Text(title)
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(title),
+                    Text(
+                      subtitle!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withValues(alpha: 0.72),
+                      ),
+                    ),
+                  ],
+                ),
           centerTitle: true,
-          bottom: PreferredSize(
-            preferredSize: ternaryFn(
-              condition: ctl.isSearching,
-              ifTrue: const Size.fromHeight(100),
-              ifFalse: const Size.fromHeight(0),
-            ),
+          bottom: !ctl.isSearching ? null : PreferredSize(
+            preferredSize: const Size.fromHeight(80),
             child: Visibility(
               visible: ctl.isSearching,
               child: Padding(

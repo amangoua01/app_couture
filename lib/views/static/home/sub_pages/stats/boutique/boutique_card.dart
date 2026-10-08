@@ -1,7 +1,7 @@
 import 'package:ateliya/data/models/stats/kpis.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
-import 'package:ateliya/tools/widgets/c_card.dart';
+import 'package:ateliya/tools/widgets/stats/gradient_overview_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -11,14 +11,30 @@ class BoutiqueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CCard(
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
+    return GradientOverviewPanel(
+      title: "Vue d'ensemble",
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+        decoration: BoxDecoration(
+          color: AppColors.secondary.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.secondary.withValues(alpha: 0.3)),
+        ),
+        child: const Text(
+          "Période sélectionnée",
+          style: TextStyle(
+            color: AppColors.secondary,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+      rows: [
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "CHIFFRE D'AFFAIRES GLOBAL",
+              "CHIFFRE D'AFFAIRES",
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.5),
                 fontSize: 10,
@@ -26,76 +42,64 @@ class BoutiqueCard extends StatelessWidget {
                 letterSpacing: 1.2,
               ),
             ),
-            const Gap(8),
+            const Gap(6),
             Text(
               kpis.chiffreAffaires.toAmount(unit: "Fcfa"),
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 30,
+                fontSize: 28,
                 fontWeight: FontWeight.w900,
                 letterSpacing: -0.8,
               ),
             ),
-            const Gap(8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-              decoration: BoxDecoration(
-                color: AppColors.secondary.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColors.secondary.withValues(alpha: 0.3),
-                ),
-              ),
-              child: const Text(
-                "Période sélectionnée",
-                style: TextStyle(
-                  color: AppColors.secondary,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+          ],
+        ),
+        KpiTileRow(
+          tiles: [
+            KpiTile(
+              label: "Recettes nettes",
+              value: kpis.recettesNettes.value.toAmount(unit: "Fcfa"),
             ),
-            const Gap(4),
-            Divider(color: Colors.white.withValues(alpha: 0.9)),
-            const Gap(4),
-            Wrap(
-              spacing: 18,
-              runSpacing: 4,
-              children: [
-                _InfoRow(
-                    label: "Recettes nettes : ",
-                    value: (kpis.recettesNettes.value).toAmount(unit: "Fcfa")),
-                _InfoRow(
-                    label: "Ticket moyen : ",
-                    value: (kpis.ticketMoyen.value).toAmount(unit: "Fcfa")),
-              ],
+            KpiTile(
+              label: "Ticket moyen",
+              value: kpis.ticketMoyen.value.toAmount(unit: "Fcfa"),
+              onInfoTap: () => _showTicketMoyenInfo(context),
             ),
           ],
         ),
-      ),
+        KpiTileRow(
+          tiles: [
+            KpiTile(
+              label: "Taux de recouvrement",
+              value: "${kpis.tauxRecouvrement ?? 0}%",
+            ),
+            KpiTile(
+              label: "Stock total boutique",
+              value: "${kpis.stockTotalBoutique ?? 0}",
+            ),
+          ],
+        ),
+      ],
     );
   }
-}
 
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  const _InfoRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(label,
-            style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.55), fontSize: 12)),
-        Text(value,
-            style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold)),
-      ],
+  void _showTicketMoyenInfo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Ticket moyen"),
+            content: const Text(
+              "Montant moyen encaissé par vente sur la période sélectionnée "
+              "(chiffre d'affaires ÷ nombre de ventes).",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Compris"),
+              ),
+            ],
+          ),
     );
   }
 }

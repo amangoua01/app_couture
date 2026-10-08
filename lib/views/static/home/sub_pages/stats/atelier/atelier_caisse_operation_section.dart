@@ -6,6 +6,9 @@ import 'package:ateliya/tools/widgets/build_mouvement_card.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
+/// Taux recouvrement et Factures actives sont déjà dans le panneau "Vue
+/// d'ensemble" ci-dessus : seuls la caisse et les mouvements (absents de
+/// ce panneau) restent ici.
 class AtelierCaisseOperationSection extends StatelessWidget {
   final Kpis kpis;
   const AtelierCaisseOperationSection({super.key, required this.kpis});
@@ -35,16 +38,6 @@ class AtelierCaisseOperationSection extends StatelessWidget {
                 value: kpis.caisse.toAmount(),
                 label: "Solde caisse (FCFA)",
                 iconColor: AppColors.primary),
-            BuildCardActivity(
-                icon: Icons.show_chart,
-                value: "${kpis.tauxRecouvrement ?? 0}%",
-                label: "Taux recouvrement",
-                iconColor: AppColors.secondary),
-            BuildCardActivity(
-                icon: Icons.description_outlined,
-                value: (kpis.facturesActives ?? 0).toString(),
-                label: "Factures actives",
-                iconColor: AppColors.yellow),
             BuildMouvementCard(
                 entree: kpis.totalMouvementsEntrants.toAmount(),
                 sortie: kpis.totalMouvementsSortants.toAmount(),

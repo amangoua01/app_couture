@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/components/card_style.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -6,6 +7,10 @@ class SettingTile extends StatelessWidget {
   final String title;
   final String? subtitle;
   final IconData? icon;
+
+  /// Remplace l'icône dans sa pastille, pour les cas qu'un simple glyphe
+  /// monochrome ne rend pas — un logo de marque multicolore, par exemple.
+  final Widget? iconWidget;
   final Color? color;
   final Color? iconBgColor;
   final bool visible;
@@ -19,6 +24,7 @@ class SettingTile extends StatelessWidget {
     this.visible = true,
     this.showDivider = true,
     this.icon,
+    this.iconWidget,
     this.color,
     this.iconBgColor,
     this.trailing,
@@ -44,16 +50,21 @@ class SettingTile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
               child: Row(
                 children: [
-                  if (icon != null) ...[
+                  if (icon != null || iconWidget != null) ...[
                     Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color:
-                            iconBgColor ?? accentColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(icon, color: accentColor, size: 18),
+                      width: 42,
+                      height: 42,
+                      alignment: Alignment.center,
+                      decoration:
+                          iconBgColor != null
+                              ? BoxDecoration(
+                                color: iconBgColor,
+                                borderRadius: BorderRadius.circular(12),
+                              )
+                              : CardStyle.iconBadge(accentColor),
+                      child:
+                          iconWidget ??
+                          Icon(icon, color: accentColor, size: 21),
                     ),
                     const Gap(14),
                   ],
@@ -74,7 +85,9 @@ class SettingTile extends StatelessWidget {
                           Text(
                             subtitle!,
                             style: TextStyle(
-                                fontSize: 12, color: Colors.grey[500]),
+                              fontSize: 12,
+                              color: Colors.grey[500],
+                            ),
                           ),
                         ],
                       ],
@@ -95,7 +108,7 @@ class SettingTile extends StatelessWidget {
           Divider(
             height: 1,
             thickness: 0.5,
-            indent: icon != null ? 66 : 16,
+            indent: (icon != null || iconWidget != null) ? 72 : 16,
             endIndent: 0,
             color: Colors.grey[150],
           ),

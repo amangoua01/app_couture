@@ -225,6 +225,9 @@ class _LigneCard extends StatelessWidget {
                       EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 ),
               ),
+              suffixProps: const DropdownSuffixProps(
+                clearButtonProps: ClearButtonProps(isVisible: true),
+              ),
               onChanged: (v) => ctl.setModele(index, v),
             ),
             const Gap(12),
