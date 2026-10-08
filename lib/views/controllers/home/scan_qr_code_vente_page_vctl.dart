@@ -18,8 +18,23 @@ class ScanQrCodeVentePageVctl extends AuthViewController {
   final apiMesure = MesureApi();
   final bool isFromVenteAndCommande;
   bool isScanning = false;
+  bool isFlashOn = false;
 
   ScanQrCodeVentePageVctl(this.isFromVenteAndCommande);
+
+  // Les reçus thermiques scannés dans un endroit peu éclairé manquent de
+  // contraste pour l'autofocus caméra : sans torche manuelle, la détection
+  // ne marchait qu'en pleine lumière.
+  Future<void> toggleFlash() async {
+    try {
+      await controller?.toggleFlash();
+      final status = await controller?.getFlashStatus();
+      isFlashOn = status ?? !isFlashOn;
+      update();
+    } catch (e) {
+      debugPrint('Error toggling flash: $e');
+    }
+  }
 
   Future<void> pauseCamera() async {
     try {

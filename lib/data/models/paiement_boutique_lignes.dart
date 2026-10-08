@@ -31,7 +31,11 @@ class PaiementBoutiqueLignes extends ModelJson {
     quantite = json['quantite'];
     montant = json['montant'].toString().toDouble().value;
     remise = json['remise']?.toString().toDouble().value;
-    paiementBoutique = json['paiementBoutique'] != null
+    // Le backend collapse les références circulaires (une ligne qui pointe
+    // vers son paiement parent, qui contient la liste de ses lignes) en
+    // un simple id entier plutôt qu'un objet complet — on l'ignore dans
+    // ce cas plutôt que de planter en essayant de le parser comme une Map.
+    paiementBoutique = (json['paiementBoutique'] is Map<String, dynamic>)
         ? PaiementBoutique.fromJson(json['paiementBoutique'])
         : null;
     if (json['modeleBoutique'] != null) {

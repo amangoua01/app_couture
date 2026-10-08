@@ -6,11 +6,11 @@ import 'package:ateliya/tools/widgets/c_card.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
+import 'package:ateliya/tools/widgets/stats/period_toggle_pill.dart';
 import 'package:ateliya/views/controllers/home/transaction_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class TransactionPage extends StatelessWidget {
   const TransactionPage({super.key});
@@ -44,33 +44,42 @@ class TransactionPage extends StatelessWidget {
                   child: Column(
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          ToggleSwitch(
-                            inactiveBgColor: AppColors.secondary,
-                            activeBgColor: const [AppColors.primary],
-                            activeFgColor: Colors.white,
-                            inactiveFgColor:
-                                Colors.white.withValues(alpha: 0.7),
-                            minWidth: 96.0,
-                            cornerRadius: 14,
-                            initialLabelIndex:
-                                ctl.mode == TransactionFilterMode.jour ? 0 : 1,
-                            labels: const ["Jour", "Mois"],
-                            onToggle: (index) {
-                              if (index == 0) {
-                                ctl.onDaySelected(ctl.focusedDay);
-                              } else {
-                                ctl.selectMonth();
-                              }
-                            },
+                          Expanded(
+                            child: PeriodTogglePill(
+                              labels: const ["Jour", "Mois"],
+                              initialIndex:
+                                  ctl.mode == TransactionFilterMode.jour
+                                      ? 0
+                                      : 1,
+                              onToggle: (index) {
+                                if (index == 0) {
+                                  ctl.onDaySelected(ctl.focusedDay);
+                                } else {
+                                  ctl.selectMonth();
+                                }
+                              },
+                            ),
                           ),
                           const Gap(10),
-                          IconButton(
-                            onPressed: () => ctl.pickDateRange(context),
-                            icon: const Icon(
-                              Icons.calendar_month,
-                              color: AppColors.primary,
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.grey.shade200),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 10,
+                                ),
+                              ],
+                            ),
+                            child: IconButton(
+                              onPressed: () => ctl.pickDateRange(context),
+                              icon: const Icon(
+                                Icons.calendar_month,
+                                color: AppColors.primary,
+                              ),
                             ),
                           ),
                         ],

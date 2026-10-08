@@ -1,6 +1,7 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/views/controllers/home/statistique_page_vctl.dart';
 import 'package:ateliya/views/static/home/sub_pages/stats/atelier/atelier_activite_section.dart';
+import 'package:ateliya/views/static/home/sub_pages/stats/atelier/atelier_caisse_operation_section.dart';
 import 'package:ateliya/views/static/home/sub_pages/stats/atelier/atelier_card.dart';
 import 'package:ateliya/views/static/home/sub_pages/stats/atelier/atelier_financial_summury_section.dart';
 import 'package:ateliya/views/static/home/sub_pages/stats/atelier/mesure_livraison_section.dart';
@@ -24,12 +25,12 @@ class AtelierStatsSubPage extends StatelessWidget {
           MesureLivraisonSection(data: ctl.data),
           const Gap(24),
           AtelierActiviteSection(data: ctl.data),
-          const Gap(24),
-          AtelierActiviteSection(data: ctl.data),
           const Gap(16),
           if (ctl.data.kpis.mesuresEnCours != null &&
               ctl.data.kpis.mesuresEnCours! > 0)
             _buildDeliveryAlertCard(ctl.data.kpis.mesuresEnCours!),
+          const Gap(24),
+          AtelierCaisseOperationSection(kpis: ctl.data.kpis),
           const Gap(24),
           AtelierFinancialSummurySection(data: ctl.data),
           const Gap(32),

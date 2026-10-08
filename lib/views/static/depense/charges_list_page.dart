@@ -1,4 +1,5 @@
 import 'package:ateliya/data/models/charge.dart';
+import 'package:ateliya/data/models/employe.dart';
 import 'package:ateliya/data/models/famille_depense.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -25,37 +26,7 @@ class ChargesListPage extends StatelessWidget {
         return Scaffold(
           backgroundColor: const Color(0xFFF7FAF8),
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.12),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: AppColors.primary,
-                  size: 16,
-                ),
-              ),
-              onPressed: () => Get.back(),
-            ),
-            centerTitle: true,
-            title: const Text(
-              "Charges récurrentes",
-              style: TextStyle(
-                color: Color(0xFF0E2C24),
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.2,
-              ),
-            ),
+            title: const Text("Charges récurrentes"),
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => _showFormSheet(context, ctl),
@@ -104,18 +75,24 @@ class ChargesListPage extends StatelessWidget {
     ChargesListVctl ctl,
     Charge charge,
   ) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.primary.withOpacity(0.15), width: 1.5),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
-      color: Colors.white,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(18),
           onTap: () => _showFormSheet(context, ctl, charge: charge),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -123,8 +100,8 @@ class ChargesListPage extends StatelessWidget {
               children: [
                 // Icône récurrente
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: 46,
+                  height: 46,
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(14),
@@ -153,15 +130,19 @@ class ChargesListPage extends StatelessWidget {
                           color: Color(0xFF0F2620),
                         ),
                       ),
-                      const Gap(4),
-                      Row(
+                      const Gap(6),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
                         children: [
-                          if (charge.familleDepense != null) ...[
+                          if (charge.familleDepense != null)
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
+                                  horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF1F5F3),
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.07,
+                                ),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
@@ -173,15 +154,53 @@ class ChargesListPage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const Gap(6),
-                          ],
                           if (charge.periodicite != null)
-                            Text(
-                              charge.periodicite!.label,
-                              style: TextStyle(
-                                fontSize: 11.5,
-                                color: Colors.grey.shade600,
-                                fontWeight: FontWeight.w500,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: AppColors.secondary.withValues(
+                                  alpha: 0.12,
+                                ),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                charge.periodicite!.label,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.secondary,
+                                ),
+                              ),
+                            ),
+                          if (charge.employe != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.engineering_outlined,
+                                    size: 12,
+                                    color: Colors.blueGrey,
+                                  ),
+                                  const Gap(4),
+                                  Text(
+                                    charge.employe!.nomComplet ??
+                                        charge.employe!.nom ??
+                                        "",
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.blueGrey,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                         ],
@@ -189,6 +208,7 @@ class ChargesListPage extends StatelessWidget {
                     ],
                   ),
                 ),
+                const Gap(8),
                 // Montant & Action suppression
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -201,16 +221,21 @@ class ChargesListPage extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                     ),
-                    const Gap(4),
+                    const Gap(6),
                     InkWell(
                       onTap: () => ctl.deleteCharge(charge),
-                      borderRadius: BorderRadius.circular(20),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.red.shade100),
+                        ),
                         child: Icon(
                           Icons.delete_outline_rounded,
-                          size: 19,
-                          color: Colors.red.shade400,
+                          size: 20,
+                          color: Colors.red.shade600,
                         ),
                       ),
                     ),
@@ -233,6 +258,7 @@ class ChargesListPage extends StatelessWidget {
     final libelleCtl = TextEditingController(text: charge?.libelle);
     final montantCtl = TextEditingController(text: charge?.montant);
     FamilleDepense? type = charge?.familleDepense;
+    Employe? employe = charge?.employe;
     bool isSubmitting = false;
 
     Get.bottomSheet(
@@ -336,6 +362,19 @@ class ChargesListPage extends StatelessWidget {
                         items: (p0, p1) => ctl.getTypes(),
                         itemAsString: (p0) => p0.libelle ?? "",
                         externalLabel: "Type de dépense",
+                      ),
+
+                      // Pour un ouvrier payé au salaire fixe (pas à la
+                      // pièce) : cette charge remonte alors dans son bilan
+                      // de paie, au même titre que ses pièces produites.
+                      CDropDownFormField<Employe>(
+                        selectedItem: employe,
+                        onChanged: (e) => setSheetState(() => employe = e),
+                        items: (p0, p1) => ctl.getEmployes(),
+                        itemAsString:
+                            (p0) => p0.nomComplet ?? p0.nom ?? "",
+                        externalLabel: "Lier à un ouvrier (optionnel)",
+                        hintText: "Ex: salaire fixe d'un ouvrier",
                         margin: const EdgeInsets.only(bottom: 24),
                       ),
 
@@ -369,6 +408,7 @@ class ChargesListPage extends StatelessWidget {
                               libelle: libelleCtl.text.trim(),
                               montant: montantCtl.text.trim(),
                               familleDepense: type,
+                              employe: employe,
                             ),
                           );
 

@@ -41,37 +41,7 @@ class _ForfaitListPageState extends State<ForfaitListPage> {
         return Scaffold(
           backgroundColor: const Color(0xFFF7FAF8),
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.12),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: AppColors.primary,
-                  size: 16,
-                ),
-              ),
-              onPressed: () => Get.back(),
-            ),
-            centerTitle: true,
-            title: const Text(
-              "Formules & Abonnements",
-              style: TextStyle(
-                color: Color(0xFF0E2C24),
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.2,
-              ),
-            ),
+            title: const Text("Formules & Abonnements"),
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: 16),
@@ -80,10 +50,10 @@ class _ForfaitListPageState extends State<ForfaitListPage> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: AppColors.secondary.withValues(alpha: 0.12),
+                      color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: AppColors.secondary.withValues(alpha: 0.35),
+                        color: AppColors.secondary.withValues(alpha: 0.6),
                       ),
                     ),
                     child: const Row(

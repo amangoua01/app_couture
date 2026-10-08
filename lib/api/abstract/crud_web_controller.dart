@@ -65,10 +65,11 @@ abstract class CrudWebController<T extends Model> extends WebController {
         url = urlBuilder(api: "$listApi/$id");
       }
 
-      if (page != null) {
-        url = url.replace(queryParameters: {
-          "page": "$page",
-        });
+      final queryParams = <String, String>{};
+      if (page != null) queryParams["page"] = "$page";
+      if (search != null && search.isNotEmpty) queryParams["search"] = search;
+      if (queryParams.isNotEmpty) {
+        url = url.replace(queryParameters: queryParams);
       }
 
       final res = await client.get(url, headers: authHeaders);

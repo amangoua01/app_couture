@@ -127,6 +127,10 @@ class EditionTransfertStockPage extends StatelessWidget {
                                         horizontal: 14, vertical: 12),
                                   ),
                                 ),
+                                suffixProps: const DropdownSuffixProps(
+                                  clearButtonProps:
+                                      ClearButtonProps(isVisible: true),
+                                ),
                                 onChanged: (v) => ctl.setSelectedBoutique(v),
                               ),
                             ],
@@ -276,6 +280,9 @@ class EditionTransfertStockPage extends StatelessWidget {
                       labelText: 'Sélectionner l\'article *',
                       border: OutlineInputBorder(),
                     ),
+                  ),
+                  suffixProps: const DropdownSuffixProps(
+                    clearButtonProps: ClearButtonProps(isVisible: true),
                   ),
                   onChanged: (v) => setState(() => selectedModele = v),
                 ),

@@ -88,7 +88,7 @@ class StatistiqueApi extends WebController {
   }
 
   String _dashboardCacheKey(Map<String, dynamic> params) =>
-      "dashboardStats:${params['filtre']}:${params['dateDebut']}:${params['dateFin']}";
+      "dashboardStats:${params['filtre']}:${params['dateDebut']}:${params['dateFin']}:${params['espaceType']}";
 
   /// Dernières statistiques d'entreprise connues pour cette période.
   Future<StatistiquesBoutique?> readCachedDashboardData(

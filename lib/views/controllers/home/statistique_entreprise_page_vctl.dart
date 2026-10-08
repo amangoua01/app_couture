@@ -1,13 +1,16 @@
 import 'package:ateliya/api/statistique_api.dart';
 import 'package:ateliya/data/models/stats/statistiques_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/constants/period_stat.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
 import 'package:ateliya/tools/models/period_stat_req.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
+import 'package:ateliya/views/static/stats/bilan_pdf_preview_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class StatistiqueEntreprisePageVctl extends AuthViewController {
   int periodIndex = 0;
@@ -23,6 +26,17 @@ class StatistiqueEntreprisePageVctl extends AuthViewController {
   Future<void> fetchStats({int indexPeriod = 0, DateTimeRange? range}) async {
     params.filtre = PeriodStat.values[indexPeriod];
     periodIndex = indexPeriod;
+
+    // S'adapte à l'entité active (boutique ou atelier) : le backend agrège
+    // alors toutes les boutiques OU tous les ateliers de l'entreprise avec
+    // les KPI propres à ce type, plutôt que de tout mélanger.
+    final entiteType = getEntite().value.type;
+    params.espaceType =
+        entiteType == EntiteEntrepriseType.boutique
+            ? "boutique"
+            : entiteType == EntiteEntrepriseType.succursale
+            ? "succursale"
+            : null;
 
     if (range != null) {
       dateRange = range;
@@ -71,6 +85,29 @@ class StatistiqueEntreprisePageVctl extends AuthViewController {
       update();
       if (!hasContent) CMessageDialog.show(message: res.message);
     }
+  }
+
+  String get periodeLabel {
+    switch (periodIndex) {
+      case 0:
+        return "journalier (${dateRange.toFrenchDate})";
+      case 1:
+        return "mensuel";
+      case 2:
+        return "annuel";
+      default:
+        return dateRange.toFrenchDate;
+    }
+  }
+
+  void exportBilanPdf() {
+    Get.to(
+      () => BilanPdfPreviewPage(
+        data: data,
+        periodeLabel: periodeLabel,
+        entreprise: user.entreprise,
+      ),
+    );
   }
 
   Future<void> pickDateRange(BuildContext context) async {

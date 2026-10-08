@@ -2,6 +2,7 @@ import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/components/field_popup.dart';
 import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
@@ -574,8 +575,9 @@ class EditionVenteMultiplePage extends StatelessWidget {
                   itemAsString:
                       (m) =>
                           "${m.modele?.libelle ?? ''}${m.taille?.isNotEmpty == true ? ' - ${m.taille}' : ''} (${m.prix.toAmount()})",
-                  popupProps: PopupProps.menu(
+                  popupProps: FieldPopup.menu<ModeleBoutique>(
                     showSearchBox: true,
+                    searchHint: "Rechercher un article...",
                     itemBuilder: (context, item, isSelected, b) {
                       return ListTile(
                         contentPadding: const EdgeInsets.symmetric(

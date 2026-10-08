@@ -1,6 +1,8 @@
 import 'package:ateliya/api/charge_api.dart';
+import 'package:ateliya/api/employe_api.dart';
 import 'package:ateliya/api/famille_depense_api.dart';
 import 'package:ateliya/data/models/charge.dart';
+import 'package:ateliya/data/models/employe.dart';
 import 'package:ateliya/data/models/famille_depense.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
@@ -9,6 +11,7 @@ import 'package:get/get.dart';
 class ChargesListVctl extends GetxController {
   final api = ChargeApi();
   final familleDepenseApi = FamilleDepenseApi();
+  final employeApi = EmployeApi();
 
   List<Charge> charges = [];
   bool isLoading = true;
@@ -42,6 +45,11 @@ class ChargesListVctl extends GetxController {
 
   Future<List<FamilleDepense>> getTypes() async {
     final res = await familleDepenseApi.list();
+    return res.status ? res.data!.items : [];
+  }
+
+  Future<List<Employe>> getEmployes() async {
+    final res = await employeApi.list();
     return res.status ? res.data!.items : [];
   }
 

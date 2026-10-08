@@ -4,13 +4,13 @@ import 'package:ateliya/tools/extensions/types/date_time_range.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/empty_page.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
+import 'package:ateliya/tools/widgets/stats/period_toggle_pill.dart';
 import 'package:ateliya/views/controllers/home/statistique_page_vctl.dart';
 import 'package:ateliya/views/static/home/sub_pages/stats/atelier/atelier_stats_sub_page.dart';
 import 'package:ateliya/views/static/home/sub_pages/stats/boutique/boutique_stats_sub_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class StatistiquePage extends StatelessWidget {
   const StatistiquePage({super.key});
@@ -37,30 +37,37 @@ class StatistiquePage extends StatelessWidget {
                   Column(
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          ToggleSwitch(
-                            inactiveBgColor: AppColors.secondary,
-                            activeBgColor: const [AppColors.primary],
-                            activeFgColor: Colors.white,
-                            inactiveFgColor:
-                                Colors.white.withValues(alpha: 0.7),
-                            minWidth: 96.0,
-                            cornerRadius: 14,
-                            initialLabelIndex: ctl.selectedIndex,
-                            labels: const ["Jour", "Mois", "Année"],
-                            onToggle: (index) {
-                              ctl.selectedIndex = index ?? 0;
-                              ctl.fetchStats(indexPeriod: index ?? 0);
-                            },
+                          Expanded(
+                            child: PeriodTogglePill(
+                              labels: const ["Jour", "Mois", "Année"],
+                              initialIndex: ctl.selectedIndex.clamp(0, 2),
+                              onToggle: (index) {
+                                ctl.selectedIndex = index ?? 0;
+                                ctl.fetchStats(indexPeriod: index ?? 0);
+                              },
+                            ),
                           ),
                           const Gap(10),
-                          IconButton(
-                              onPressed: () => ctl.pickDateRange(context),
-                              icon: const Icon(
-                                Icons.calendar_month,
-                                color: AppColors.primary,
-                              ))
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.grey.shade200),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 10,
+                                ),
+                              ],
+                            ),
+                            child: IconButton(
+                                onPressed: () => ctl.pickDateRange(context),
+                                icon: const Icon(
+                                  Icons.calendar_month,
+                                  color: AppColors.primary,
+                                )),
+                          ),
                         ],
                       ),
                       if (ctl.selectedIndex == 3) ...[

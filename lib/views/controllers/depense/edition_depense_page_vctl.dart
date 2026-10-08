@@ -285,7 +285,10 @@ class EditionDepensePageVctl extends GetxController {
       update();
 
       if (res.status) {
-        Get.back(result: true);
+        // L'objet créé (pas juste `true`) : c'est ce que BodyListView
+        // insère en tête de la liste des dépenses pour l'actualiser sans
+        // nouvel appel réseau.
+        Get.back(result: res.data);
         CMessageDialog.show(
           message: "Dépense enregistrée avec succès",
           isSuccess: true,

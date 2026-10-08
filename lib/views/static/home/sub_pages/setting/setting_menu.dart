@@ -16,6 +16,9 @@ import 'package:ateliya/views/static/info/terms_conditions_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_ya_home_page.dart';
 import 'package:ateliya/views/static/modele/modele_list_page.dart';
 import 'package:ateliya/views/static/modele_boutique/modele_list_boutique_page.dart';
+import 'package:ateliya/views/static/ouvriers/bilan_paie_page.dart';
+import 'package:ateliya/views/static/ouvriers/ouvrier_list_page.dart';
+import 'package:ateliya/views/static/ouvriers/pointage_page.dart';
 import 'package:ateliya/views/static/personnels/personnels_list_page.dart';
 import 'package:ateliya/views/static/printers/print_list_page.dart';
 import 'package:ateliya/views/static/ravitaillement/ravitaillement_list_page.dart';
@@ -107,6 +110,9 @@ List<SettingSection> buildSettingSections(SettingPageVctl ctl) {
     SettingSection(
       label: "Atelier & Catalogue",
       entries: [
+                SettingEntry(title: "Ouvriers & Apprentis", icon: Icons.engineering_outlined, color: AppColors.primary, visible: isAdmin, keywords: const ["ouvrier", "apprenti", "personnel"], onTap: () => Get.to(() => const OuvrierListPage())),
+        SettingEntry(title: "Pointage du jour", icon: Icons.access_time_outlined, color: AppColors.primary, visible: isAdmin, keywords: const ["pointage", "presence", "heures"], onTap: () => Get.to(() => const PointagePage())),
+        SettingEntry(title: "Bilan de paie", icon: Icons.payments_outlined, color: AppColors.primary, visible: isAdmin, keywords: const ["paie", "salaire", "bilan"], onTap: () => Get.to(() => const BilanPaiePage())),
         SettingEntry(title: "Mes clients", icon: Icons.group_outlined, color: AppColors.primary, visible: !isAc, keywords: const ["clientele", "contact"], onTap: () => Get.to(() => const ClientListePage())),
         SettingEntry(title: "Mes modèles", icon: Icons.style_outlined, color: AppColors.primary, visible: isAdmin && isBoutique, keywords: const ["article", "produit"], onTap: () => Get.to(() => const ModeleListPage())),
         SettingEntry(title: "Modèles boutiques", icon: Icons.shopping_bag_outlined, color: AppColors.primary, visible: isAdmin && isBoutique, keywords: const ["catalogue", "tarif"], onTap: () => Get.to(() => const ModeleListBoutiquePage())),

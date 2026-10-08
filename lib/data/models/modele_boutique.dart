@@ -76,8 +76,13 @@ class ModeleBoutique extends ModelJson<ModeleBoutique> {
     }
     if (json['paiementBoutiqueLignes'] != null) {
       _paiementBoutiqueLignes = <PaiementBoutiqueLignes>[];
+      // Même précaution que côté PaiementBoutiqueLignes : un élément
+      // collapsé en id (référence circulaire) n'est pas une Map, on le
+      // saute plutôt que de planter.
       json['paiementBoutiqueLignes'].forEach((v) {
-        _paiementBoutiqueLignes.add(PaiementBoutiqueLignes.fromJson(v));
+        if (v is Map<String, dynamic>) {
+          _paiementBoutiqueLignes.add(PaiementBoutiqueLignes.fromJson(v));
+        }
       });
     }
     taille = json['taille'];

@@ -87,6 +87,13 @@ class CDropDownFormField<T> extends StatelessWidget {
             selectedItem: selectedItem,
             popupProps: popupProps ?? FieldPopup.menu<T>(),
             compareFn: compareFn ?? (a, b) => a == b,
+            // Sans ça, une fois un élément choisi, impossible de revenir à
+            // "aucune sélection" sans réouvrir le menu et sélectionner
+            // autre chose — le bouton "x" n'apparaît que si on l'active
+            // explicitement ici.
+            suffixProps: const DropdownSuffixProps(
+              clearButtonProps: ClearButtonProps(isVisible: true),
+            ),
             validator: (value) {
               if (validator != null) {
                 return validator!(value);

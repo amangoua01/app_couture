@@ -7,9 +7,7 @@ class DataResponse<T> {
   String message = "Désolé, une erreur est survenue. Veuillez réessayer SVP.";
   String detailErrors = "";
 
-  DataResponse.success({required this.data})
-      : status = true,
-        message = "";
+  DataResponse.success({required this.data, this.message = ""}) : status = true;
 
   DataResponse.error(
       {this.message =

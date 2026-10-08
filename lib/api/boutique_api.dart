@@ -227,7 +227,9 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       );
       final json = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        return DataResponse.success(data: Vente.fromJson(json['data']));
+        // Cette route renvoie l'entité directement à la racine du JSON
+        // (pas d'enveloppe `{"data": ...}` comme le reste de l'API).
+        return DataResponse.success(data: Vente.fromJson(json));
       } else {
         return DataResponse.error(message: json['message'] ?? "Erreur");
       }

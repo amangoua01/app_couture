@@ -1,7 +1,6 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/body_list_view.dart';
-import 'package:ateliya/tools/widgets/list_item.dart';
 import 'package:ateliya/views/controllers/depense/depense_list_page_vctl.dart';
 import 'package:ateliya/views/static/depense/depense_detail_page.dart';
 import 'package:ateliya/views/static/depense/edition_depense_page.dart';
@@ -71,56 +70,84 @@ class DepenseListPage extends StatelessWidget {
             final category = depense.familleDepense?.libelle ?? 'Dépense générale';
             final group = depense.familleDepense?.groupeDepense?.libelle;
 
-            return Card(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: const Color(0xFFDC2626).withOpacity(0.15), width: 1.5),
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.grey.shade300),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 14,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-              color: Colors.white,
               child: InkWell(
                 onTap: () => Get.to(() => DepenseDetailPage(depense: depense)),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   child: Row(
                     children: [
                       Container(
-                        width: 44, height: 44,
-                        decoration: BoxDecoration(color: const Color(0xFFFEE2E2), borderRadius: BorderRadius.circular(14)),
-                        child: const Center(child: Icon(Icons.receipt_long_rounded, color: Color(0xFFDC2626), size: 22)),
+                        width: 46,
+                        height: 46,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFEE2E2),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: const Center(
+                          child: Icon(Icons.receipt_long_rounded,
+                              color: Color(0xFFDC2626), size: 22),
+                        ),
                       ),
-                      const Gap(14),
+                      const Gap(12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               group != null ? "$category ($group)" : category,
-                              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w700, fontSize: 14.5),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                             const Gap(4),
                             Text(
                               depense.createdAt.toFrenchDateTime,
-                              style: TextStyle(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade500,
+                                  fontWeight: FontWeight.w500),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
+                            if ((depense.description ?? '').isNotEmpty) ...[
+                              const Gap(3),
+                              Text(
+                                depense.description!,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade500,
+                                    fontStyle: FontStyle.italic),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ],
                         ),
                       ),
-                      const Gap(12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            "- ${depense.montant.toAmount(unit: "FCFA")}",
-                            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14.5, color: Color(0xFFB91C1C), letterSpacing: -0.2),
-                          ),
-                          const Gap(4),
-                          const Icon(Icons.arrow_forward_ios_rounded, size: 12, color: AppColors.primary),
-                        ],
+                      const Gap(8),
+                      Text(
+                        "-${depense.montant.toAmount(unit: "FCFA")}",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 14,
+                            color: Color(0xFFB91C1C),
+                            letterSpacing: -0.2),
                       ),
                     ],
                   ),

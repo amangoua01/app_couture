@@ -4,11 +4,16 @@ class PeriodStatReq {
   DateTime? dateDebut;
   DateTime? dateFin;
   PeriodStat filtre = PeriodStat.jour;
+  // Sans espaceId : demande au backend d'agréger toutes les entités de ce
+  // type (boutique/succursale) plutôt qu'une seule — utilisé par
+  // "Statistiques Globales" pour s'adapter au type de l'entité active.
+  String? espaceType;
 
   PeriodStatReq({
     this.dateDebut,
     this.dateFin,
     this.filtre = PeriodStat.jour,
+    this.espaceType,
   });
 
   Map<String, dynamic> toJson() {
@@ -40,6 +45,10 @@ class PeriodStatReq {
         data['dateFin'] = dateFin?.toIso8601String().split('T')[0];
         data['valeur'] = null;
         break;
+    }
+
+    if (espaceType != null) {
+      data['espaceType'] = espaceType;
     }
 
     return data;

@@ -6,10 +6,39 @@ import 'package:flutter/material.dart';
 abstract class FieldPopup {
   static PopupProps<T> menu<T>({
     DropdownSearchPopupItemBuilder<T>? itemBuilder,
+    bool showSearchBox = false,
+    String searchHint = "Rechercher...",
   }) => PopupProps<T>.menu(
     fit: FlexFit.loose,
     constraints: const BoxConstraints(maxHeight: 320),
     itemBuilder: itemBuilder,
+    showSearchBox: showSearchBox,
+    searchFieldProps:
+        showSearchBox
+            ? TextFieldProps(
+              decoration: InputDecoration(
+                hintText: searchHint,
+                hintStyle: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontSize: 14,
+                ),
+                prefixIcon: const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.primary,
+                ),
+                filled: true,
+                fillColor: AppColors.primary.withValues(alpha: 0.04),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            )
+            : const TextFieldProps(),
     menuProps: MenuProps(
       backgroundColor: Colors.white,
       elevation: 6,

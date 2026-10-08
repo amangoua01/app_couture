@@ -1,5 +1,6 @@
 import 'package:ateliya/api/abstract/crud_web_controller.dart';
 import 'package:ateliya/data/models/abstract/model.dart';
+import 'package:ateliya/services/sync_service.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/models/paginated_data.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
@@ -67,6 +68,10 @@ abstract class ListViewController<M extends Model>
     if (res.status) {
       data = (res.data! as PaginatedData<M>);
       update();
+    } else if (data.isNotEmpty && await SyncService.isOffline()) {
+      // Hors-ligne avec des données déjà affichées (cache ou page
+      // précédente) : la liste reste utilisable, inutile d'effrayer
+      // l'utilisateur avec un message d'erreur générique.
     } else {
       CMessageDialog.show(message: res.message);
     }

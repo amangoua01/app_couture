@@ -1,10 +1,14 @@
 import 'package:ateliya/api/modele_boutique_api.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/ravitaillement_stock.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/future.dart';
+import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class RavitaillementListVctl extends AuthViewController {
@@ -97,7 +101,8 @@ class RavitaillementListVctl extends AuthViewController {
       title: 'Confirmer le ravitaillement',
       hint: 'Ex : Colis reçu en bon état',
       confirmLabel: 'Confirmer',
-      confirmColor: Colors.green,
+      confirmColor: AppColors.green,
+      icon: Icons.check_circle_outline,
     );
     if (commentaire == null) return; // annulé
 
@@ -117,7 +122,8 @@ class RavitaillementListVctl extends AuthViewController {
       title: 'Rejeter le ravitaillement',
       hint: 'Ex : Colis endommagé lors du transport',
       confirmLabel: 'Rejeter',
-      confirmColor: Colors.red,
+      confirmColor: const Color(0xFFC0392B),
+      icon: Icons.cancel_outlined,
     );
     if (commentaire == null) return; // annulé
 
@@ -132,37 +138,82 @@ class RavitaillementListVctl extends AuthViewController {
     }
   }
 
-  /// Ouvre un dialog avec un champ commentaire optionnel.
+  /// Ouvre un dialog avec un champ commentaire pré-rempli (à partir de
+  /// l'exemple) : l'utilisateur peut valider tel quel ou l'adapter.
   /// Retourne le texte saisi si confirmé, null si annulé.
   Future<String?> _showCommentDialog({
     required String title,
     required String hint,
     required String confirmLabel,
     required Color confirmColor,
+    required IconData icon,
   }) {
-    final ctl = TextEditingController();
+    final defaultText = hint.replaceFirst(RegExp(r'^Ex\s*:\s*'), '');
+    final ctl = TextEditingController(text: defaultText);
+    // Dialog brut (pas AlertDialog) : son Column en mainAxisSize.min se cale
+    // strictement sur le contenu, évitant l'étirement en pleine hauteur que
+    // provoquait AlertDialog avec ce contenu compact.
     return Get.dialog<String>(
-      AlertDialog(
-        title: Text(title),
-        content: TextField(
-          controller: ctl,
-          decoration: InputDecoration(hintText: hint),
-          maxLines: 3,
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: confirmColor.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: confirmColor, size: 24),
+              ),
+              const Gap(14),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                ),
+              ),
+              const Gap(12),
+              CTextFormField(
+                controller: ctl,
+                hintText: hint,
+                maxLines: 2,
+                autofocus: true,
+                margin: EdgeInsets.zero,
+              ),
+              const Gap(16),
+              Row(
+                children: [
+                  Expanded(
+                    child: CButton(
+                      title: 'Annuler',
+                      color: Colors.white,
+                      textColor: AppColors.primary,
+                      border: const BorderSide(color: AppColors.fieldBorder),
+                      onPressed: () => Get.back<String>(),
+                    ),
+                  ),
+                  const Gap(10),
+                  Expanded(
+                    child: CButton(
+                      title: confirmLabel,
+                      color: confirmColor,
+                      onPressed: () => Get.back<String>(result: ctl.text.trim()),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back<String>(),
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () => Get.back<String>(result: ctl.text.trim()),
-            style: TextButton.styleFrom(foregroundColor: confirmColor),
-            child: Text(
-              confirmLabel,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
       ),
     );
   }

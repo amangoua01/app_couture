@@ -199,13 +199,14 @@ class _GeneralView extends StatelessWidget {
             _StockRepartitionDonut(items: ctl.data!.stockParModele!),
             const Gap(30),
           ],
-          const Text(
-            "Évolution du Stock",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const Gap(15),
-          Container(
-            height: 250,
+          if (evolution.isNotEmpty) ...[
+            const Text(
+              "Évolution du Stock",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const Gap(15),
+            Container(
+              height: 250,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -316,6 +317,7 @@ class _GeneralView extends StatelessWidget {
             ],
           ),
           const Gap(30),
+          ],
           _SummaryTable(kpis: kpis),
           if (ctl.data?.repartition != null) ...[
             const Gap(30),

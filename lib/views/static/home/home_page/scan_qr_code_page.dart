@@ -14,7 +14,19 @@ class ScanQrCodePage extends StatelessWidget {
       init: ScanQrCodeVentePageVctl(isFromVenteAndCommande),
       builder: (ctl) {
         return Scaffold(
-          appBar: AppBar(title: const Text("Scanner un QR Code")),
+          appBar: AppBar(
+            title: const Text("Scanner un QR Code"),
+            actions: [
+              IconButton(
+                tooltip: "Torche",
+                onPressed: ctl.toggleFlash,
+                icon: Icon(
+                  ctl.isFlashOn ? Icons.flash_on : Icons.flash_off,
+                  color: ctl.isFlashOn ? AppColors.secondary : null,
+                ),
+              ),
+            ],
+          ),
           body: Stack(
             children: [
               QRView(

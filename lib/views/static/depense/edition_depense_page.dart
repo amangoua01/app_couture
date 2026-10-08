@@ -2,7 +2,6 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/empty_page.dart';
-import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/tools/widgets/ligne_card.dart';
 import 'package:ateliya/views/controllers/depense/edition_depense_page_vctl.dart';
 import 'package:ateliya/views/static/depense/bottom_sheet_depense.dart';
@@ -203,29 +202,6 @@ class EditionDepensePage extends StatelessWidget {
                         );
                       },
                     ),
-                  const Gap(24),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey.shade100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: CTextFormField(
-                      controller: ctl.descriptionCtl,
-                      externalLabel: "Notes / Description",
-                      maxLines: 3,
-                      margin: EdgeInsets.zero,
-                      hintText: "Saisir une description (facultatif)",
-                    ),
-                  ),
                 ],
               ),
             ),

@@ -19,6 +19,7 @@ class ClientListePage extends StatelessWidget {
           ctl,
           title: "Clients",
           createPage: const EditionClientPage(),
+          enableSearch: true,
           itemBuilder:
               (e, i, selected) => ListItem(
                 ctl,

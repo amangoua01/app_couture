@@ -26,37 +26,7 @@ class AbonnementPaymentPage extends StatelessWidget {
         return Scaffold(
           backgroundColor: const Color(0xFFF7FAF8),
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.12),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: AppColors.primary,
-                  size: 16,
-                ),
-              ),
-              onPressed: () => Get.back(),
-            ),
-            centerTitle: true,
-            title: const Text(
-              "Finaliser la souscription",
-              style: TextStyle(
-                color: Color(0xFF0E2C24),
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.2,
-              ),
-            ),
+            title: const Text("Finaliser la souscription"),
           ),
           body: SafeArea(
             child: Column(
