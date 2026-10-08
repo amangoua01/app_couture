@@ -154,24 +154,33 @@ class BilanPdf {
     );
   }
 
+  /// Une couleur par KPI (plutôt qu'une grille monochrome) : la couleur
+  /// porte elle-même un sens (vert = argent qui rentre, rouge = qui sort,
+  /// orange = à surveiller), ce qui rend le bilan plus lisible d'un coup
+  /// d'œil et plus présentable qu'un tableau gris uniforme.
   static pw.Widget _kpiGrid(
     Kpis kpis,
     bool isAtelier,
     PdfColor primaryColor,
   ) {
-    final tiles = <(String, String)>[
-      ('Chiffre d\'affaires', '${kpis.chiffreAffaires.toAmount()} FCFA'),
-      ('Recettes nettes', '${(kpis.recettesNettes ?? 0).toAmount()} FCFA'),
-      ('Ticket moyen', '${(kpis.ticketMoyen ?? 0).toAmount()} FCFA'),
-      ('Dépenses', '${kpis.totalDepenses.toAmount()} FCFA'),
-      ('Taux de recouvrement', '${kpis.tauxRecouvrement ?? 0}%'),
-      ('Solde caisse', '${kpis.caisse.toAmount()} FCFA'),
+    final vert = PdfColor.fromHex('#16A34A');
+    final rouge = PdfColor.fromHex('#DC2626');
+    final bleu = PdfColor.fromHex('#2563EB');
+    final violet = PdfColor.fromHex('#7C3AED');
+    final teal = PdfColor.fromHex('#0D9488');
+    final indigo = PdfColor.fromHex('#4F46E5');
+    final ambre = PdfColor.fromHex('#D97706');
+
+    final tiles = <(String, String, PdfColor)>[
+      ('Chiffre d\'affaires', '${kpis.chiffreAffaires.toAmount()} FCFA', vert),
+      ('Recettes nettes', '${(kpis.recettesNettes ?? 0).toAmount()} FCFA', bleu),
+      ('Ticket moyen', '${(kpis.ticketMoyen ?? 0).toAmount()} FCFA', violet),
+      ('Dépenses', '${kpis.totalDepenses.toAmount()} FCFA', rouge),
+      ('Taux de recouvrement', '${kpis.tauxRecouvrement ?? 0}%', ambre),
+      ('Solde caisse', '${kpis.caisse.toAmount()} FCFA', teal),
       if (isAtelier) ...[
-        (
-          'Délai moyen de livraison',
-          '${kpis.delaiMoyenLivraisonJours} j',
-        ),
-        ('Pièces en retard', '${kpis.piecesEnRetard ?? 0}'),
+        ('Délai moyen de livraison', '${kpis.delaiMoyenLivraisonJours} j', indigo),
+        ('Pièces en retard', '${kpis.piecesEnRetard ?? 0}', rouge),
       ],
     ];
 
@@ -182,10 +191,13 @@ class BilanPdf {
         for (final t in tiles)
           pw.Container(
             width: 160,
-            padding: const pw.EdgeInsets.all(10),
+            padding: const pw.EdgeInsets.fromLTRB(10, 10, 10, 10),
+            // Fond plein (pas une teinte à faible opacité, mal rendue par
+            // certains lecteurs PDF) : la couleur ne sert à rien si le
+            // texte de la même teinte devient illisible dessus — on passe
+            // donc le texte en blanc.
             decoration: pw.BoxDecoration(
-              color: PdfColors.grey50,
-              border: pw.Border.all(color: PdfColors.grey200),
+              color: t.$3,
               borderRadius: pw.BorderRadius.circular(6),
             ),
             child: pw.Column(
@@ -193,9 +205,9 @@ class BilanPdf {
               children: [
                 pw.Text(
                   t.$1,
-                  style: const pw.TextStyle(
+                  style: pw.TextStyle(
                     fontSize: 8.5,
-                    color: PdfColors.grey600,
+                    color: PdfColor(1, 1, 1, 0.8),
                   ),
                 ),
                 pw.SizedBox(height: 3),
@@ -204,7 +216,7 @@ class BilanPdf {
                   style: pw.TextStyle(
                     fontSize: 13,
                     fontWeight: pw.FontWeight.bold,
-                    color: primaryColor,
+                    color: PdfColors.white,
                   ),
                 ),
               ],

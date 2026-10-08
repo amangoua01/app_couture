@@ -10,11 +10,12 @@ import 'package:ateliya/data/models/taille_standard.dart';
 import 'package:ateliya/data/models/type_mesure.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/extensions/types/text_editing_controller.dart';
+import 'package:ateliya/tools/utils/label_matcher.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ateliya/services/gemini_mesure_service.dart';
 import 'package:ateliya/services/speech_recognition_service.dart';
 import 'package:ateliya/views/static/mesure/sub_pages/reprendre_mesures_client_page.dart';
 
@@ -42,11 +43,44 @@ class EditionPieceCouturePageVctl extends AuthViewController {
   // Variables pour la voix
   final SpeechRecognitionService _speech = SpeechRecognitionService();
   bool isListening = false;
-  bool isProcessingSpeech = false;
   bool speechAvailable = false;
   String speechStatus = "";
   String recognizedText = "";
-  final GeminiMesureService geminiService = GeminiMesureService();
+
+  // Rang de la première mensuration que la dictée en cours doit remplir.
+  //
+  // Relancer le micro repart d'un texte vierge : sans ce repère, les nombres
+  // du nouvel énoncé étaient réaffectés à partir du tout premier champ et
+  // écrasaient les mesures déjà prises. On reprend donc à la première
+  // mensuration encore vide.
+  int _dictationAnchor = 0;
+
+  /// Valeurs contenues dans la dernière transcription reçue.
+  ///
+  /// Une nouvelle liste qui diverge de celle-ci — ni prolongement, ni
+  /// correction — signifie que le moteur est reparti de zéro : c'est le signal
+  /// pour réancrer la dictée au lieu de réécrire, depuis le haut, des mesures
+  /// déjà prises.
+  List<String> _lastNumbers = [];
+
+  /// Vrai si [a] est un début de [b] : le cas normal d'une transcription qui
+  /// s'allonge au fil de la dictée.
+  bool _estDebutDe(List<String> a, List<String> b) {
+    if (a.length > b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  /// Mensuration que la prochaine valeur dictée viendra remplir, affichée
+  /// pendant l'écoute pour que le couturier sache toujours où il en est.
+  String get prochaineMensuration {
+    final actives = mensurations.where((m) => m.isActive).toList();
+    final idx = _dictationAnchor + _lastNumbers.length;
+    if (idx < 0 || idx >= actives.length) return "";
+    return actives[idx].categorieMesure.libelle ?? "";
+  }
 
   EditionPieceCouturePageVctl(this.ligne) {
     if (ligne != null) {
@@ -88,19 +122,19 @@ class EditionPieceCouturePageVctl extends AuthViewController {
     if (dto == null || dto.id != 0) return;
 
     final extracted = dto.mensurations;
-    final guess = _normalizeLabel(dto.libelle);
-    if (guess.isEmpty) return;
+    if (motsSignificatifs(dto.libelle).isEmpty) return;
 
     final types = await fetchTypeMesures();
     TypeMesure? match;
+    var meilleurScore = 0.0;
     for (final t in types) {
-      final lib = _normalizeLabel(t.libelle);
-      if (lib.isEmpty) continue;
-      if (lib == guess || lib.contains(guess) || guess.contains(lib)) {
+      final score = similariteLibelle(dto.libelle, t.libelle);
+      if (score > meilleurScore) {
+        meilleurScore = score;
         match = t;
-        break;
       }
     }
+    if (meilleurScore < seuilCorrespondanceLibelle) match = null;
 
     if (match != null) {
       selectedTypeMesure = match;
@@ -115,21 +149,25 @@ class EditionPieceCouturePageVctl extends AuthViewController {
   Future<void> _checkAndInitSpeech() async {
     speechAvailable = await _speech.ensureReady(
       onStatus: (val) {
-        speechStatus = val;
         if (val == 'done' || val == 'notListening') {
+          if (!isListening) return; // déjà traité
           isListening = false;
-          update();
-          if (recognizedText.isNotEmpty && !isProcessingSpeech) {
-            _processSpeech(recognizedText);
-          }
+          speechStatus = _allMensurationsFilled
+              ? "Toutes les mensurations sont renseignées."
+              : "Dictée interrompue — appuyez sur Dicter pour continuer.";
         } else {
-          update();
+          speechStatus = val;
         }
+        update();
       },
       onError: (errorMsg) {
         isListening = false;
-        if (errorMsg == 'error_speech_timeout' && recognizedText.isEmpty) {
-          speechStatus = "Aucune voix détectée.";
+        if (errorMsg == 'error_speech_timeout' || errorMsg == 'error_no_match') {
+          speechStatus = recognizedText.isEmpty
+              ? "Aucune voix détectée."
+              : (_allMensurationsFilled
+                  ? "Toutes les mensurations sont renseignées."
+                  : "Dictée interrompue — appuyez sur Dicter pour continuer.");
         } else {
           speechStatus = "Info micro : $errorMsg";
         }
@@ -144,6 +182,10 @@ class EditionPieceCouturePageVctl extends AuthViewController {
       CMessageDialog.show(message: "Veuillez d'abord sélectionner un type de pièce.");
       return;
     }
+    if (mensurations.where((m) => m.isActive).isEmpty) {
+      CMessageDialog.show(message: "Activez au moins une mensuration à renseigner.");
+      return;
+    }
     if (!speechAvailable) {
       await _checkAndInitSpeech();
     }
@@ -156,14 +198,56 @@ class EditionPieceCouturePageVctl extends AuthViewController {
       if (speechAvailable) {
         isListening = true;
         speechStatus = "Écoute en cours...";
+        // La dictée reprend à la première mensuration encore vide, pour qu'une
+        // relance complète la série au lieu de réécrire les valeurs déjà prises.
+        final actives = mensurations.where((m) => m.isActive).toList();
+        final firstEmpty =
+            actives.indexWhere((m) => m.valeur.isEmpty || m.valeur == '0');
+        _dictationAnchor = firstEmpty < 0 ? 0 : firstEmpty;
+        _lastNumbers = [];
         recognizedText = "";
         update();
 
         await _speech.listen(
+          // Lire plusieurs mensurations à la suite implique de courtes
+          // pauses naturelles entre chaque valeur (le temps de vérifier le
+          // ruban), et Android éteint son moteur à chaque énoncé reconnu :
+          // sans le mode continu, la dictée s'arrêtait d'elle-même au bout de
+          // deux ou trois valeurs.
+          continuous: true,
+          // Prendre une mesure entre deux valeurs demande du temps : le moteur
+          // doit tolérer ces silences sans clore la phrase, sous peine de
+          // repartir pour une à trois secondes de réveil à chaque pause.
+          pauseFor: const Duration(seconds: 30),
+          // Court sans risque : la relance n'a lieu que si une voix est captée
+          // sans être transcrite. Un silence pendant la prise de mesure, lui,
+          // laisse la session intacte.
+          stuckAfter: const Duration(seconds: 10),
           onResult: (text) {
+            // Le moteur émet encore quelques résultats après l'arrêt : les
+            // prendre en compte recollait le texte une seconde fois et la série
+            // repartait du premier champ.
+            if (!isListening) return;
+            // Aucun recollage ici : le service accumule déjà l'intégralité de la
+            // dictée en cours.
             recognizedText = text;
             speechStatus = "Texte capté !";
+            // Remplissage en direct, au fil de la dictée : on dicte les
+            // valeurs dans l'ordre d'affichage ("70 75 20 30...") plutôt que
+            // de devoir nommer chaque mensuration — ce que la reconnaissance
+            // vocale comprenait mal ("Dos" entendu "De", etc.).
+            final allFilled = _assignNumbersInOrder(recognizedText);
             update();
+            // Dès que tous les champs actifs ont leur valeur, on coupe
+            // nous-mêmes le micro : laissé ouvert plus longtemps, le moteur
+            // se mettait à boucler/répéter ce qu'il avait déjà entendu et
+            // réécrivait les champs depuis le début avec ce bruit.
+            if (allFilled && isListening) {
+              _speech.stop();
+              isListening = false;
+              speechStatus = "Toutes les mensurations sont renseignées.";
+              update();
+            }
           },
         );
       } else {
@@ -172,26 +256,58 @@ class EditionPieceCouturePageVctl extends AuthViewController {
     }
   }
 
-  Future<void> _processSpeech(String text) async {
-    isProcessingSpeech = true;
-    update();
-    try {
-      final ligneMesure = await geminiService.extractMesureFromText(
-        "${selectedTypeMesure?.libelle.value ?? 'Vêtement'} : $text",
-        expectedCategories: mensurations.map((e) => e.categorieMesure.libelle ?? '').toList(),
-      );
-      if (ligneMesure != null && ligneMesure.typeMesureDto != null) {
-        updateMensurations(ligneMesure.typeMesureDto!.mensurations);
-      } else {
-        CMessageDialog.show(message: "Aucune mesure n'a pu être extraite.");
-      }
-    } catch (e) {
-      CMessageDialog.show(message: "Erreur lors de l'extraction des mesures.");
-    } finally {
-      isProcessingSpeech = false;
-      recognizedText = "";
-      update();
+  bool get _allMensurationsFilled {
+    final actives = mensurations.where((m) => m.isActive).toList();
+    return actives.isNotEmpty && actives.every((m) => m.valeur.isNotEmpty && m.valeur != '0');
+  }
+
+  /// Extrait les nombres de la dictée et les assigne, dans l'ordre, aux
+  /// mensurations actives selon leur ordre d'affichage — aucune
+  /// correspondance de mot nécessaire. Renvoie vrai si toutes les
+  /// mensurations actives ont désormais une valeur.
+  bool _assignNumbersInOrder(String text) {
+    final numbers = RegExp(r'\d+(?:[.,]\d+)?')
+        .allMatches(text)
+        .map((m) => m.group(0)!.replaceAll(',', '.'))
+        .toList();
+    final actives = mensurations.where((m) => m.isActive).toList();
+
+    // Garde-fou : une transcription plus courte que la précédente veut dire que
+    // le moteur a recommencé son texte à zéro. Sans réancrage, les nouvelles
+    // valeurs se réécrivaient par-dessus les premières mensurations, déjà
+    // mesurées — le « il reprend en haut » constaté sur le terrain. On repart
+    // donc de la première mensuration encore vide.
+    final memeSerie = _estDebutDe(_lastNumbers, numbers) ||
+        _estDebutDe(numbers, _lastNumbers);
+    if (!memeSerie) {
+      final libre = actives.indexWhere((m) => m.valeur.isEmpty || m.valeur == '0');
+      _dictationAnchor = libre < 0 ? actives.length : libre;
+      if (kDebugMode) debugPrint('STT/ transcription repartie de zéro -> réancrage sur $_dictationAnchor');
     }
+    _lastNumbers = numbers;
+
+    for (var i = 0; i < numbers.length; i++) {
+      final cible = _dictationAnchor + i;
+      if (cible >= actives.length) break;
+      actives[cible].valeur = numbers[i];
+    }
+    if (kDebugMode) {
+      debugPrint('STT/ dictée="$text" nombres=$numbers repère=$_dictationAnchor '
+          'champs=${actives.length} '
+          'valeurs=${actives.map((m) => m.valeur).toList()}');
+    }
+    return actives.isNotEmpty &&
+        _dictationAnchor + numbers.length >= actives.length;
+  }
+
+  /// Repart d'une dictée vide (ex: après une erreur) sans toucher aux
+  /// valeurs déjà renseignées manuellement.
+  void clearDictation() {
+    recognizedText = "";
+    _dictationAnchor = 0;
+    _lastNumbers = [];
+    speechStatus = "";
+    update();
   }
 
   void onTypeMesureChanged(TypeMesure? e) {
@@ -209,30 +325,28 @@ class EditionPieceCouturePageVctl extends AuthViewController {
     update();
   }
   
-  /// Minuscules + accents retirés : Gemini renvoie parfois "Épaule" quand la
-  /// catégorie est enregistrée "Epaule" (ou l'inverse), et une comparaison
-  /// insensible à la casse seule laisse passer ce genre d'écart.
-  static const _accents = 'àâäáãåèéêëìíîïòóôöõùúûüçñ';
-  static const _noAccents = 'aaaaaaeeeeiiiiooooouuuucn';
-
-  String _normalizeLabel(String? value) {
-    var result = (value ?? '').toLowerCase().trim();
-    for (var i = 0; i < _accents.length; i++) {
-      result = result.replaceAll(_accents[i], _noAccents[i]);
-    }
-    return result;
-  }
-
   void updateMensurations(List<MensurationDto> extracted) {
-    for (var m in mensurations) {
-      final key = _normalizeLabel(m.categorieMesure.libelle);
-      for (var ext in extracted) {
-        final extKey = _normalizeLabel(ext.categorieMesure.libelle);
-        if (key.isNotEmpty && (extKey.contains(key) || key.contains(extKey))) {
-          m.valeur = ext.valeur;
-          m.isActive = true;
-          break;
+    // Chaque mensuration prend la valeur dictée qui lui ressemble le plus, et
+    // cette valeur n'est plus réutilisable ensuite : sans cela, un libellé
+    // approximatif pouvait se poser sur plusieurs champs à la fois.
+    final disponibles = [...extracted];
+    for (final m in mensurations) {
+      MensurationDto? meilleure;
+      var meilleurScore = 0.0;
+      for (final ext in disponibles) {
+        final score = similariteLibelle(
+          m.categorieMesure.libelle,
+          ext.categorieMesure.libelle,
+        );
+        if (score > meilleurScore) {
+          meilleurScore = score;
+          meilleure = ext;
         }
+      }
+      if (meilleure != null && meilleurScore >= seuilCorrespondanceLibelle) {
+        m.valeur = meilleure.valeur;
+        m.isActive = true;
+        disponibles.remove(meilleure);
       }
     }
     update();

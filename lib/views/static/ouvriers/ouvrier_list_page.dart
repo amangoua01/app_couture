@@ -1,8 +1,10 @@
 import 'package:ateliya/tools/components/card_style.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/body_list_view.dart';
+import 'package:ateliya/views/controllers/ouvriers/atelier_scope.dart';
 import 'package:ateliya/views/controllers/ouvriers/ouvrier_list_page_vctl.dart';
 import 'package:ateliya/views/static/ouvriers/edition_ouvrier_page.dart';
+import 'package:ateliya/views/static/ouvriers/pointage_historique_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -18,6 +20,7 @@ class OuvrierListPage extends StatelessWidget {
         return BodyListView(
           ctl,
           title: "Ouvriers / Apprentis",
+          subtitle: mentionAtelierActif(ctl.getEntite().value),
           createPage: const EditionOuvrierPage(),
           itemBuilder: (_, i, selected) {
             final item = ctl.data.items[i];
@@ -72,6 +75,11 @@ class OuvrierListPage extends StatelessWidget {
                               ),
                             ],
                           ),
+                        ),
+                        IconButton(
+                          tooltip: "Historique des pointages",
+                          icon: const Icon(Icons.history_rounded, color: AppColors.primary),
+                          onPressed: () => Get.to(() => PointageHistoriquePage(employe: item)),
                         ),
                       ],
                     ),

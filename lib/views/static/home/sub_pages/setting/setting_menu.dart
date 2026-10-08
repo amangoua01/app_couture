@@ -1,4 +1,5 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/widgets/settings/store_badges.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/constants/type_user_enum.dart';
 import 'package:ateliya/views/controllers/home/setting_page_vctl.dart';
@@ -32,6 +33,17 @@ class SettingEntry {
   final String title;
   final String? subtitle;
   final IconData icon;
+
+  /// Visuel personnalisé à la place du glyphe, pour un logo de marque que le
+  /// monochrome ne rend pas (voir les entrées des boutiques d'applications).
+  final Widget? iconWidget;
+
+  /// Entrée à placer sur une demi-largeur, pour être appariée avec la suivante.
+  ///
+  /// Deux entrées de même nature — les deux boutiques d'applications — se
+  /// lisent mieux côte à côte que l'une sous l'autre, et la section y gagne
+  /// une ligne.
+  final bool sideBySide;
   final Color color;
   final bool visible;
   final VoidCallback? onTap;
@@ -43,6 +55,8 @@ class SettingEntry {
     required this.title,
     required this.icon,
     required this.color,
+    this.iconWidget,
+    this.sideBySide = false,
     this.subtitle,
     this.visible = true,
     this.onTap,
@@ -131,8 +145,8 @@ List<SettingSection> buildSettingSections(SettingPageVctl ctl) {
     SettingSection(
       label: "Partager l'application",
       entries: [
-        SettingEntry(title: "Disponible sur Play Store", icon: Icons.android_rounded, color: const Color(0xFF34A853), keywords: const ["android", "google"], onTap: ctl.openPlayStore),
-        SettingEntry(title: "Disponible sur App Store", icon: Icons.apple_rounded, color: AppColors.primary, keywords: const ["ios", "iphone", "apple"], onTap: ctl.openAppStore),
+        SettingEntry(title: "Play Store", icon: Icons.android_rounded, iconWidget: const PlayStoreMark(), sideBySide: true, color: const Color(0xFF34A853), keywords: const ["android", "google", "disponible", "telecharger"], onTap: ctl.openPlayStore),
+        SettingEntry(title: "App Store", icon: Icons.apple_rounded, iconWidget: const AppStoreMark(), sideBySide: true, color: AppStoreMark.bleuAppStore, keywords: const ["ios", "iphone", "apple", "disponible", "telecharger"], onTap: ctl.openAppStore),
         SettingEntry(title: "Copier le lien de partage", icon: Icons.share_outlined, color: AppColors.primary, keywords: const ["partager", "lien", "inviter"], onTap: ctl.shareApp),
       ],
     ),

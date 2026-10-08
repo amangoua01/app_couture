@@ -14,15 +14,19 @@ abstract class FieldBorder {
         borderSide: BorderSide(color: color, width: width),
       );
 
-  /// État par défaut : la couleur de marque pleinement saturée, pas un
-  /// simple filet gris. Une teinte diluée à faible alpha rendait un gris
-  /// terne indiscernable d'une bordure par défaut — ce n'est qu'avec une
-  /// couleur franche que la bordure se voit comme un choix de design.
-  static final enabled = _border(AppColors.primary, 1.4);
+  /// État par défaut : un filet neutre et discret — la couleur de marque
+  /// n'apparaît qu'au focus, pour que son apparition soit elle-même le
+  /// signal visuel (plutôt que d'avoir des champs colorés en permanence).
+  static final enabled = _border(AppColors.fieldBorder, 1.3);
 
-  /// État actif : trait encore épaissi pour rester lisible une fois le
-  /// champ en focus.
-  static final focused = _border(AppColors.primary, 2);
+  /// État actif : la couleur de marque entre en scène, trait épaissi pour
+  /// bien marquer le champ actuellement édité.
+  static final focused = _border(AppColors.primary, 1.8);
+
+  /// Valeur choisie dans un sélecteur (sans y être pour autant "en focus") :
+  /// une teinte de marque diluée fait comprendre d'un coup d'œil que ce
+  /// champ n'est plus vide, sans le colorer aussi franchement qu'au focus.
+  static final selected = _border(AppColors.primary.withValues(alpha: 0.45), 1.4);
 
   static final error = _border(AppColors.danger, 1.2);
 

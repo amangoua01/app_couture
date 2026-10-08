@@ -1,5 +1,6 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/env.dart';
+import 'package:ateliya/tools/widgets/messages/animated_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,7 +14,8 @@ abstract class CChoiceMessageDialog {
     double height = 150,
     double width = 200,
   }) =>
-      Get.dialog<bool>(
+      AnimatedDialog.show<bool>(
+        barrierDismissible: false,
         Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
@@ -115,6 +117,5 @@ abstract class CChoiceMessageDialog {
             ),
           ),
         ),
-        barrierDismissible: false,
       );
 }

@@ -1,6 +1,5 @@
 import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/settings/quick_profile_card.dart';
 import 'package:ateliya/tools/widgets/settings/setting_section_label.dart';
@@ -36,7 +35,6 @@ class SettingPage extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppColors.scaffoldBg,
           appBar: MainAppBar(
-            enterpriseTitle: ctl.getEntite().value.libelle.value,
             notifCount: ctl.nbUnreadNotifs,
             onSelectionChanged: () => ctl.update(),
             onNotifRefresh: () => ctl.loadUnreadCount(),

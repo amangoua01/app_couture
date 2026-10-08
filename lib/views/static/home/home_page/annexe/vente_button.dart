@@ -32,16 +32,21 @@ class VenteButton extends StatelessWidget {
                 width: 150,
                 // Le package applique un padding horizontal fixe de 15px de
                 // chaque côté de l'icône (30px), non paramétrable : en
-                // dessous de ~52 (30 + icône 18 + marge), le bouton replié
+                // dessous de ~50 (30 + icône 18 + marge), le bouton replié
                 // en cercle déborde de son propre padding interne.
-                height: 52,
+                height: 50,
                 color: AppColors.secondary,
-                text: const Text(
-                  "Créer une mesure",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                // Le package ne centre pas lui-même le texte dans l'espace
+                // restant une fois l'icône posée — sans ce Center, il
+                // s'accroche à gauche et paraît décalé.
+                text: const Center(
+                  child: Text(
+                    "Créer une mesure",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
                 icon: SvgPicture.asset(
@@ -57,26 +62,24 @@ class VenteButton extends StatelessWidget {
               ),
               child: ScrollingFabAnimated(
                 width: 140,
-                height: 52,
+                height: 50,
                 color: AppColors.secondary,
-                text: const Text(
-                  "Faire une vente",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                text: const Center(
+                  child: Text(
+                    "Faire une vente",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
-                // "atelier.svg" ne représentait pas une vente (copié-collé
-                // depuis le bouton voisin) : une icône boutique/caisse est
-                // plus parlante pour cette action.
-                icon: SvgPicture.asset(
-                  "assets/images/svg/shop.svg",
-                  width: 18,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.white,
-                    BlendMode.srcIn,
-                  ),
+                // Caisse enregistreuse : plus parlant pour "faire une
+                // vente" que l'icône boutique utilisée jusque-là.
+                icon: const Icon(
+                  Icons.point_of_sale_rounded,
+                  color: Colors.white,
+                  size: 19,
                 ),
                 onPress: ctl.goToVente,
                 scrollController: ctl.scrollCtl,

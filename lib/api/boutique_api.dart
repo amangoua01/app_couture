@@ -6,6 +6,7 @@ import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/data/models/fichier_local.dart';
 import 'package:ateliya/data/models/stock_modele_item.dart';
 import 'package:ateliya/data/models/vente.dart';
+import 'package:ateliya/tools/components/data_cache.dart';
 import 'package:ateliya/tools/extensions/types/int.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -110,6 +111,25 @@ class BoutiqueApi extends CrudWebController<Boutique> {
 
   // https://backend.ateliya.com/api/modeleBoutique/modele/by/boutique/1
 
+  String _stockBoutiqueCacheKey(int boutiqueId) => "stockBoutique:$boutiqueId";
+
+  /// Dernier stock connu de la boutique, pour un affichage immédiat.
+  ///
+  /// La liste complète d'une boutique fournie est longue à parvenir : sans
+  /// cela, chaque passage sur l'écran imposait d'attendre le réseau avant de
+  /// voir quoi que ce soit, y compris quand rien n'avait changé.
+  Future<List<StockModeleItem>?> readCachedModeleBoutique(
+    int boutiqueId,
+  ) async {
+    final raw = await DataCache.readList(_stockBoutiqueCacheKey(boutiqueId));
+    if (raw == null) return null;
+    try {
+      return raw.map((e) => StockModeleItem.fromJson(e)).toList();
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<DataResponse<List<StockModeleItem>>> getModeleBoutiqueByBoutiqueId(
     int id,
   ) async {
@@ -120,11 +140,10 @@ class BoutiqueApi extends CrudWebController<Boutique> {
       );
       var data = jsonDecode(res.body);
       if (res.statusCode == 200) {
+        final rawList = data["data"] as List? ?? [];
+        await DataCache.write(_stockBoutiqueCacheKey(id), rawList);
         return DataResponse.success(
-          data:
-              (data["data"] as List).map((e) {
-                return StockModeleItem.fromJson(e);
-              }).toList(),
+          data: rawList.map((e) => StockModeleItem.fromJson(e)).toList(),
         );
       } else {
         return DataResponse.error(

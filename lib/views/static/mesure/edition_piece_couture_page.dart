@@ -43,33 +43,18 @@ class EditionPieceCouturePage extends StatelessWidget {
                         ctl.isListening
                             ? Colors.red.shade800
                             : const Color(0xFFDC2626),
-                    icon:
-                        ctl.isProcessingSpeech
-                            ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                            : Icon(
-                              ctl.isListening ? Icons.mic_none : Icons.mic,
-                              color: Colors.white,
-                            ),
+                    icon: Icon(
+                      ctl.isListening ? Icons.mic_none : Icons.mic,
+                      color: Colors.white,
+                    ),
                     label: Text(
-                      ctl.isProcessingSpeech
-                          ? "Analyse..."
-                          : (ctl.isListening
-                              ? "Écoute en cours..."
-                              : "Dicter (IA)"),
+                      ctl.isListening ? "Écoute en cours..." : "Dicter",
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    onPressed:
-                        ctl.isProcessingSpeech ? null : ctl.toggleListening,
+                    onPressed: ctl.toggleListening,
                   )
                   : null,
           body: Form(
@@ -115,6 +100,121 @@ class EditionPieceCouturePage extends StatelessWidget {
                     "Mensurations",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
+                  const Gap(4),
+                  Text(
+                    "Appuyez sur Dicter puis énoncez les valeurs dans l'ordre d'affichage ci-dessous (ex: \"70 75 20 30\") — pas besoin de nommer chaque mensuration.",
+                    style: TextStyle(fontSize: 11.5, color: Colors.grey.shade500),
+                  ),
+                  // Pendant l'écoute, le couturier doit pouvoir vérifier d'un
+                  // coup d'œil où ira la prochaine valeur : sans ce repère, une
+                  // valeur mal placée ne se remarque qu'à la fin de la saisie.
+                  if (ctl.isListening && ctl.prochaineMensuration.isNotEmpty) ...[
+                    const Gap(8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.07),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.25),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.my_location_rounded,
+                            size: 15,
+                            color: AppColors.primary,
+                          ),
+                          const Gap(8),
+                          Expanded(
+                            child: RichText(
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              text: TextSpan(
+                                style: const TextStyle(
+                                  fontSize: 11.5,
+                                  color: AppColors.primary,
+                                ),
+                                children: [
+                                  const TextSpan(text: "Prochaine valeur : "),
+                                  TextSpan(
+                                    text: ctl.prochaineMensuration,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  if (ctl.recognizedText.isNotEmpty) ...[
+                    const Gap(8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFFBEB),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFFFDE68A)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.graphic_eq_rounded, size: 15, color: Color(0xFFB45309)),
+                          const Gap(8),
+                          Expanded(
+                            child: Text(
+                              ctl.recognizedText,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 11.5, color: Color(0xFF92400E)),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: ctl.clearDictation,
+                            child: const Padding(
+                              padding: EdgeInsets.only(left: 8),
+                              child: Icon(Icons.close_rounded, size: 16, color: Color(0xFFB45309)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  if (!ctl.isListening &&
+                      ctl.speechStatus.contains("interrompue")) ...[
+                    const Gap(8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEF2F2),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFFF87171)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.pause_circle_outline_rounded, size: 16, color: Color(0xFFB91C1C)),
+                          const Gap(8),
+                          Expanded(
+                            child: Text(
+                              ctl.speechStatus,
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFFB91C1C),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const Gap(10),
                   // Une ligne par mensuration : libellé, valeur et
                   // interrupteur côte à côte, pour qu'un maximum de pièces

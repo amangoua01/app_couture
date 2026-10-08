@@ -3,6 +3,7 @@ import 'package:ateliya/api/employe_api.dart';
 import 'package:ateliya/data/models/caisse.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/auth_view_controller.dart';
+import 'package:ateliya/views/controllers/ouvriers/atelier_scope.dart';
 import 'package:intl/intl.dart';
 
 class BilanPaiePageVctl extends AuthViewController {
@@ -67,7 +68,13 @@ class BilanPaiePageVctl extends AuthViewController {
     isLoading = true;
     update();
 
-    final res = await _api.getBilanPaie(debut: _debutStr, fin: _finStr);
+    // Le bilan porte sur l'atelier actif : un atelier n'a pas à voir, ni
+    // surtout à régler, les paies de l'équipe d'un autre atelier.
+    final res = await _api.getBilanPaie(
+      debut: _debutStr,
+      fin: _finStr,
+      succursaleId: idAtelierActif(getEntite().value),
+    );
     if (res.status) {
       bilans = res.data ?? [];
     } else {

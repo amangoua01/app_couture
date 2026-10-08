@@ -1,8 +1,9 @@
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/type_user_enum.dart';
+import 'package:ateliya/tools/widgets/animations/fondu_indexed_stack.dart';
 import 'package:ateliya/views/controllers/home/home_windows_vctl.dart';
-import 'package:ateliya/views/static/home/widgets/build_tab_item.dart';
+import 'package:ateliya/views/static/home/widgets/floating_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -19,116 +20,49 @@ class HomeWindows extends StatelessWidget {
         return Obx(() {
           final entite = ctl.getEntite().value;
           final isBoutique = entite is Boutique;
+          final isAc = ctl.user.type?.code == TypeUserEnum.ac.code;
+
+          final indices = isAc
+              ? const [0, 3]
+              : isBoutique
+                  ? const [0, 1, 4, 2, 3]
+                  : const [0, 1, 2, 3];
+
+          final elements = isAc
+              ? const [
+                  ElementNavigation(icone: IcoFontIcons.uiHome, libelle: "Accueil"),
+                  ElementNavigation(icone: IcoFontIcons.uiSettings, libelle: "Options"),
+                ]
+              : [
+                  const ElementNavigation(icone: IcoFontIcons.uiHome, libelle: "Accueil"),
+                  ElementNavigation(icone: FontAwesomeIcons.gauge.data, libelle: "Stats"),
+                  if (isBoutique)
+                    ElementNavigation(
+                      icone: Icons.storefront_rounded,
+                      libelle: "Boutique",
+                      icone0nglet: SvgPicture.asset(
+                        "assets/images/svg/store.svg",
+                        width: 22,
+                        colorFilter: ColorFilter.mode(
+                          ctl.page == 4 ? Colors.white : Colors.grey[400]!,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                  const ElementNavigation(icone: IcoFontIcons.list, libelle: "Activités"),
+                  const ElementNavigation(icone: IcoFontIcons.uiSettings, libelle: "Options"),
+                ];
+
           return Scaffold(
             backgroundColor: AppColors.scaffoldBg,
-            body: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(
-                  opacity: CurveTween(
-                    curve: Curves.easeInOut,
-                  ).animate(animation),
-                  child: child,
-                );
+            body: FonduIndexedStack(index: ctl.page, children: ctl.pages),
+            bottomNavigationBar: FloatingNavBar(
+              indexActif: indices.indexOf(ctl.page).clamp(0, indices.length - 1),
+              onChange: (i) {
+                ctl.page = indices[i];
+                ctl.update();
               },
-              child: KeyedSubtree(
-                key: ValueKey<int>(ctl.page),
-                child: ctl.pages[ctl.page],
-              ),
-            ),
-            floatingActionButton:
-                isBoutique
-                    ? FloatingActionButton(
-                      heroTag: "boutique",
-                      backgroundColor: AppColors.primary,
-                      elevation: 6,
-                      shape: CircleBorder(
-                        side: BorderSide(
-                          color:
-                              ctl.page == 4
-                                  ? AppColors.yellow
-                                  : Colors.transparent,
-                          width: 2.5,
-                        ),
-                      ),
-                      onPressed: () {
-                        ctl.page = 4;
-                        ctl.update();
-                      },
-                      child: AnimatedScale(
-                        scale: ctl.page == 4 ? 1.15 : 1.0,
-                        duration: const Duration(milliseconds: 200),
-                        child: SvgPicture.asset(
-                          "assets/images/svg/store.svg",
-                          width: 24,
-                          colorFilter: ColorFilter.mode(
-                            ctl.page == 4 ? AppColors.yellow : Colors.white,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                      ),
-                    )
-                    : null,
-            floatingActionButtonLocation:
-                isBoutique ? FloatingActionButtonLocation.centerDocked : null,
-            bottomNavigationBar: BottomAppBar(
-              padding: EdgeInsets.zero,
-              shape: isBoutique ? const CircularNotchedRectangle() : null,
-              notchMargin: 8,
-              color: Colors.white,
-              elevation: 16,
-              shadowColor: Colors.black.withValues(alpha: 0.15),
-              clipBehavior: Clip.antiAlias,
-              child: Container(
-                height: 64,
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children:
-                      ctl.user.type?.code == TypeUserEnum.ac.code
-                          ? [
-                            BuildTabItem(
-                              ctl: ctl,
-                              index: 0,
-                              icon: IcoFontIcons.uiHome,
-                              label: "Accueil",
-                            ),
-                            BuildTabItem(
-                              ctl: ctl,
-                              index: 3,
-                              icon: IcoFontIcons.uiSettings,
-                              label: "Options",
-                            ),
-                          ]
-                          : [
-                            BuildTabItem(
-                              ctl: ctl,
-                              index: 0,
-                              icon: IcoFontIcons.uiHome,
-                              label: "Accueil",
-                            ),
-                            BuildTabItem(
-                              ctl: ctl,
-                              index: 1,
-                              icon: FontAwesomeIcons.gauge.data,
-                              label: "Stats",
-                            ),
-                            if (isBoutique) const SizedBox(width: 48),
-                            BuildTabItem(
-                              ctl: ctl,
-                              index: 2,
-                              icon: IcoFontIcons.list,
-                              label: "Activités",
-                            ),
-                            BuildTabItem(
-                              ctl: ctl,
-                              index: 3,
-                              icon: IcoFontIcons.uiSettings,
-                              label: "Options",
-                            ),
-                          ],
-                ),
-              ),
+              elements: elements,
             ),
           );
         });

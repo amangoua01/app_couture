@@ -33,6 +33,9 @@ abstract class ListViewController<M extends Model>
   /// la liste de la précédente.
   String get cacheScope => "${getEntite().value.id ?? ''}";
 
+  /// Filtres ajoutés à l'appel de liste, à redéfinir par écran.
+  Map<String, String> get extraListQuery => const {};
+
   @override
   Future<void> getList({int page = 1, String? search}) async {
     int? finalId;
@@ -63,6 +66,7 @@ abstract class ListViewController<M extends Model>
       search: search,
       cacheScope: cacheScope,
       useCache: useCache,
+      extraQuery: extraListQuery,
     );
     endLoad(page);
     if (res.status) {

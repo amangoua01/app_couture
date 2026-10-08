@@ -7,6 +7,10 @@ class SettingTile extends StatelessWidget {
   final String title;
   final String? subtitle;
   final IconData? icon;
+
+  /// Remplace l'icône dans sa pastille, pour les cas qu'un simple glyphe
+  /// monochrome ne rend pas — un logo de marque multicolore, par exemple.
+  final Widget? iconWidget;
   final Color? color;
   final Color? iconBgColor;
   final bool visible;
@@ -20,6 +24,7 @@ class SettingTile extends StatelessWidget {
     this.visible = true,
     this.showDivider = true,
     this.icon,
+    this.iconWidget,
     this.color,
     this.iconBgColor,
     this.trailing,
@@ -45,7 +50,7 @@ class SettingTile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
               child: Row(
                 children: [
-                  if (icon != null) ...[
+                  if (icon != null || iconWidget != null) ...[
                     Container(
                       width: 42,
                       height: 42,
@@ -57,7 +62,9 @@ class SettingTile extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12),
                               )
                               : CardStyle.iconBadge(accentColor),
-                      child: Icon(icon, color: accentColor, size: 21),
+                      child:
+                          iconWidget ??
+                          Icon(icon, color: accentColor, size: 21),
                     ),
                     const Gap(14),
                   ],
@@ -101,7 +108,7 @@ class SettingTile extends StatelessWidget {
           Divider(
             height: 1,
             thickness: 0.5,
-            indent: icon != null ? 72 : 16,
+            indent: (icon != null || iconWidget != null) ? 72 : 16,
             endIndent: 0,
             color: Colors.grey[150],
           ),

@@ -1,7 +1,6 @@
 import 'package:ateliya/data/models/transaction_response.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
-import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/c_card.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
@@ -23,7 +22,6 @@ class TransactionPage extends StatelessWidget {
         return Scaffold(
           backgroundColor: const Color(0xFFF8FAF9),
           appBar: MainAppBar(
-            enterpriseTitle: ctl.getEntite().value.libelle.value,
             notifCount: ctl.nbUnreadNotifs,
             onSelectionChanged: () => ctl.fetchData(),
             onNotifRefresh: () => ctl.loadUnreadCount(),

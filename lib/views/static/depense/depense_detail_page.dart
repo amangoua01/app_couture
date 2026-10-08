@@ -121,33 +121,43 @@ class DepenseDetailPage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Column(
-                children: [
-                  _InfoRow(
-                    icon: Icons.sell_outlined,
-                    label: "Catégorie",
-                    value: depense.familleDepense?.libelle ?? "Non spécifié",
-                  ),
-                  if (depense.familleDepense?.groupeDepense != null) ...[
-                    Divider(height: 1, indent: 58, color: Colors.grey.shade100),
-                    _InfoRow(
-                      icon: Icons.category_outlined,
-                      label: "Groupe de charge",
-                      value:
-                          depense.familleDepense!.groupeDepense!.libelle ??
-                          "Non spécifié",
-                    ),
-                  ],
-                  if (depense.description != null &&
-                      depense.description!.isNotEmpty) ...[
-                    Divider(height: 1, indent: 58, color: Colors.grey.shade100),
+              child: Builder(
+                builder: (context) {
+                  final rows = <Widget>[
+                    if ((depense.familleDepense?.libelle ?? "").isNotEmpty)
+                      _InfoRow(
+                        icon: Icons.sell_outlined,
+                        label: "Catégorie",
+                        value: depense.familleDepense!.libelle!,
+                      ),
+                    if ((depense.familleDepense?.groupeDepense?.libelle ?? "").isNotEmpty)
+                      _InfoRow(
+                        icon: Icons.category_outlined,
+                        label: "Groupe de charge",
+                        value: depense.familleDepense!.groupeDepense!.libelle!,
+                      ),
+                    // Toujours affichée (contrairement à Catégorie/Groupe) : une
+                    // note vide reste une information ("rien n'a été précisé"),
+                    // pas une ligne à masquer.
                     _InfoRow(
                       icon: Icons.notes_rounded,
-                      label: "Description / Motif",
-                      value: depense.description!,
+                      label: "Note",
+                      value: (depense.description ?? "").isNotEmpty
+                          ? depense.description!
+                          : "Aucune note ajoutée",
+                      muted: (depense.description ?? "").isEmpty,
                     ),
-                  ],
-                ],
+                  ];
+
+                  return Column(
+                    children: [
+                      for (var i = 0; i < rows.length; i++) ...[
+                        if (i > 0) Divider(height: 1, indent: 58, color: Colors.grey.shade100),
+                        rows[i],
+                      ],
+                    ],
+                  );
+                },
               ),
             ),
 
@@ -195,12 +205,30 @@ class DepenseDetailPage extends StatelessWidget {
                   children: [
                     for (var i = 0; i < lignes.length; i++) ...[
                       if (i > 0) Divider(height: 1, indent: 68, color: Colors.grey.shade100),
-                      _LigneReglementTile(ligne: lignes[i]),
+                      _LigneReglementTile(
+                        ligne: lignes[i],
+                        totalDepense: double.tryParse(depense.montant ?? '0') ?? 0,
+                      ),
                     ],
                   ],
                 ),
               ),
             ],
+
+            const Gap(20),
+            Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.lock_outline_rounded, size: 13, color: Colors.grey.shade400),
+                  const Gap(6),
+                  Text(
+                    "Dépense enregistrée · lecture seule",
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -210,65 +238,98 @@ class DepenseDetailPage extends StatelessWidget {
 
 class _LigneReglementTile extends StatelessWidget {
   final LigneDepenseCaisse ligne;
-  const _LigneReglementTile({required this.ligne});
+  final double totalDepense;
+  const _LigneReglementTile({required this.ligne, required this.totalDepense});
 
   @override
   Widget build(BuildContext context) {
+    final montantLigne = double.tryParse(ligne.montant ?? '0') ?? 0;
+    final part = totalDepense > 0 ? (montantLigne / totalDepense).clamp(0.0, 1.0) : 0.0;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.account_balance_wallet_rounded,
-              color: AppColors.primary,
-              size: 20,
-            ),
-          ),
-          const Gap(14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  ligne.caisse?.entite?.libelle.value ?? "Caisse",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14.5,
-                    color: Color(0xFF0F2620),
-                  ),
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                if (ligne.caisse?.type != null) ...[
-                  const Gap(2),
-                  Text(
-                    caisseTypeLabel(ligne.caisse!.type),
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      color: Colors.grey.shade600,
+                child: const Icon(
+                  Icons.account_balance_wallet_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+              ),
+              const Gap(14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      ligne.caisse?.entite?.libelle.value ?? "Caisse",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14.5,
+                        color: Color(0xFF0F2620),
+                      ),
                     ),
-                  ),
-                ],
-              ],
-            ),
+                    if (ligne.caisse?.type != null) ...[
+                      const Gap(2),
+                      Text(
+                        caisseTypeLabel(ligne.caisse!.type),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const Gap(10),
+              Text(
+                (ligne.montant ?? "0").toAmount(unit: "FCFA"),
+                textAlign: TextAlign.right,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 14.5,
+                  color: AppColors.primary,
+                ),
+              ),
+            ],
           ),
-          Text(
-            (ligne.montant ?? "0").toAmount(unit: "FCFA"),
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: 14.5,
-              color: AppColors.primary,
+          if (totalDepense > 0) ...[
+            const Gap(10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: part,
+                minHeight: 6,
+                backgroundColor: Colors.grey.shade100,
+                valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+              ),
             ),
-          ),
+            const Gap(6),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "${(part * 100).round()}% de la dépense",
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -279,11 +340,13 @@ class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
+  final bool muted;
 
   const _InfoRow({
     required this.icon,
     required this.label,
     required this.value,
+    this.muted = false,
   });
 
   @override
@@ -319,10 +382,11 @@ class _InfoRow extends StatelessWidget {
                 const Gap(3),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF0F2620),
+                    fontWeight: muted ? FontWeight.w500 : FontWeight.w700,
+                    fontStyle: muted ? FontStyle.italic : FontStyle.normal,
+                    color: muted ? Colors.grey.shade400 : const Color(0xFF0F2620),
                   ),
                 ),
               ],

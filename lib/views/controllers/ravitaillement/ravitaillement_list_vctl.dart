@@ -138,9 +138,9 @@ class RavitaillementListVctl extends AuthViewController {
     }
   }
 
-  /// Ouvre un dialog avec un champ commentaire pré-rempli (à partir de
-  /// l'exemple) : l'utilisateur peut valider tel quel ou l'adapter.
-  /// Retourne le texte saisi si confirmé, null si annulé.
+  /// Ouvre une feuille en bas d'écran avec un champ commentaire pré-rempli
+  /// (à partir de l'exemple) : l'utilisateur peut valider tel quel ou
+  /// l'adapter. Retourne le texte saisi si confirmé, null si annulé.
   Future<String?> _showCommentDialog({
     required String title,
     required String hint,
@@ -150,19 +150,30 @@ class RavitaillementListVctl extends AuthViewController {
   }) {
     final defaultText = hint.replaceFirst(RegExp(r'^Ex\s*:\s*'), '');
     final ctl = TextEditingController(text: defaultText);
-    // Dialog brut (pas AlertDialog) : son Column en mainAxisSize.min se cale
-    // strictement sur le contenu, évitant l'étirement en pleine hauteur que
-    // provoquait AlertDialog avec ce contenu compact.
-    return Get.dialog<String>(
-      Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+    return Get.bottomSheet<String>(
+      Container(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: SafeArea(
+          top: false,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
               Container(
                 width: 48,
                 height: 48,
@@ -215,6 +226,9 @@ class RavitaillementListVctl extends AuthViewController {
           ),
         ),
       ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      enableDrag: true,
     );
   }
 }

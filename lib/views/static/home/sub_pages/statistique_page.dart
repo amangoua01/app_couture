@@ -1,7 +1,6 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
-import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/empty_page.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/stats/period_toggle_pill.dart';
@@ -23,7 +22,6 @@ class StatistiquePage extends StatelessWidget {
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: MainAppBar(
-              enterpriseTitle: ctl.getEntite().value.libelle.value,
               notifCount: ctl.nbUnreadNotifs,
               onSelectionChanged: () {
                 ctl.fetchStats(indexPeriod: ctl.periodIndex);

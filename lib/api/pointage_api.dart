@@ -38,6 +38,34 @@ class PointageApi extends CrudWebController<Pointage> {
     }
   }
 
+  /// Historique sur une période (ex: les pointages passés d'un employé) —
+  /// même route que [listForDate], avec `debut`/`fin` au lieu de `date`.
+  Future<DataResponse<List<Pointage>>> listForPeriod(
+    String debut,
+    String fin, {
+    int? employeId,
+  }) async {
+    try {
+      final queryParams = <String, String>{'debut': debut, 'fin': fin};
+      if (employeId != null) queryParams['employeId'] = employeId.toString();
+
+      final uri = urlBuilder(api: "").replace(queryParameters: queryParams);
+
+      final res = await client.get(uri, headers: authHeaders);
+      final json = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        final list = (json['data'] as List? ?? [])
+            .map((e) => Pointage.fromJson(e))
+            .toList();
+        return DataResponse.success(data: list);
+      } else {
+        return DataResponse.error(message: json['message'] ?? "Erreur");
+      }
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
   /// Crée ou complète la fiche du jour d'un employé (une seule route pour
   /// les deux cas côté backend : `POST pointage/save`).
   Future<DataResponse<Pointage>> save(Pointage pointage) async {

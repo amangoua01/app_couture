@@ -3,6 +3,7 @@ import 'package:ateliya/services/speech_recognition_service.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
+import 'package:ateliya/tools/widgets/voice/hold_to_talk_mic_button.dart';
 import 'package:ateliya/views/static/depense/edition_depense_page.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -34,6 +35,13 @@ class _GeminiAssistantSheetState extends State<GeminiAssistantSheet> {
   bool _speechAvailable = false;
   String _speechStatus = "";
 
+  // Verrouillage "mains libres" (glisser le bouton micro) : le texte déjà
+  // reconnu avant une pause est conservé ici pour que les segments dictés
+  // s'accumulent plutôt que de s'écraser.
+  bool _locked = false;
+  bool _pausedWhileLocked = false;
+  String _committedText = "";
+
   final List<String> _quickSuggestions = [
     "Achat 5 bobines de fil et aiguilles pour 7 500 FCFA",
     "Paiement facture d'électricité CIE 28 000 FCFA",
@@ -52,22 +60,40 @@ class _GeminiAssistantSheetState extends State<GeminiAssistantSheet> {
     _speechAvailable = await _speech.ensureReady(
       onStatus: (val) {
         debugPrint("SpeechToText onStatus: $val");
-        if (mounted) {
-          setState(() {
-            _speechStatus = val;
-            if (val == 'done' || val == 'notListening') {
-              _isListening = false;
-            }
-          });
+        if (!mounted) return;
+        // Le plugin envoie souvent 'done' PUIS 'notListening' pour la même
+        // fin de session : sans ce garde, le second événement déclenchait
+        // un second redémarrage en double, source du texte qui se
+        // réinitialisait de façon aléatoire pendant l'écoute verrouillée.
+        if ((val == 'done' || val == 'notListening') && !_isListening) {
+          return;
         }
+        setState(() {
+          _speechStatus = val;
+          if (val == 'done' || val == 'notListening') {
+            _isListening = false;
+            if (_locked) {
+              // Pause naturelle du moteur (silence prolongé) pendant qu'on
+              // est verrouillé : le texte déjà dicté est conservé, mais on
+              // attend un "Reprendre" explicite plutôt que de redémarrer
+              // tout seul — un redémarrage automatique s'est révélé peu
+              // fiable avec ce plugin (deux chemins d'arrêt à synchroniser).
+              _committedText = _textController.text;
+              _pausedWhileLocked = true;
+            }
+          }
+        });
       },
       onError: (errorMsg) {
         debugPrint("SpeechToText onError: $errorMsg");
         if (mounted) {
           setState(() {
             _isListening = false;
-            if (errorMsg == 'error_speech_timeout') {
-              if (_textController.text.isEmpty) {
+            if (errorMsg == 'error_speech_timeout' || errorMsg == 'error_no_match') {
+              if (_locked) {
+                _committedText = _textController.text;
+                _pausedWhileLocked = true;
+              } else if (_textController.text.isEmpty) {
                 _speechStatus =
                     "Aucune voix détectée. Vous pouvez parler plus près du micro ou taper votre dépense.";
               }
@@ -81,41 +107,55 @@ class _GeminiAssistantSheetState extends State<GeminiAssistantSheet> {
     if (mounted) setState(() {});
   }
 
-  Future<void> _toggleListening() async {
+  // Appui maintenu façon WhatsApp : on écoute tant que le doigt reste sur
+  // le bouton, on arrête dès qu'il se lève.
+  Future<void> _startListening() async {
+    if (_isListening) return;
     if (!_speechAvailable) {
       await _checkAndInitSpeech();
     }
 
-    if (_isListening) {
-      await _speech.stop();
-      if (mounted) setState(() => _isListening = false);
-    } else {
-      if (_speechAvailable) {
-        if (mounted) {
-          setState(() {
-            _isListening = true;
-            _speechStatus = "Écoute en cours... Parlez maintenant";
-          });
-        }
-
-        await _speech.listen(
-          onResult: (text) {
-            debugPrint("Speech result: $text");
-            if (mounted) {
-              setState(() {
-                _textController.text = text;
-                _speechStatus = "Texte capté !";
-              });
-            }
-          },
-        );
-      } else {
-        CMessageDialog.show(
-          message:
-              "Veuillez autoriser l'accès au microphone dans les paramètres de votre téléphone pour dicter vos dépenses.",
-        );
+    if (_speechAvailable) {
+      if (mounted) {
+        setState(() {
+          _isListening = true;
+          _speechStatus = "Écoute en cours... Parlez maintenant";
+        });
       }
+
+      await _speech.listen(
+        // Android éteint son moteur à chaque énoncé reconnu : sans relance
+        // automatique, la dictée s'arrête d'elle-même au bout d'une phrase.
+        continuous: true,
+        onResult: (text) {
+          // Le moteur émet encore des résultats après l'arrêt de la session.
+          // Les accepter ici les recollait derrière le texte déjà figé dans
+          // [_committedText], et la dictée se retrouvait écrite en double.
+          if (!mounted || !_isListening) return;
+          setState(() {
+            _textController.text =
+                _committedText.isEmpty ? text : "$_committedText $text";
+            _speechStatus = "Texte capté !";
+          });
+        },
+      );
+    } else {
+      CMessageDialog.show(
+        message:
+            "Veuillez autoriser l'accès au microphone dans les paramètres de votre téléphone pour dicter vos dépenses.",
+      );
     }
+  }
+
+  Future<void> _stopListening() async {
+    if (!_isListening) return;
+    await _speech.stop();
+    if (mounted) setState(() => _isListening = false);
+  }
+
+  Future<void> _resumeListening() async {
+    setState(() => _pausedWhileLocked = false);
+    await _startListening();
   }
 
   @override
@@ -353,9 +393,10 @@ class _GeminiAssistantSheetState extends State<GeminiAssistantSheet> {
                 color: const Color(0xFFF8FAFC),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color:
-                      _isListening ? AppColors.secondary : Colors.grey.shade200,
-                  width: _isListening ? 2 : 1,
+                  color: (_isListening || _locked)
+                      ? AppColors.secondary
+                      : Colors.grey.shade200,
+                  width: (_isListening || _locked) ? 2 : 1,
                 ),
               ),
               child: Column(
@@ -388,7 +429,10 @@ class _GeminiAssistantSheetState extends State<GeminiAssistantSheet> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (_textController.text.isNotEmpty)
+                        if (_textController.text.isNotEmpty &&
+                            !_isListening &&
+                            !_locked &&
+                            !_pausedWhileLocked)
                           GestureDetector(
                             onTap: () {
                               _textController.clear();
@@ -415,45 +459,37 @@ class _GeminiAssistantSheetState extends State<GeminiAssistantSheet> {
                         else
                           const SizedBox.shrink(),
 
-                        // Bouton micro
-                        GestureDetector(
-                          onTap: _toggleListening,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color:
-                                  _isListening
-                                      ? const Color(0xFFDC2626)
-                                      : AppColors.primary,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  _isListening
-                                      ? Icons.mic
-                                      : Icons.mic_none_rounded,
-                                  color: Colors.white,
-                                  size: 18,
-                                ),
-                                const Gap(6),
-                                Text(
-                                  _isListening
-                                      ? "Écoute en cours..."
-                                      : "Parler",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
+                        // Bouton micro — appui maintenu façon WhatsApp,
+                        // verrouillable en glissant vers la droite
+                        Flexible(
+                          child: HoldToTalkMicButton(
+                            isListening: _isListening,
+                            onHoldStart: _startListening,
+                            onHoldRelease: _stopListening,
+                            onLock: () => setState(() => _locked = true),
+                            isPaused: _pausedWhileLocked,
+                            onResume: _resumeListening,
+                            onValidate: () async {
+                              setState(() {
+                                _locked = false;
+                                _pausedWhileLocked = false;
+                              });
+                              await _stopListening();
+                            },
+                            onCancel: () async {
+                              setState(() {
+                                _locked = false;
+                                _pausedWhileLocked = false;
+                              });
+                              await _stopListening();
+                              if (mounted) {
+                                setState(() {
+                                  _textController.clear();
+                                  _committedText = "";
+                                  _speechStatus = "";
+                                });
+                              }
+                            },
                           ),
                         ),
                       ],

@@ -4,7 +4,9 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/build_summury_item.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
+import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
+import 'package:ateliya/views/controllers/ouvriers/atelier_scope.dart';
 import 'package:ateliya/views/controllers/ouvriers/bilan_paie_page_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -19,7 +21,30 @@ class BilanPaiePage extends StatelessWidget {
       init: BilanPaiePageVctl(),
       builder: (ctl) {
         return Scaffold(
-          appBar: AppBar(title: const Text("Bilan des Paies")),
+          appBar: AppBar(
+            title: Builder(
+              builder: (_) {
+                final atelier = mentionAtelierActif(ctl.getEntite().value);
+                if (atelier == null) return const Text("Bilan des Paies");
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Bilan des Paies"),
+                    Text(
+                      atelier,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withValues(alpha: 0.72),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
           body: Column(
             children: [
               _MoisSelector(ctl: ctl),
@@ -335,14 +360,47 @@ class _BilanCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
               child: CButton(
-                title: "Payer ce solde",
+                // Le montant étant désormais modifiable, « payer ce solde »
+                // annoncerait à tort un règlement intégral obligatoire.
+                title: "Effectuer un versement",
                 isLoading: ctl.isPaying,
                 onPressed:
                     () => _confirmerPaiement(context, employe, resteAPayer),
               ),
             ),
-          ] else
-            const Gap(16),
+          ] else ...[
+            // Sans ce repère, l'absence de bouton se lit comme un écran
+            // incomplet plutôt que comme un solde réglé.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 11),
+                decoration: BoxDecoration(
+                  color: AppColors.green.withValues(alpha: 0.09),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: AppColors.green.withValues(alpha: 0.25),
+                  ),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.verified_rounded, size: 16, color: AppColors.green),
+                    Gap(8),
+                    Text(
+                      "Tout est soldé pour cette période",
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.green,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -368,53 +426,173 @@ class _BilanCard extends StatelessWidget {
         ) ??
         caisses.first;
 
-    Get.dialog(
+    // Un ouvrier payé à la pièce se règle souvent en plusieurs fois : le
+    // montant est donc modifiable, pré-rempli avec le solde restant pour que
+    // le cas courant — tout solder d'un coup — reste un simple appui.
+    final montantCtl = TextEditingController(text: montant.toStringAsFixed(0));
+    String? erreur;
+
+    double? montantSaisi() {
+      final brut = montantCtl.text.replaceAll(RegExp(r'[^0-9.,]'), '')
+          .replaceAll(',', '.');
+      return double.tryParse(brut);
+    }
+
+    await Get.bottomSheet(
       StatefulBuilder(
         builder: (context, setState) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: const Text("Confirmer le paiement"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Payer ${montant.toStringAsFixed(0)} FCFA à ${employe['nomComplet'] ?? employe['nom']} pour ${ctl.moisLabel} ?",
-                ),
-                const Gap(16),
-                CDropDownFormField<Caisse>(
-                  externalLabel: "Caisse à débiter",
-                  selectedItem: selected,
-                  items: (filter, _) => caisses,
-                  itemAsString: (c) => c.entite?.libelle ?? c.reference ?? "Caisse",
-                  compareFn: (a, b) => a.id == b.id,
-                  margin: EdgeInsets.zero,
-                  onChanged: (c) => setState(() => selected = c),
-                ),
-              ],
+          return Container(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Get.back(),
-                child: const Text("Annuler"),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    "Confirmer le paiement",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                  ),
+                  const Gap(6),
+                  Text(
+                    "${employe['nomComplet'] ?? employe['nom']} — ${ctl.moisLabel}",
+                    style: TextStyle(color: Colors.grey.shade700, height: 1.4),
+                  ),
+                  const Gap(14),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Reste à payer",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      Text(
+                        "${montant.toStringAsFixed(0)} F",
+                        style: const TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Gap(10),
+                  CTextFormField(
+                    controller: montantCtl,
+                    externalLabel: "Montant à verser",
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    margin: EdgeInsets.zero,
+                    suffixIcon: TextButton(
+                      onPressed: () => setState(() {
+                        montantCtl.text = montant.toStringAsFixed(0);
+                        erreur = null;
+                      }),
+                      child: const Text(
+                        "Tout solder",
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (erreur != null) ...[
+                    const Gap(6),
+                    Text(
+                      erreur!,
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.danger,
+                      ),
+                    ),
+                  ],
+                  const Gap(14),
+                  CDropDownFormField<Caisse>(
+                    externalLabel: "Caisse à débiter",
+                    selectedItem: selected,
+                    items: (filter, _) => caisses,
+                    itemAsString: (c) => c.entite?.libelle ?? c.reference ?? "Caisse",
+                    compareFn: (a, b) => a.id == b.id,
+                    margin: EdgeInsets.zero,
+                    onChanged: (c) => setState(() => selected = c),
+                  ),
+                  const Gap(20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CButton(
+                          title: 'Annuler',
+                          color: Colors.white,
+                          textColor: AppColors.primary,
+                          border: const BorderSide(color: AppColors.fieldBorder),
+                          onPressed: () => Get.back(),
+                        ),
+                      ),
+                      const Gap(10),
+                      Expanded(
+                        child: CButton(
+                          title: 'Confirmer',
+                          enabled: selected != null,
+                          onPressed: () async {
+                            final saisi = montantSaisi();
+                            if (saisi == null || saisi <= 0) {
+                              setState(() =>
+                                  erreur = "Saisissez un montant supérieur à 0.");
+                              return;
+                            }
+                            // Verser plus que le solde fausserait le bilan :
+                            // l'excédent serait compté comme déjà payé sur la
+                            // période suivante.
+                            if (saisi > montant + 0.001) {
+                              setState(() => erreur =
+                                  "Le montant dépasse le solde restant (${montant.toStringAsFixed(0)} F).");
+                              return;
+                            }
+                            Get.back();
+                            await ctl.payer(
+                              employe['id'],
+                              saisi,
+                              caisseId: selected!.id,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: selected == null
-                    ? null
-                    : () async {
-                        Get.back();
-                        await ctl.payer(employe['id'], montant, caisseId: selected!.id);
-                      },
-                child: const Text(
-                  "Confirmer",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
+            ),
           );
         },
       ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      enableDrag: true,
     );
+    montantCtl.dispose();
   }
 }
 

@@ -3,10 +3,11 @@ import 'package:ateliya/data/models/modele_boutique.dart';
 import 'package:ateliya/data/models/stock_modele_item.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:ateliya/tools/widgets/empty_page.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
+import 'package:ateliya/tools/widgets/photo_produit.dart';
 import 'package:ateliya/views/controllers/home/boutique_page_vctl.dart';
 import 'package:ateliya/views/static/home/detail_boutique_item_page.dart';
+import 'package:ateliya/views/static/home/sub_pages/stats/page_boutique/boutique_skeleton.dart';
 import 'package:ateliya/views/static/home/sub_pages/stats/page_boutique/search_bar_part.dart';
 import 'package:ateliya/views/static/ravitaillement/edition_ravitaillement_page.dart';
 import 'package:ateliya/views/static/stocks/edition_sortie_stock_page.dart';
@@ -26,7 +27,6 @@ class BoutiquePage extends StatelessWidget {
         return Scaffold(
           backgroundColor: const Color(0xFFF8FAF9),
           appBar: MainAppBar(
-            enterpriseTitle: ctl.getEntite().value.libelle.value,
             notifCount: ctl.nbUnreadNotifs,
             onSelectionChanged: () => ctl.fetchData(),
             onNotifRefresh: () => ctl.loadUnreadCount(),
@@ -35,27 +35,36 @@ class BoutiquePage extends StatelessWidget {
             children: [
               SearchBarPart(ctl: ctl),
               Expanded(
-                child: ctl.isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary,
-                          strokeWidth: 2.5,
-                        ),
-                      )
+                // Tant qu'aucune lecture n'a abouti, on montre la silhouette du
+                // contenu : annoncer une boutique vide avant d'avoir interrogé
+                // le serveur obligeait l'utilisateur à actualiser à la main.
+                child: (ctl.isLoading || !ctl.hasLoadedOnce)
+                    ? const BoutiqueSkeleton()
                     : ctl.data.isEmpty
                         ? RefreshIndicator(
                             onRefresh: ctl.fetchData,
                             color: AppColors.secondary,
                             child: ListView(
                               physics: const AlwaysScrollableScrollPhysics(),
-                              children: const [
+                              children: [
                                 SizedBox(
-                                  height: 500,
-                                  child: EmptyPage(
-                                    icon: Icons.inventory_2_outlined,
-                                    title: "Aucun article en boutique",
-                                    subtitle: "Tirez vers le bas pour actualiser",
-                                  ),
+                                  height: 460,
+                                  child: ctl.hasQuery
+                                      ? BoutiqueAucunResultat(
+                                          onEffacer: ctl.clearSearch,
+                                        )
+                                      : BoutiqueVide(
+                                          onRavitailler: ctl.user.isAdmin
+                                              ? () async {
+                                                  final res = await Get.to(
+                                                    () => const EditionRavitaillementPage(),
+                                                  );
+                                                  if (res != null) {
+                                                    ctl.fetchData();
+                                                  }
+                                                }
+                                              : null,
+                                        ),
                                 ),
                               ],
                             ),
@@ -71,14 +80,14 @@ class BoutiquePage extends StatelessWidget {
                                     child: _SectionHeader(item: item),
                                   ),
                                   SliverPadding(
-                                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
                                     sliver: SliverGrid(
                                       gridDelegate:
                                           const SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
                                         childAspectRatio: 0.72,
-                                        mainAxisSpacing: 12,
-                                        crossAxisSpacing: 12,
+                                        mainAxisSpacing: 10,
+                                        crossAxisSpacing: 10,
                                       ),
                                       delegate: SliverChildBuilderDelegate(
                                         (context, index) => _VarianteCard(
@@ -89,7 +98,7 @@ class BoutiquePage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  const SliverToBoxAdapter(child: Gap(4)),
+                                  const SliverToBoxAdapter(child: Gap(2)),
                                 ],
                                 const SliverToBoxAdapter(child: Gap(32)),
                               ],
@@ -119,7 +128,7 @@ class _SectionHeader extends StatelessWidget {
     final prixEntries = item.bilan.parPrix.entries.toList();
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -135,24 +144,26 @@ class _SectionHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
+            padding: const EdgeInsets.fromLTRB(14, 11, 14, 9),
             child: Row(
               children: [
                 Container(
-                  width: 52,
-                  height: 52,
+                  width: 46,
+                  height: 46,
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: hasPhoto
-                        ? Image.network((photo).fullUrl!, fit: BoxFit.cover)
-                        : Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Image.asset('assets/images/model1.png'),
-                          ),
+                    child: PhotoProduit(
+                      url: hasPhoto ? (photo).fullUrl : null,
+                      largeurAffichee: 46,
+                      placeholder: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Image.asset('assets/images/model1.png'),
+                      ),
+                    ),
                   ),
                 ),
                 const Gap(12),
@@ -162,14 +173,16 @@ class _SectionHeader extends StatelessWidget {
                     children: [
                       Text(
                         item.modele?.libelle ?? 'Sans nom',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w800,
                           color: AppColors.primary,
                           letterSpacing: -0.3,
                         ),
                       ),
-                      const Gap(5),
+                      const Gap(4),
                       Row(
                         children: [
                           _Pill(
@@ -196,61 +209,47 @@ class _SectionHeader extends StatelessWidget {
             ),
           ),
 
-          if (tailleEntries.isNotEmpty || prixEntries.isNotEmpty)
+          if (tailleEntries.isNotEmpty || prixEntries.isNotEmpty) ...[
             Divider(
                 height: 1,
                 indent: 14,
                 endIndent: 14,
                 color: Colors.grey.shade100),
-
-          if (tailleEntries.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.fromLTRB(14, 10, 14, 4),
+              padding: const EdgeInsets.fromLTRB(14, 9, 14, 11),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const _BilanLabel('Par taille'),
-                  const Gap(6),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: tailleEntries
-                        .map((e) => _BilanChip(
-                              label: (e.key.isEmpty || e.key == 'N/A')
-                                  ? 'N/A'
-                                  : e.key,
-                              qty: e.value,
-                            ))
-                        .toList(),
-                  ),
+                  if (tailleEntries.isNotEmpty)
+                    _BilanRow(
+                      label: 'Taille',
+                      chips: tailleEntries
+                          .map((e) => _BilanChip(
+                                label: (e.key.isEmpty || e.key == 'N/A')
+                                    ? 'N/A'
+                                    : e.key,
+                                qty: e.value,
+                              ))
+                          .toList(),
+                    ),
+                  if (tailleEntries.isNotEmpty && prixEntries.isNotEmpty)
+                    const Gap(7),
+                  if (prixEntries.isNotEmpty)
+                    _BilanRow(
+                      label: 'Prix',
+                      chips: prixEntries
+                          .map((e) => _BilanChip(
+                                label: e.key.toAmount(unit: 'F'),
+                                qty: e.value,
+                                isPrice: true,
+                              ))
+                          .toList(),
+                    ),
                 ],
               ),
             ),
-
-          if (prixEntries.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 8, 14, 14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const _BilanLabel('Par prix'),
-                  const Gap(6),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: prixEntries
-                        .map((e) => _BilanChip(
-                              label: e.key.toAmount(unit: 'F'),
-                              qty: e.value,
-                              isPrice: true,
-                            ))
-                        .toList(),
-                  ),
-                ],
-              ),
-            )
-          else
-            const Gap(12),
+          ] else
+            const Gap(10),
         ],
       ),
     );
@@ -313,12 +312,19 @@ class _VarianteCard extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(16)),
-                        child: hasPhoto
-                            ? Image.network((photo).fullUrl!, fit: BoxFit.cover)
-                            : Padding(
-                                padding: const EdgeInsets.all(24),
-                                child: Image.asset('assets/images/model1.png'),
-                              ),
+                        child: SizedBox.expand(
+                          child: PhotoProduit(
+                            url: hasPhoto ? (photo).fullUrl : null,
+                            // Deux colonnes : la vignette occupe à peu près la
+                            // moitié de la largeur de l'écran.
+                            largeurAffichee:
+                                MediaQuery.sizeOf(context).width / 2,
+                            placeholder: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Image.asset('assets/images/model1.png'),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     if (taille != null)
@@ -441,58 +447,65 @@ class _VarianteCard extends StatelessWidget {
                           fontSize: 14,
                           color: AppColors.secondary,
                         )),
-                    if (taille != null) ...[
-                      const Gap(2),
-                      Text('Taille : $taille',
-                          style: TextStyle(
-                              fontSize: 11, color: Colors.grey[600])),
-                    ],
-                    const Gap(4),
+                    // La taille n'est plus répétée ici : elle figure déjà sur
+                    // la vignette. La place ainsi libérée sert aux boutons de
+                    // stock, enfin assez grands pour être visés au doigt.
+                    const Gap(5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: qty > 0
-                                    ? AppColors.green
-                                    : AppColors.secondary,
-                                shape: BoxShape.circle,
+                        Flexible(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: qty > 0
+                                      ? AppColors.green
+                                      : AppColors.secondary,
+                                  shape: BoxShape.circle,
+                                ),
                               ),
-                            ),
-                            const Gap(4),
-                            Text(
-                              qty > 0 ? '$qty en stock' : 'Rupture',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: qty > 0
-                                    ? AppColors.green
-                                    : AppColors.secondary,
+                              const Gap(4),
+                              Flexible(
+                                child: Text(
+                                  qty > 0 ? '$qty en stock' : 'Rupture',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: qty > 0
+                                        ? AppColors.green
+                                        : AppColors.secondary,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         if (ctl.user.isAdmin)
                           Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               _StockBtn(
-                                icon: Icons.remove,
+                                icon: Icons.remove_rounded,
                                 color: Colors.red,
+                                tooltip: "Sortie de stock",
                                 onTap: () async {
                                   final res = await Get.to(() =>
                                       EditionSortieStockPage.one(variante));
                                   if (res != null) ctl.fetchData();
                                 },
                               ),
-                              const Gap(5),
+                              const Gap(8),
                               _StockBtn(
-                                icon: Icons.add,
+                                icon: Icons.add_rounded,
                                 color: AppColors.green,
+                                tooltip: "Ravitailler",
                                 onTap: () async {
                                   final res = await Get.to(() =>
                                       EditionRavitaillementPage.one(variante));
@@ -516,24 +529,39 @@ class _VarianteCard extends StatelessWidget {
 
 // ─── Widgets utilitaires ───────────────────────────────────────────────────────
 
+/// Retrait et ajout de stock depuis la carte.
+///
+/// Ces deux boutons étaient des pastilles d'une vingtaine de pixels, en deçà
+/// de la taille minimale confortable au doigt, et séparées de quelques pixels
+/// seulement : on visait le moins et on touchait le plus.
 class _StockBtn extends StatelessWidget {
   final IconData icon;
   final Color color;
+  final String tooltip;
   final VoidCallback onTap;
-  const _StockBtn(
-      {required this.icon, required this.color, required this.onTap});
+  const _StockBtn({
+    required this.icon,
+    required this.color,
+    required this.tooltip,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(6),
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(9),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(9),
+          child: SizedBox(
+            width: 32,
+            height: 32,
+            child: Icon(icon, size: 19, color: color),
+          ),
         ),
-        child: Icon(icon, size: 14, color: color),
       ),
     );
   }
@@ -549,32 +577,53 @@ class _Pill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(label,
           style: TextStyle(
-              color: textColor, fontSize: 11, fontWeight: FontWeight.bold)),
+              color: textColor, fontSize: 10.5, fontWeight: FontWeight.bold)),
     );
   }
 }
 
-class _BilanLabel extends StatelessWidget {
-  final String text;
-  const _BilanLabel(this.text);
+/// Répartition du stock sur une seule ligne : intitulé à gauche, pastilles à
+/// droite.
+///
+/// L'intitulé occupait auparavant sa propre ligne au-dessus des pastilles, soit
+/// deux lignes perdues par fiche pour deux mots. Le mettre en regard rend la
+/// carte nettement plus courte sans rien retirer de l'information.
+class _BilanRow extends StatelessWidget {
+  final String label;
+  final List<Widget> chips;
+  const _BilanRow({required this.label, required this.chips});
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text.toUpperCase(),
-      style: TextStyle(
-        fontSize: 10,
-        fontWeight: FontWeight.w700,
-        color: Colors.grey[400],
-        letterSpacing: 0.8,
-      ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 44,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+              label.toUpperCase(),
+              style: TextStyle(
+                fontSize: 9.5,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey[400],
+                letterSpacing: 0.6,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Wrap(spacing: 5, runSpacing: 5, children: chips),
+        ),
+      ],
     );
   }
 }
@@ -589,12 +638,12 @@ class _BilanChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
       decoration: BoxDecoration(
         color: isPrice
             ? AppColors.primary.withValues(alpha: 0.07)
             : Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(7),
         border: Border.all(
           color: isPrice
               ? AppColors.primary.withValues(alpha: 0.2)
@@ -603,7 +652,7 @@ class _BilanChip extends StatelessWidget {
       ),
       child: RichText(
         text: TextSpan(
-          style: const TextStyle(fontSize: 12),
+          style: const TextStyle(fontSize: 11),
           children: [
             TextSpan(
               text: label,
@@ -613,7 +662,7 @@ class _BilanChip extends StatelessWidget {
               ),
             ),
             TextSpan(
-              text: '  ×$qty',
+              text: ' ×$qty',
               style: TextStyle(
                 color: Colors.grey[500],
                 fontWeight: FontWeight.w400,

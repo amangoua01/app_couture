@@ -9,6 +9,7 @@ import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/tools/widgets/shimmer_listtile.dart';
+import 'package:ateliya/tools/widgets/total_summary_card.dart';
 import 'package:ateliya/views/controllers/depense/charges_list_vctl.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -23,21 +24,15 @@ class ChargesListPage extends StatelessWidget {
     return GetBuilder(
       init: ChargesListVctl(),
       builder: (ctl) {
+        final totalCharges = ctl.charges.fold<double>(
+          0,
+          (sum, c) => sum + (double.tryParse(c.montant ?? '0') ?? 0),
+        );
+
         return Scaffold(
           backgroundColor: const Color(0xFFF7FAF8),
           appBar: AppBar(
             title: const Text("Charges récurrentes"),
-          ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _showFormSheet(context, ctl),
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 4,
-            icon: const Icon(Icons.add_rounded, size: 22),
-            label: const Text(
-              "Nouvelle charge",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
-            ),
           ),
           body: RefreshIndicator(
             onRefresh: ctl.fetchCharges,
@@ -54,13 +49,42 @@ class ChargesListPage extends StatelessWidget {
                   message: "Aucune charge récurrente pour le moment.\nAjoutez vos salaires, loyers ou factures récurrentes.",
                 ),
                 child: ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 100),
                   physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: ctl.charges.length,
+                  itemCount: ctl.charges.length + 1,
                   itemBuilder: (context, i) {
-                    final charge = ctl.charges[i];
+                    if (i == 0) {
+                      return TotalSummaryCard(
+                        label: "Total des charges",
+                        total: totalCharges,
+                        count: ctl.charges.length,
+                        countLabel: "charge${ctl.charges.length > 1 ? 's' : ''}",
+                      );
+                    }
+                    final charge = ctl.charges[i - 1];
                     return _buildChargeCard(context, ctl, charge);
                   },
+                ),
+              ),
+            ),
+          ),
+          bottomNavigationBar: SafeArea(
+            minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: ElevatedButton.icon(
+                onPressed: () => _showFormSheet(context, ctl),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+                ),
+                icon: const Icon(Icons.add_rounded, size: 22),
+                label: const Text(
+                  "Nouvelle charge",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
                 ),
               ),
             ),
@@ -76,7 +100,7 @@ class ChargesListPage extends StatelessWidget {
     Charge charge,
   ) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),

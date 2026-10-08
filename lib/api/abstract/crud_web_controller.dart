@@ -56,6 +56,9 @@ abstract class CrudWebController<T extends Model> extends WebController {
     String? search,
     String? cacheScope,
     bool useCache = false,
+    /// Filtres propres à un écran, ajoutés à l'URL (ex: restreindre les
+    /// ouvriers à l'atelier actif).
+    Map<String, String>? extraQuery,
   }) async {
     try {
       Uri url;
@@ -68,6 +71,7 @@ abstract class CrudWebController<T extends Model> extends WebController {
       final queryParams = <String, String>{};
       if (page != null) queryParams["page"] = "$page";
       if (search != null && search.isNotEmpty) queryParams["search"] = search;
+      if (extraQuery != null) queryParams.addAll(extraQuery);
       if (queryParams.isNotEmpty) {
         url = url.replace(queryParameters: queryParams);
       }

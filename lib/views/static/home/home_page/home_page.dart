@@ -2,7 +2,6 @@ import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/constants/type_user_enum.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
-import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/tools/widgets/subscription_banner.dart';
@@ -28,7 +27,6 @@ class HomePage extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppColors.scaffoldBg,
           appBar: MainAppBar(
-            enterpriseTitle: ctl.getEntite().value.libelle.value,
             notifCount: ctl.nbUnreadNotifs,
             onSelectionChanged: () {
               ctl.loadData();

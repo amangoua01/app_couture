@@ -7,6 +7,7 @@ import 'package:ateliya/data/models/pointage_ligne.dart';
 import 'package:ateliya/data/models/type_mesure.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/abstract/list_view_controller.dart';
+import 'package:ateliya/views/controllers/ouvriers/atelier_scope.dart';
 import 'package:intl/intl.dart';
 
 class PointagePageVctl extends ListViewController<Employe> {
@@ -18,6 +19,11 @@ class PointagePageVctl extends ListViewController<Employe> {
   List<TypeMesure> typesMesure = [];
 
   PointagePageVctl() : super(EmployeApi());
+
+  /// On ne pointe que l'équipe de l'atelier actif : les ouvriers des autres
+  /// ateliers ne travaillent pas ici et n'ont rien à faire dans cette feuille.
+  @override
+  Map<String, String> get extraListQuery => filtreAtelierActif(getEntite().value);
 
   @override
   void onReady() {
