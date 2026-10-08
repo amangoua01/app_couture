@@ -1,2 +1,0 @@
-/Users/yvesamangoua/Documents/projects/ateliya_mobile/android/app/.cxx/RelWithDebInfo/w32402x3/armeabi-v7a/CMakeFiles/edit_cache.dir
-/Users/yvesamangoua/Documents/projects/ateliya_mobile/android/app/.cxx/RelWithDebInfo/w32402x3/armeabi-v7a/CMakeFiles/rebuild_cache.dir
