@@ -92,11 +92,12 @@ dependencies:
   barcode_widget: ^2.0.4
   intl: ^0.20.2
   speech_to_text: ^7.0.0
-  sqflite: ^2.4.4+1
   path: ^1.9.1
   uuid: ^4.6.0
   connectivity_plus: ^7.3.1
-  cached_network_image: ^4.0.4
+  sqflite: ^2.4.2
+  cached_network_image: ^3.4.1
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
@@ -108,7 +109,6 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
-  flutter_native_splash: ^2.4.8
 
 # Écran de démarrage natif (affiché pendant le chargement du moteur Flutter,
 # avant le premier frame) : généré par `dart run flutter_native_splash:create`

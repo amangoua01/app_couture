@@ -15,8 +15,8 @@ abstract class Env {
   static const String defaultPassword = "admin93K";
 
   static const defaultDevise = Currency("Fcfa", code: "XOF", decimalDigits: 0);
-  
-  static const AppEnv env = AppEnv.prod;
+
+  static const AppEnv env = AppEnv.dev;
 
   static NetwordConfig get baseUrl => env.networdConfig;
 
