@@ -1,4 +1,3 @@
-import 'package:ateliya/tools/components/field_border.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -18,10 +17,7 @@ abstract class FieldPopup {
             ? TextFieldProps(
               decoration: InputDecoration(
                 hintText: searchHint,
-                hintStyle: TextStyle(
-                  color: Colors.grey.shade500,
-                  fontSize: 14,
-                ),
+                hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 14),
                 prefixIcon: const Icon(
                   Icons.search_rounded,
                   color: AppColors.primary,
@@ -75,7 +71,10 @@ abstract class FieldPopup {
         prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primary),
         filled: true,
         fillColor: AppColors.primary.withValues(alpha: 0.04),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,

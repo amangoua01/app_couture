@@ -6,7 +6,6 @@ import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/empty_page.dart';
 import 'package:ateliya/tools/widgets/inputs/c_drop_down_form_field.dart';
 import 'package:ateliya/tools/widgets/inputs/c_text_form_field.dart';
-import 'package:ateliya/tools/widgets/ligne_card.dart';
 import 'package:ateliya/views/controllers/caisse/approvisionner_caisse_page_vctl.dart';
 import 'package:ateliya/views/static/caisse/bottom_sheet_depot.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +26,14 @@ class ApprovisionnerCaissePage extends StatelessWidget {
       builder: (ctl) {
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: AppBar(title: Text(ctl.sens == SensMouvementCaisseEnum.entree ? "Nouveau dépôt" : "Nouveau retrait")),
-          
+          appBar: AppBar(
+            title: Text(
+              ctl.sens == SensMouvementCaisseEnum.entree
+                  ? "Nouveau dépôt"
+                  : "Nouveau retrait",
+            ),
+          ),
+
           floatingActionButton: FloatingActionButton(
             onPressed: () => BottomSheetDepot.show(ctl),
             elevation: 4,
@@ -49,10 +54,15 @@ class ApprovisionnerCaissePage extends StatelessWidget {
             ),
             child: SafeArea(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
                 child: CButton(
-                  title: ctl.sens == SensMouvementCaisseEnum.entree ? "Enregistrer le dépôt" : "Enregistrer le retrait",
+                  title:
+                      ctl.sens == SensMouvementCaisseEnum.entree
+                          ? "Enregistrer le dépôt"
+                          : "Enregistrer le retrait",
                   onPressed: ctl.submit,
                 ),
               ),
@@ -66,11 +76,17 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                 physics: const BouncingScrollPhysics(),
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.15), width: 1.5),
+                      border: Border.all(
+                        color: AppColors.primary.withValues(alpha: 0.15),
+                        width: 1.5,
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,8 +94,9 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                         CDropDownFormField<ModePaiementEnum>(
                           externalLabel: "Mode de paiement",
                           selectedItem: ctl.modePaiement,
-                          items: (filter, loadProps) async =>
-                              ModePaiementEnum.values,
+                          items:
+                              (filter, loadProps) async =>
+                                  ModePaiementEnum.values,
                           itemAsString: (item) => item.label,
                           onChanged: (e) {
                             if (e != null) {
@@ -88,7 +105,7 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                             }
                           },
                         ),
-                        
+
                         CTextFormField(
                           externalLabel: "Description",
                           controller: ctl.descriptionCtl,
@@ -113,7 +130,9 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(12),
@@ -189,25 +208,44 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                       separatorBuilder: (context, index) => const Gap(12),
                       itemBuilder: (context, index) {
                         final line = ctl.lines[index];
-                        final isEntree = ctl.sens == SensMouvementCaisseEnum.entree;
+                        final isEntree =
+                            ctl.sens == SensMouvementCaisseEnum.entree;
                         final currentEntiteId = ctl.getEntite().value.id;
-                        final isCurrentCaisse = line.caisse?.entite?.id == currentEntiteId;
+                        final isCurrentCaisse =
+                            line.caisse?.entite?.id == currentEntiteId;
                         return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
-                            color: isCurrentCaisse ? AppColors.primary.withValues(alpha: 0.04) : Colors.white,
+                            color:
+                                isCurrentCaisse
+                                    ? AppColors.primary.withValues(alpha: 0.04)
+                                    : Colors.white,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                                color: isCurrentCaisse ? AppColors.primary.withValues(alpha: 0.3) : AppColors.primary.withValues(alpha: 0.15), 
-                                width: isCurrentCaisse ? 2.0 : 1.5),
+                              color:
+                                  isCurrentCaisse
+                                      ? AppColors.primary.withValues(alpha: 0.3)
+                                      : AppColors.primary.withValues(
+                                        alpha: 0.15,
+                                      ),
+                              width: isCurrentCaisse ? 2.0 : 1.5,
+                            ),
                           ),
                           child: Row(
                             children: [
                               Expanded(
                                 flex: 3,
                                 child: Text(
-                                  line.caisse?.entite?.libelle.value ?? "Caisse",
-                                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: Color(0xFF0F2620)),
+                                  line.caisse?.entite?.libelle.value ??
+                                      "Caisse",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                    color: Color(0xFF0F2620),
+                                  ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -222,14 +260,25 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w800,
-                                    color: isEntree ? AppColors.primary : Colors.red,
+                                    color:
+                                        isEntree
+                                            ? AppColors.primary
+                                            : Colors.red,
                                   ),
                                   decoration: InputDecoration(
                                     hintText: "0",
                                     suffixText: " F",
                                     filled: true,
-                                    fillColor: isCurrentCaisse ? Colors.white : AppColors.primary.withValues(alpha: 0.03),
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    fillColor:
+                                        isCurrentCaisse
+                                            ? Colors.white
+                                            : AppColors.primary.withValues(
+                                              alpha: 0.03,
+                                            ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
                                     isDense: true,
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
@@ -242,7 +291,11 @@ class ApprovisionnerCaissePage extends StatelessWidget {
                               if (ctl.lines.length > 1) ...[
                                 const Gap(4),
                                 IconButton(
-                                  icon: const Icon(Icons.close_rounded, color: Colors.red, size: 20),
+                                  icon: const Icon(
+                                    Icons.close_rounded,
+                                    color: Colors.red,
+                                    size: 20,
+                                  ),
                                   onPressed: () => ctl.removeLine(index),
                                   constraints: const BoxConstraints(),
                                   padding: EdgeInsets.zero,

@@ -1,4 +1,3 @@
-import 'package:ateliya/tools/components/card_style.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/empty_data_widget.dart';
@@ -45,68 +44,98 @@ class TypesDepenseListPage extends StatelessWidget {
                   message: "Aucun type de dépense pour l'instant",
                 ),
                 child: ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: ctl.types.length,
-                    itemBuilder: (_, i) {
-                      final type = ctl.types[i];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 6),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          side: BorderSide(color: AppColors.primary.withOpacity(0.15), width: 1.5),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: ctl.types.length,
+                  itemBuilder: (_, i) {
+                    final type = ctl.types[i];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: BorderSide(
+                          color: AppColors.primary.withOpacity(0.15),
+                          width: 1.5,
                         ),
-                        color: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 40, height: 40,
-                                decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
-                                child: const Icon(Icons.category_rounded, color: AppColors.primary, size: 20),
+                      ),
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              const Gap(14),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      type.libelle ?? "",
-                                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: Color(0xFF0F231F)),
-                                    ),
-                                    const Gap(6),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: type.isGlobal ? Colors.grey.shade100 : AppColors.primary.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        type.isGlobal ? "Global" : "Personnalisé",
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w800,
-                                          color: type.isGlobal ? Colors.grey.shade600 : AppColors.primary,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              child: const Icon(
+                                Icons.category_rounded,
+                                color: AppColors.primary,
+                                size: 20,
                               ),
-                              if (!type.isGlobal)
-                                IconButton(
-                                  icon: const Icon(Icons.delete_rounded, color: Colors.red, size: 22),
-                                  onPressed: () => ctl.deleteType(type),
+                            ),
+                            const Gap(14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    type.libelle ?? "",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 15,
+                                      color: Color(0xFF0F231F),
+                                    ),
+                                  ),
+                                  const Gap(6),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          type.isGlobal
+                                              ? Colors.grey.shade100
+                                              : AppColors.primary.withOpacity(
+                                                0.1,
+                                              ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      type.isGlobal ? "Global" : "Personnalisé",
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w800,
+                                        color:
+                                            type.isGlobal
+                                                ? Colors.grey.shade600
+                                                : AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (!type.isGlobal)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete_rounded,
+                                  color: Colors.red,
+                                  size: 22,
                                 ),
-                            ],
-                          ),
+                                onPressed: () => ctl.deleteType(type),
+                              ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
+              ),
             ),
           ),
         );
