@@ -1,5 +1,6 @@
 import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/settings/quick_profile_card.dart';
 import 'package:ateliya/tools/widgets/settings/setting_section_label.dart';
@@ -79,6 +80,19 @@ class SettingPage extends StatelessWidget {
                       SettingsGroup(entries: item.entries),
                       const Gap(24),
                     ],
+                  if (!isSearching) ...[
+                    const Center(
+                      child: Text(
+                        "Version ${Env.appVersion}",
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ),
+                    const Gap(16),
+                  ],
                 ],
               ),
             ),

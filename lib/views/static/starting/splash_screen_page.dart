@@ -1,7 +1,9 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/widgets/seasonal_logo.dart';
 import 'package:ateliya/views/controllers/starting/splash_screen_page_vctl.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class SplashScreenPage extends StatelessWidget {
@@ -36,10 +38,24 @@ class SplashScreenPage extends StatelessWidget {
                   alignment: Alignment.bottomCenter,
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 24),
-                    child: Text(
-                      "Ateliya © 2025",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 10, color: Colors.white70),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Version ${Env.appVersion}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        Gap(4),
+                        Text(
+                          "Ateliya © 2025",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 10, color: Colors.white60),
+                        ),
+                      ],
                     ),
                   ),
                 ),
