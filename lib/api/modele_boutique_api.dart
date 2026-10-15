@@ -32,6 +32,19 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
   @override
   String get module => "modeleBoutique";
 
+  String _detailsCacheKey(int modeleId) => "detailsModele:$modeleId";
+
+  /// Derniers détails connus de l'article (ventes, réservations, mouvements).
+  Future<ModeleBoutiqueDetails?> readCachedDetails(int modeleId) async {
+    final raw = await DataCache.read(_detailsCacheKey(modeleId));
+    if (raw is! Map<String, dynamic>) return null;
+    try {
+      return ModeleBoutiqueDetails.fromJson(raw);
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<DataResponse<ModeleBoutiqueDetails>> getDetails(int modeleId) async {
     try {
       final res = await client.get(
@@ -40,6 +53,7 @@ class ModeleBoutiqueApi extends CrudWebController<ModeleBoutique> {
       );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
+        await DataCache.write(_detailsCacheKey(modeleId), data['data']);
         return DataResponse.success(
           data: ModeleBoutiqueDetails.fromJson(data['data']),
         );

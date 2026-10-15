@@ -3,6 +3,7 @@ import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/services/sound_service.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
 import 'package:ateliya/views/controllers/home/boutique_page_vctl.dart';
+import 'package:ateliya/views/static/reservation/reservation_list_page.dart';
 import 'package:ateliya/views/static/ventes/edition_vente_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -85,6 +86,8 @@ class SearchBarPart extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
+          _BoutonReservations(ctl: ctl),
+          const SizedBox(width: 10),
           GestureDetector(
             onTap: () async {
               final code = await SimpleBarcodeScanner.scanBarcode(
@@ -139,6 +142,52 @@ class SearchBarPart extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Accès aux réservations de la boutique, avec le nombre de celles à traiter.
+class _BoutonReservations extends StatelessWidget {
+  final BoutiquePageVctl ctl;
+  const _BoutonReservations({required this.ctl});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        await Get.to(() => const ReservationListPage());
+        // Une confirmation a pu déduire du stock, une annulation en libérer.
+        ctl.fetchData();
+      },
+      child: Badge(
+        isLabelVisible: ctl.nbReservationsATraiter > 0,
+        label: Text('${ctl.nbReservationsATraiter}'),
+        backgroundColor: AppColors.secondary,
+        offset: const Offset(-2, 2),
+        child: Container(
+          height: 48,
+          width: 48,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.08),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.04),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.bookmark_border_rounded,
+            color: AppColors.secondary,
+            size: 24,
+          ),
+        ),
       ),
     );
   }

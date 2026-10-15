@@ -14,6 +14,17 @@ class ActivitesBoutique extends ModelJson {
     this.progression,
   });
 
+  /// Activité propre à la boutique (réservations, ventes directes).
+  bool get isBoutique {
+    final a = (activite ?? '').toLowerCase();
+    return a.contains('réservation') ||
+        a.contains('reservation') ||
+        a.contains('vente');
+  }
+
+  /// Toute autre activité (factures, mesures, paiements…) relève de l'atelier.
+  bool get isAtelier => !isBoutique;
+
   @override
   ActivitesBoutique fromJson(Json json) {
     return ActivitesBoutique.fromJson(json);
