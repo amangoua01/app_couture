@@ -37,13 +37,41 @@ class EditionVentePageVctl extends AuthViewController
     }
   }
 
-  Future<List<Client>> getClients() async {
-    final res = await clientApi.list();
-    if (res.status) {
-      return res.data!.items;
-    } else {
-      return [];
-    }
+  /// Clients chargés une seule fois : le sélecteur n'interroge plus le serveur
+  /// à chaque ouverture.
+  List<Client>? _clients;
+
+  Future<List<Client>> getClients({bool refresh = false}) async {
+    if (!refresh && _clients != null) return _clients!;
+    _clients = await clientApi.listForSelect();
+    return _clients!;
+  }
+
+  /// Après la création d'un client depuis l'écran : il rejoint la liste et se
+  /// retrouve déjà sélectionné, sans repasser par le sélecteur.
+  void onClientCreated(Client created) {
+    _clients = [created, ...?_clients];
+    client = created;
+    update();
+  }
+
+  int get quantite => quantiteCtl.text.toInt().value;
+  double get prixUnitaire => prixCtl.text.toDouble().value;
+  double get total => quantite * prixUnitaire;
+  int get stock => modeleBoutique.quantite ?? 0;
+
+  /// Pas de la quantité, borné entre 1 et le stock disponible.
+  void changeQuantite(int delta) {
+    final next = (quantite + delta).clamp(1, stock < 1 ? 1 : stock);
+    quantiteCtl.text = '$next';
+    update();
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Préchargement discret : la liste est prête avant l'ouverture du sélecteur.
+    getClients();
   }
 
   Future<List<Boutique>> getBoutique() async {
@@ -69,7 +97,8 @@ class EditionVentePageVctl extends AuthViewController
 
       final data = PaiementBoutiqueDto(
         datePaiment: dateVenteCtl.dateTime!,
-        clientId: client!.id!,
+        // Le client est facultatif : une vente au comptoir n'en a pas.
+        clientId: client?.id,
         lignes: [
           LignePaiementBoutiqueDto(
             montant: prixCtl.text.toDouble().value,

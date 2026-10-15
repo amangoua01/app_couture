@@ -82,27 +82,15 @@ class EditionPersonnelPageVctl
   }
 
   Future<List<TypeUser>> getTypeUsers() async {
-    final res = await typeUserApi.list();
-    if (res.status) {
-      return res.data!.items;
-    }
-    return [];
+    return typeUserApi.listForSelect();
   }
 
   Future<List<Boutique>> getBoutiques() async {
-    final res = await boutiqueApi.list();
-    if (res.status) {
-      return res.data!.items;
-    }
-    return [];
+    return boutiqueApi.listForSelect();
   }
 
   Future<List<Atelier>> getSuccursales() async {
-    final res = await succursaleApi.list();
-    if (res.status) {
-      return res.data!.items;
-    }
-    return [];
+    return succursaleApi.listForSelect();
   }
 
   bool get isBoutiqueRequired {
