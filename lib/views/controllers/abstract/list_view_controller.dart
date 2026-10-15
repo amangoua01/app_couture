@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/api/abstract/crud_web_controller.dart';
 import 'package:ateliya/data/models/abstract/model.dart';
 import 'package:ateliya/services/sync_service.dart';
@@ -113,7 +114,7 @@ abstract class ListViewController<M extends Model>
           height: 100,
         );
         if (rep == true) {
-          final res = await api.deleteMultiple(selected!);
+          final res = await api.deleteMultiple(selected!).load();
           if (res.status) {
             await getList();
             if (data.isEmpty) {

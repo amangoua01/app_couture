@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/api/employe_api.dart';
 import 'package:ateliya/api/pointage_api.dart';
 import 'package:ateliya/api/type_mesure_api.dart';
@@ -75,7 +76,7 @@ class PointagePageVctl extends ListViewController<Employe> {
       observation: observation,
     );
 
-    final res = await _pointageApi.save(p);
+    final res = await _pointageApi.save(p).load();
     if (res.status && res.data != null) {
       pointagesDuJour[employe.id!] = res.data!;
       update();

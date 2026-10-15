@@ -213,10 +213,7 @@ class BodyListView<T> extends StatelessWidget {
                         () => createPage!,
                         routeName: createPage.toString(),
                       );
-                      if (res != null) {
-                        ctl.data.items.insert(0, res);
-                        ctl.update();
-                      }
+                      if (res != null) await ctl.getList(search: ctl.search);
                     }
                   } else {
                     ctl.onDeleteAllSelected();
