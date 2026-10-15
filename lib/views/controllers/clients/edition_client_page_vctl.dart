@@ -92,19 +92,11 @@ class EditionClientPageVctl extends EditionViewController<Client, ClientApi> {
   }
 
   Future<List<Boutique>> fetchBoutiques() async {
-    final res = await boutiqueApi.list();
-    if (res.status) {
-      return res.data!.items;
-    }
-    return [];
+    return boutiqueApi.listForSelect();
   }
 
   Future<List<Atelier>> fetchSuccursales() async {
-    final res = await succursaleApi.list();
-    if (res.status) {
-      return res.data!.items;
-    }
-    return [];
+    return succursaleApi.listForSelect();
   }
 
   @override

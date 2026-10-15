@@ -40,8 +40,7 @@ class EditionVenteMultiplePageVctl extends AuthViewController
   }
 
   Future<List<Client>> getClients() async {
-    final res = await clientApi.list();
-    return res.status ? res.data!.items : [];
+    return clientApi.listForSelect();
   }
 
   Future<List<ModeleBoutique>> getModeles() async {

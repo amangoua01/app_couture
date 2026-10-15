@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/api/charge_api.dart';
 import 'package:ateliya/api/employe_api.dart';
 import 'package:ateliya/api/famille_depense_api.dart';
@@ -54,8 +55,10 @@ class ChargesListVctl extends GetxController {
   }
 
   Future<bool> saveCharge(Charge charge) async {
-    final res =
-        charge.id == null ? await api.create(charge) : await api.update(charge);
+    final res = await (charge.id == null
+            ? api.create(charge)
+            : api.update(charge))
+        .load();
     if (!res.status) {
       CMessageDialog.show(message: res.message);
       return false;
@@ -77,7 +80,7 @@ class ChargesListVctl extends GetxController {
     );
     if (confirmed != true) return;
 
-    final res = await api.delete(charge.id!);
+    final res = await api.delete(charge.id!).load();
     if (res.status) {
       charges.removeWhere((e) => e.id == charge.id);
       update();

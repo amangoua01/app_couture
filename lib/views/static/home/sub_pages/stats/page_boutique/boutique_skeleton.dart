@@ -6,9 +6,9 @@ import 'package:shimmer/shimmer.dart';
 /// Chargement de la boutique, sous la forme même du contenu attendu.
 ///
 /// Un simple rond qui tourne au centre ne dit rien de ce qui arrive et fait
-/// paraître l'attente plus longue. Reprendre la silhouette d'une fiche modèle
-/// suivie de sa grille de variantes annonce la structure à venir et évite le
-/// saut visuel au moment où les données s'affichent.
+/// paraître l'attente plus longue. Reprendre la silhouette de la grille de
+/// cartes modèle annonce la structure à venir et évite le saut visuel au
+/// moment où les données s'affichent.
 class BoutiqueSkeleton extends StatelessWidget {
   const BoutiqueSkeleton({super.key});
 
@@ -17,22 +17,18 @@ class BoutiqueSkeleton extends StatelessWidget {
     return Shimmer.fromColors(
       baseColor: Colors.grey.shade200,
       highlightColor: Colors.grey.shade50,
-      child: ListView(
+      child: GridView.count(
         physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-        children: [
-          for (var i = 0; i < 2; i++) ...[
-            const _CarteModeleFactice(),
-            const Gap(10),
-            const Row(
-              children: [
-                Expanded(child: _CarteVarianteFactice()),
-                Gap(10),
-                Expanded(child: _CarteVarianteFactice()),
-              ],
-            ),
-            const Gap(16),
-          ],
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+        crossAxisCount: 2,
+        childAspectRatio: 0.7,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        children: const [
+          _CarteModeleFactice(),
+          _CarteModeleFactice(),
+          _CarteModeleFactice(),
+          _CarteModeleFactice(),
         ],
       ),
     );
@@ -64,76 +60,30 @@ class _CarteModeleFactice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              _Bloc(width: 46, height: 46, radius: 12),
-              Gap(12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _Bloc(width: 120, height: 13),
-                  Gap(7),
-                  _Bloc(width: 86, height: 16, radius: 20),
-                ],
-              ),
-            ],
+          Expanded(
+            child: _Bloc(
+              width: double.infinity,
+              height: double.infinity,
+              radius: 18,
+            ),
           ),
-          Gap(14),
-          Row(
-            children: [
-              _Bloc(width: 34, height: 8),
-              Gap(10),
-              _Bloc(width: 52, height: 21, radius: 7),
-              Gap(5),
-              _Bloc(width: 52, height: 21, radius: 7),
-            ],
-          ),
-          Gap(7),
-          Row(
-            children: [
-              _Bloc(width: 34, height: 8),
-              Gap(10),
-              _Bloc(width: 74, height: 21, radius: 7),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CarteVarianteFactice extends StatelessWidget {
-  const _CarteVarianteFactice();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _Bloc(width: double.infinity, height: 150, radius: 16),
           Padding(
             padding: EdgeInsets.fromLTRB(10, 10, 10, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Bloc(width: 70, height: 13),
+                _Bloc(width: 90, height: 13),
                 Gap(6),
-                _Bloc(width: 54, height: 10),
+                _Bloc(width: 64, height: 12),
                 Gap(8),
-                _Bloc(width: 86, height: 10),
+                _Bloc(width: 110, height: 16, radius: 6),
               ],
             ),
           ),
@@ -276,10 +226,7 @@ class BoutiqueAucunResultat extends StatelessWidget {
             style: TextButton.styleFrom(
               foregroundColor: AppColors.primary,
               backgroundColor: AppColors.primary.withValues(alpha: 0.06),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 11,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
               textStyle: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,

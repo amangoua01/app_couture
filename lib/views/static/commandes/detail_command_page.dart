@@ -9,6 +9,7 @@ import 'package:ateliya/data/models/paiement_facture.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
+import 'package:ateliya/tools/widgets/grille_mensurations.dart';
 import 'package:ateliya/tools/widgets/paiement_dialog.dart';
 import 'package:ateliya/tools/widgets/placeholder_builder.dart';
 import 'package:ateliya/views/controllers/commandes/detail_command_page_vctl.dart'; // Added
@@ -284,12 +285,16 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                     children: [
                                       Text(
                                         (() {
-  final nom = lm.nom;
-  if (nom != null && nom.trim().isNotEmpty) return nom;
-  final lib = lm.typeMesure?.libelle;
-  if (lib != null && lib.trim().isNotEmpty) return lib;
-  return "Article";
-})(),
+                                          final nom = lm.nom;
+                                          if (nom != null &&
+                                              nom.trim().isNotEmpty)
+                                            return nom;
+                                          final lib = lm.typeMesure?.libelle;
+                                          if (lib != null &&
+                                              lib.trim().isNotEmpty)
+                                            return lib;
+                                          return "Article";
+                                        })(),
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
@@ -378,77 +383,36 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                           color: Colors.grey[700],
                                         ),
                                       ),
+                                      const Gap(8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 2,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary.withValues(
+                                            alpha: 0.08,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '${lm.mensurations.where((m) => m.isActive).length}',
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w800,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                  const Gap(10),
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 8,
-                                    children:
+                                  const Gap(12),
+                                  GrilleMensurations(
+                                    mensurations:
                                         lm.mensurations
                                             .where((m) => m.isActive)
-                                            .map(
-                                              (mensuration) => Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 8,
-                                                    ),
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.primary
-                                                      .withValues(alpha: 0.08),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  border: Border.all(
-                                                    color: AppColors.primary
-                                                        .withValues(alpha: 0.2),
-                                                  ),
-                                                ),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text(
-                                                      mensuration
-                                                              .categorieMesure
-                                                              ?.libelle ??
-                                                          "Mesure",
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors.grey[700],
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    const Gap(6),
-                                                    Container(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            horizontal: 6,
-                                                            vertical: 2,
-                                                          ),
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            AppColors.primary,
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              4,
-                                                            ),
-                                                      ),
-                                                      child: Text(
-                                                        mensuration.taille,
-                                                        style: const TextStyle(
-                                                          fontSize: 11,
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            )
                                             .toList(),
                                   ),
                                 ],

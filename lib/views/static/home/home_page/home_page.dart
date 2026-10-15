@@ -9,7 +9,7 @@ import 'package:ateliya/views/controllers/home/home_page_vctl.dart';
 import 'package:ateliya/views/static/home/home_page/annexe/activite_part.dart';
 import 'package:ateliya/views/static/home/home_page/annexe/caisse_wallet_card_state.dart';
 import 'package:ateliya/views/static/home/home_page/annexe/vente_button.dart';
-import 'package:ateliya/views/static/home/home_page/widgets/inline_stats_bar.dart';
+import 'package:ateliya/views/static/home/home_page/widgets/travaux_stats.dart';
 import 'package:ateliya/views/static/home/widgets/no_entite_selected_view.dart';
 import 'package:ateliya/views/static/home/widgets/roadmap_onboarding_widget.dart';
 import 'package:flutter/material.dart';
@@ -68,23 +68,15 @@ class HomePage extends StatelessWidget {
                         EntiteEntrepriseType.succursale,
                     child: Column(
                       children: [
-                        InlineStatsBar(
-                          items: [
-                            StatItem(
-                              icon: Icons.pending_actions_rounded,
-                              label: "Travaux en cours",
-                              value:
-                                  "${ctl.data.commandes.where((e) => e.isActive).length}",
-                              color: AppColors.primary,
-                            ),
-                            StatItem(
-                              icon: Icons.check_circle_outline_rounded,
-                              label: "Terminées",
-                              value:
-                                  "${ctl.data.commandes.where((e) => !e.isActive).length}",
-                              color: AppColors.green,
-                            ),
-                          ],
+                        TravauxStats(
+                          enCours:
+                              ctl.data.commandes
+                                  .where((e) => e.isActive)
+                                  .length,
+                          terminees:
+                              ctl.data.commandes
+                                  .where((e) => !e.isActive)
+                                  .length,
                         ),
                         const Gap(24),
                       ],

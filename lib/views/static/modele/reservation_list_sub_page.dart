@@ -1,4 +1,7 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/reservation_statut.dart';
+import 'package:ateliya/views/static/reservation/reservation_detail_page.dart';
+import 'package:ateliya/views/static/reservation/reservation_widgets.dart';
 import 'package:ateliya/tools/extensions/types/datetime.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -139,6 +142,11 @@ class ReservationListSubPage extends StatelessWidget {
                   children: [
                     ListTile(
                       contentPadding: EdgeInsets.zero,
+                      onTap: reservation?.id == null
+                          ? null
+                          : () => Get.to(
+                                () => ReservationDetailPage(reservation!.id!),
+                              ),
                       leading: CircleAvatar(
                         child: SvgPicture.asset(
                           'assets/images/svg/calendar.svg',
@@ -171,25 +179,8 @@ class ReservationListSubPage extends StatelessWidget {
                             ),
                         ],
                       ),
-                      trailing: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: reservation?.status == 'en_attente'
-                              ? Colors.orange
-                              : Colors.green,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          reservation?.status == 'en_attente'
-                              ? 'En attente'
-                              : 'Confirmée',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      trailing: StatutChip(
+                        ReservationStatut.fromCode(reservation?.status),
                       ),
                     ),
                     Text(

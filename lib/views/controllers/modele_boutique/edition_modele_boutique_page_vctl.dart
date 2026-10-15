@@ -118,18 +118,10 @@ class EditionModeleBoutiquePageVctl
   }
 
   Future<List<Modele>> getModeles() async {
-    final res = await modeleApi.list();
-    if (res.status) {
-      return res.data!.items;
-    }
-    return [];
+    return modeleApi.listForSelect();
   }
 
   Future<List<Boutique>> getBoutiques() async {
-    final res = await boutiqueApi.list();
-    if (res.status) {
-      return res.data!.items;
-    }
-    return [];
+    return boutiqueApi.listForSelect();
   }
 }

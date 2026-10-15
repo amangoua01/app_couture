@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/widgets/seasonal_logo.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/extensions/ternary_fn.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
@@ -34,10 +35,12 @@ class LoginPage extends StatelessWidget {
                       children: [
                         const Gap(50),
                         Center(
-                          child: Image.asset(
-                            "assets/images/logo_ateliya.png",
-                            height: 120,
-                            fit: BoxFit.contain,
+                          child: SeasonalLogoFrame(
+                            child: Image.asset(
+                              "assets/images/logo_ateliya.png",
+                              height: 90,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
                         const Gap(30),

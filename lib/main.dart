@@ -3,6 +3,7 @@ import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/services/deep_link_service.dart';
 import 'package:ateliya/tools/services/notification_service.dart';
 import 'package:ateliya/tools/services/printer_connection_service.dart';
+import 'package:ateliya/tools/widgets/keyboard_dismisser.dart';
 import 'package:ateliya/tools/widgets/themes/app_theme.dart';
 import 'package:ateliya/views/static/starting/splash_screen_page.dart';
 import 'package:flutter/foundation.dart';
@@ -68,7 +69,10 @@ void main() async {
             Locale('fr', 'FR'),
             Locale('en', 'US'),
           ],
-          builder: EasyLoading.init(),
+          builder: (context, child) {
+            final easyLoading = EasyLoading.init();
+            return KeyboardDismisser(child: easyLoading(context, child));
+          },
           debugShowCheckedModeBanner: false,
           home: const SplashScreenPage(),
         ),

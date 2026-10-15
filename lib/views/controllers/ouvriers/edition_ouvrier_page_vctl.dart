@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/api/employe_api.dart';
 import 'package:ateliya/api/succursale_api.dart';
 import 'package:ateliya/data/models/atelier.dart';
@@ -19,8 +20,7 @@ class EditionOuvrierPageVctl extends EditionViewController<Employe, EmployeApi> 
   EditionOuvrierPageVctl(super.item) : super(api: EmployeApi());
 
   Future<List<Atelier>> getAteliers() async {
-    final res = await _atelierApi.list();
-    return res.status ? res.data!.items : [];
+    return _atelierApi.listForSelect();
   }
 
   Employe _fromInputs() => Employe(
@@ -50,7 +50,7 @@ class EditionOuvrierPageVctl extends EditionViewController<Employe, EmployeApi> 
 
   @override
   Future<Employe?> onCreate() async {
-    final res = await api.create(_fromInputs());
+    final res = await api.create(_fromInputs()).load();
     if (res.status) return res.data;
     CMessageDialog.show(message: res.message);
     return null;
@@ -58,7 +58,7 @@ class EditionOuvrierPageVctl extends EditionViewController<Employe, EmployeApi> 
 
   @override
   Future<Employe?> onUpdate(Employe item) async {
-    final res = await api.update(_fromInputs());
+    final res = await api.update(_fromInputs()).load();
     if (res.status) return res.data;
     CMessageDialog.show(message: res.message);
     return null;

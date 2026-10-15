@@ -18,9 +18,7 @@ class AtelierFinancialSummurySection extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.05),
-          ),
+          border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
           boxShadow: [
             BoxShadow(
               color: AppColors.primary.withValues(alpha: 0.04),
@@ -31,22 +29,30 @@ class AtelierFinancialSummurySection extends StatelessWidget {
         ),
         child: Column(
           children: [
-            ...(data.activitesBoutique ?? []).map((act) => BuildSummuryItem(
-                label: act.activite ?? "",
-                value: "${(act.revenus ?? 0).toAmount()} FCFA",
-                color: AppColors.primary)),
+            ...(data.activitesBoutique ?? [])
+                .where((act) => act.isAtelier)
+                .map(
+                  (act) => BuildSummuryItem(
+                    label: act.activite ?? "",
+                    value: "${(act.revenus ?? 0).toAmount()} FCFA",
+                    color: AppColors.primary,
+                  ),
+                ),
             BuildSummuryItem(
-                label: "Dépenses",
-                value: "-${data.kpis.totalDepenses.toAmount()} FCFA",
-                color: AppColors.secondary),
+              label: "Dépenses",
+              value: "-${data.kpis.totalDepenses.toAmount()} FCFA",
+              color: AppColors.secondary,
+            ),
             Divider(
-                height: 28,
-                color: AppColors.fieldBorder.withValues(alpha: 0.6)),
+              height: 28,
+              color: AppColors.fieldBorder.withValues(alpha: 0.6),
+            ),
             BuildSummuryItem(
-                label: "Recettes nettes",
-                value: "${(data.kpis.recettesNettes ?? 0).toAmount()} FCFA",
-                color: AppColors.green,
-                isBold: true),
+              label: "Recettes nettes",
+              value: "${(data.kpis.recettesNettes ?? 0).toAmount()} FCFA",
+              color: AppColors.green,
+              isBold: true,
+            ),
           ],
         ),
       ),

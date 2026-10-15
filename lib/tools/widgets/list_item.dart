@@ -78,10 +78,7 @@ class ListItem<M extends ModelJson> extends StatelessWidget {
           () => editionPage,
           routeName: editionPage.toString(),
         );
-        if (res != null) {
-          item = res;
-          ctl.update();
-        }
+        if (res != null) await ctl.getList(search: ctl.search);
         if (actionAfterEdit != null) actionAfterEdit!(res);
       }
     } else {

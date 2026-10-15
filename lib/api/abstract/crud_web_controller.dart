@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:ateliya/api/abstract/web_controller.dart';
@@ -50,12 +51,33 @@ abstract class CrudWebController<T extends Model> extends WebController {
   /// Vide le cache du module après une écriture.
   Future<void> invalidateCache() => DataCache.invalidate(cachePrefix);
 
+  /// Liste destinée à un sélecteur ou à un formulaire (clients, boutiques,
+  /// ateliers…) : renvoie aussitôt la dernière liste connue et la rafraîchit
+  /// en arrière-plan pour la prochaine ouverture.
+  ///
+  /// Ces listes sont lues à chaque ouverture d'un écran de saisie alors
+  /// qu'elles changent rarement : attendre le réseau à chaque fois ralentissait
+  /// des écrans qui n'en ont pas besoin. Sans liste en cache (premier usage),
+  /// on attend la réponse comme avant. Une écriture sur le module (création,
+  /// modification, suppression) vide le cache, donc la liste suivante repart
+  /// du réseau.
+  Future<List<T>> listForSelect({String? cacheScope, int? id}) async {
+    final cached = await readCachedList(scope: cacheScope, id: id);
+    if (cached != null && cached.isNotEmpty) {
+      unawaited(list(id: id, cacheScope: cacheScope, useCache: true));
+      return cached.items;
+    }
+    final res = await list(id: id, cacheScope: cacheScope, useCache: true);
+    return res.status ? res.data!.items : [];
+  }
+
   Future<DataResponse<PaginatedData<T>>> list({
     int? id,
     int? page,
     String? search,
     String? cacheScope,
     bool useCache = false,
+
     /// Filtres propres à un écran, ajoutés à l'URL (ex: restreindre les
     /// ouvriers à l'atelier actif).
     Map<String, String>? extraQuery,
@@ -82,7 +104,9 @@ abstract class CrudWebController<T extends Model> extends WebController {
       if (res.statusCode == 200) {
         if ((data as Map).containsKey("data")) data = data["data"];
         // Seule la première page non filtrée est réutilisable à l'ouverture.
-        if (useCache && (page ?? 1) == 1 && (search == null || search.isEmpty)) {
+        if (useCache &&
+            (page ?? 1) == 1 &&
+            (search == null || search.isEmpty)) {
           await DataCache.write(
             cacheKeyFor(scope: cacheScope, id: id, page: 1),
             data,

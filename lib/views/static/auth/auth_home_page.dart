@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/widgets/seasonal_logo.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/views/static/auth/login_page.dart';
@@ -46,9 +47,19 @@ class AuthHomePage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(
-                          child: Image.asset(
-                            "assets/images/logo_text.png",
-                            height: 40,
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Image.asset(
+                                "assets/images/logo_text.png",
+                                height: 40,
+                              ),
+                              const Positioned(
+                                right: -14,
+                                top: -10,
+                                child: SeasonalLogoMark(),
+                              ),
+                            ],
                           ),
                         ),
                         const Gap(15),

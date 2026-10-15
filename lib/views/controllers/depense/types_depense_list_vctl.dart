@@ -1,3 +1,4 @@
+import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/api/famille_depense_api.dart';
 import 'package:ateliya/data/models/famille_depense.dart';
 import 'package:ateliya/tools/widgets/messages/c_choice_message_dialog.dart';
@@ -38,7 +39,7 @@ class TypesDepenseListVctl extends GetxController {
   }
 
   Future<void> createType(String libelle) async {
-    final res = await api.create(libelle);
+    final res = await api.create(libelle).load();
     if (res.status) {
       types.insert(0, res.data!);
       update();
@@ -53,7 +54,7 @@ class TypesDepenseListVctl extends GetxController {
     );
     if (confirmed != true) return;
 
-    final res = await api.delete(type.id!);
+    final res = await api.delete(type.id!).load();
     if (res.status) {
       types.removeWhere((e) => e.id == type.id);
       update();
