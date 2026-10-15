@@ -21,64 +21,69 @@ class SettingPage extends StatelessWidget {
     return GetBuilder(
       init: SettingPageVctl(),
       builder: (ctl) {
-        final query = ctl.searchQuery;
-        final sections = buildSettingSections(ctl);
-        final isSearching = query.trim().isNotEmpty;
+        // Les onglets restent montés : changer de boutique depuis un autre
+        // onglet ne reconstruit pas ce menu. On écoute donc l'entité active
+        // pour que les entrées propres à une boutique / un atelier suivent.
+        return Obx(() {
+          final query = ctl.searchQuery;
+          final sections = buildSettingSections(ctl);
+          final isSearching = query.trim().isNotEmpty;
 
-        // Pendant une recherche, l'en-tête de profil laisse la place aux résultats.
-        final visibleSections =
-            sections
-                .map((s) => (section: s, entries: s.visibleEntries(query)))
-                .where((e) => e.entries.isNotEmpty)
-                .toList();
+          // Pendant une recherche, l'en-tête de profil laisse la place aux résultats.
+          final visibleSections =
+              sections
+                  .map((s) => (section: s, entries: s.visibleEntries(query)))
+                  .where((e) => e.entries.isNotEmpty)
+                  .toList();
 
-        return Scaffold(
-          backgroundColor: AppColors.scaffoldBg,
-          appBar: MainAppBar(
-            notifCount: ctl.nbUnreadNotifs,
-            onSelectionChanged: () => ctl.update(),
-            onNotifRefresh: () => ctl.loadUnreadCount(),
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (!isSearching) ...[
-                  UnifiedProfileHeader(ctl: ctl),
-                  const Gap(16),
-                  QuickProfileCard(
-                    name: ctl.user.fullName,
-                    onTap:
-                        () => Get.to(() => const ProfilPage())?.then((e) {
-                          if (e is User) {
-                            ctl.user = e;
-                            ctl.update();
-                          }
-                        }),
-                  ),
-                  const Gap(20),
-                ],
-                SettingsSearchField(
-                  controller: ctl.searchCtl,
-                  onChanged: ctl.onSearchChanged,
-                ),
-                const Gap(24),
-                if (visibleSections.isEmpty)
-                  const _NoSettingResult()
-                else
-                  for (final item in visibleSections) ...[
-                    if (item.section.label != null) ...[
-                      SettingSectionLabel(item.section.label!),
-                      const Gap(8),
-                    ],
-                    SettingsGroup(entries: item.entries),
-                    const Gap(24),
-                  ],
-              ],
+          return Scaffold(
+            backgroundColor: AppColors.scaffoldBg,
+            appBar: MainAppBar(
+              notifCount: ctl.nbUnreadNotifs,
+              onSelectionChanged: () => ctl.update(),
+              onNotifRefresh: () => ctl.loadUnreadCount(),
             ),
-          ),
-        );
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!isSearching) ...[
+                    UnifiedProfileHeader(ctl: ctl),
+                    const Gap(16),
+                    QuickProfileCard(
+                      name: ctl.user.fullName,
+                      onTap:
+                          () => Get.to(() => const ProfilPage())?.then((e) {
+                            if (e is User) {
+                              ctl.user = e;
+                              ctl.update();
+                            }
+                          }),
+                    ),
+                    const Gap(20),
+                  ],
+                  SettingsSearchField(
+                    controller: ctl.searchCtl,
+                    onChanged: ctl.onSearchChanged,
+                  ),
+                  const Gap(24),
+                  if (visibleSections.isEmpty)
+                    const _NoSettingResult()
+                  else
+                    for (final item in visibleSections) ...[
+                      if (item.section.label != null) ...[
+                        SettingSectionLabel(item.section.label!),
+                        const Gap(8),
+                      ],
+                      SettingsGroup(entries: item.entries),
+                      const Gap(24),
+                    ],
+                ],
+              ),
+            ),
+          );
+        });
       },
     );
   }

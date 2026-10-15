@@ -1,6 +1,8 @@
+import 'package:ateliya/data/models/abstract/entite_entreprise.dart';
 import 'package:ateliya/data/models/atelier.dart';
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/cache_key.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/c_tab_bar.dart';
 import 'package:ateliya/tools/widgets/wrapper_listview.dart';
@@ -13,10 +15,19 @@ import 'package:get/get.dart';
 class SelectEntrepriseBottomPage extends StatelessWidget {
   const SelectEntrepriseBottomPage({super.key});
 
+  /// La feuille s'ouvre sur l'onglet de l'espace actif : un atelier actif
+  /// ouvre « Ateliers », une boutique (ou rien) ouvre « Boutiques ».
+  static int _ongletInitial() {
+    final tag = CacheKey.entite.name;
+    if (!Get.isRegistered<Rx<EntiteEntreprise>>(tag: tag)) return 0;
+    return Get.find<Rx<EntiteEntreprise>>(tag: tag).value is Atelier ? 1 : 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
+      initialIndex: _ongletInitial(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
