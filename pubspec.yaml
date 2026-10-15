@@ -116,13 +116,13 @@ dev_dependencies:
 flutter_native_splash:
   color: "#0A3A30"
   color_dark: "#062720"
-  image: assets/images/splash_logo.png
-  image_dark: assets/images/splash_logo.png
+  image: assets/images/splash_card.png
+  image_dark: assets/images/splash_card.png
   android_12:
     color: "#0A3A30"
     color_dark: "#062720"
-    image: assets/images/splash_logo.png
-    image_dark: assets/images/splash_logo.png
+    image: assets/images/splash_card_android12.png
+    image_dark: assets/images/splash_card_android12.png
     icon_background_color: "#0A3A30"
     icon_background_color_dark: "#062720"
   android: true
