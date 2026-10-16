@@ -7,18 +7,21 @@ import 'package:ateliya/tools/models/netword_config.dart';
 /// d'en changer un en oubliant l'autre au moment de passer en production.
 enum AppEnv {
   dev(
-    networdConfig: NetwordConfig(
-      host: "backend.ateliya.com",
-      scheme: "https",
+    networdConfig: NetwordConfig(host: "backend.ateliya.com", scheme: "https"),
+    geminiApiKey: String.fromEnvironment(
+      'GEMINI_API_KEY_DEV',
+      defaultValue: String.fromEnvironment('GEMINI_API_KEY'),
     ),
-    geminiApiKey: "AQ.Ab8RN6IXoCkvRHVQxMF1WmjSc3PkvgW739nn1yeVrUhfN_JByg",
   ),
   prod(
     networdConfig: NetwordConfig(
       host: "backendprod.ateliya.com",
       scheme: "https",
     ),
-    geminiApiKey: "AQ.Ab8RN6IXoCkvRHVQxMF1WmjSc3PkvgW739nn1yeVrUhfN_JByg",
+    geminiApiKey: String.fromEnvironment(
+      'GEMINI_API_KEY_PROD',
+      defaultValue: String.fromEnvironment('GEMINI_API_KEY'),
+    ),
   );
 
   final NetwordConfig networdConfig;

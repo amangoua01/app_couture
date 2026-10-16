@@ -9,6 +9,7 @@ workflows:
       groups:
         # Ajoutez vos variables d'environnement (Keystore, etc.) dans ce groupe sur Codemagic
         - android-signing
+        - app-env
       flutter: stable
       xcode: latest
       cocoapods: default
@@ -30,6 +31,15 @@ workflows:
         script: |
           export PATH="$PATH:$HOME/.pub-cache/bin"
           fvm flutter pub get
+      - name: Configurer le fichier d'environnement (.env)
+        script: |
+          if [ -n "$DOTENV" ]; then
+            echo "$DOTENV" > .env
+          else
+            echo "GEMINI_API_KEY_DEV=$GEMINI_API_KEY_DEV" >> .env
+            echo "GEMINI_API_KEY_PROD=$GEMINI_API_KEY_PROD" >> .env
+            echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> .env
+          fi
       - name: Configurer les clés de signature Android (Keystore)
         script: |
           # Exemple de décodage du fichier Keystore si stocké sous forme de variable d'environnement Base64 :
@@ -42,7 +52,7 @@ workflows:
       - name: Build de l'application (Release App Bundle)
         script: |
           export PATH="$PATH:$HOME/.pub-cache/bin"
-          fvm flutter build appbundle --release
+          fvm flutter build appbundle --release --dart-define-from-file=.env
     artifacts:
       - build/app/outputs/bundle/release/*.aab
       - build/app/outputs/flutter-apk/*.apk
@@ -62,6 +72,7 @@ workflows:
       groups:
         # Ajoutez vos variables d'environnement (Apple Developer Portal, Certificats, etc.) sur Codemagic
         - ios-signing
+        - app-env
       flutter: stable
       xcode: latest
       cocoapods: default
@@ -89,13 +100,22 @@ workflows:
         script: |
           export PATH="$PATH:$HOME/.pub-cache/bin"
           fvm flutter pub get
+      - name: Configurer le fichier d'environnement (.env)
+        script: |
+          if [ -n "$DOTENV" ]; then
+            echo "$DOTENV" > .env
+          else
+            echo "GEMINI_API_KEY_DEV=$GEMINI_API_KEY_DEV" >> .env
+            echo "GEMINI_API_KEY_PROD=$GEMINI_API_KEY_PROD" >> .env
+            echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> .env
+          fi
       - name: Installer les CocoaPods
         script: |
           cd ios && pod install --repo-update
       - name: Build de l'application (Release IPA)
         script: |
           export PATH="$PATH:$HOME/.pub-cache/bin"
-          fvm flutter build ipa --release --export-options-plist=$HOME/export_options.plist
+          fvm flutter build ipa --release --export-options-plist=$HOME/export_options.plist --dart-define-from-file=.env
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
