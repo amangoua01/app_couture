@@ -1,6 +1,7 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/buttons/c_button.dart';
 import 'package:ateliya/tools/widgets/c_tab_bar.dart';
+import 'package:ateliya/tools/widgets/swipe_tabs.dart';
 import 'package:ateliya/tools/widgets/command_tile.dart';
 import 'package:ateliya/tools/widgets/empty_page.dart';
 import 'package:ateliya/tools/widgets/inputs/c_date_form_field.dart';
@@ -79,7 +80,17 @@ class CommandeListPage extends StatelessWidget {
                   isScrollable: true,
                 ),
                 Expanded(
-                  child: PlaceholderBuilder(
+                  // Balayer l'écran change d'onglet, comme un toucher sur la barre.
+                  child: SwipeTabs<int>(
+                    values: [
+                      for (var i = 0; i < CommandeListVctl.tabs.length; i++) i,
+                    ],
+                    selection: ctl.tabIndex,
+                    onChanged: (i) {
+                      DefaultTabController.of(context).animateTo(i);
+                      ctl.tabIndex = i;
+                    },
+                    child: PlaceholderBuilder(
                     condition: !ctl.isLoading,
                     placeholder: const Center(
                       child: CircularProgressIndicator(),
@@ -142,6 +153,7 @@ class CommandeListPage extends StatelessWidget {
                         ),
                       );
                     },
+                  ),
                   ),
                 ),
               ],

@@ -269,14 +269,7 @@ class DetailForfaitSubPage extends StatelessWidget {
                   height: 50,
                   child: Container(
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          AppColors.primary,
-                          Color(0xFF135043),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: AppColors.primary,
                       borderRadius: BorderRadius.circular(25),
                       boxShadow: [
                         BoxShadow(

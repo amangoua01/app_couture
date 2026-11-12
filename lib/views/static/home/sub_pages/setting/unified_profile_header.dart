@@ -29,11 +29,7 @@ class UnifiedProfileHeader extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF0F2620), Color(0xFF133C30)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Color(0xFF0F2620),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

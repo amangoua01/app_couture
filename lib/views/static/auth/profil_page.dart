@@ -81,11 +81,7 @@ class _IdentityBanner extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.primary, AppColors.primaryDark],
-          ),
+          color: AppColors.primary,
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
         ),
         padding: EdgeInsets.only(

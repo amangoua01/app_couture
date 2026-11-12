@@ -322,14 +322,7 @@ class EditionVenteMultiplePage extends StatelessWidget {
                                   ),
                                   padding: const EdgeInsets.all(20),
                                   decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xFF0A3A30), // AppColors.primary
-                                        Color(0xFF135346),
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
+                                    color: Color(0xFF0A3A30),
                                     borderRadius: BorderRadius.circular(24),
                                     boxShadow: [
                                       BoxShadow(

@@ -1,4 +1,5 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/app_icons.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/constants/type_user_enum.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
@@ -7,7 +8,6 @@ import 'package:ateliya/views/static/home/home_page/scan_qr_code_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scrolling_fab_animated/flutter_scrolling_fab_animated.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
@@ -29,7 +29,7 @@ class VenteButton extends StatelessWidget {
               condition:
                   ctl.getEntite().value.type == EntiteEntrepriseType.boutique,
               placeholder: ScrollingFabAnimated(
-                width: 150,
+                width: 172,
                 // Le package applique un padding horizontal fixe de 15px de
                 // chaque côté de l'icône (30px), non paramétrable : en
                 // dessous de ~50 (30 + icône 18 + marge), le bouton replié
@@ -49,19 +49,12 @@ class VenteButton extends StatelessWidget {
                     ),
                   ),
                 ),
-                icon: SvgPicture.asset(
-                  "assets/images/svg/mesure.svg",
-                  width: 18,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.white,
-                    BlendMode.srcIn,
-                  ),
-                ),
+                icon: Icon(AppIconsBold.ruler, color: Colors.white, size: 22),
                 onPress: ctl.goToMesure,
                 scrollController: ctl.scrollCtl,
               ),
               child: ScrollingFabAnimated(
-                width: 140,
+                width: 160,
                 height: 50,
                 color: AppColors.secondary,
                 text: const Center(
@@ -77,9 +70,9 @@ class VenteButton extends StatelessWidget {
                 // Caisse enregistreuse : plus parlant pour "faire une
                 // vente" que l'icône boutique utilisée jusque-là.
                 icon: const Icon(
-                  Icons.point_of_sale_rounded,
+                  AppIconsBold.cashRegister,
                   color: Colors.white,
-                  size: 19,
+                  size: 21,
                 ),
                 onPress: ctl.goToVente,
                 scrollController: ctl.scrollCtl,
@@ -93,8 +86,8 @@ class VenteButton extends StatelessWidget {
               foregroundColor: Colors.white,
               activeBackgroundColor: AppColors.primary,
               activeForegroundColor: Colors.white,
-              icon: Icons.menu_open_rounded,
-              activeIcon: Icons.close_rounded,
+              icon: AppIconsBold.plus,
+              activeIcon: AppIconsBold.x,
               children: [
                 SpeedDialChild(
                   label: "Créer un client",
@@ -106,14 +99,7 @@ class VenteButton extends StatelessWidget {
                   labelBackgroundColor: Colors.white,
                   backgroundColor: Colors.white,
                   foregroundColor: AppColors.primary,
-                  child: SvgPicture.asset(
-                    "assets/images/svg/client.svg",
-                    width: 22,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.primary,
-                      BlendMode.srcIn,
-                    ),
-                  ),
+                  child: Icon(AppIconsBold.userPlus, color: AppColors.primary, size: 22),
                   onTap: ctl.goToClient,
                 ),
                 SpeedDialChild(
@@ -125,40 +111,19 @@ class VenteButton extends StatelessWidget {
                   backgroundColor: Colors.white,
                   foregroundColor: AppColors.primary,
                   onTap: ctl.goToTransfert,
-                  child: SvgPicture.asset(
-                    "assets/images/svg/transfer_stock.svg",
-                    width: 22,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.primary,
-                      BlendMode.srcIn,
-                    ),
-                  ),
+                  child: Icon(AppIconsBold.arrowsLeftRight, color: AppColors.primary, size: 22),
                 ),
                 SpeedDialChild(
                   visible: ctl.user.isAdmin,
                   label: "Créer une dépense",
-                  child: SvgPicture.asset(
-                    "assets/images/svg/depense.svg",
-                    width: 20,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.srcIn,
-                    ),
-                  ),
+                  child: Icon(AppIconsBold.receipt, color: Colors.white, size: 22),
                   backgroundColor: AppColors.primary,
                   onTap: ctl.goToDepense,
                 ),
                 SpeedDialChild(
                   backgroundColor: AppColors.primary,
                   label: "Scanner un reçu",
-                  child: SvgPicture.asset(
-                    "assets/images/svg/qr_code.svg",
-                    width: 30,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.srcIn,
-                    ),
-                  ),
+                  child: Icon(AppIconsBold.qrCode, color: Colors.white, size: 22),
                   onTap: () => Get.to(() => const ScanQrCodePage()),
                 ),
               ],

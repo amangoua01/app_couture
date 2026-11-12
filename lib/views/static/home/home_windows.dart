@@ -1,14 +1,12 @@
 import 'package:ateliya/data/models/boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/app_icons.dart';
 import 'package:ateliya/tools/constants/type_user_enum.dart';
 import 'package:ateliya/tools/widgets/animations/fondu_indexed_stack.dart';
 import 'package:ateliya/views/controllers/home/home_windows_vctl.dart';
 import 'package:ateliya/views/static/home/widgets/floating_nav_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:icofont_flutter/icofont_flutter.dart';
 
 class HomeWindows extends StatelessWidget {
   const HomeWindows({super.key});
@@ -30,27 +28,44 @@ class HomeWindows extends StatelessWidget {
 
           final elements = isAc
               ? const [
-                  ElementNavigation(icone: IcoFontIcons.uiHome, libelle: "Accueil"),
-                  ElementNavigation(icone: IcoFontIcons.uiSettings, libelle: "Options"),
+                  ElementNavigation(
+                    icone: AppIcons.house,
+                    iconeActive: AppIconsFill.house,
+                    libelle: "Accueil",
+                  ),
+                  ElementNavigation(
+                    icone: AppIcons.gearSix,
+                    iconeActive: AppIconsFill.gearSix,
+                    libelle: "Options",
+                  ),
                 ]
               : [
-                  const ElementNavigation(icone: IcoFontIcons.uiHome, libelle: "Accueil"),
-                  ElementNavigation(icone: FontAwesomeIcons.gauge.data, libelle: "Stats"),
+                  const ElementNavigation(
+                    icone: AppIcons.house,
+                    iconeActive: AppIconsFill.house,
+                    libelle: "Accueil",
+                  ),
+                  const ElementNavigation(
+                    icone: AppIcons.chartLineUp,
+                    iconeActive: AppIconsBold.chartLineUp,
+                    libelle: "Stats",
+                  ),
                   if (isBoutique)
-                    ElementNavigation(
-                      icone: Icons.storefront_rounded,
+                    const ElementNavigation(
+                      icone: AppIcons.storefront,
+                      iconeActive: AppIconsFill.storefront,
                       libelle: "Boutique",
-                      icone0nglet: SvgPicture.asset(
-                        "assets/images/svg/store.svg",
-                        width: 22,
-                        colorFilter: ColorFilter.mode(
-                          ctl.page == 4 ? Colors.white : Colors.grey[400]!,
-                          BlendMode.srcIn,
-                        ),
-                      ),
                     ),
-                  const ElementNavigation(icone: IcoFontIcons.list, libelle: "Activités"),
-                  const ElementNavigation(icone: IcoFontIcons.uiSettings, libelle: "Options"),
+                  const ElementNavigation(
+                    icone: AppIcons.listChecks,
+                    iconeActive: AppIconsBold.listChecks,
+                    libelle: "Activités",
+                  ),
+                  const ElementNavigation(
+                    icone: AppIcons.gearSix,
+                    iconeActive: AppIconsFill.gearSix,
+                    libelle: "Options",
+                  ),
                 ];
 
           return Scaffold(
