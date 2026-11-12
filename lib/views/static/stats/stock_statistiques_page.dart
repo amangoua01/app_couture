@@ -42,6 +42,37 @@ class StockStatistiquesPage extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                     )
+                    : ctl.data == null && ctl.errorMessage != null
+                    ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              size: 48,
+                              color: Colors.grey.shade500,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              ctl.errorMessage!,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 15),
+                            ),
+                            const SizedBox(height: 16),
+                            OutlinedButton(
+                              onPressed: () {
+                                ctl.isLoading = true;
+                                ctl.update();
+                                ctl.fetchData();
+                              },
+                              child: const Text("Réessayer"),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
                     : Column(
                       children: [
                         const CTabBar(

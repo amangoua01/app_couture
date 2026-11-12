@@ -10,6 +10,11 @@ class StockStatistiquesVctl extends AuthViewController {
   StockStatistiques? data;
   bool isLoading = true;
 
+  /// Message renvoyé par le serveur quand le chargement échoue (abonnement
+  /// requis, boutique introuvable…) : sans lui, la page affichait des zéros
+  /// trompeurs.
+  String? errorMessage;
+
   PeriodStatReq params = PeriodStatReq(filtre: PeriodStat.mois);
   int periodIndex = 1;
 
@@ -41,6 +46,9 @@ class StockStatistiquesVctl extends AuthViewController {
     final res = await _api.getStockStatistiques(entite.id!, params);
     if (res.status && res.data != null) {
       data = res.data;
+      errorMessage = null;
+    } else if (data == null) {
+      errorMessage = res.message;
     }
 
     isLoading = false;
