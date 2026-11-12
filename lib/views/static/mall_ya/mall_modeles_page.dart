@@ -202,15 +202,7 @@ class MallModelesPage extends StatelessWidget {
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xFF062A22),
-                          AppColors.primary,
-                          Color(0xFF0D5040),
-                        ],
-                      ),
+                      color: AppColors.primary,
                       borderRadius:
                           BorderRadius.vertical(bottom: Radius.circular(32)),
                     ),

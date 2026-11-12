@@ -33,15 +33,7 @@ class MallStatusPage extends StatelessWidget {
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xFF062A22),
-                          AppColors.primary,
-                          Color(0xFF0D5040),
-                        ],
-                      ),
+                      color: AppColors.primary,
                       borderRadius:
                           BorderRadius.vertical(bottom: Radius.circular(32)),
                     ),
@@ -253,11 +245,7 @@ class _StatusBubble extends StatelessWidget {
             height: 58,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: [_kColor, Color(0xFF26A69A)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: _kColor,
               border: Border.all(color: _kColor, width: 2.5),
             ),
             child: ClipOval(
@@ -529,14 +517,7 @@ class _StatusViewerState extends State<_StatusViewer>
             height: 120,
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.7),
-                    Colors.transparent,
-                  ],
-                ),
+                color: Colors.black.withValues(alpha: 0.4),
               ),
             ),
           ),

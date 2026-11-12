@@ -12,6 +12,7 @@ import 'package:ateliya/views/static/home/home_page/annexe/vente_button.dart';
 import 'package:ateliya/views/static/home/home_page/widgets/travaux_stats.dart';
 import 'package:ateliya/views/static/home/widgets/no_entite_selected_view.dart';
 import 'package:ateliya/views/static/home/widgets/roadmap_onboarding_widget.dart';
+import 'package:ateliya/tools/widgets/mall_entry_card.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -61,6 +62,13 @@ class HomePage extends StatelessWidget {
                       onToggleObscure: ctl.toggleObscureBalance,
                     ),
                   ),
+                  if (ctl.user.isAdmin) ...[
+                    const Gap(12),
+                    MallEntryCard(
+                      code: ctl.user.entreprise?.codeMarchand,
+                      compact: true,
+                    ),
+                  ],
                   const Gap(24),
                   Visibility(
                     visible:

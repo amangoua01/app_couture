@@ -2,6 +2,7 @@ import 'package:ateliya/data/models/user.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/env.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
+import 'package:ateliya/tools/widgets/mall_entry_card.dart';
 import 'package:ateliya/tools/widgets/settings/quick_profile_card.dart';
 import 'package:ateliya/tools/widgets/settings/setting_section_label.dart';
 import 'package:ateliya/tools/widgets/settings/settings_group.dart';
@@ -49,6 +50,12 @@ class SettingPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // La boutique en ligne passe avant tout le reste : c'est
+                  // la fonction la plus facile à manquer.
+                  if (!isSearching && ctl.user.isAdmin) ...[
+                    MallEntryCard(code: ctl.user.entreprise?.codeMarchand),
+                    const Gap(16),
+                  ],
                   if (!isSearching) ...[
                     UnifiedProfileHeader(ctl: ctl),
                     const Gap(16),
