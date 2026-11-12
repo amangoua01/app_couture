@@ -1,9 +1,8 @@
 import 'package:ateliya/api/statistique_api.dart';
+import 'package:ateliya/data/models/stats/globale_stats.dart';
 import 'package:ateliya/data/models/stats/statistiques_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
-import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/constants/period_stat.dart';
-import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/date_time_range.dart';
 import 'package:ateliya/tools/models/period_stat_req.dart';
 import 'package:ateliya/tools/widgets/messages/c_message_dialog.dart';
@@ -12,85 +11,101 @@ import 'package:ateliya/views/static/stats/bilan_pdf_preview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+/// Statistiques globales de l'entreprise.
+///
+/// Chaque période (0 jour, 1 mois, 2 année, 3 plage libre) garde ses chiffres :
+/// on glisse d'un onglet à l'autre sans attendre. Le filtre « Ensemble /
+/// Boutiques / Ateliers » ne recharge rien, il change seulement la lecture.
 class StatistiqueEntreprisePageVctl extends AuthViewController {
   int periodIndex = 0;
+  int scope = 0; // 0 ensemble, 1 boutiques, 2 ateliers
   final api = StatistiqueApi();
-  final params = PeriodStatReq();
-  bool isLoading = false;
-  StatistiquesBoutique data = StatistiquesBoutique();
+
+  final Map<int, GlobaleStats> _byPeriod = {};
+  final Set<int> _loading = {};
   var dateRange = CustomDateTimeRange.now();
 
   int get selectedIndex => periodIndex;
   set selectedIndex(int value) => periodIndex = value;
 
-  Future<void> fetchStats({int indexPeriod = 0, DateTimeRange? range}) async {
-    params.filtre = PeriodStat.values[indexPeriod];
-    periodIndex = indexPeriod;
+  GlobaleStats? dataFor(int index) => _byPeriod[index];
+  bool hasData(int index) => _byPeriod.containsKey(index);
+  bool get isLoading => _loading.contains(periodIndex) && !hasData(periodIndex);
 
-    // S'adapte à l'entité active (boutique ou atelier) : le backend agrège
-    // alors toutes les boutiques OU tous les ateliers de l'entreprise avec
-    // les KPI propres à ce type, plutôt que de tout mélanger.
-    final entiteType = getEntite().value.type;
-    params.espaceType =
-        entiteType == EntiteEntrepriseType.boutique
-            ? "boutique"
-            : entiteType == EntiteEntrepriseType.succursale
-            ? "succursale"
-            : null;
+  @visibleForTesting
+  void seed(int index, GlobaleStats value) => _byPeriod[index] = value;
 
-    if (range != null) {
-      dateRange = range;
-      params.dateDebut = range.start;
-      params.dateFin = range.end;
-    } else {
-      if (params.filtre == PeriodStat.jour) {
-        dateRange = CustomDateTimeRange.now();
-        params.dateDebut = dateRange.start;
-        params.dateFin = dateRange.end;
-      } else {
-        params.dateDebut = null;
-        params.dateFin = null;
-      }
-    }
-
-    // Réaffiche les dernières statistiques connues pour cette période le
-    // temps que le réseau réponde.
-    final cached = await api.readCachedDashboardData(params);
-    final hasContent = cached != null;
-    if (hasContent) {
-      data = cached;
-      update();
-    }
-
-    isLoading = !hasContent;
+  void setScope(int value) {
+    if (value == scope) return;
+    scope = value;
     update();
+  }
 
-    // Le voile de chargement bloquant ne sert qu'au tout premier chargement :
-    // une fois des données affichées, on rafraîchit en silence.
-    final request = api.getDashboardData(params);
-    var res = await (hasContent ? request : request.load());
+  /// Bloc à afficher pour la période et le filtre courants.
+  StatistiquesBoutique blockFor(GlobaleStats g) => switch (scope) {
+    1 => g.boutiques,
+    2 => g.ateliers,
+    _ => g.ensemble,
+  };
 
-    // Retry une fois en cas d'erreur réseau
+  PeriodStatReq _paramsFor(int index, DateTimeRange? range) {
+    final p = PeriodStatReq()..filtre = PeriodStat.values[index];
+    if (index == 0) {
+      final today = CustomDateTimeRange.now();
+      p.dateDebut = today.start;
+      p.dateFin = today.end;
+    } else if (index == 3 && range != null) {
+      p.dateDebut = range.start;
+      p.dateFin = range.end;
+    }
+    return p;
+  }
+
+  Future<void> _load(int index, {DateTimeRange? range}) async {
+    if (!_loading.add(index)) return;
+    update();
+    final params = _paramsFor(index, range);
+    var res = await api.getGlobale(params);
     if (!res.status) {
       await Future.delayed(const Duration(seconds: 1));
-      final retryRequest = api.getDashboardData(params);
-      res = await (hasContent ? retryRequest : retryRequest.load());
+      res = await api.getGlobale(params);
     }
+    _loading.remove(index);
+    if (res.status && res.data != null) {
+      _byPeriod[index] = res.data!;
+    } else if (index == periodIndex && !hasData(index)) {
+      CMessageDialog.show(message: res.message);
+    }
+    update();
+  }
 
-    isLoading = false;
-    if (res.status) {
-      data = res.data!;
-      update();
-    } else {
-      update();
-      if (!hasContent) CMessageDialog.show(message: res.message);
+  Future<void> _prefetchNeighbours() async {
+    for (final i in const [1, 0, 2]) {
+      if (i != periodIndex && !hasData(i)) await _load(i);
     }
+  }
+
+  Future<void> selectPeriod(int index) async {
+    if (index == periodIndex && hasData(index)) return;
+    periodIndex = index;
+    update();
+    if (!hasData(index)) await _load(index);
+  }
+
+  Future<void> refreshCurrent() =>
+      _load(periodIndex, range: periodIndex == 3 ? dateRange : null);
+
+  Future<void> fetchStats({int indexPeriod = 0, DateTimeRange? range}) async {
+    periodIndex = indexPeriod;
+    if (range != null) dateRange = range;
+    update();
+    await _load(indexPeriod, range: indexPeriod == 3 ? dateRange : null);
   }
 
   String get periodeLabel {
     switch (periodIndex) {
       case 0:
-        return "journalier (${dateRange.toFrenchDate})";
+        return "journalier (${CustomDateTimeRange.now().toFrenchDate})";
       case 1:
         return "mensuel";
       case 2:
@@ -101,9 +116,11 @@ class StatistiqueEntreprisePageVctl extends AuthViewController {
   }
 
   void exportBilanPdf() {
+    final g = dataFor(periodIndex);
+    if (g == null) return;
     Get.to(
       () => BilanPdfPreviewPage(
-        data: data,
+        data: blockFor(g),
         periodeLabel: periodeLabel,
         entreprise: user.entreprise,
       ),
@@ -116,28 +133,26 @@ class StatistiqueEntreprisePageVctl extends AuthViewController {
       initialDateRange: dateRange,
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: Colors.white,
-              onSurface: AppColors.primary,
-            ),
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: const ColorScheme.light(
+            primary: AppColors.primary,
+            onPrimary: Colors.white,
+            onSurface: AppColors.primary,
           ),
-          child: child!,
-        );
-      },
+        ),
+        child: child!,
+      ),
     );
-
     if (picked != null) {
-      fetchStats(indexPeriod: 3, range: picked);
+      _byPeriod.remove(3);
+      await fetchStats(indexPeriod: 3, range: picked);
     }
   }
 
   @override
   void onReady() {
-    fetchStats();
+    _load(periodIndex).then((_) => _prefetchNeighbours());
     super.onReady();
   }
 }

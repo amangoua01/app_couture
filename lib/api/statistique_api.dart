@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:ateliya/api/abstract/web_controller.dart';
+import 'package:ateliya/data/models/stats/comparaison_entite.dart';
+import 'package:ateliya/data/models/stats/globale_stats.dart';
 import 'package:ateliya/data/models/stats/statistiques_boutique.dart';
 import 'package:ateliya/data/models/stats/stock_statistiques.dart';
 import 'package:ateliya/tools/components/data_cache.dart';
@@ -125,5 +127,48 @@ class StatistiqueApi extends WebController {
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
     }
+  }
+
+  /// Vue globale (boutiques + ateliers + période précédente) en un seul appel.
+  Future<DataResponse<GlobaleStats>> getGlobale(PeriodStatReq params) async {
+    try {
+      final paramsJson = params.toJson()..remove('espaceType');
+      final res = await client.post(
+        urlBuilder(api: "ateliya/globale"),
+        body: paramsJson.parseToJson(),
+        headers: authHeaders,
+      );
+      if (res.statusCode == 404) return _globaleParRepli(params);
+      final body = jsonDecode(res.body);
+      if (res.statusCode == 200 && body["data"] != null) {
+        return DataResponse.success(
+          data: GlobaleStats.fromJson(Map<String, dynamic>.from(body["data"])),
+        );
+      }
+      return DataResponse.error(message: body['message']);
+    } catch (e, st) {
+      return DataResponse.error(systemError: e, stackTrace: st);
+    }
+  }
+
+  /// Serveur pas encore à jour : on assemble la vue globale à partir de deux
+  /// appels au tableau de bord (boutiques puis ateliers), sans comparaison
+  /// avec la période précédente.
+  Future<DataResponse<GlobaleStats>> _globaleParRepli(PeriodStatReq params) async {
+    final b = await getDashboardData(params..espaceType = "boutique");
+    final a = await getDashboardData(params..espaceType = "succursale");
+    params.espaceType = null;
+    if (!b.status || !a.status) {
+      return DataResponse.error(message: (b.status ? a : b).message);
+    }
+    return DataResponse.success(
+      data: GlobaleStats(
+        boutiques: b.data,
+        ateliers: a.data,
+        entites: [
+          for (final e in b.data?.comparaisonEntites ?? <ComparaisonEntite>[]) e,
+        ],
+      ),
+    );
   }
 }
