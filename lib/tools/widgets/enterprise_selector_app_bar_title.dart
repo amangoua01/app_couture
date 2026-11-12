@@ -1,5 +1,6 @@
 import 'package:ateliya/data/models/abstract/entite_entreprise.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/app_icons.dart';
 import 'package:ateliya/tools/constants/cache_key.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
 import 'package:ateliya/tools/widgets/animations/pressable.dart';
@@ -50,72 +51,69 @@ class EnterpriseSelectorAppBarTitle extends StatelessWidget {
         ).then((e) {
           if (e != null) onSelectionChanged();
         }),
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(8, 7, 12, 7),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(
-                color: AppColors.secondary.withValues(alpha: 0.5),
-                width: 1,
-              ),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: AppColors.secondary.withValues(alpha: 0.75),
+              width: 1.2,
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: AppColors.secondary.withValues(alpha: 0.25),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    isAtelier ? Icons.home_work_rounded : Icons.storefront_rounded,
-                    color: Colors.white,
-                    size: 14,
-                  ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: AppColors.secondary.withValues(alpha: 0.22),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                const Gap(8),
-                Flexible(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        libelle.isEmpty ? "Sélectionner une entreprise" : libelle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w700,
-                          height: 1.1,
-                        ),
-                      ),
-                      if (libelle.isNotEmpty)
-                        Text(
-                          isAtelier ? "Atelier" : "Boutique",
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.65),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            height: 1.1,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                const Gap(4),
-                const Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  color: AppColors.secondary,
+                child: Icon(
+                  isAtelier ? AppIcons.factory : AppIcons.storefront,
+                  color: Colors.white,
                   size: 18,
                 ),
-              ],
-            ),
+              ),
+              const Gap(10),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      libelle.isEmpty ? "Sélectionner une entreprise" : libelle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        height: 1.15,
+                      ),
+                    ),
+                    if (libelle.isNotEmpty)
+                      Text(
+                        isAtelier ? "Atelier" : "Boutique",
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.65),
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w500,
+                          height: 1.15,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const Gap(6),
+              const Icon(
+                AppIconsBold.caretDown,
+                color: AppColors.secondary,
+                size: 16,
+              ),
+            ],
           ),
         ),
       );

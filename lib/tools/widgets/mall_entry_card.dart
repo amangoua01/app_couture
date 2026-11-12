@@ -37,9 +37,9 @@ class _MallEntryCardState extends State<MallEntryCard> {
   Widget _grand() {
     return Material(
       color: AppColors.secondary,
-      borderRadius: BorderRadius.circular(6),
+      borderRadius: BorderRadius.circular(26),
       child: InkWell(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(26),
         onTap: _ouvrir,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(18, 18, 14, 18),
@@ -76,8 +76,11 @@ class _MallEntryCardState extends State<MallEntryCard> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.all(8),
-                color: AppColors.primaryDark,
+                padding: const EdgeInsets.all(11),
+                decoration: const BoxDecoration(
+                  color: AppColors.primaryDark,
+                  shape: BoxShape.circle,
+                ),
                 child: const Icon(
                   AppIconsBold.arrowRight,
                   size: 18,
@@ -94,12 +97,12 @@ class _MallEntryCardState extends State<MallEntryCard> {
   Widget _compact() {
     return InkWell(
       onTap: _ouvrir,
-      borderRadius: BorderRadius.circular(6),
+      borderRadius: BorderRadius.circular(22),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(22),
           border: Border.all(color: const Color(0xFFDDE3DF)),
         ),
         child: Row(

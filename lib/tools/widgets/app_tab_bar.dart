@@ -83,24 +83,19 @@ class _AppTabBarState extends State<AppTabBar> {
       labelPadding: widget.isScrollable
           ? const EdgeInsets.symmetric(horizontal: 18)
           : null,
-      labelColor: AppColors.textDark,
-      unselectedLabelColor: AppColors.textMuted,
-      labelStyle: const TextStyle(
-        fontSize: 14.5,
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.1,
-      ),
+      labelColor: Colors.white,
+      unselectedLabelColor: AppColors.primary,
+      labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
       unselectedLabelStyle: const TextStyle(
-        fontSize: 14.5,
-        fontWeight: FontWeight.w500,
-        letterSpacing: -0.1,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
       ),
-      indicator: const UnderlineTabIndicator(
-        borderSide: BorderSide(color: AppColors.secondary, width: 3.5),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(3)),
-        insets: EdgeInsets.symmetric(horizontal: 4),
+      // La pastille glisse avec le doigt quand on balaie l'écran.
+      indicator: BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(30),
       ),
-      indicatorSize: TabBarIndicatorSize.label,
+      indicatorSize: TabBarIndicatorSize.tab,
       dividerColor: Colors.transparent,
       splashFactory: NoSplash.splashFactory,
       overlayColor: WidgetStateProperty.all(Colors.transparent),
@@ -108,7 +103,7 @@ class _AppTabBarState extends State<AppTabBar> {
       tabs: [
         for (final t in widget.tabs)
           Tab(
-            height: 48,
+            height: 38,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -121,19 +116,19 @@ class _AppTabBarState extends State<AppTabBar> {
                   const SizedBox(width: 7),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
+                      horizontal: 7,
                       vertical: 1.5,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.09),
+                      color: AppColors.secondary,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       '${t.count}',
                       style: const TextStyle(
                         fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.primaryDark,
                       ),
                     ),
                   ),
@@ -144,16 +139,26 @@ class _AppTabBarState extends State<AppTabBar> {
       ],
     );
 
-    return Container(
-      margin: widget.margin,
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFFDDE3DF))),
+    final capsule = Container(
+      height: 46,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.07),
+        borderRadius: BorderRadius.circular(30),
       ),
+      child: bar,
+    );
+
+    return Padding(
+      padding: widget.margin == EdgeInsets.zero
+          ? const EdgeInsets.fromLTRB(16, 6, 16, 10)
+          : widget.margin,
       child: widget.trailing == null
-          ? bar
+          ? capsule
           : Row(
               children: [
-                Expanded(child: bar),
+                Expanded(child: capsule),
+                const SizedBox(width: 10),
                 widget.trailing!,
               ],
             ),

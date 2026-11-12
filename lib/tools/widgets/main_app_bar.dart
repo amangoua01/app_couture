@@ -28,7 +28,8 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: AppColors.primary,
       elevation: 0,
-      centerTitle: true,
+      centerTitle: false,
+      titleSpacing: 8,
       automaticallyImplyLeading: false,
       leadingWidth: 60,
       leading: Padding(

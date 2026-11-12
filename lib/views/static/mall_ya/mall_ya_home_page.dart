@@ -70,10 +70,10 @@ class _CarteVitrine extends StatelessWidget {
     final configure = code != null && code.isNotEmpty;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: AppColors.primary,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(26),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,62 +115,74 @@ class _CarteVitrine extends StatelessWidget {
               style: TextStyle(fontSize: 12.5, color: Colors.white70),
             ),
           const SizedBox(height: 18),
+          // Geste principal : grand bouton rond, comme « Déposer » sur l'accueil.
           SizedBox(
             width: double.infinity,
+            height: 54,
             child: FilledButton.icon(
               onPressed: configure ? () => ouvrirVitrine(code) : null,
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.secondary,
-                foregroundColor: AppColors.primaryDark,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: Colors.white24,
+                shape: const StadiumBorder(),
+                textStyle: const TextStyle(
+                  fontSize: 15.5,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-              icon: const Icon(AppIconsBold.globe, size: 19),
-              label: const Text(
-                'Voir ma boutique',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
+              icon: const Icon(AppIconsBold.globe, size: 21),
+              label: const Text('Voir ma boutique'),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: configure ? ctl.shareBoutique : null,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: Colors.white38),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  icon: const Icon(AppIcons.shareNetwork, size: 18),
-                  label: const Text('Partager'),
+                child: _BoutonRond(
+                  icon: AppIcons.shareNetwork,
+                  label: 'Partager',
+                  onTap: configure ? ctl.shareBoutique : null,
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: configure ? ctl.copierLien : null,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: Colors.white38),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  icon: const Icon(AppIcons.copy, size: 18),
-                  label: const Text('Copier le lien'),
+                child: _BoutonRond(
+                  icon: AppIcons.copy,
+                  label: 'Copier le lien',
+                  onTap: configure ? ctl.copierLien : null,
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Bouton rond à contour blanc, pour les gestes secondaires sur fond vert.
+class _BoutonRond extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+  const _BoutonRond({required this.icon, required this.label, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 48,
+      child: OutlinedButton.icon(
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Colors.white,
+          side: const BorderSide(color: Colors.white54),
+          shape: const StadiumBorder(),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          textStyle: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600),
+        ),
+        icon: Icon(icon, size: 18),
+        label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
       ),
     );
   }
@@ -203,7 +215,7 @@ class _Groupe extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: const Color(0xFFDDE3DF)),
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
             children: [

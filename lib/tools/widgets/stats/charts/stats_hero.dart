@@ -44,9 +44,9 @@ class StatsHero extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: StatsStyle.ink,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(26),
       ),
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+      padding: const EdgeInsets.fromLTRB(22, 22, 22, 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

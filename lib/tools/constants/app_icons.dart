@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 
 /// Trait fin (usage courant).
 abstract class AppIcons {
+  static const IconData arrowUpRight = IconData(0xe092, fontFamily: 'PhosphorRegular');
   static const IconData house = IconData(0xe2c2, fontFamily: 'PhosphorRegular');
   static const IconData houseLine = IconData(0xe2c4, fontFamily: 'PhosphorRegular');
   static const IconData chartLineUp = IconData(0xe156, fontFamily: 'PhosphorRegular');
@@ -161,6 +162,7 @@ abstract class AppIcons {
 
 /// Trait épais (accents, onglet actif).
 abstract class AppIconsBold {
+  static const IconData arrowUpRight = IconData(0xe092, fontFamily: 'PhosphorBold');
   static const IconData house = IconData(0xe2c2, fontFamily: 'PhosphorBold');
   static const IconData houseLine = IconData(0xe2c4, fontFamily: 'PhosphorBold');
   static const IconData chartLineUp = IconData(0xe156, fontFamily: 'PhosphorBold');
@@ -316,6 +318,7 @@ abstract class AppIconsBold {
 
 /// Pictogrammes pleins (état sélectionné).
 abstract class AppIconsFill {
+  static const IconData arrowUpRight = IconData(0xe092, fontFamily: 'PhosphorFill');
   static const IconData house = IconData(0xe2c2, fontFamily: 'PhosphorFill');
   static const IconData houseLine = IconData(0xe2c4, fontFamily: 'PhosphorFill');
   static const IconData chartLineUp = IconData(0xe156, fontFamily: 'PhosphorFill');

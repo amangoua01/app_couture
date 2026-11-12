@@ -85,13 +85,20 @@ class _OngletsState extends State<_Onglets> with SingleTickerProviderStateMixin 
         AppTabBar(
           controller: _tabs,
           tabs: [for (final t in StatistiquePage._titres) AppTabItem(t)],
-          trailing: IconButton(
-            tooltip: 'Choisir une période',
-            onPressed: () => ctl.pickDateRange(context),
-            icon: const Icon(
-              AppIcons.calendarBlank,
-              color: StatsStyle.ink,
-              size: 24,
+          trailing: Material(
+            color: Colors.white,
+            shape: const CircleBorder(side: BorderSide(color: Color(0xFFDDE3DF))),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () => ctl.pickDateRange(context),
+              child: const Padding(
+                padding: EdgeInsets.all(11),
+                child: Icon(
+                  AppIcons.calendarBlank,
+                  color: StatsStyle.ink,
+                  size: 22,
+                ),
+              ),
             ),
           ),
         ),
