@@ -1,5 +1,6 @@
 import 'package:ateliya/api/categorie_mesure_api.dart';
 import 'package:ateliya/api/categorie_type_mesure_api.dart';
+import 'package:ateliya/api/type_mesure_api.dart';
 import 'package:ateliya/data/dto/create_categorie_type_mesure_dto.dart';
 import 'package:ateliya/data/models/categorie_mesure.dart';
 import 'package:ateliya/data/models/categorie_type_mesure.dart';
@@ -17,6 +18,12 @@ class CategorieTypeMesureListVctl extends GetxController {
   bool isOrderChanged = false;
 
   final categorieTypeMesureApi = CategorieTypeMesureApi();
+  final _typeMesureApi = TypeMesureApi();
+
+  /// Le sélecteur « Type pièce » lit la liste des types en cache et ne garde
+  /// que ceux qui ont des catégories : sans cette invalidation, un type
+  /// enrichi ici resterait absent du sélecteur.
+  Future<void> _refreshTypesCache() => _typeMesureApi.invalidateCache();
   List<CategorieMesure> categories = [];
   List<CategorieTypeMesure> categoriesType = [];
 
@@ -62,6 +69,7 @@ class CategorieTypeMesureListVctl extends GetxController {
         )
         .load();
     if (res.status) {
+      await _refreshTypesCache();
       categoriesType = res.data!;
       update();
       Get.back();
@@ -98,6 +106,7 @@ class CategorieTypeMesureListVctl extends GetxController {
 
     isLoading = false;
     if (res.status) {
+      await _refreshTypesCache();
       isOrderChanged = false;
       update();
     } else {
@@ -115,6 +124,7 @@ class CategorieTypeMesureListVctl extends GetxController {
     if (rep == true) {
       final res = await categorieTypeMesureApi.delete(id).load();
       if (res.status) {
+        await _refreshTypesCache();
         categoriesType.removeWhere((e) => e.id.value == id);
         update();
       } else {
