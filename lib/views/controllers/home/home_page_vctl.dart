@@ -39,14 +39,35 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
   /// Vrai tant qu'aucune réponse réseau n'est encore arrivée pour cette entité.
   bool isFirstLoad = true;
 
+  /// Entité dont `data` est le tableau de bord (type:id). Quand l'utilisateur
+  /// change de boutique ou d'atelier, l'écran repart de zéro au lieu de garder
+  /// les chiffres de l'entité précédente.
+  String? _entiteChargee;
+
+  /// Vrai pendant un chargement réseau : l'écran l'indique par une barre fine.
+  bool isRefreshing = false;
+
   Future<void> loadData() async {
     final entite = getEntite().value;
     loadUnreadCount();
-    if (entite.isNotEmpty) {
+    if (entite.isEmpty) return;
+
+    final cle = '${entite.type.name}:${entite.id}';
+    if (_entiteChargee != cle) {
+      _entiteChargee = cle;
+      data = AccueilData();
+      presentSubscription = false;
+      isFirstLoad = true;
+    }
+    isRefreshing = true;
+    update();
+
+    try {
       // Réaffiche le dernier tableau de bord connu avant l'appel réseau.
       var hasContent = !isFirstLoad;
       if (isFirstLoad) {
         final cached = await api.readCached(entite.id!, entite.type);
+        if (_entiteChargee != cle) return; // l'utilisateur a changé d'entité
         if (cached != null) {
           data = cached;
           presentSubscription = cached.subscriptionExpired;
@@ -59,16 +80,15 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
       // sinon on rafraîchit en silence sous les données déjà affichées.
       final request = api.getAccueilData(entite.id!, entite.type);
       final res = await (hasContent ? request : request.load());
+      if (_entiteChargee != cle) return;
       isFirstLoad = false;
       if (res.status) {
         data = res.data!;
         presentSubscription = data.subscriptionExpired;
-        update();
       } else {
         if (res.detailErrors == "endSubscription") {
           // Ancien backend : l'accueil était refusé au lieu d'être signalé.
           presentSubscription = true;
-          update();
         } else if (hasContent && await SyncService.isOffline()) {
           // Hors-ligne avec un tableau de bord déjà affiché (cache ou
           // chargement précédent) : pas besoin d'un message d'erreur
@@ -77,6 +97,9 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
           CMessageDialog.show(message: res.message);
         }
       }
+    } finally {
+      if (_entiteChargee == cle) isRefreshing = false;
+      update();
     }
   }
 
