@@ -14,7 +14,6 @@ import 'package:ateliya/views/static/depense/depense_list_page.dart';
 import 'package:ateliya/views/static/home/sub_pages/statistique_entreprise_page.dart';
 import 'package:ateliya/views/static/info/contact_us_page.dart';
 import 'package:ateliya/views/static/info/terms_conditions_page.dart';
-import 'package:ateliya/views/static/mall_ya/mall_ya_home_page.dart';
 import 'package:ateliya/views/static/modele/modele_list_page.dart';
 import 'package:ateliya/views/static/modele_boutique/modele_list_boutique_page.dart';
 import 'package:ateliya/views/static/ouvriers/bilan_paie_page.dart';
@@ -95,12 +94,6 @@ List<SettingSection> buildSettingSections(SettingPageVctl ctl) {
   final isAc = ctl.user.type?.code == TypeUserEnum.ac.code;
 
   return [
-    SettingSection(
-      label: "Gestion de mon entreprise",
-      entries: [
-        SettingEntry(title: "Mall Ya", icon: Icons.factory_outlined, color: AppColors.primary, visible: isAdmin, keywords: const ["marketplace", "vitrine"], onTap: () => Get.to(() => const MallYaHomePage())),
-      ],
-    ),
     SettingSection(
       label: "Finances & Comptabilité",
       entries: [

@@ -48,7 +48,7 @@ class _MallEntryCardState extends State<MallEntryCard> {
               const Icon(
                 AppIconsBold.storefront,
                 size: 34,
-                color: AppColors.primaryDark,
+                color: Colors.white,
               ),
               const SizedBox(width: 16),
               const Expanded(
@@ -61,7 +61,7 @@ class _MallEntryCardState extends State<MallEntryCard> {
                         fontSize: 15.5,
                         fontWeight: FontWeight.w700,
                         height: 1.2,
-                        color: AppColors.primaryDark,
+                        color: Colors.white,
                       ),
                     ),
                     SizedBox(height: 4),
@@ -69,7 +69,7 @@ class _MallEntryCardState extends State<MallEntryCard> {
                       'Voir, partager et configurer votre vitrine',
                       style: TextStyle(
                         fontSize: 12.5,
-                        color: AppColors.primaryDark,
+                        color: Colors.white,
                       ),
                     ),
                   ],
