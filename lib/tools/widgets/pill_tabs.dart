@@ -36,11 +36,11 @@ class PillTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hauteur = stacked ? 60.0 : 46.0;
+    final hauteur = stacked ? 50.0 : 46.0;
     return Container(
       margin: margin,
       height: hauteur,
-      padding: const EdgeInsets.all(4),
+      padding: EdgeInsets.all(stacked ? 3 : 4),
       decoration: BoxDecoration(
         color: _fond,
         borderRadius: BorderRadius.circular(hauteur),
@@ -114,19 +114,19 @@ class _Contenu extends StatelessWidget {
           AnimatedDefaultTextStyle(
             duration: const Duration(milliseconds: 200),
             style: TextStyle(
-              fontSize: 18,
-              height: 1.1,
+              fontSize: 15.5,
+              height: 1.05,
               fontWeight: FontWeight.w800,
               color: couleur,
               fontFeatures: const [FontFeature.tabularFigures()],
             ),
             child: Text('${tab.count}'),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           AnimatedDefaultTextStyle(
             duration: const Duration(milliseconds: 200),
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 10.5,
               fontWeight: FontWeight.w600,
               color: actif ? Colors.white70 : AppColors.textMuted,
             ),
