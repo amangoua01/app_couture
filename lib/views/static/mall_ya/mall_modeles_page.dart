@@ -1,5 +1,6 @@
 import 'package:ateliya/data/models/mall_modele_boutique.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/widgets/swipe_tabs.dart';
 import 'package:ateliya/views/controllers/mall_ya/mall_modeles_vctl.dart';
 import 'package:ateliya/views/static/mall_ya/mall_detail_modele_page.dart';
 import 'package:ateliya/views/static/mall_ya/mall_lot_promotions_page.dart';
@@ -18,168 +19,194 @@ class MallModelesPage extends StatelessWidget {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (_) => DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        maxChildSize: 0.9,
-        minChildSize: 0.4,
-        builder: (_, scrollCtrl) => Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFFF5F7FA),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Icon(Icons.archive_rounded, color: Colors.orange, size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      'Modèles archivés',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF062A22),
-                      ),
+      builder:
+          (_) => DraggableScrollableSheet(
+            initialChildSize: 0.6,
+            maxChildSize: 0.9,
+            minChildSize: 0.4,
+            builder:
+                (_, scrollCtrl) => Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF5F7FA),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(24),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'Appuyez sur un modèle pour le réactiver',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: ListView.builder(
-                  controller: scrollCtrl,
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                  itemCount: ctl.modelesArchives.length,
-                  itemBuilder: (_, i) {
-                    final item = ctl.modelesArchives[i];
-                    final photoUrl = item.modele?.photo?.fullUrl;
-                    final prix = double.tryParse(item.prix) ?? 0;
-                    final fmt = NumberFormat('#,###', 'fr_FR');
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: GestureDetector(
-                        onTap: () async {
-                          await ctl.reactiverModele(item.id);
-                          Get.back();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                                color: Colors.orange.withValues(alpha: 0.3)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.04),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: photoUrl != null
-                                    ? Image.network(photoUrl,
-                                        width: 56,
-                                        height: 56,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) =>
-                                            _archivePlaceholder())
-                                    : _archivePlaceholder(),
-                              ),
-                              const Gap(12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.modele?.libelle ?? '—',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 13,
-                                        color: Color(0xFF062A22),
-                                      ),
-                                    ),
-                                    const Gap(2),
-                                    Text(
-                                      '${fmt.format(prix)} FCFA',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFFC2185B),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: const Row(
-                                  children: [
-                                    Icon(Icons.restore_rounded,
-                                        color: Colors.orange, size: 14),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      'Réactiver',
-                                      style: TextStyle(
-                                        color: Colors.orange,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 12),
+                      Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                    );
-                  },
+                      const SizedBox(height: 16),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.archive_rounded,
+                              color: Colors.orange,
+                              size: 20,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Modèles archivés',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF062A22),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Appuyez sur un modèle pour le réactiver',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Expanded(
+                        child: ListView.builder(
+                          controller: scrollCtrl,
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                          itemCount: ctl.modelesArchives.length,
+                          itemBuilder: (_, i) {
+                            final item = ctl.modelesArchives[i];
+                            final photoUrl = item.modele?.photo?.fullUrl;
+                            final prix = double.tryParse(item.prix) ?? 0;
+                            final fmt = NumberFormat('#,###', 'fr_FR');
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await ctl.reactiverModele(item.id);
+                                  Get.back();
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: Colors.orange.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.04,
+                                        ),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child:
+                                            photoUrl != null
+                                                ? Image.network(
+                                                  photoUrl,
+                                                  width: 56,
+                                                  height: 56,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder:
+                                                      (_, __, ___) =>
+                                                          _archivePlaceholder(),
+                                                )
+                                                : _archivePlaceholder(),
+                                      ),
+                                      const Gap(12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.modele?.libelle ?? '—',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 13,
+                                                color: Color(0xFF062A22),
+                                              ),
+                                            ),
+                                            const Gap(2),
+                                            Text(
+                                              '${fmt.format(prix)} FCFA',
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w700,
+                                                color: Color(0xFFC2185B),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.orange.withValues(
+                                            alpha: 0.12,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        child: const Row(
+                                          children: [
+                                            Icon(
+                                              Icons.restore_rounded,
+                                              color: Colors.orange,
+                                              size: 14,
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              'Réactiver',
+                                              style: TextStyle(
+                                                color: Colors.orange,
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
           ),
-        ),
-      ),
     );
   }
 
   Widget _archivePlaceholder() => Container(
-        width: 56,
-        height: 56,
-        color: const Color(0xFFFFF3E0),
-        child:
-            const Icon(Icons.checkroom_rounded, color: Colors.orange, size: 24),
-      );
+    width: 56,
+    height: 56,
+    color: const Color(0xFFFFF3E0),
+    child: const Icon(Icons.checkroom_rounded, color: Colors.orange, size: 24),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -191,173 +218,244 @@ class MallModelesPage extends StatelessWidget {
         final items = ctl.filtered;
         return Scaffold(
           backgroundColor: const Color(0xFFF5F7FA),
-          body: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverAppBar(
-                pinned: true,
-                expandedHeight: 180,
-                backgroundColor: const Color(0xFF062A22),
-                automaticallyImplyLeading: false,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius:
-                          BorderRadius.vertical(bottom: Radius.circular(32)),
-                    ),
-                    padding: EdgeInsets.fromLTRB(16, topPadding + 56, 16, 20),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Gap(12),
-                        Text(
-                          'Mes modèles',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            height: 1.2,
-                            letterSpacing: -0.5,
-                          ),
+          body: SwipeTabs<int>(
+            values: const [0, 1, 2],
+            selection: ctl.tabIndex,
+            onChanged: ctl.setTab,
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverAppBar(
+                  pinned: true,
+                  expandedHeight: 180,
+                  backgroundColor: const Color(0xFF062A22),
+                  automaticallyImplyLeading: false,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Container(
+                      decoration: const BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.vertical(
+                          bottom: Radius.circular(32),
                         ),
-                        Gap(4),
-                        Text(
-                          'Gérez la visibilité de vos modèles sur le Mall.',
-                          style: TextStyle(fontSize: 12, color: Colors.white54),
-                        ),
-                        Gap(16),
-                      ],
-                    ),
-                  ),
-                ),
-                title: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => Get.back(),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.15)),
-                        ),
-                        child: const Icon(Icons.arrow_back_ios_new_rounded,
-                            color: Colors.white, size: 17),
                       ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.15)),
-                      ),
-                      child: Row(
+                      padding: EdgeInsets.fromLTRB(16, topPadding + 56, 16, 20),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.checkroom_rounded,
-                              color: Colors.white, size: 15),
-                          const Gap(6),
+                          Gap(12),
                           Text(
-                            '${items.length} modèle${items.length > 1 ? 's' : ''}',
-                            style: const TextStyle(
+                            'Mes modèles',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
                               color: Colors.white,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 13,
+                              height: 1.2,
+                              letterSpacing: -0.5,
                             ),
                           ),
+                          Gap(4),
+                          Text(
+                            'Gérez la visibilité de vos modèles sur le Mall.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white54,
+                            ),
+                          ),
+                          Gap(16),
                         ],
                       ),
                     ),
-                    const Spacer(),
-                    if (ctl.modelesArchives.isNotEmpty)
+                  ),
+                  title: Row(
+                    children: [
                       GestureDetector(
-                        onTap: () => _showArchives(context, ctl),
+                        onTap: () => Get.back(),
                         child: Container(
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: Colors.orange.withValues(alpha: 0.2),
+                            color: Colors.white.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                                color: Colors.orange.withValues(alpha: 0.4)),
+                              color: Colors.white.withValues(alpha: 0.15),
+                            ),
                           ),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              const Icon(Icons.archive_rounded,
-                                  color: Colors.orange, size: 20),
-                              Positioned(
-                                top: 4,
-                                right: 4,
-                                child: Container(
-                                  width: 14,
-                                  height: 14,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.orange,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${ctl.modelesArchives.length}',
-                                      style: const TextStyle(
+                          child: const Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            color: Colors.white,
+                            size: 17,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.15),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.checkroom_rounded,
+                              color: Colors.white,
+                              size: 15,
+                            ),
+                            const Gap(6),
+                            Text(
+                              '${items.length} modèle${items.length > 1 ? 's' : ''}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Spacer(),
+                      if (ctl.modelesArchives.isNotEmpty)
+                        GestureDetector(
+                          onTap: () => _showArchives(context, ctl),
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.orange.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.orange.withValues(alpha: 0.4),
+                              ),
+                            ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.archive_rounded,
+                                  color: Colors.orange,
+                                  size: 20,
+                                ),
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: Container(
+                                    width: 14,
+                                    height: 14,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.orange,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${ctl.modelesArchives.length}',
+                                        style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 8,
-                                          fontWeight: FontWeight.w900),
+                                          fontWeight: FontWeight.w900,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      )
-                    else
-                      const SizedBox(width: 40),
-                  ],
-                ),
-                bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(60),
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        _TabBtn(
+                        )
+                      else
+                        const SizedBox(width: 40),
+                    ],
+                  ),
+                  bottom: PreferredSize(
+                    preferredSize: const Size.fromHeight(60),
+                    child: Container(
+                      margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          _TabBtn(
                             label: 'Tous',
                             index: 0,
                             current: ctl.tabIndex,
-                            onTap: ctl.setTab),
-                        _TabBtn(
+                            onTap: ctl.setTab,
+                          ),
+                          _TabBtn(
                             label: 'Nouveautés',
                             index: 1,
                             current: ctl.tabIndex,
-                            onTap: ctl.setTab),
-                        _TabBtn(
+                            onTap: ctl.setTab,
+                          ),
+                          _TabBtn(
                             label: 'Promotions',
                             index: 2,
                             current: ctl.tabIndex,
-                            onTap: ctl.setTab),
-                      ],
+                            onTap: ctl.setTab,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.04),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              onChanged: ctl.setSearch,
+                              decoration: InputDecoration(
+                                hintText: 'Rechercher...',
+                                hintStyle: const TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey,
+                                ),
+                                prefixIcon: const Icon(
+                                  Icons.search_rounded,
+                                  color: Colors.grey,
+                                  size: 20,
+                                ),
+                                suffixIcon:
+                                    ctl.searchQuery.isNotEmpty
+                                        ? IconButton(
+                                          icon: const Icon(
+                                            Icons.close_rounded,
+                                            size: 18,
+                                            color: Colors.grey,
+                                          ),
+                                          onPressed: () => ctl.setSearch(''),
+                                        )
+                                        : null,
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Gap(8),
+                        Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(14),
@@ -369,121 +467,98 @@ class MallModelesPage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: TextField(
-                            onChanged: ctl.setSearch,
-                            decoration: InputDecoration(
-                              hintText: 'Rechercher...',
-                              hintStyle: const TextStyle(
-                                  fontSize: 13, color: Colors.grey),
-                              prefixIcon: const Icon(Icons.search_rounded,
-                                  color: Colors.grey, size: 20),
-                              suffixIcon: ctl.searchQuery.isNotEmpty
-                                  ? IconButton(
-                                      icon: const Icon(Icons.close_rounded,
-                                          size: 18, color: Colors.grey),
-                                      onPressed: () => ctl.setSearch(''),
-                                    )
-                                  : null,
-                              border: InputBorder.none,
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 14),
+                          child: PopupMenuButton<int?>(
+                            onSelected: ctl.setBoutique,
+                            initialValue: ctl.selectedBoutiqueId,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
                             ),
-                          ),
-                        ),
-                      ),
-                      const Gap(8),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.04),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: PopupMenuButton<int?>(
-                          onSelected: ctl.setBoutique,
-                          initialValue: ctl.selectedBoutiqueId,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14)),
-                          itemBuilder: (_) => [
-                            const PopupMenuItem(
-                              value: null,
-                              child: Text('Toutes les boutiques',
-                                  style: TextStyle(fontSize: 13)),
-                            ),
-                            ...ctl.boutiqueOptions.map(
-                              (b) => PopupMenuItem(
-                                value: b.id,
-                                child: Text(b.libelle,
-                                    style: const TextStyle(fontSize: 13)),
+                            itemBuilder:
+                                (_) => [
+                                  const PopupMenuItem(
+                                    value: null,
+                                    child: Text(
+                                      'Toutes les boutiques',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
+                                  ),
+                                  ...ctl.boutiqueOptions.map(
+                                    (b) => PopupMenuItem(
+                                      value: b.id,
+                                      child: Text(
+                                        b.libelle,
+                                        style: const TextStyle(fontSize: 13),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 14,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.storefront_rounded,
+                                    size: 20,
+                                    color:
+                                        ctl.selectedBoutiqueId != null
+                                            ? AppColors.primary
+                                            : Colors.grey,
+                                  ),
+                                  const Gap(4),
+                                  Icon(
+                                    Icons.arrow_drop_down_rounded,
+                                    size: 18,
+                                    color:
+                                        ctl.selectedBoutiqueId != null
+                                            ? AppColors.primary
+                                            : Colors.grey,
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 14),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.storefront_rounded,
-                                  size: 20,
-                                  color: ctl.selectedBoutiqueId != null
-                                      ? AppColors.primary
-                                      : Colors.grey,
-                                ),
-                                const Gap(4),
-                                Icon(
-                                  Icons.arrow_drop_down_rounded,
-                                  size: 18,
-                                  color: ctl.selectedBoutiqueId != null
-                                      ? AppColors.primary
-                                      : Colors.grey,
-                                ),
-                              ],
-                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              items.isEmpty && ctl.loading
-                  ? const SliverFillRemaining(
-                      child: _ModelesSkeleton(),
+                items.isEmpty && ctl.loading
+                    ? const SliverFillRemaining(child: _ModelesSkeleton())
+                    : items.isEmpty
+                    ? const SliverFillRemaining(
+                      child: Center(
+                        child: Text(
+                          'Aucun modèle trouvé.',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
                     )
-                  : items.isEmpty
-                      ? const SliverFillRemaining(
-                          child: Center(
-                            child: Text('Aucun modèle trouvé.',
-                                style: TextStyle(color: Colors.grey)),
-                          ),
-                        )
-                      : SliverPadding(
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (_, i) => Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    final result = await Get.to(() =>
-                                        MallDetailModelePage(item: items[i]));
-                                    if (result == 'deleted') ctl.loadModeles();
-                                  },
-                                  child: _ModeleTile(item: items[i]),
-                                ),
-                              ),
-                              childCount: items.length,
+                    : SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (_, i) => Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: GestureDetector(
+                              onTap: () async {
+                                final result = await Get.to(
+                                  () => MallDetailModelePage(item: items[i]),
+                                );
+                                if (result == 'deleted') ctl.loadModeles();
+                              },
+                              child: _ModeleTile(item: items[i]),
                             ),
                           ),
+                          childCount: items.length,
                         ),
-            ],
+                      ),
+                    ),
+              ],
+            ),
           ),
           floatingActionButton: Column(
             mainAxisSize: MainAxisSize.min,
@@ -493,26 +568,30 @@ class MallModelesPage extends StatelessWidget {
                 icon: Icons.auto_awesome,
                 label: 'Nouveauté',
                 color: const Color(0xFF1565C0),
-                onTap: ctl.modeles.isEmpty
-                    ? null
-                    : () async {
-                        final res = await Get.to(
-                            () => MallLotNouveautesPage(modeles: ctl.modeles));
-                        if (res == true) ctl.loadModeles();
-                      },
+                onTap:
+                    ctl.modeles.isEmpty
+                        ? null
+                        : () async {
+                          final res = await Get.to(
+                            () => MallLotNouveautesPage(modeles: ctl.modeles),
+                          );
+                          if (res == true) ctl.loadModeles();
+                        },
               ),
               const Gap(10),
               _FabAction(
                 icon: Icons.local_offer_rounded,
                 label: 'Promotion',
                 color: const Color(0xFFC2185B),
-                onTap: ctl.modeles.isEmpty
-                    ? null
-                    : () async {
-                        final res = await Get.to(
-                            () => MallLotPromotionsPage(modeles: ctl.modeles));
-                        if (res == true) ctl.loadModeles();
-                      },
+                onTap:
+                    ctl.modeles.isEmpty
+                        ? null
+                        : () async {
+                          final res = await Get.to(
+                            () => MallLotPromotionsPage(modeles: ctl.modeles),
+                          );
+                          if (res == true) ctl.loadModeles();
+                        },
               ),
             ],
           ),
@@ -591,15 +670,16 @@ class _ModeleTile extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: photoUrl != null
-                ? Image.network(
-                    photoUrl,
-                    width: 64,
-                    height: 64,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _placeholder(),
-                  )
-                : _placeholder(),
+            child:
+                photoUrl != null
+                    ? Image.network(
+                      photoUrl,
+                      width: 64,
+                      height: 64,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _placeholder(),
+                    )
+                    : _placeholder(),
           ),
           const Gap(12),
           Expanded(
@@ -644,7 +724,9 @@ class _ModeleTile extends StatelessWidget {
                       const _Badge(label: 'Promo', color: Color(0xFFC2185B)),
                     if (item.isSurMesure == true)
                       const _Badge(
-                          label: 'Sur mesure', color: Color(0xFF6A1B9A)),
+                        label: 'Sur mesure',
+                        color: Color(0xFF6A1B9A),
+                      ),
                   ],
                 ),
               ],
@@ -657,12 +739,15 @@ class _ModeleTile extends StatelessWidget {
   }
 
   Widget _placeholder() => Container(
-        width: 64,
-        height: 64,
-        color: const Color(0xFFE8F5E9),
-        child: const Icon(Icons.checkroom_rounded,
-            color: Color(0xFF062A22), size: 28),
-      );
+    width: 64,
+    height: 64,
+    color: const Color(0xFFE8F5E9),
+    child: const Icon(
+      Icons.checkroom_rounded,
+      color: Color(0xFF062A22),
+      size: 28,
+    ),
+  );
 }
 
 class _Badge extends StatelessWidget {
@@ -681,8 +766,11 @@ class _Badge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style:
-            TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: color),
+        style: TextStyle(
+          fontSize: 9,
+          fontWeight: FontWeight.w700,
+          color: color,
+        ),
       ),
     );
   }
@@ -725,11 +813,14 @@ class _FabAction extends StatelessWidget {
             children: [
               Icon(icon, color: Colors.white, size: 16),
               const Gap(6),
-              Text(label,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13)),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
             ],
           ),
         ),
@@ -749,14 +840,15 @@ class _ModelesSkeleton extends StatelessWidget {
       child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         itemCount: 5,
-        itemBuilder: (_, __) => Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          height: 88,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
+        itemBuilder:
+            (_, __) => Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              height: 88,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
       ),
     );
   }
