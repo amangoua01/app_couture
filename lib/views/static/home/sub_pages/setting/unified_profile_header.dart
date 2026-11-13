@@ -29,7 +29,7 @@ class UnifiedProfileHeader extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Color(0xFF0F2620),
+        color: const Color(0xFF0F2620),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -76,16 +76,25 @@ class UnifiedProfileHeader extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.white.withOpacity(0.15)),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.15),
+                            ),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.tag_rounded, size: 12, color: AppColors.secondary),
+                              const Icon(
+                                Icons.tag_rounded,
+                                size: 12,
+                                color: AppColors.secondary,
+                              ),
                               const Gap(4),
                               Text(
                                 code,
@@ -120,7 +129,11 @@ class UnifiedProfileHeader extends StatelessWidget {
                             color: AppColors.secondary.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Icon(Icons.copy_rounded, color: AppColors.secondary, size: 14),
+                          child: const Icon(
+                            Icons.copy_rounded,
+                            color: AppColors.secondary,
+                            size: 14,
+                          ),
                         ),
                       ),
                     ],
@@ -141,7 +154,11 @@ class UnifiedProfileHeader extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2)),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
                   ],
                 ),
                 child: Hero(
@@ -152,7 +169,12 @@ class UnifiedProfileHeader extends StatelessWidget {
                       "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=$code&color=0a3a30",
                       width: 60,
                       height: 60,
-                      errorBuilder: (_, __, ___) => const Icon(Icons.qr_code_2_rounded, size: 60, color: AppColors.primary),
+                      errorBuilder:
+                          (_, __, ___) => const Icon(
+                            Icons.qr_code_2_rounded,
+                            size: 60,
+                            color: AppColors.primary,
+                          ),
                     ),
                   ),
                 ),
@@ -182,15 +204,28 @@ class UnifiedProfileHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    ctl.user.isAdmin ? "Mon Code Marchand" : "Mon Code Parrainage",
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: AppColors.primary),
+                    ctl.user.isAdmin
+                        ? "Mon Code Marchand"
+                        : "Mon Code Parrainage",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.primary,
+                    ),
                   ),
                   GestureDetector(
                     onTap: () => Get.back(),
                     child: Container(
                       padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
-                      child: const Icon(Icons.close_rounded, color: Colors.grey, size: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: Colors.grey,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ],
@@ -203,8 +238,16 @@ class UnifiedProfileHeader extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 8))],
-                    border: Border.all(color: AppColors.primary.withOpacity(0.08)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                    border: Border.all(
+                      color: AppColors.primary.withOpacity(0.08),
+                    ),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
@@ -212,7 +255,12 @@ class UnifiedProfileHeader extends StatelessWidget {
                       "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=$code&color=0a3a30",
                       width: 200,
                       height: 200,
-                      errorBuilder: (_, __, ___) => const Icon(Icons.qr_code_2_rounded, size: 200, color: AppColors.primary),
+                      errorBuilder:
+                          (_, __, ___) => const Icon(
+                            Icons.qr_code_2_rounded,
+                            size: 200,
+                            color: AppColors.primary,
+                          ),
                     ),
                   ),
                 ),
@@ -222,36 +270,71 @@ class UnifiedProfileHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.primary.withOpacity(0.1)),
+                      border: Border.all(
+                        color: AppColors.primary.withOpacity(0.1),
+                      ),
                     ),
                     child: Text(
                       code,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.5, color: AppColors.primary),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.5,
+                        color: AppColors.primary,
+                      ),
                     ),
                   ),
                   const Gap(10),
                   GestureDetector(
                     onTap: () {
                       Clipboard.setData(ClipboardData(text: code));
-                      Get.snackbar("Code copié !", "Le code a été copié dans le presse-papiers.", snackPosition: SnackPosition.BOTTOM, backgroundColor: const Color(0xFF112C26), colorText: Colors.white, margin: const EdgeInsets.all(15), duration: const Duration(seconds: 2));
+                      Get.snackbar(
+                        "Code copié !",
+                        "Le code a été copié dans le presse-papiers.",
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: const Color(0xFF112C26),
+                        colorText: Colors.white,
+                        margin: const EdgeInsets.all(15),
+                        duration: const Duration(seconds: 2),
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.05), borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.primary.withOpacity(0.1))),
-                      child: const Icon(Icons.copy_rounded, color: AppColors.primary, size: 18),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: AppColors.primary.withOpacity(0.1),
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.copy_rounded,
+                        color: AppColors.primary,
+                        size: 18,
+                      ),
                     ),
                   ),
                 ],
               ),
               const Gap(16),
               Text(
-                ctl.user.isAdmin ? "Partagez ce QR Code pour inviter des collaborateurs à rejoindre votre atelier." : "Partagez ce QR Code pour parrainer un nouvel atelier.",
+                ctl.user.isAdmin
+                    ? "Partagez ce QR Code pour inviter des collaborateurs à rejoindre votre atelier."
+                    : "Partagez ce QR Code pour parrainer un nouvel atelier.",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade600, height: 1.4, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
+                  height: 1.4,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),

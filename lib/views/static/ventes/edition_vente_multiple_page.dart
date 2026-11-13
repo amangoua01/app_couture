@@ -1,8 +1,8 @@
 import 'package:ateliya/data/models/client.dart';
 import 'package:ateliya/data/models/fichier_server.dart';
 import 'package:ateliya/data/models/modele_boutique.dart';
-import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/components/field_popup.dart';
+import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/constants/mode_paiement_enum.dart';
 import 'package:ateliya/tools/extensions/future.dart';
 import 'package:ateliya/tools/extensions/types/double.dart';
@@ -322,7 +322,7 @@ class EditionVenteMultiplePage extends StatelessWidget {
                                   ),
                                   padding: const EdgeInsets.all(20),
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF0A3A30),
+                                    color: const Color(0xFF0A3A30),
                                     borderRadius: BorderRadius.circular(24),
                                     boxShadow: [
                                       BoxShadow(

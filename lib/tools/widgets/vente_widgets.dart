@@ -12,7 +12,7 @@ import 'package:gap/gap.dart';
 
 class SectionTitre extends StatelessWidget {
   final String label;
-  const SectionTitre(this.label);
+  const SectionTitre(this.label, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class SectionTitre extends StatelessWidget {
 /// taille et ce qu'il en reste, au lieu d'un champ grisé illisible.
 class ArticleCard extends StatelessWidget {
   final ModeleBoutique item;
-  const ArticleCard({required this.item});
+  const ArticleCard({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +114,7 @@ class ArticleCard extends StatelessWidget {
 class Pastille extends StatelessWidget {
   final String label;
   final bool alerte;
-  const Pastille(this.label, {this.alerte = false});
+  const Pastille(this.label, {super.key, this.alerte = false});
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +140,7 @@ class Pastille extends StatelessWidget {
 class ClientTile extends StatelessWidget {
   final Client client;
   final bool isSelected;
-  const ClientTile({required this.client, required this.isSelected});
+  const ClientTile({super.key, required this.client, required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +180,11 @@ class ClientTile extends StatelessWidget {
 class PaiementTile extends StatelessWidget {
   final String label;
   final bool isSelected;
-  const PaiementTile({required this.label, required this.isSelected});
+  const PaiementTile({
+    super.key,
+    required this.label,
+    required this.isSelected,
+  });
 
   static IconData _icone(ModePaiementEnum mode) {
     switch (mode) {
@@ -212,7 +216,7 @@ class PaiementTile extends StatelessWidget {
 class PasBouton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  const PasBouton({required this.icon, required this.onTap});
+  const PasBouton({super.key, required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

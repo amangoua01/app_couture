@@ -88,10 +88,12 @@ class DelaiRetrait {
         actif ? const Color(0xFFB91C1C) : Colors.grey.shade600,
       );
     }
-    if (ecart == 0)
+    if (ecart == 0) {
       return const DelaiRetrait("Retrait aujourd'hui", Color(0xFFC2410C));
-    if (ecart == 1)
+    }
+    if (ecart == 1) {
       return const DelaiRetrait('Retrait demain', Color(0xFFB7791F));
+    }
     if (ecart <= 7) {
       return DelaiRetrait('Retrait dans $ecart jours', AppColors.primary);
     }

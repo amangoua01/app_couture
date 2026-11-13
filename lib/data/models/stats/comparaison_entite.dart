@@ -2,15 +2,13 @@ import 'package:ateliya/data/models/abstract/model_json.dart';
 import 'package:ateliya/tools/extensions/types/map.dart';
 
 class ComparaisonEntite extends ModelJson {
-  @override
-  int? id;
   String? nom;
   String? type;
   int chiffreAffaires = 0;
   int totalDepenses = 0;
 
   ComparaisonEntite({
-    this.id,
+    super.id,
     this.nom,
     this.type,
     this.chiffreAffaires = 0,

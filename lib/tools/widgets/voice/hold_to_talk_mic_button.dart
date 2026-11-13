@@ -132,7 +132,10 @@ class _HoldToTalkMicButtonState extends State<HoldToTalkMicButton> {
     // l'appareil ou l'échelle de police système.
     return LayoutBuilder(
       builder: (context, constraints) {
-        final available = constraints.maxWidth.isFinite ? constraints.maxWidth : _maxTrackWidth;
+        final available =
+            constraints.maxWidth.isFinite
+                ? constraints.maxWidth
+                : _maxTrackWidth;
         // Capturé pour être réutilisé par les gestionnaires de glissement
         // (_onPanUpdate n'a pas accès aux contraintes de layout).
         _trackWidth = _maxTrackWidth > available ? available : _maxTrackWidth;
@@ -146,23 +149,28 @@ class _HoldToTalkMicButtonState extends State<HoldToTalkMicButton> {
             duration: const Duration(milliseconds: 220),
             curve: Curves.easeOutCubic,
             alignment: Alignment.centerRight,
-            child: _held
-                ? SizedBox(
-                    width: _trackWidth,
-                    height: _trackHeight,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFEE2E2),
-                        borderRadius: BorderRadius.circular(_trackHeight / 2),
-                        border: Border.all(color: const Color(0xFFDC2626).withValues(alpha: 0.25)),
+            child:
+                _held
+                    ? SizedBox(
+                      width: _trackWidth,
+                      height: _trackHeight,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFEE2E2),
+                          borderRadius: BorderRadius.circular(_trackHeight / 2),
+                          border: Border.all(
+                            color: const Color(
+                              0xFFDC2626,
+                            ).withValues(alpha: 0.25),
+                          ),
+                        ),
+                        child: _buildTrack(),
                       ),
-                      child: _buildTrack(),
+                    )
+                    : ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: available),
+                      child: _buildIdlePill(),
                     ),
-                  )
-                : ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: available),
-                    child: _buildIdlePill(),
-                  ),
           ),
         );
       },
@@ -177,24 +185,28 @@ class _HoldToTalkMicButtonState extends State<HoldToTalkMicButton> {
         color: AppColors.primary,
         borderRadius: BorderRadius.circular(_trackHeight / 2),
       ),
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.mic_none_rounded, color: Colors.white, size: 18),
-          const Gap(6),
-          const Flexible(
+          Icon(Icons.mic_none_rounded, color: Colors.white, size: 18),
+          Gap(6),
+          Flexible(
             child: Text(
               "Maintenir pour parler",
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-          const Gap(4),
+          Gap(4),
           // Dès le repos, un indice visuel qu'on peut glisser vers la
           // droite — sans attendre que l'utilisateur appuie pour le
           // découvrir.
-          const _ChevronHint(color: Colors.white70, size: 13),
+          _ChevronHint(color: Colors.white70, size: 13),
         ],
       ),
     );
@@ -211,7 +223,9 @@ class _HoldToTalkMicButtonState extends State<HoldToTalkMicButton> {
           child: Icon(
             Icons.lock_outline_rounded,
             size: 18,
-            color: const Color(0xFFDC2626).withValues(alpha: 0.4 + 0.6 * (1 - fade)),
+            color: const Color(
+              0xFFDC2626,
+            ).withValues(alpha: 0.4 + 0.6 * (1 - fade)),
           ),
         ),
         // Indice de direction : chevrons + texte, qui s'estompent à mesure
@@ -221,7 +235,10 @@ class _HoldToTalkMicButtonState extends State<HoldToTalkMicButton> {
         // volontairement étroit.
         Positioned.fill(
           child: Padding(
-            padding: const EdgeInsets.only(left: _thumbSize + _thumbInset * 2, right: 36),
+            padding: const EdgeInsets.only(
+              left: _thumbSize + _thumbInset * 2,
+              right: 36,
+            ),
             child: Opacity(
               opacity: fade,
               child: Row(
@@ -255,7 +272,13 @@ class _HoldToTalkMicButtonState extends State<HoldToTalkMicButton> {
             decoration: const BoxDecoration(
               color: Color(0xFFDC2626),
               shape: BoxShape.circle,
-              boxShadow: [BoxShadow(color: Color(0x33DC2626), blurRadius: 8, offset: Offset(0, 3))],
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x33DC2626),
+                  blurRadius: 8,
+                  offset: Offset(0, 3),
+                ),
+              ],
             ),
             child: const Icon(Icons.mic, color: Colors.white, size: 18),
           ),
@@ -271,7 +294,11 @@ class _HoldToTalkMicButtonState extends State<HoldToTalkMicButton> {
         color: const Color(0xFFDC2626),
         borderRadius: BorderRadius.circular(26),
         boxShadow: const [
-          BoxShadow(color: Color(0x33DC2626), blurRadius: 10, offset: Offset(0, 4)),
+          BoxShadow(
+            color: Color(0x33DC2626),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
         ],
       ),
       child: Row(
@@ -282,19 +309,23 @@ class _HoldToTalkMicButtonState extends State<HoldToTalkMicButton> {
               child: InkWell(
                 onTap: widget.onResume,
                 borderRadius: BorderRadius.circular(16),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.mic_rounded, color: Colors.white, size: 17),
-                      const Gap(6),
-                      const Flexible(
+                      Icon(Icons.mic_rounded, color: Colors.white, size: 17),
+                      Gap(6),
+                      Flexible(
                         child: Text(
                           "Reprendre",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ],
@@ -310,12 +341,20 @@ class _HoldToTalkMicButtonState extends State<HoldToTalkMicButton> {
                 "Verrouillé",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
           const Gap(10),
-          Container(width: 1, height: 22, color: Colors.white.withValues(alpha: 0.25)),
+          Container(
+            width: 1,
+            height: 22,
+            color: Colors.white.withValues(alpha: 0.25),
+          ),
           const Gap(6),
           // Zones de clic généreuses et nettement séparées : trop petites
           // et trop proches l'une de l'autre, "Annuler" ratait souvent et
@@ -392,7 +431,8 @@ class _ChevronHint extends StatefulWidget {
   State<_ChevronHint> createState() => _ChevronHintState();
 }
 
-class _ChevronHintState extends State<_ChevronHint> with SingleTickerProviderStateMixin {
+class _ChevronHintState extends State<_ChevronHint>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _ctl = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 900),
@@ -413,10 +453,17 @@ class _ChevronHintState extends State<_ChevronHint> with SingleTickerProviderSta
           mainAxisSize: MainAxisSize.min,
           children: List.generate(2, (i) {
             final phase = (_ctl.value - i * 0.25) % 1.0;
-            final opacity = (phase < 0.5 ? phase * 2 : (1 - phase) * 2).clamp(0.25, 1.0);
+            final opacity = (phase < 0.5 ? phase * 2 : (1 - phase) * 2).clamp(
+              0.25,
+              1.0,
+            );
             return Opacity(
               opacity: opacity,
-              child: Icon(Icons.chevron_right_rounded, size: widget.size, color: widget.color),
+              child: Icon(
+                Icons.chevron_right_rounded,
+                size: widget.size,
+                color: widget.color,
+              ),
             );
           }),
         );
@@ -432,7 +479,8 @@ class _PulsingDot extends StatefulWidget {
   State<_PulsingDot> createState() => _PulsingDotState();
 }
 
-class _PulsingDotState extends State<_PulsingDot> with SingleTickerProviderStateMixin {
+class _PulsingDotState extends State<_PulsingDot>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _ctl = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 700),
@@ -451,7 +499,10 @@ class _PulsingDotState extends State<_PulsingDot> with SingleTickerProviderState
       child: Container(
         width: 8,
         height: 8,
-        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
       ),
     );
   }

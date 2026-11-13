@@ -39,48 +39,54 @@ class BilanPdf {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(36),
-        header: (context) => _header(
-          entreprise: entreprise,
-          logoImage: logoImage,
-          periodeLabel: periodeLabel,
-          primaryColor: primaryColor,
-        ),
-        footer: (context) => pw.Container(
-          alignment: pw.Alignment.centerRight,
-          margin: const pw.EdgeInsets.only(top: 10),
-          child: pw.Text(
-            'Page ${context.pageNumber}/${context.pagesCount} • Généré par Ateliya',
-            style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey500),
-          ),
-        ),
-        build: (context) => [
-          pw.SizedBox(height: 20),
-          _kpiGrid(kpis, isAtelier, primaryColor),
-          pw.SizedBox(height: 24),
-          if (data.revenusQuotidiens.isNotEmpty) ...[
-            _sectionTitle('Revenus par jour', primaryColor),
-            pw.SizedBox(height: 8),
-            _revenusTable(data, primaryColor),
-            pw.SizedBox(height: 24),
-          ],
-          if ((data.topModelesVendus ?? []).isNotEmpty) ...[
-            _sectionTitle(
-              isAtelier ? 'Pièces les plus cousues' : 'Top modèles vendus',
-              primaryColor,
+        header:
+            (context) => _header(
+              entreprise: entreprise,
+              logoImage: logoImage,
+              periodeLabel: periodeLabel,
+              primaryColor: primaryColor,
             ),
-            pw.SizedBox(height: 8),
-            _topTable(data, primaryColor),
-          ],
-          if ((data.comparaisonEntites ?? []).isNotEmpty) ...[
-            pw.SizedBox(height: 24),
-            _sectionTitle(
-              'Charges par ${isAtelier ? "atelier" : "boutique"}',
-              primaryColor,
+        footer:
+            (context) => pw.Container(
+              alignment: pw.Alignment.centerRight,
+              margin: const pw.EdgeInsets.only(top: 10),
+              child: pw.Text(
+                'Page ${context.pageNumber}/${context.pagesCount} • Généré par Ateliya',
+                style: const pw.TextStyle(
+                  fontSize: 8,
+                  color: PdfColors.grey500,
+                ),
+              ),
             ),
-            pw.SizedBox(height: 8),
-            _chargesParEntiteTable(data, isAtelier, primaryColor),
-          ],
-        ],
+        build:
+            (context) => [
+              pw.SizedBox(height: 20),
+              _kpiGrid(kpis, isAtelier, primaryColor),
+              pw.SizedBox(height: 24),
+              if (data.revenusQuotidiens.isNotEmpty) ...[
+                _sectionTitle('Revenus par jour', primaryColor),
+                pw.SizedBox(height: 8),
+                _revenusTable(data, primaryColor),
+                pw.SizedBox(height: 24),
+              ],
+              if ((data.topModelesVendus ?? []).isNotEmpty) ...[
+                _sectionTitle(
+                  isAtelier ? 'Pièces les plus cousues' : 'Top modèles vendus',
+                  primaryColor,
+                ),
+                pw.SizedBox(height: 8),
+                _topTable(data, primaryColor),
+              ],
+              if ((data.comparaisonEntites ?? []).isNotEmpty) ...[
+                pw.SizedBox(height: 24),
+                _sectionTitle(
+                  'Charges par ${isAtelier ? "atelier" : "boutique"}',
+                  primaryColor,
+                ),
+                pw.SizedBox(height: 8),
+                _chargesParEntiteTable(data, isAtelier, primaryColor),
+              ],
+            ],
       ),
     );
 
@@ -158,11 +164,7 @@ class BilanPdf {
   /// porte elle-même un sens (vert = argent qui rentre, rouge = qui sort,
   /// orange = à surveiller), ce qui rend le bilan plus lisible d'un coup
   /// d'œil et plus présentable qu'un tableau gris uniforme.
-  static pw.Widget _kpiGrid(
-    Kpis kpis,
-    bool isAtelier,
-    PdfColor primaryColor,
-  ) {
+  static pw.Widget _kpiGrid(Kpis kpis, bool isAtelier, PdfColor primaryColor) {
     final vert = PdfColor.fromHex('#16A34A');
     final rouge = PdfColor.fromHex('#DC2626');
     final bleu = PdfColor.fromHex('#2563EB');
@@ -173,13 +175,21 @@ class BilanPdf {
 
     final tiles = <(String, String, PdfColor)>[
       ('Chiffre d\'affaires', '${kpis.chiffreAffaires.toAmount()} FCFA', vert),
-      ('Recettes nettes', '${(kpis.recettesNettes ?? 0).toAmount()} FCFA', bleu),
+      (
+        'Recettes nettes',
+        '${(kpis.recettesNettes ?? 0).toAmount()} FCFA',
+        bleu,
+      ),
       ('Ticket moyen', '${(kpis.ticketMoyen ?? 0).toAmount()} FCFA', violet),
       ('Dépenses', '${kpis.totalDepenses.toAmount()} FCFA', rouge),
       ('Taux de recouvrement', '${kpis.tauxRecouvrement ?? 0}%', ambre),
       ('Solde caisse', '${kpis.caisse.toAmount()} FCFA', teal),
       if (isAtelier) ...[
-        ('Délai moyen de livraison', '${kpis.delaiMoyenLivraisonJours} j', indigo),
+        (
+          'Délai moyen de livraison',
+          '${kpis.delaiMoyenLivraisonJours} j',
+          indigo,
+        ),
         ('Pièces en retard', '${kpis.piecesEnRetard ?? 0}', rouge),
       ],
     ];
@@ -205,7 +215,7 @@ class BilanPdf {
               children: [
                 pw.Text(
                   t.$1,
-                  style: pw.TextStyle(
+                  style: const pw.TextStyle(
                     fontSize: 8.5,
                     color: PdfColor(1, 1, 1, 0.8),
                   ),
@@ -248,10 +258,7 @@ class BilanPdf {
     );
   }
 
-  static pw.Widget _topTable(
-    StatistiquesBoutique data,
-    PdfColor primaryColor,
-  ) {
+  static pw.Widget _topTable(StatistiquesBoutique data, PdfColor primaryColor) {
     return pw.TableHelper.fromTextArray(
       headerStyle: pw.TextStyle(
         fontWeight: pw.FontWeight.bold,
@@ -279,10 +286,11 @@ class BilanPdf {
     bool isAtelier,
     PdfColor primaryColor,
   ) {
-    final entites = (data.comparaisonEntites ?? [])
-        .where((e) => isAtelier ? !e.isBoutique : e.isBoutique)
-        .toList()
-      ..sort((a, b) => b.totalDepenses.compareTo(a.totalDepenses));
+    final entites =
+        (data.comparaisonEntites ?? [])
+            .where((e) => isAtelier ? !e.isBoutique : e.isBoutique)
+            .toList()
+          ..sort((a, b) => b.totalDepenses.compareTo(a.totalDepenses));
 
     return pw.TableHelper.fromTextArray(
       headerStyle: pw.TextStyle(
@@ -296,8 +304,7 @@ class BilanPdf {
       cellAlignments: {1: pw.Alignment.centerRight},
       headers: [isAtelier ? 'Atelier' : 'Boutique', 'Charges (FCFA)'],
       data: [
-        for (final e in entites)
-          [e.nom ?? '-', e.totalDepenses.toAmount()],
+        for (final e in entites) [e.nom ?? '-', e.totalDepenses.toAmount()],
       ],
     );
   }

@@ -220,8 +220,8 @@ class _Quantite extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 5, bottom: 3),
+          const Padding(
+            padding: EdgeInsets.only(left: 5, bottom: 3),
             child: Text('Quantité*', style: FieldBorder.labelStyle),
           ),
           Row(

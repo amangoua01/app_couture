@@ -396,7 +396,7 @@ class _BlocPaiement extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.south_west_rounded,
                       size: 16,
                       color: AppColors.green,

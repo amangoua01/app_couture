@@ -187,8 +187,8 @@ class _QuantiteField extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 5, bottom: 3),
+          const Padding(
+            padding: EdgeInsets.only(left: 5, bottom: 3),
             child: Text("Quantité*", style: FieldBorder.labelStyle),
           ),
           Row(
@@ -207,8 +207,9 @@ class _QuantiteField extends StatelessWidget {
                   margin: EdgeInsets.zero,
                   onChanged: (_) => ctl.update(),
                   validator: (e) {
-                    if (e == null || e.isEmpty)
+                    if (e == null || e.isEmpty) {
                       return 'La quantité est requise';
+                    }
                     final qty = int.tryParse(e);
                     if (qty == null || qty <= 0) {
                       return 'Veuillez saisir une quantité valide';

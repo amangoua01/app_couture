@@ -291,8 +291,9 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
                                             return nom;
                                           final lib = lm.typeMesure?.libelle;
                                           if (lib != null &&
-                                              lib.trim().isNotEmpty)
+                                              lib.trim().isNotEmpty) {
                                             return lib;
+                                          }
                                           return "Article";
                                         })(),
                                         style: const TextStyle(

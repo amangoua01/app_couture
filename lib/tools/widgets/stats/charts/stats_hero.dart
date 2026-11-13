@@ -1,12 +1,12 @@
 import 'dart:math' as math;
 
+import 'package:ateliya/tools/constants/app_icons.dart';
 import 'package:ateliya/tools/widgets/stats/charts/animated_count.dart';
 import 'package:ateliya/tools/widgets/stats/charts/stat_format.dart';
 import 'package:ateliya/tools/widgets/stats/charts/stats_style.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:ateliya/tools/constants/app_icons.dart';
 
 class HeroStat {
   final String label;
@@ -123,12 +123,12 @@ class _Trend extends StatelessWidget {
           ),
         ),
         const Gap(8),
-        Expanded(
+        const Expanded(
           child: Text(
             'seconde moitié vs première',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 11.5, color: Colors.white60),
+            style: TextStyle(fontSize: 11.5, color: Colors.white60),
           ),
         ),
       ],

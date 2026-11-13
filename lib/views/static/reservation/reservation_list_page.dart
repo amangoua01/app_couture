@@ -98,8 +98,9 @@ class ReservationListPage extends StatelessWidget {
                                                     initiale: ctl.affichees[i],
                                                   ),
                                                 );
-                                                if (modifiee == true)
+                                                if (modifiee == true) {
                                                   ctl.fetch();
+                                                }
                                               },
                                             ),
                                       ),

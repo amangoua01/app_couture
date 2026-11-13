@@ -48,7 +48,7 @@ class VenteBoutiqueListPage extends StatelessWidget {
                 margin: const EdgeInsets.all(15),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Color(0xFF0A3A30),
+                  color: const Color(0xFF0A3A30),
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(

@@ -42,8 +42,9 @@ class SettingPageVctl extends AuthViewController {
 
   Future<void> openPlayStore() async {
     final uri = Uri.parse(Env.playStoreUrl);
-    if (await canLaunchUrl(uri))
+    if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   Future<void> openAppStore() async {
@@ -52,7 +53,8 @@ class SettingPageVctl extends AuthViewController {
   }
 
   Future<void> shareApp() async {
-    final text = "Gérez votre atelier ou boutique facilement avec Ateliya !\n"
+    final text =
+        "Gérez votre atelier ou boutique facilement avec Ateliya !\n"
         "📱 Android : ${Env.playStoreUrl}\n"
         "🍎 iOS : ${Env.appStoreUrl}";
     await Clipboard.setData(ClipboardData(text: text));
