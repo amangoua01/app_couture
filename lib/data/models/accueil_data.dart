@@ -19,7 +19,7 @@ class AccueilData extends ModelJson {
 
   Kpis get kpis => Kpis(
         clientsActifs: settings?.nombreUser ?? 0,
-        commandesEnCours: commandes.where((e) => e.isActive).length,
+        commandesEnCours: commandes.where((e) => !e.estTerminee).length,
         chiffreAffaires: 0,
         reservationsActives: 0,
       );

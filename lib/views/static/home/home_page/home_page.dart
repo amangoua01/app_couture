@@ -82,11 +82,11 @@ class HomePage extends StatelessWidget {
                             TravauxStats(
                               enCours:
                                   ctl.data.commandes
-                                      .where((e) => e.isActive)
+                                      .where((e) => !e.estTerminee)
                                       .length,
                               terminees:
                                   ctl.data.commandes
-                                      .where((e) => !e.isActive)
+                                      .where((e) => e.estTerminee)
                                       .length,
                             ),
                             const Gap(24),
