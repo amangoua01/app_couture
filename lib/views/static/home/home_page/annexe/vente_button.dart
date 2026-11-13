@@ -31,10 +31,11 @@ class VenteButton extends StatelessWidget {
               placeholder: ScrollingFabAnimated(
                 width: 172,
                 // Le package applique un padding horizontal fixe de 15px de
-                // chaque côté de l'icône (30px), non paramétrable : en
-                // dessous de ~50 (30 + icône 18 + marge), le bouton replié
-                // en cercle déborde de son propre padding interne.
-                height: 50,
+                // chaque côté de l'icône (30px), non paramétrable : avec
+                // l'icône à 22px (30 + 22 = 52px), une hauteur < 52px fait
+                // déborder le RenderFlex interne lors du repli. On utilise
+                // 56px (taille standard FAB / SpeedDial).
+                height: 56,
                 color: AppColors.secondary,
                 // Le package ne centre pas lui-même le texte dans l'espace
                 // restant une fois l'icône posée — sans ce Center, il
@@ -55,7 +56,7 @@ class VenteButton extends StatelessWidget {
               ),
               child: ScrollingFabAnimated(
                 width: 160,
-                height: 50,
+                height: 56,
                 color: AppColors.secondary,
                 text: const Center(
                   child: Text(

@@ -13,7 +13,7 @@ class EntrepriseApi extends CrudWebController<Entreprise> {
   String get module => 'entreprise';
 
   Future<DataResponse<EntrepriseEntitiesResponse>>
-      getEntrepriseEntities() async {
+  getEntrepriseEntities() async {
     try {
       final res = await client.get(
         urlBuilder(api: 'surccursale/boutique'),
@@ -25,9 +25,7 @@ class EntrepriseApi extends CrudWebController<Entreprise> {
           data: EntrepriseEntitiesResponse.fromJson(data['data']),
         );
       } else {
-        return DataResponse.error(
-          message: data['error'],
-        );
+        return DataResponse.error(message: data['message']);
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -42,11 +40,9 @@ class EntrepriseApi extends CrudWebController<Entreprise> {
       );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        return DataResponse.success(
-          data: Entreprise.fromJson(data['data']),
-        );
+        return DataResponse.success(data: Entreprise.fromJson(data['data']));
       } else {
-        return DataResponse.error(message: data['error']);
+        return DataResponse.error(message: data['message']);
       }
     } catch (e, st) {
       return DataResponse.error(systemError: e, stackTrace: st);
@@ -54,7 +50,8 @@ class EntrepriseApi extends CrudWebController<Entreprise> {
   }
 
   Future<DataResponse<Entreprise>> updateEntreprise(
-      Entreprise entreprise) async {
+    Entreprise entreprise,
+  ) async {
     try {
       final res = await client.multiPart(
         urlBuilder(api: 'update'),
@@ -64,12 +61,11 @@ class EntrepriseApi extends CrudWebController<Entreprise> {
       );
       final data = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        return DataResponse.success(
-          data: Entreprise.fromJson(data['data']),
-        );
+        return DataResponse.success(data: Entreprise.fromJson(data['data']));
       } else {
         return DataResponse.error(
-          message: data['message'] ??
+          message:
+              data['message'] ??
               data['error'] ??
               'Erreur lors de la mise à jour',
         );
