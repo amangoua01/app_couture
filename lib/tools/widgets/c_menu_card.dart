@@ -5,7 +5,7 @@ class CMenuCard extends StatelessWidget {
   final IconData icon;
   final String label;
   final String subtitle;
-  final List<Color> gradient;
+  final Color color;
   final Color accentColor;
   final VoidCallback onTap;
 
@@ -14,7 +14,7 @@ class CMenuCard extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.subtitle,
-    required this.gradient,
+    required this.color,
     required this.accentColor,
     required this.onTap,
   });
@@ -48,11 +48,7 @@ class CMenuCard extends StatelessWidget {
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: gradient,
-                ),
+                color: color,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(

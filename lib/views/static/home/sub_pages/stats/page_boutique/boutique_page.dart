@@ -6,6 +6,7 @@ import 'package:ateliya/tools/extensions/types/double.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
 import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/onglets_compteurs.dart';
+import 'package:ateliya/tools/widgets/swipe_tabs.dart';
 import 'package:ateliya/tools/widgets/photo_produit.dart';
 import 'package:ateliya/tools/widgets/preview_image_page.dart';
 import 'package:ateliya/views/controllers/home/boutique_page_vctl.dart';
@@ -46,26 +47,12 @@ class BoutiquePage extends StatelessWidget {
                 // Changer de filtre, ou passer du chargement aux données, se
                 // fait en fondu avec un léger glissement : le contenu ne
                 // saute plus d'un coup.
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 260),
-                  switchInCurve: Curves.easeOutCubic,
-                  switchOutCurve: Curves.easeIn,
-                  transitionBuilder:
-                      (child, animation) => FadeTransition(
-                        opacity: animation,
-                        child: SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0, 0.025),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
-                        ),
-                      ),
+                child: SwipeTabs<StockFiltre>(
+                  values: StockFiltre.values,
+                  selection: ctl.filtre,
+                  onChanged: ctl.setFiltre,
                   child: KeyedSubtree(
-                    key: ValueKey((
-                      ctl.filtre,
-                      ctl.isLoading || !ctl.hasLoadedOnce,
-                    )),
+                    key: ValueKey(ctl.isLoading || !ctl.hasLoadedOnce),
                     child:
                         (ctl.isLoading || !ctl.hasLoadedOnce)
                             ? const BoutiqueSkeleton()
@@ -239,13 +226,7 @@ class _ModeleCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.07),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFFDDE3DF), width: 1),
       ),
       child: Material(
         color: Colors.transparent,

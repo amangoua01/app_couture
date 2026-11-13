@@ -30,18 +30,7 @@ class ModelCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.06),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
-          ),
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.03),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFFDDE3DF), width: 1),
       ),
       child: Material(
         color: Colors.transparent,
@@ -374,14 +363,7 @@ class ModelCard extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppColors.secondary,
-                                  AppColors.secondary.withValues(alpha: 0.85),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
+                              color: AppColors.secondary,
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(

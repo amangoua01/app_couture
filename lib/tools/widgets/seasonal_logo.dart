@@ -101,15 +101,7 @@ class SeasonalLogoFrame extends StatelessWidget {
           padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(28),
-            gradient:
-                ev == null
-                    ? null
-                    : LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: ev.frame,
-                    ),
-            color: ev == null ? Colors.white : null,
+            color: ev == null ? Colors.white : ev.frame.first,
             border:
                 ev == null ? Border.all(color: const Color(0xFFD9E2DC)) : null,
             boxShadow: [

@@ -249,11 +249,7 @@ class _GeminiAssistantSheetState extends State<GeminiAssistantSheet> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.primary, Color(0xFF135E4E)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: AppColors.primary,
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(

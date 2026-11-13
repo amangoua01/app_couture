@@ -4,19 +4,18 @@ import 'package:ateliya/tools/constants/app_env.dart';
 import 'package:ateliya/tools/models/currency.dart';
 import 'package:ateliya/tools/models/netword_config.dart';
 import 'package:flutter_in_store_app_version_checker/flutter_in_store_app_version_checker.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 abstract class Env {
   static const String appName = 'Ateliya';
-  static const String appVersion = '1.5.3';
-  static const int buildVersion = 44;
-  static final fontFamily = GoogleFonts.poppins().fontFamily;
+  static const String appVersion = '1.5.2';
+  static const int buildVersion = 43;
+  static const fontFamily = 'Geist';
 
   static const String defaultPassword = "admin93K";
 
   static const defaultDevise = Currency("Fcfa", code: "XOF", decimalDigits: 0);
 
-  static const AppEnv env = AppEnv.dev;
+  static const AppEnv env = AppEnv.prod;
 
   static NetwordConfig get baseUrl => env.networdConfig;
 

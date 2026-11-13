@@ -32,7 +32,6 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  google_fonts: ^6.2.1
   get: ^4.7.2
   lottie: ^3.3.1
   gap: ^3.0.1
@@ -98,7 +97,6 @@ dependencies:
   sqflite: ^2.4.2
   cached_network_image: ^3.4.1
   flutter_native_splash: ^2.4.7
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -144,6 +142,45 @@ flutter:
   assets:
     - assets/images/
     - assets/images/svg/
+    - assets/fonts/phosphor/LICENSE-Phosphor-MIT.txt
+    - assets/fonts/geist/LICENSE-Geist-OFL.txt
+
+  # Icônes Phosphor (licence MIT, voir assets/fonts/phosphor). Utilisées via
+  # lib/tools/constants/app_icons.dart.
+  fonts:
+    # Police de l'application : Geist (SIL OFL, voir assets/fonts/geist).
+    - family: Geist
+      fonts:
+        - asset: assets/fonts/geist/Geist-Light.ttf
+          weight: 300
+        - asset: assets/fonts/geist/Geist-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/geist/Geist-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/geist/Geist-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/geist/Geist-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/geist/Geist-ExtraBold.ttf
+          weight: 800
+    # Chasse fixe pour les références (factures, codes).
+    - family: GeistMono
+      fonts:
+        - asset: assets/fonts/geist/GeistMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/geist/GeistMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/geist/GeistMono-Bold.ttf
+          weight: 700
+    - family: PhosphorRegular
+      fonts:
+        - asset: assets/fonts/phosphor/Phosphor-Regular.ttf
+    - family: PhosphorBold
+      fonts:
+        - asset: assets/fonts/phosphor/Phosphor-Bold.ttf
+    - family: PhosphorFill
+      fonts:
+        - asset: assets/fonts/phosphor/Phosphor-Fill.ttf
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

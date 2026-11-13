@@ -33,11 +33,7 @@ class DepenseDetailPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, AppColors.primaryDark],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: AppColors.primary,
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.primary.withValues(alpha: 0.3),

@@ -85,14 +85,7 @@ class _OperatorListPageState extends State<OperatorListPage> {
                                 width: double.infinity,
                                 padding: const EdgeInsets.all(18),
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFF06231C),
-                                      Color(0xFF0A3A30),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
+                                  color: Color(0xFF06231C),
                                   borderRadius: BorderRadius.circular(22),
                                   boxShadow: [
                                     BoxShadow(
@@ -308,14 +301,7 @@ class _OperatorListPageState extends State<OperatorListPage> {
                           height: 52,
                           child: Container(
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [
-                                  AppColors.primary,
-                                  Color(0xFF135043),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
+                              color: AppColors.primary,
                               borderRadius: BorderRadius.circular(26),
                               boxShadow: [
                                 BoxShadow(

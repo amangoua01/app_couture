@@ -30,11 +30,7 @@ class RoadmapOnboardingWidget extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(22, 24, 18, 24),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(22),
-            gradient: const LinearGradient(
-              colors: [AppColors.primary, AppColors.primaryDark],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: AppColors.primary,
             boxShadow: [
               BoxShadow(
                 color: AppColors.primary.withValues(alpha: 0.3),

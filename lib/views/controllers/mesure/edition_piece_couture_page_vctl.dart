@@ -410,9 +410,13 @@ class EditionPieceCouturePageVctl extends AuthViewController {
   Future<List<TypeMesure>> fetchTypeMesures() async {
     final cached = await typeMesureApi.readCachedList();
     if (cached != null && cached.isNotEmpty) {
-      return cached.items.where((e) => e.categories.isNotEmpty).toList();
+      final avecCategories =
+          cached.items.where((e) => e.categories.isNotEmpty).toList();
+      // Un cache sans aucun type exploitable est probablement périmé
+      // (catégories ajoutées depuis) : on interroge alors le serveur.
+      if (avecCategories.isNotEmpty) return avecCategories;
     }
-    final res = await typeMesureApi.list(useCache: true);
+    final res = await typeMesureApi.list(useCache: false);
     if (res.status) {
       return res.data!.items.where((e) => e.categories.isNotEmpty).toList();
     }

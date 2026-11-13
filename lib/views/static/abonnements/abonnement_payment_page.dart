@@ -354,14 +354,7 @@ class AbonnementPaymentPage extends StatelessWidget {
                     height: 52,
                     child: Container(
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            AppColors.primary,
-                            Color(0xFF135043),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: AppColors.primary,
                         borderRadius: BorderRadius.circular(26),
                         boxShadow: [
                           BoxShadow(

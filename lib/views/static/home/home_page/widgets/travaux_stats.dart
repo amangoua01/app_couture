@@ -48,11 +48,7 @@ class _CarteEnCours extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFE2B15B), AppColors.secondary],
-        ),
+        color: AppColors.secondary,
         boxShadow: [
           BoxShadow(
             color: AppColors.secondary.withValues(alpha: 0.4),

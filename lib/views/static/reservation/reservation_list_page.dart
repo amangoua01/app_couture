@@ -1,6 +1,7 @@
 import 'package:ateliya/data/models/reservation.dart';
 import 'package:ateliya/tools/constants/app_colors.dart';
 import 'package:ateliya/tools/widgets/onglets_compteurs.dart';
+import 'package:ateliya/tools/widgets/swipe_tabs.dart';
 import 'package:ateliya/views/controllers/reservation/reservation_list_vctl.dart';
 import 'package:ateliya/views/static/reservation/reservation_detail_page.dart';
 import 'package:ateliya/views/static/reservation/reservation_widgets.dart';
@@ -54,22 +55,14 @@ class ReservationListPage extends StatelessWidget {
                   ctl.onglet == ReservationOnglet.aTraiter)
                 _BandeauStock(nombre: ctl.nbManqueStock),
               Expanded(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 260),
-                  switchInCurve: Curves.easeOutCubic,
-                  transitionBuilder:
-                      (child, animation) => FadeTransition(
-                        opacity: animation,
-                        child: SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0, 0.025),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
-                        ),
-                      ),
+                // Balayer l'écran change d'onglet (comme un toucher sur le
+                // sélecteur) ; le contenu glisse dans le sens du geste.
+                child: SwipeTabs<ReservationOnglet>(
+                  values: ReservationOnglet.values,
+                  selection: ctl.onglet,
+                  onChanged: ctl.choisir,
                   child: KeyedSubtree(
-                    key: ValueKey((ctl.onglet, ctl.hasLoadedOnce)),
+                    key: ValueKey(ctl.hasLoadedOnce),
                     child:
                         !ctl.hasLoadedOnce
                             ? const Center(child: CircularProgressIndicator())
