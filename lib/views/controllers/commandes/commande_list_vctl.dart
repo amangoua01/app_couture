@@ -37,7 +37,7 @@ class CommandeListVctl extends AuthViewController {
     ('NONTERMINEE', 'Non terminées'),
     ('SOLDEESNONTERMINEE', 'Soldées, non terminées'),
     ('TERMINEE', 'Terminées'),
-    ('LIVRER', 'Livrées'),
+    ('LIVREE', 'Livrées'),
     ('RETIRE', 'Retirées'),
   ];
 

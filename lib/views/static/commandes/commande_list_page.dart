@@ -26,7 +26,7 @@ class CommandeListPage extends StatelessWidget {
         return Icons.payments_rounded;
       case 'TERMINEE':
         return Icons.task_alt_rounded;
-      case 'LIVRER':
+      case 'LIVREE':
         return Icons.local_shipping_rounded;
       case 'RETIRE':
         return Icons.inventory_2_rounded;

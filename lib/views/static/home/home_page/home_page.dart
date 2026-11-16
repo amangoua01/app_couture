@@ -81,10 +81,12 @@ class HomePage extends StatelessWidget {
                           children: [
                             TravauxStats(
                               enCours:
+                                  ctl.travauxEnCours ??
                                   ctl.data.commandes
                                       .where((e) => !e.estTerminee)
                                       .length,
                               terminees:
+                                  ctl.travauxTerminees ??
                                   ctl.data.commandes
                                       .where((e) => e.estTerminee)
                                       .length,
