@@ -75,6 +75,10 @@
         <intent>
             <action android:name="android.speech.RecognitionService" />
         </intent>
+        <!-- Synthèse vocale (flutter_tts) : lecture à voix haute des réponses de LIA. -->
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

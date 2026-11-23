@@ -6,6 +6,7 @@ import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/tools/widgets/subscription_banner.dart';
 import 'package:ateliya/views/controllers/home/home_page_vctl.dart';
+import 'package:ateliya/views/static/assistant/widgets/assistant_entry_card.dart';
 import 'package:ateliya/views/static/home/home_page/annexe/activite_part.dart';
 import 'package:ateliya/views/static/home/home_page/annexe/caisse_wallet_card_state.dart';
 import 'package:ateliya/views/static/home/home_page/annexe/vente_button.dart';
@@ -66,6 +67,8 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       if (ctl.user.isAdmin) ...[
+                        const Gap(12),
+                        const AssistantEntryCard(),
                         const Gap(12),
                         MallEntryCard(
                           code: ctl.user.entreprise?.codeMarchand,
