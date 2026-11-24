@@ -7,8 +7,8 @@ import 'package:flutter_in_store_app_version_checker/flutter_in_store_app_versio
 
 abstract class Env {
   static const String appName = 'Ateliya';
-  static const String appVersion = '1.6.0';
-  static const int buildVersion = 45;
+  static const String appVersion = '1.7.0';
+  static const int buildVersion = 46;
   static const fontFamily = 'Geist';
 
   static const String defaultPassword = "admin93K";
