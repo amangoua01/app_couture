@@ -151,7 +151,7 @@ class TypesDepenseListPage extends StatelessWidget {
           24,
           12,
           24,
-          24 + MediaQuery.of(context).viewInsets.bottom,
+          24,
         ),
         decoration: const BoxDecoration(
           color: Colors.white,

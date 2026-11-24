@@ -768,7 +768,26 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
     );
   }
 
-  Widget _buildEtatBadge(String etat) {
+  /// Le serveur renvoie parfois l'état brut (« EN_COURS ») : on le ramène au
+  /// libellé affiché partout ailleurs.
+  static String _libelleEtat(String? brut) {
+    final k = (brut ?? '').toLowerCase().replaceAll('_', ' ').trim();
+    switch (k) {
+      case 'en cours':
+        return 'En cours';
+      case 'terminee':
+      case 'terminée':
+        return 'Terminée';
+      case 'livree':
+      case 'livrée':
+        return 'Livrée';
+      default:
+        return k.isEmpty ? '' : k[0].toUpperCase() + k.substring(1);
+    }
+  }
+
+  Widget _buildEtatBadge(String etatBrut) {
+    final etat = _libelleEtat(etatBrut);
     Color backgroundColor;
     Color textColor;
     IconData icon;
@@ -839,7 +858,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
               ),
               const Gap(15),
               ...etats.map((etat) {
-                final isSelected = lm.etat == etat;
+                final isSelected = _libelleEtat(lm.etat) == etat;
                 return ListTile(
                   leading: Icon(
                     isSelected ? Icons.check_circle : Icons.circle_outlined,
@@ -891,7 +910,7 @@ class _DetailCommandPageState extends State<DetailCommandPage> {
               ),
               const Gap(15),
               ...etats.map((etat) {
-                final isSelected = mesure.etatFacture == etat;
+                final isSelected = _libelleEtat(mesure.etatFacture) == etat;
                 return ListTile(
                   leading: Icon(
                     isSelected ? Icons.check_circle : Icons.circle_outlined,

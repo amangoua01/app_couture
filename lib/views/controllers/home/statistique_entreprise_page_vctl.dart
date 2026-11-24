@@ -32,6 +32,9 @@ class StatistiqueEntreprisePageVctl extends AuthViewController {
   bool hasData(int index) => _byPeriod.containsKey(index);
   bool get isLoading => _loading.contains(periodIndex) && !hasData(periodIndex);
 
+  /// Vrai tant que la période affichée se charge (même avec d'anciens chiffres).
+  bool get isLoadingAny => _loading.contains(periodIndex);
+
   @visibleForTesting
   void seed(int index, GlobaleStats value) => _byPeriod[index] = value;
 

@@ -6,6 +6,7 @@ import 'package:ateliya/tools/widgets/main_app_bar.dart';
 import 'package:ateliya/tools/widgets/placeholder_widget.dart';
 import 'package:ateliya/tools/widgets/subscription_banner.dart';
 import 'package:ateliya/views/controllers/home/home_page_vctl.dart';
+import 'package:ateliya/views/static/assistant/widgets/assistant_entry_card.dart';
 import 'package:ateliya/views/static/home/home_page/annexe/activite_part.dart';
 import 'package:ateliya/views/static/home/home_page/annexe/caisse_wallet_card_state.dart';
 import 'package:ateliya/views/static/home/home_page/annexe/vente_button.dart';
@@ -13,6 +14,7 @@ import 'package:ateliya/views/static/home/home_page/widgets/travaux_stats.dart';
 import 'package:ateliya/views/static/home/widgets/no_entite_selected_view.dart';
 import 'package:ateliya/views/static/home/widgets/roadmap_onboarding_widget.dart';
 import 'package:ateliya/tools/widgets/mall_entry_card.dart';
+import 'package:ateliya/tools/widgets/top_loading_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -43,56 +45,70 @@ class HomePage extends StatelessWidget {
               ifTrue: RoadmapOnboardingWidget(ctl),
               ifFalse: const NoEntiteSelectedView(),
             ),
-            child: RefreshIndicator(
-              onRefresh: ctl.loadData,
-              child: ListView(
-                controller: ctl.scrollCtl,
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(12),
-                children: [
-                  SubscriptionBanner(
-                    visible: ctl.presentSubscription,
-                    canManage: ctl.user.isAdmin,
-                  ),
-                  Visibility(
-                    visible: ctl.user.type?.code != TypeUserEnum.ac.code,
-                    child: CaisseWalletCard(
-                      ctl: ctl,
-                      obscureBalance: ctl.obscureBalance,
-                      onToggleObscure: ctl.toggleObscureBalance,
-                    ),
-                  ),
-                  if (ctl.user.isAdmin) ...[
-                    const Gap(12),
-                    MallEntryCard(
-                      code: ctl.user.entreprise?.codeMarchand,
-                      compact: true,
-                    ),
-                  ],
-                  const Gap(24),
-                  Visibility(
-                    visible:
-                        ctl.getEntite().value.type ==
-                        EntiteEntrepriseType.succursale,
-                    child: Column(
-                      children: [
-                        TravauxStats(
-                          enCours:
-                              ctl.data.commandes
-                                  .where((e) => e.isActive)
-                                  .length,
-                          terminees:
-                              ctl.data.commandes
-                                  .where((e) => !e.isActive)
-                                  .length,
+            child: Stack(
+              children: [
+                RefreshIndicator(
+                  onRefresh: ctl.loadData,
+                  child: ListView(
+                    controller: ctl.scrollCtl,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(12),
+                    children: [
+                      SubscriptionBanner(
+                        visible: ctl.presentSubscription,
+                        canManage: ctl.user.isAdmin,
+                      ),
+                      Visibility(
+                        visible: ctl.user.type?.code != TypeUserEnum.ac.code,
+                        child: CaisseWalletCard(
+                          ctl: ctl,
+                          obscureBalance: ctl.obscureBalance,
+                          onToggleObscure: ctl.toggleObscureBalance,
                         ),
-                        const Gap(24),
+                      ),
+                      if (ctl.user.isAdmin) ...[
+                        const Gap(12),
+                        const AssistantEntryCard(),
+                        const Gap(12),
+                        MallEntryCard(
+                          code: ctl.user.entreprise?.codeMarchand,
+                          compact: true,
+                        ),
                       ],
-                    ),
+                      const Gap(24),
+                      Visibility(
+                        visible:
+                            ctl.getEntite().value.type ==
+                            EntiteEntrepriseType.succursale,
+                        child: Column(
+                          children: [
+                            TravauxStats(
+                              enCours:
+                                  ctl.travauxEnCours ??
+                                  ctl.data.commandes
+                                      .where((e) => !e.estTerminee)
+                                      .length,
+                              terminees:
+                                  ctl.travauxTerminees ??
+                                  ctl.data.commandes
+                                      .where((e) => e.estTerminee)
+                                      .length,
+                            ),
+                            const Gap(24),
+                          ],
+                        ),
+                      ),
+                      ActivitePart(ctl: ctl),
+                    ],
                   ),
-                  ActivitePart(ctl: ctl),
-                ],
-              ),
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: TopLoadingBar(visible: ctl.isRefreshing),
+                ),
+              ],
             ),
           ),
         );

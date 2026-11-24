@@ -7,6 +7,7 @@ import 'package:ateliya/tools/widgets/stats/charts/stats_style.dart';
 import 'package:ateliya/views/controllers/home/statistique_page_vctl.dart';
 import 'package:ateliya/views/static/home/sub_pages/stats/atelier/atelier_stats_sub_page.dart';
 import 'package:ateliya/views/static/home/sub_pages/stats/boutique/boutique_stats_sub_page.dart';
+import 'package:ateliya/tools/widgets/top_loading_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ateliya/tools/constants/app_icons.dart';
@@ -30,9 +31,17 @@ class StatistiquePage extends StatelessWidget {
             onSelectionChanged: () {},
             onNotifRefresh: () => ctl.loadUnreadCount(),
           ),
-          body: ctl.periodIndex > 2
-              ? _PlageLibre(ctl: ctl)
-              : _Onglets(ctl: ctl),
+          body: Stack(
+            children: [
+              ctl.periodIndex > 2 ? _PlageLibre(ctl: ctl) : _Onglets(ctl: ctl),
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: TopLoadingBar(visible: ctl.isRefreshing),
+              ),
+            ],
+          ),
         );
       },
     );

@@ -159,9 +159,7 @@ class PointagePage extends StatelessWidget {
       child: StatefulBuilder(
         builder: (sheetContext, setState) {
           return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
-            ),
+            padding: EdgeInsets.zero,
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
               child: Column(

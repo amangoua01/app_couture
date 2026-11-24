@@ -27,11 +27,14 @@ class BottomSheetDepense {
     Get.bottomSheet(
       StatefulBuilder(
         builder: (sheetContext, setState) {
-          final keyboardHeight = MediaQuery.of(sheetContext).viewInsets.bottom;
+          // Get.bottomSheet remonte déjà la feuille au-dessus du clavier : ne pas
+          // ajouter la hauteur du clavier une seconde fois (sinon bande blanche).
+          final media = MediaQuery.of(sheetContext);
+          final maxSheetHeight = (media.size.height - media.viewInsets.bottom) * 0.9;
 
           return Container(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(sheetContext).size.height * 0.85,
+              maxHeight: maxSheetHeight,
             ),
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -40,8 +43,9 @@ class BottomSheetDepense {
             child: SafeArea(
               top: false,
               child: Padding(
-                padding: EdgeInsets.only(bottom: keyboardHeight),
+                padding: EdgeInsets.zero,
                 child: SingleChildScrollView(
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.fromLTRB(22, 12, 22, 24),
                   child: Column(

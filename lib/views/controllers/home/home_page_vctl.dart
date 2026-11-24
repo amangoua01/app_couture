@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ateliya/api/accueil_api.dart';
 import 'package:ateliya/api/boutique_api.dart';
+import 'package:ateliya/api/facture_api.dart';
 import 'package:ateliya/data/models/accueil_data.dart';
 import 'package:ateliya/services/sync_service.dart';
 import 'package:ateliya/tools/constants/entite_entreprise_type.dart';
@@ -28,6 +29,27 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
   final api = AccueilApi();
   final scrollCtl = ScrollController();
   final boutiqueApi = BoutiqueApi();
+  final _factureApi = FactureApi();
+
+  /// Totaux réels des travaux de l'atelier. `data.commandes` ne contient que les
+  /// 10 dernières commandes (et sans l'état de la facture) : on les lit donc à
+  /// part, dans la pagination de la liste des commandes.
+  int? travauxEnCours;
+  int? travauxTerminees;
+
+  Future<void> _chargerTravaux(String cle, int atelierId) async {
+    final r = await Future.wait([
+      _factureApi.countByType(atelierId, 'NONTERMINEE'),
+      _factureApi.countByType(atelierId, 'SOLDEESNONTERMINEE'),
+      _factureApi.countByType(atelierId, 'TERMINEE'),
+      _factureApi.countByType(atelierId, 'LIVREE'),
+    ]);
+    if (_entiteChargee != cle) return; // l'utilisateur a changé d'entité
+    if (r.any((e) => e == null)) return; // on garde l'affichage précédent
+    travauxEnCours = r[0]! + r[1]!;
+    travauxTerminees = r[2]! + r[3]!;
+    update();
+  }
   bool presentSubscription = false;
   bool obscureBalance = true;
 
@@ -39,14 +61,37 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
   /// Vrai tant qu'aucune réponse réseau n'est encore arrivée pour cette entité.
   bool isFirstLoad = true;
 
+  /// Entité dont `data` est le tableau de bord (type:id). Quand l'utilisateur
+  /// change de boutique ou d'atelier, l'écran repart de zéro au lieu de garder
+  /// les chiffres de l'entité précédente.
+  String? _entiteChargee;
+
+  /// Vrai pendant un chargement réseau : l'écran l'indique par une barre fine.
+  bool isRefreshing = false;
+
   Future<void> loadData() async {
     final entite = getEntite().value;
     loadUnreadCount();
-    if (entite.isNotEmpty) {
+    if (entite.isEmpty) return;
+
+    final cle = '${entite.type.name}:${entite.id}';
+    if (_entiteChargee != cle) {
+      _entiteChargee = cle;
+      data = AccueilData();
+      travauxEnCours = null;
+      travauxTerminees = null;
+      presentSubscription = false;
+      isFirstLoad = true;
+    }
+    isRefreshing = true;
+    update();
+
+    try {
       // Réaffiche le dernier tableau de bord connu avant l'appel réseau.
       var hasContent = !isFirstLoad;
       if (isFirstLoad) {
         final cached = await api.readCached(entite.id!, entite.type);
+        if (_entiteChargee != cle) return; // l'utilisateur a changé d'entité
         if (cached != null) {
           data = cached;
           presentSubscription = cached.subscriptionExpired;
@@ -59,16 +104,18 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
       // sinon on rafraîchit en silence sous les données déjà affichées.
       final request = api.getAccueilData(entite.id!, entite.type);
       final res = await (hasContent ? request : request.load());
+      if (_entiteChargee != cle) return;
       isFirstLoad = false;
       if (res.status) {
         data = res.data!;
         presentSubscription = data.subscriptionExpired;
-        update();
+        if (entite.type == EntiteEntrepriseType.succursale) {
+          unawaited(_chargerTravaux(cle, entite.id!));
+        }
       } else {
         if (res.detailErrors == "endSubscription") {
           // Ancien backend : l'accueil était refusé au lieu d'être signalé.
           presentSubscription = true;
-          update();
         } else if (hasContent && await SyncService.isOffline()) {
           // Hors-ligne avec un tableau de bord déjà affiché (cache ou
           // chargement précédent) : pas besoin d'un message d'erreur
@@ -77,6 +124,9 @@ class HomePageVctl extends AuthViewController with PrinterManagerViewMixin {
           CMessageDialog.show(message: res.message);
         }
       }
+    } finally {
+      if (_entiteChargee == cle) isRefreshing = false;
+      update();
     }
   }
 

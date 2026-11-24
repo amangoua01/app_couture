@@ -1,20 +1,28 @@
 import 'package:ateliya/data/models/stats/stock_statistiques.dart';
-import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/tools/constants/app_icons.dart';
 import 'package:ateliya/tools/constants/period_stat.dart';
-import 'package:ateliya/tools/extensions/types/date_time_range.dart';
 import 'package:ateliya/tools/extensions/types/string.dart';
-import 'package:ateliya/tools/widgets/c_tab_bar.dart';
-import 'package:ateliya/tools/widgets/empty_data_widget.dart';
+import 'package:ateliya/tools/widgets/app_tab_bar.dart';
 import 'package:ateliya/tools/widgets/messages/c_bottom_sheet.dart';
-import 'package:ateliya/tools/widgets/placeholder_builder.dart';
+import 'package:ateliya/tools/widgets/pill_tabs.dart';
 import 'package:ateliya/tools/widgets/select_dash_period_sub_page.dart';
+import 'package:ateliya/tools/widgets/stats/charts/breakdown_donut.dart';
+import 'package:ateliya/tools/widgets/stats/charts/compare_bars.dart';
+import 'package:ateliya/tools/widgets/stats/charts/kpi_tile.dart';
+import 'package:ateliya/tools/widgets/stats/charts/rank_bars.dart';
+import 'package:ateliya/tools/widgets/stats/charts/series_line_chart.dart';
+import 'package:ateliya/tools/widgets/stats/charts/stats_card.dart';
+import 'package:ateliya/tools/widgets/stats/charts/stats_style.dart';
+import 'package:ateliya/tools/widgets/top_loading_bar.dart';
 import 'package:ateliya/views/controllers/stats/stock_statistiques_vctl.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:ateliya/views/static/home/sub_pages/stats/stats_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
+/// Suivi du stock d'une boutique : quatre onglets qu'on change en touchant le
+/// titre ou en glissant, une période commune, et le même langage visuel que
+/// les statistiques (à plat, filets fins, chiffres lisibles).
 class StockStatistiquesPage extends StatelessWidget {
   const StockStatistiquesPage({super.key});
 
@@ -23,1166 +31,536 @@ class StockStatistiquesPage extends StatelessWidget {
     return GetBuilder<StockStatistiquesVctl>(
       init: StockStatistiquesVctl(),
       builder: (ctl) {
-        return DefaultTabController(
-          length: 4,
-          child: Scaffold(
-            backgroundColor: Colors.grey[50],
-            appBar: AppBar(
-              title: const Text(
-                "Suivi de Stock",
-                style: TextStyle(fontWeight: FontWeight.bold),
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(title: const Text('Suivi de stock')),
+          body: Stack(
+            children: [
+              _corps(ctl),
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: TopLoadingBar(visible: ctl.isRefreshing),
               ),
-              elevation: 0,
-              centerTitle: true,
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _corps(StockStatistiquesVctl ctl) {
+    if (ctl.isLoading && ctl.data == null) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 14),
+        child: StatsSkeleton(),
+      );
+    }
+    if (ctl.data == null && ctl.errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                AppIcons.warningCircle,
+                size: 44,
+                color: StatsStyle.muted,
+              ),
+              const SizedBox(height: 14),
+              Text(
+                ctl.errorMessage!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 15, color: StatsStyle.dark),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton(
+                onPressed: () {
+                  ctl.isLoading = true;
+                  ctl.update();
+                  ctl.fetchData();
+                },
+                child: const Text('Réessayer'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return _Onglets(ctl: ctl);
+  }
+}
+
+class _Onglets extends StatefulWidget {
+  final StockStatistiquesVctl ctl;
+  const _Onglets({required this.ctl});
+
+  @override
+  State<_Onglets> createState() => _OngletsState();
+}
+
+class _OngletsState extends State<_Onglets>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabs = TabController(length: 4, vsync: this);
+
+  @override
+  void dispose() {
+    _tabs.dispose();
+    super.dispose();
+  }
+
+  Future<void> _choisirPlage() async {
+    final ctl = widget.ctl;
+    final e = await CBottomSheet.show(
+      child: SelectDashPeriodSubPage(
+        DateTimeRange(
+          start: ctl.params.dateDebut ?? DateTime.now(),
+          end: ctl.params.dateFin ?? DateTime.now(),
+        ),
+      ),
+    );
+    if (e is DateTimeRange) {
+      ctl.updatePeriod(PeriodStat.periode, debut: e.start, fin: e.end);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ctl = widget.ctl;
+    return Column(
+      children: [
+        AppTabBar(
+          controller: _tabs,
+          isScrollable: true,
+          tabs: const [
+            AppTabItem('Général'),
+            AppTabItem('Mouvements'),
+            AppTabItem('Inventaire'),
+            AppTabItem('Par taille'),
+          ],
+        ),
+        PillTabs(
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+          index: ctl.periodIndex.clamp(0, 3),
+          onChanged: (i) {
+            if (i == 3) {
+              _choisirPlage();
+            } else {
+              ctl.updatePeriod(PeriodStat.values[i]);
+            }
+          },
+          tabs: const [
+            PillTab('Jour'),
+            PillTab('Mois'),
+            PillTab('Année'),
+            PillTab('Période', icon: AppIcons.calendarBlank),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabs,
+            children: [
+              _Page(ctl: ctl, child: _General(ctl: ctl)),
+              _Page(ctl: ctl, child: _Mouvements(ctl: ctl)),
+              _Page(ctl: ctl, child: _Inventaire(ctl: ctl)),
+              _Page(ctl: ctl, child: _ParTaille(ctl: ctl)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Défilement + actualisation par glissement, avec les marges communes.
+class _Page extends StatelessWidget {
+  final StockStatistiquesVctl ctl;
+  final Widget child;
+  const _Page({required this.ctl, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      color: StatsStyle.gold,
+      onRefresh: ctl.fetchData,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+        children: [child],
+      ),
+    );
+  }
+}
+
+String _nb(num v) => '${v.round()}';
+String _articles(num v) => '${v.round()} article(s)';
+
+// ── Général ─────────────────────────────────────────────────────────────
+
+class _General extends StatelessWidget {
+  final StockStatistiquesVctl ctl;
+  const _General({required this.ctl});
+
+  static const _sage = Color(0xFF5C8A78);
+  static const _alert = Color(0xFFB4401F);
+
+  @override
+  Widget build(BuildContext context) {
+    final d = ctl.data;
+    final k = d?.kpis ?? StockKpis.fromJson({});
+    final evo = d?.evolution ?? <StockEvolution>[];
+    final modeles = d?.stockParModele ?? <StockParModele>[];
+    final sansStock = k.nbModelesSansStock ?? 0;
+    final attente = k.nbMouvementsEnAttente ?? 0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Gap(8),
+        KpiGrid(
+          tiles: [
+            KpiTile(
+              icon: AppIcons.package,
+              label: 'Stock actuel',
+              value: k.stockActuelTotal ?? 0,
+              format: _nb,
+              caption: 'articles en boutique',
             ),
-            body:
-                ctl.isLoading && ctl.data == null
-                    ? const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primary,
+            KpiTile(
+              icon: AppIcons.tShirt,
+              label: 'Modèles en boutique',
+              value: k.nbModelesBoutique ?? 0,
+              format: _nb,
+            ),
+            KpiTile(
+              icon: AppIcons.warningCircle,
+              label: 'Sans stock',
+              value: sansStock,
+              format: _nb,
+              caption: sansStock > 0 ? 'À réapprovisionner' : 'Aucune rupture',
+              color: sansStock > 0 ? _alert : StatsStyle.ink,
+            ),
+            KpiTile(
+              icon: AppIcons.clock,
+              label: 'Mouvements en attente',
+              value: attente,
+              format: _nb,
+              caption: attente > 0 ? 'À confirmer' : 'Rien en attente',
+              color: attente > 0 ? _alert : StatsStyle.ink,
+            ),
+          ],
+        ),
+        const Gap(30),
+        StatsCard(
+          title: 'Entrées et sorties',
+          icon: AppIcons.arrowsLeftRight,
+          subtitle: 'Sur la période choisie',
+          child: CompareBars(
+            styles: const [
+              BarSeriesStyle('Entrées', StatsStyle.ink),
+              BarSeriesStyle('Sorties', StatsStyle.gold),
+            ],
+            groups: [
+              BarGroup('Mouvements', [k.nbEntrees ?? 0, k.nbSorties ?? 0]),
+              BarGroup('Articles', [
+                k.qteEntreeTotale ?? 0,
+                k.qteSortieTotale ?? 0,
+              ]),
+            ],
+          ),
+        ),
+        const Gap(30),
+        StatsCard(
+          title: 'Répartition par modèle',
+          icon: AppIcons.chartPie,
+          child: BreakdownDonut(
+            centerLabel: 'En stock',
+            format: _articles,
+            slices: [
+              for (var i = 0; i < modeles.length; i++)
+                BreakdownSlice(
+                  modeles[i].libelle ?? 'Modèle',
+                  modeles[i].stockTotal ?? 0,
+                  BreakdownDonut.palette[i % BreakdownDonut.palette.length],
+                ),
+            ],
+          ),
+        ),
+        const Gap(30),
+        StatsCard(
+          title: 'Évolution du stock',
+          icon: AppIcons.chartLineUp,
+          subtitle: 'Touchez la courbe pour lire chaque point',
+          child: SeriesLineChart(
+            labels: [for (final e in evo) _jour(e.date)],
+            series: [
+              ChartSeries(
+                label: 'Stock',
+                color: StatsStyle.ink,
+                values: [for (final e in evo) e.solde ?? 0],
+                format: _articles,
+              ),
+              ChartSeries(
+                label: 'Entrées',
+                color: _sage,
+                values: [for (final e in evo) e.qteEntree ?? 0],
+                format: _articles,
+              ),
+              ChartSeries(
+                label: 'Sorties',
+                color: StatsStyle.gold,
+                values: [for (final e in evo) e.qteSortie ?? 0],
+                format: _articles,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  static String _jour(String? iso) {
+    final d = iso?.toDateTime();
+    if (d == null) return iso ?? '';
+    return '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}';
+  }
+}
+
+// ── Mouvements ──────────────────────────────────────────────────────────
+
+class _Mouvements extends StatelessWidget {
+  final StockStatistiquesVctl ctl;
+  const _Mouvements({required this.ctl});
+
+  @override
+  Widget build(BuildContext context) {
+    final list = ctl.data?.historiqueMouvements ?? <HistoriqueMouvement>[];
+    if (list.isEmpty) {
+      return const StatsEmpty(message: 'Aucun mouvement sur cette période');
+    }
+    return Column(children: [for (final m in list) _Mouvement(m: m)]);
+  }
+}
+
+class _Mouvement extends StatelessWidget {
+  final HistoriqueMouvement m;
+  const _Mouvement({required this.m});
+
+  @override
+  Widget build(BuildContext context) {
+    final sortie = m.type?.toLowerCase() == 'sortie';
+    final confirme = (m.statut ?? '').toUpperCase().startsWith('CONFIRM');
+    final couleur = sortie ? StatsStyle.gold : StatsStyle.ink;
+    final lignes = m.lignes ?? <LigneMouvement>[];
+    final total = lignes.fold<int>(0, (a, l) => a + (l.quantiteMouvement ?? 0));
+
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: StatsStyle.hairline)),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(vertical: 4),
+          childrenPadding: const EdgeInsets.only(bottom: 12),
+          shape: const Border(),
+          collapsedShape: const Border(),
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: couleur.withValues(alpha: 0.5)),
+            ),
+            child: Icon(
+              sortie ? AppIcons.arrowUp : AppIcons.arrowDown,
+              size: 18,
+              color: couleur,
+            ),
+          ),
+          title: Text(
+            sortie ? 'Sortie' : 'Entrée',
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+          ),
+          subtitle: Text(
+            m.date.toFrenchDateTime,
+            style: const TextStyle(fontSize: 12, color: StatsStyle.muted),
+          ),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '${sortie ? '-' : '+'}$total',
+                style: StatsStyle.number(16, color: couleur),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                confirme ? 'Confirmé' : (m.statut ?? '').toLowerCase(),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: confirme ? StatsStyle.muted : const Color(0xFFB4401F),
+                ),
+              ),
+            ],
+          ),
+          children: [
+            if ((m.commentaire ?? '').isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    m.commentaire!,
+                    style: const TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 12.5,
+                      color: StatsStyle.muted,
+                    ),
+                  ),
+                ),
+              ),
+            for (final l in lignes)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${l.modeleLibelle ?? 'Modèle'}'
+                        '${(l.taille ?? '').isNotEmpty ? ' · ${l.taille}' : ''}',
+                        style: const TextStyle(fontSize: 13.5),
                       ),
-                    )
-                    : ctl.data == null && ctl.errorMessage != null
-                    ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              size: 48,
-                              color: Colors.grey.shade500,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              ctl.errorMessage!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                            const SizedBox(height: 16),
-                            OutlinedButton(
-                              onPressed: () {
-                                ctl.isLoading = true;
-                                ctl.update();
-                                ctl.fetchData();
-                              },
-                              child: const Text("Réessayer"),
-                            ),
-                          ],
+                    ),
+                    Text(
+                      '${l.quantiteAvant ?? 0} → ${l.quantiteApres ?? 0}',
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        color: StatsStyle.muted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Inventaire ──────────────────────────────────────────────────────────
+
+class _Inventaire extends StatelessWidget {
+  final StockStatistiquesVctl ctl;
+  const _Inventaire({required this.ctl});
+
+  @override
+  Widget build(BuildContext context) {
+    final list = [...?ctl.data?.stockParModele]
+      ..sort((a, b) => (b.stockTotal ?? 0).compareTo(a.stockTotal ?? 0));
+    if (list.isEmpty) {
+      return const StatsEmpty(message: 'Aucun modèle en boutique');
+    }
+    return Column(
+      children: [
+        for (final m in list)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: StatsStyle.hairline)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        m.libelle ?? 'Modèle',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    )
-                    : Column(
+                    ),
+                    Text('${m.stockTotal ?? 0}', style: StatsStyle.number(20)),
+                  ],
+                ),
+                Text(
+                  '${m.nbVariantes ?? 0} variante(s)',
+                  style: const TextStyle(fontSize: 12, color: StatsStyle.muted),
+                ),
+                for (final v in m.variantes ?? <StockVariante>[])
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
                       children: [
-                        const CTabBar(
-                          tabs: [
-                            "Général",
-                            "Mouvements",
-                            "Inventaire",
-                            "Par Taille",
-                          ],
-                        ),
                         Expanded(
-                          child: TabBarView(
-                            children: [
-                              _GeneralView(ctl: ctl),
-                              _HistoriqueMouvementsView(ctl: ctl),
-                              _InventaireView(ctl: ctl),
-                              _StockParTailleView(ctl: ctl),
-                            ],
+                          child: Text(
+                            [
+                              if ((v.taille ?? '').isNotEmpty)
+                                'Taille ${v.taille}',
+                              if ((v.couleur ?? '').isNotEmpty) v.couleur!,
+                            ].join(' · ').ifEmpty('Sans taille'),
+                            style: const TextStyle(fontSize: 13.5),
+                          ),
+                        ),
+                        Text(
+                          '${v.stock ?? 0} en stock',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: StatsStyle.ink,
                           ),
                         ),
                       ],
                     ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _GeneralView extends StatelessWidget {
-  final StockStatistiquesVctl ctl;
-  const _GeneralView({required this.ctl});
-
-  @override
-  Widget build(BuildContext context) {
-    final kpis = ctl.data?.kpis ?? StockKpis.fromJson({});
-    final evolution = ctl.data?.evolution ?? [];
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Period Selector Header
-          Center(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: Colors.grey.shade200),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
                   ),
-                ],
-              ),
-              padding: const EdgeInsets.all(4),
-              child: ToggleSwitch(
-                initialLabelIndex: ctl.periodIndex,
-                totalSwitches: 4,
-                minWidth: (Get.width - 60) / 4,
-                cornerRadius: 25,
-                activeBgColor: const [AppColors.primary],
-                inactiveBgColor: Colors.white,
-                activeFgColor: Colors.white,
-                inactiveFgColor: Colors.grey[600],
-                labels: PeriodStat.values.map((e) => e.libelle).toList(),
-                onToggle: (index) {
-                  if (index == 3) {
-                    ctl.periodIndex = index ?? 0;
-                    ctl.update();
-                  } else {
-                    if (index != null) {
-                      ctl.updatePeriod(PeriodStat.values[index]);
-                    }
-                  }
-                },
-              ),
-            ),
-          ),
-          PlaceholderBuilder(
-            condition: ctl.periodIndex == 3,
-            builder: () {
-              return Column(
-                children: [
-                  const Gap(20),
-                  GestureDetector(
-                    onTap:
-                        () => CBottomSheet.show(
-                          child: SelectDashPeriodSubPage(
-                            DateTimeRange(
-                              start: ctl.params.dateDebut ?? DateTime.now(),
-                              end: ctl.params.dateFin ?? DateTime.now(),
-                            ),
-                          ),
-                        ).then((e) {
-                          if (e is DateTimeRange) {
-                            ctl.updatePeriod(
-                              PeriodStat.periode,
-                              debut: e.start,
-                              fin: e.end,
-                            );
-                          }
-                        }),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 15,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.primary),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.calendar_today,
-                                color: AppColors.primary,
-                                size: 20,
-                              ),
-                              const Gap(10),
-                              Text(
-                                DateTimeRange(
-                                  start: ctl.params.dateDebut ?? DateTime.now(),
-                                  end: ctl.params.dateFin ?? DateTime.now(),
-                                ).toFrenchDate,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Icon(
-                            Icons.arrow_drop_down,
-                            color: AppColors.primary,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-          const Gap(25),
-
-          _StockOverviewPanel(kpis: kpis),
-          const Gap(24),
-          if ((ctl.data?.stockParModele ?? []).isNotEmpty) ...[
-            _StockRepartitionDonut(items: ctl.data!.stockParModele!),
-            const Gap(30),
-          ],
-          if (evolution.isNotEmpty) ...[
-            const Text(
-              "Évolution du Stock",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const Gap(15),
-            Container(
-              height: 250,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.grey.shade200),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.03),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
               ],
             ),
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  getDrawingHorizontalLine:
-                      (value) =>
-                          FlLine(color: Colors.grey[200], strokeWidth: 1),
-                ),
-                borderData: FlBorderData(show: false),
-                titlesData: FlTitlesData(
-                  rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  leftTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: true, reservedSize: 30),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 30,
-                      interval: 1,
-                      getTitlesWidget: (val, meta) {
-                        if (val.toInt() >= 0 &&
-                            val.toInt() < evolution.length) {
-                          String dateText = evolution[val.toInt()].date ?? "";
-                          if (dateText.length >= 8) {
-                            dateText = dateText.substring(8);
-                          } else if (dateText.contains('-')) {
-                            dateText = dateText.split('-').last;
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Text(
-                              dateText,
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          );
-                        }
-                        return const SizedBox();
-                      },
-                    ),
-                  ),
-                ),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots:
-                        evolution
-                            .asMap()
-                            .entries
-                            .map(
-                              (e) => FlSpot(
-                                e.key.toDouble(),
-                                e.value.qteEntree?.toDouble() ?? 0,
-                              ),
-                            )
-                            .toList(),
-                    color: Colors.green,
-                    isCurved: true,
-                    dotData: const FlDotData(show: false),
-                  ),
-                  LineChartBarData(
-                    spots:
-                        evolution
-                            .asMap()
-                            .entries
-                            .map(
-                              (e) => FlSpot(
-                                e.key.toDouble(),
-                                e.value.qteSortie?.toDouble() ?? 0,
-                              ),
-                            )
-                            .toList(),
-                    color: Colors.red,
-                    isCurved: true,
-                    dotData: const FlDotData(show: false),
-                  ),
-                ],
-              ),
-            ),
           ),
-          const Gap(15),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _ChartLegend(label: "Entrées", color: Colors.green),
-              Gap(20),
-              _ChartLegend(label: "Sorties", color: Colors.red),
-            ],
-          ),
-          const Gap(30),
-          ],
-          _SummaryTable(kpis: kpis),
-          if (ctl.data?.repartition != null) ...[
-            const Gap(30),
-            _RepartitionDetails(repartition: ctl.data!.repartition!),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _RepartitionDetails extends StatelessWidget {
-  final StockRepartition repartition;
-  const _RepartitionDetails({required this.repartition});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Détails des Mouvements",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const Gap(15),
-        Row(
-          children: [
-            Expanded(
-              child: _MoveDetailsCard(
-                title: "Entrées",
-                summary: repartition.entrees,
-                color: Colors.green,
-              ),
-            ),
-            const Gap(15),
-            Expanded(
-              child: _MoveDetailsCard(
-                title: "Sorties",
-                summary: repartition.sorties,
-                color: Colors.red,
-              ),
-            ),
-          ],
-        ),
       ],
     );
   }
 }
 
-class _MoveDetailsCard extends StatelessWidget {
-  final String title;
-  final StockMovementSummary? summary;
-  final Color color;
+// ── Par taille ──────────────────────────────────────────────────────────
 
-  const _MoveDetailsCard({
-    required this.title,
-    this.summary,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
-          const Divider(),
-          _TableRow(
-            label: "Mouvements",
-            value: "${summary?.nbMouvements ?? 0}",
-          ),
-          _TableRow(label: "Confirmés", value: "${summary?.confirmes ?? 0}"),
-          _TableRow(label: "En attente", value: "${summary?.enAttente ?? 0}"),
-          if ((summary?.rejetes ?? 0) > 0)
-            _TableRow(
-              label: "Rejetés",
-              value: "${summary?.rejetes ?? 0}",
-              color: Colors.red,
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HistoriqueMouvementsView extends StatelessWidget {
+class _ParTaille extends StatelessWidget {
   final StockStatistiquesVctl ctl;
-  const _HistoriqueMouvementsView({required this.ctl});
+  const _ParTaille({required this.ctl});
 
   @override
   Widget build(BuildContext context) {
-    final list = ctl.data?.historiqueMouvements ?? [];
-    if (ctl.isLoading && list.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (list.isEmpty) return const EmptyDataWidget();
-    return ListView.separated(
-      padding: const EdgeInsets.all(20),
-      itemCount: list.length,
-      separatorBuilder: (_, __) => const Gap(15),
-      itemBuilder: (context, index) {
-        final item = list[index];
-        final isSortie = item.type?.toLowerCase() == 'sortie';
-        final color = isSortie ? Colors.red : Colors.green;
-        final icon = isSortie ? Icons.arrow_upward : Icons.arrow_downward;
-
-        return Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade200),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: color.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(icon, color: color, size: 20),
-                      ),
-                      const Gap(10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.type ?? '',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: color,
-                            ),
-                          ),
-                          Text(
-                            item.date ?? '',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  _SmallLabel(
-                    text: item.statut ?? '',
-                    color:
-                        item.statut == 'CONFIRME'
-                            ? Colors.green
-                            : Colors.orange,
-                  ),
-                ],
-              ),
-              if (item.commentaire != null && item.commentaire!.isNotEmpty) ...[
-                const Gap(10),
-                Text(
-                  item.commentaire!,
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                    fontSize: 12,
-                    color: Colors.black54,
-                  ),
-                ),
-              ],
-              if (item.lignes != null && item.lignes!.isNotEmpty) ...[
-                const Gap(10),
-                const Divider(height: 1),
-                Theme(
-                  data: Theme.of(
-                    context,
-                  ).copyWith(dividerColor: Colors.transparent),
-                  child: ExpansionTile(
-                    tilePadding: EdgeInsets.zero,
-                    title: Text(
-                      "${item.lignes!.length} articles concernés",
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    children:
-                        item.lignes!.map((ligne) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        ligne.modeleLibelle ?? '',
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      Text(
-                                        "Stock : ${ligne.quantiteAvant ?? 0} ➔ ${ligne.quantiteApres ?? 0}",
-                                        style: const TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Text(
-                                  "${isSortie ? '-' : '+'}${ligne.quantiteMouvement ?? 0}",
-                                  style: TextStyle(
-                                    color: color,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _InventaireView extends StatelessWidget {
-  final StockStatistiquesVctl ctl;
-  const _InventaireView({required this.ctl});
-
-  @override
-  Widget build(BuildContext context) {
-    final list = ctl.data?.stockParModele ?? [];
-    if (ctl.isLoading && list.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (list.isEmpty) return const EmptyDataWidget();
-
-    return ListView.separated(
-      padding: const EdgeInsets.all(20),
-      itemCount: list.length,
-      separatorBuilder: (_, __) => const Gap(15),
-      itemBuilder: (context, index) {
-        final group = list[index];
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade200),
-          ),
-          child: Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              tilePadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
-              title: Text(
-                group.libelle.value,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(
-                "${group.nbVariantes ?? 0} variantes",
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-              trailing: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  "Total: ${group.stockTotal ?? 0}",
-                  style: const TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              children:
-                  (group.variantes ?? []).map((v) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(color: Colors.grey.shade100),
-                        ),
-                      ),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                        ),
-                        leading: const Icon(
-                          Icons.checkroom,
-                          color: Colors.grey,
-                          size: 20,
-                        ),
-                        title: Text(
-                          "Taille : ${v.taille.value}",
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        subtitle: Text(
-                          "${v.couleur != null ? "${v.couleur.value} • " : ""}${v.prix != null ? v.prix.value.toAmount() : ""}",
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        trailing: Text(
-                          "${v.stock ?? 0} EN STOCK",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-/// Panneau sombre en dégradé, avec une grille de KPI — même langage visuel
-/// que le reste de l'app (fond dégradé primary → primaryDark) plutôt que
-/// des cartes blanches génériques.
-class _StockOverviewPanel extends StatelessWidget {
-  final StockKpis kpis;
-  const _StockOverviewPanel({required this.kpis});
-
-  @override
-  Widget build(BuildContext context) {
-    final sansStock = kpis.nbModelesSansStock ?? 0;
-    final enAttente = kpis.nbMouvementsEnAttente ?? 0;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        color: AppColors.primary,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Vue d'ensemble",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 16,
-            ),
-          ),
-          const Gap(16),
-          Row(
-            children: [
-              Expanded(
-                child: _KpiTile(
-                  label: "Stock actuel",
-                  value: "${kpis.stockActuelTotal ?? 0}",
-                ),
-              ),
-              const Gap(12),
-              Expanded(
-                child: _KpiTile(
-                  label: "Modèles en boutique",
-                  value: "${kpis.nbModelesBoutique ?? 0}",
-                ),
-              ),
-            ],
-          ),
-          const Gap(12),
-          Row(
-            children: [
-              Expanded(
-                child: _KpiTile(
-                  label: "Sans stock",
-                  value: "$sansStock",
-                  accent: sansStock > 0 ? const Color(0xFFE57373) : null,
-                ),
-              ),
-              const Gap(12),
-              Expanded(
-                child: _KpiTile(
-                  label: "Mouvements en attente",
-                  value: "$enAttente",
-                  accent: enAttente > 0 ? AppColors.secondary : null,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _KpiTile extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color? accent;
-
-  const _KpiTile({required this.label, required this.value, this.accent});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              if (accent != null) ...[
-                Container(
-                  width: 7,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    color: accent,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const Gap(6),
-              ],
-              Expanded(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
-                    fontSize: 11.5,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const Gap(6),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 22,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Répartition du stock par modèle, en donut — les 4 plus gros modèles
-/// nommés, le reste regroupé sous "Autres" pour garder la légende lisible.
-class _StockRepartitionDonut extends StatelessWidget {
-  final List<StockParModele> items;
-  const _StockRepartitionDonut({required this.items});
-
-  static const _palette = [
-    AppColors.primary,
-    AppColors.secondary,
-    Color(0xFF6FA88A),
-    Color(0xFFB08968),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final sorted = [...items]
+    final list = [...?ctl.data?.stockParTaille]
       ..sort((a, b) => (b.stockTotal ?? 0).compareTo(a.stockTotal ?? 0));
-    final top = sorted.take(4).toList();
-    final reste = sorted
-        .skip(4)
-        .fold<int>(0, (sum, e) => sum + (e.stockTotal ?? 0));
-    final total = sorted.fold<int>(0, (sum, e) => sum + (e.stockTotal ?? 0));
-    if (total == 0) return const SizedBox.shrink();
-
-    final slices = [
-      for (var i = 0; i < top.length; i++)
-        (
-          label: top[i].libelle ?? 'Modèle',
-          value: top[i].stockTotal ?? 0,
-          color: _palette[i % _palette.length],
-        ),
-      if (reste > 0)
-        (label: "Autres", value: reste, color: Colors.grey.shade300),
-    ];
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Répartition par modèle",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const Gap(16),
-          Row(
-            children: [
-              SizedBox(
-                width: 130,
-                height: 130,
-                child: PieChart(
-                  PieChartData(
-                    sectionsSpace: 2,
-                    centerSpaceRadius: 36,
-                    sections: [
-                      for (final s in slices)
-                        PieChartSectionData(
-                          value: s.value.toDouble(),
-                          color: s.color,
-                          radius: 26,
-                          showTitle: false,
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              const Gap(20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (final s in slices)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 9,
-                              height: 9,
-                              decoration: BoxDecoration(
-                                color: s.color,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const Gap(8),
-                            Expanded(
-                              child: Text(
-                                s.label,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 12.5),
-                              ),
-                            ),
-                            Text(
-                              "${((s.value / total) * 100).round()}%",
-                              style: const TextStyle(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+    return StatsCard(
+      title: 'Stock par taille',
+      icon: AppIcons.ruler,
+      subtitle: 'Articles en boutique selon la taille',
+      child: RankBars(
+        emptyMessage: 'Aucun article en stock',
+        items: [
+          for (final t in list)
+            RankItem(
+              label:
+                  (t.taille ?? '').isEmpty
+                      ? 'Sans taille'
+                      : 'Taille ${t.taille}',
+              value: t.stockTotal ?? 0,
+              valueText: '${t.stockTotal ?? 0} en stock',
+              caption: '${t.nbModeleBoutique ?? 0} modèle(s)',
+            ),
         ],
       ),
     );
   }
 }
 
-class _SummaryTable extends StatelessWidget {
-  final StockKpis kpis;
-  const _SummaryTable({required this.kpis});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Résumé",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const Gap(15),
-          _TableRow(
-            label: "Modèles en boutique",
-            value: "${kpis.nbModelesBoutique ?? 0}",
-          ),
-          const Divider(height: 20),
-          _TableRow(
-            label: "Modèles sans stock",
-            value: "${kpis.nbModelesSansStock ?? 0}",
-            color: Colors.orange,
-          ),
-          const Divider(height: 20),
-          _TableRow(
-            label: "Mouvements Total",
-            value: "${kpis.nbMouvementsTotal ?? 0}",
-          ),
-          _TableRow(
-            label: " • Dont Entrées",
-            value: "${kpis.nbEntrees ?? 0}",
-            color: Colors.green,
-          ),
-          _TableRow(
-            label: " • Dont Sorties",
-            value: "${kpis.nbSorties ?? 0}",
-            color: Colors.red,
-          ),
-          const Divider(height: 20),
-          _TableRow(
-            label: "Mouvements en attente",
-            value: "${kpis.nbMouvementsEnAttente ?? 0}",
-            color: Colors.blue,
-          ),
-          const Divider(height: 20),
-          _TableRow(
-            label: "Solde Net (Entrées-Sorties)",
-            value: "${kpis.soldeNet ?? 0}",
-            isBold: true,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TableRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color? color;
-  final bool isBold;
-
-  const _TableRow({
-    required this.label,
-    required this.value,
-    this.color,
-    this.isBold = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: TextStyle(fontSize: 13, color: Colors.grey[700])),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
-            color: color ?? Colors.black87,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ChartLegend extends StatelessWidget {
-  final String label;
-  final Color color;
-  const _ChartLegend({required this.label, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const Gap(6),
-        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-      ],
-    );
-  }
-}
-
-class _StockParTailleView extends StatelessWidget {
-  final StockStatistiquesVctl ctl;
-  const _StockParTailleView({required this.ctl});
-
-  @override
-  Widget build(BuildContext context) {
-    final list = ctl.data?.stockParTaille ?? [];
-    if (ctl.isLoading && list.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (list.isEmpty) return const EmptyDataWidget();
-    return ListView.separated(
-      padding: const EdgeInsets.all(20),
-      itemCount: list.length,
-      separatorBuilder: (_, __) => const Gap(15),
-      itemBuilder: (context, index) {
-        final item = list[index];
-        return Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade200),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Taille: ${item.taille.value}",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Gap(4),
-                  Text(
-                    "${item.nbModeleBoutique ?? 0} modèles concernés",
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      "${item.stockTotal ?? 0}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    const Text(
-                      "Total",
-                      style: TextStyle(fontSize: 10, color: AppColors.primary),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _SmallLabel extends StatelessWidget {
-  final String text;
-  final Color color;
-  const _SmallLabel({required this.text, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: color,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
+extension on String {
+  String ifEmpty(String other) => isEmpty ? other : this;
 }

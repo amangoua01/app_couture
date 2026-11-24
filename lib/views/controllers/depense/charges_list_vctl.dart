@@ -54,6 +54,29 @@ class ChargesListVctl extends GetxController {
     return res.status ? res.data!.items : [];
   }
 
+  /// Création express d'un ouvrier depuis le formulaire de charge : seul le nom est
+  /// obligatoire, le reste se complète plus tard dans la fiche de l'ouvrier.
+  Future<Employe?> quickCreateEmploye({
+    required String nom,
+    String? prenoms,
+    String? telephone,
+    String? poste,
+  }) async {
+    final res = await employeApi
+        .create(Employe(
+          nom: nom.trim(),
+          prenoms: (prenoms ?? '').trim(),
+          telephone: (telephone ?? '').trim(),
+          poste: (poste ?? '').trim(),
+        ))
+        .load();
+    if (!res.status) {
+      CMessageDialog.show(message: res.message);
+      return null;
+    }
+    return res.data;
+  }
+
   Future<bool> saveCharge(Charge charge) async {
     final res = await (charge.id == null
             ? api.create(charge)

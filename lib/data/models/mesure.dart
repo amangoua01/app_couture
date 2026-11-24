@@ -38,6 +38,31 @@ class Mesure extends ModelFormData<Mesure> {
   bool isActive = true;
   String? etatFacture;
 
+  /// Vraie quand la commande est terminée ou livrée (ou désactivée) : elle ne
+  /// compte alors plus dans les travaux en cours. L'état vient du serveur, tantôt
+  /// « Livrée », tantôt « LIVREE ».
+  bool get estTerminee {
+    if (!isActive) return true;
+    // La liste de l'accueil ne renvoie pas l'état de la facture, seulement celui
+    // de chaque pièce : sans état global, une commande est terminée quand toutes
+    // ses pièces le sont.
+    if ((etatFacture ?? '').isEmpty && lignesMesures.isNotEmpty) {
+      return lignesMesures.every((l) {
+        final e = (l.etat ?? '')
+            .toLowerCase()
+            .replaceAll('é', 'e')
+            .trim();
+        return e == 'terminee' || e == 'livree';
+      });
+    }
+    final k = (etatFacture ?? '')
+        .toLowerCase()
+        .replaceAll('_', ' ')
+        .replaceAll('é', 'e')
+        .trim();
+    return k == 'terminee' || k == 'livree';
+  }
+
   Mesure({
     this.dateRetrait,
     this.dateDepot,

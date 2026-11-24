@@ -21,9 +21,7 @@ class MouvementCaisseListPage extends StatelessWidget {
       builder: (ctl) {
         return Scaffold(
           backgroundColor: const Color(0xFFF8FAF9),
-          appBar: AppBar(
-            title: const Text("Mouvements de caisse"),
-          ),
+          appBar: AppBar(title: const Text("Mouvements de caisse")),
           body: Column(
             children: [
               // ── Header Période de filtrage (Uniformisé) ───────────────────────
@@ -32,7 +30,10 @@ class MouvementCaisseListPage extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => _showDatePicker(context, ctl),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withValues(alpha: 0.03),
                       borderRadius: BorderRadius.circular(20),
@@ -48,7 +49,9 @@ class MouvementCaisseListPage extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppColors.primary.withValues(alpha: 0.1)),
+                            border: Border.all(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                            ),
                           ),
                           child: const Icon(
                             Icons.calendar_month_rounded,
@@ -66,7 +69,9 @@ class MouvementCaisseListPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w800,
-                                  color: AppColors.primary.withValues(alpha: 0.5),
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.5,
+                                  ),
                                   letterSpacing: 0.3,
                                 ),
                               ),
@@ -83,7 +88,10 @@ class MouvementCaisseListPage extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.primary,
                             borderRadius: BorderRadius.circular(10),
@@ -106,19 +114,20 @@ class MouvementCaisseListPage extends StatelessWidget {
                 child: PlaceholderWidget(
                   condition: !ctl.isLoading,
                   placeholder: const Center(child: CircularProgressIndicator()),
-                  child: ctl.data.isEmpty
-                      ? EmptyDataWidget(
-                          message: "Aucun mouvement trouvé",
-                          onRefresh: ctl.fetchData,
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(16, 10, 16, 40),
-                          itemCount: ctl.data.items.length,
-                          itemBuilder: (context, index) {
-                            final item = ctl.data.items[index];
-                            return _MouvementTile(item: item);
-                          },
-                        ),
+                  child:
+                      ctl.data.isEmpty
+                          ? EmptyDataWidget(
+                            message: "Aucun mouvement trouvé",
+                            onRefresh: ctl.fetchData,
+                          )
+                          : ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 10, 16, 40),
+                            itemCount: ctl.data.items.length,
+                            itemBuilder: (context, index) {
+                              final item = ctl.data.items[index];
+                              return _MouvementTile(item: item);
+                            },
+                          ),
                 ),
               ),
             ],
@@ -152,10 +161,7 @@ class MouvementCaisseListPage extends StatelessWidget {
               onValueChanged: (dates) {
                 if (dates.length >= 2) {
                   ctl.updateDateRange(
-                    DateTimeRange(
-                      start: dates[0],
-                      end: dates[1],
-                    ),
+                    DateTimeRange(start: dates[0], end: dates[1]),
                   );
                   Get.back();
                 }
@@ -181,129 +187,227 @@ class _MouvementTile extends StatelessWidget {
     final icon = isEntree ? Icons.north_east_rounded : Icons.south_west_rounded;
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      // La liste a déjà ses marges latérales : même largeur que le bloc de filtre.
+      margin: const EdgeInsets.symmetric(vertical: 6),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: color.withOpacity(0.2), width: 1.5),
+        side: BorderSide(color: color.withValues(alpha: 0.2), width: 1.5),
       ),
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(14),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Indicateur d'entrée/sortie d'argent chic
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 20),
-            ),
-            const Gap(14),
-
-            // Détails du mouvement
-            Expanded(
-              flex: 5,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.reference ?? "Mouvement",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Color(0xFF0F231F),
-                      fontWeight: FontWeight.w800,
-                      fontSize: 14.5,
-                      letterSpacing: -0.15,
-                    ),
+            Row(
+              children: [
+                // Indicateur d'entrée/sortie d'argent chic
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const Gap(4),
-                  Row(
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                const Gap(14),
+
+                // Détails du mouvement
+                Expanded(
+                  flex: 5,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.access_time_rounded,
-                        size: 12,
-                        color: AppColors.primary.withValues(alpha: 0.35),
+                      Text(
+                        item.reference ?? "Mouvement",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Color(0xFF0F231F),
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14.5,
+                          letterSpacing: -0.15,
+                        ),
                       ),
                       const Gap(4),
-                      if (item.createdAt != null)
-                        Text(
-                          DateFormat('dd/MM/yyyy HH:mm')
-                              .format(DateTime.parse(item.createdAt!)),
-                          style: TextStyle(
-                            color: AppColors.primary.withValues(alpha: 0.45),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.access_time_rounded,
+                            size: 12,
+                            color: AppColors.primary.withValues(alpha: 0.35),
                           ),
+                          const Gap(4),
+                          if (item.createdAt != null)
+                            Text(
+                              DateFormat(
+                                'dd/MM/yyyy HH:mm',
+                              ).format(DateTime.parse(item.createdAt!)),
+                              style: TextStyle(
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.45,
+                                ),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                        ],
+                      ),
+                      if (item.description != null &&
+                          item.description!.isNotEmpty) ...[
+                        const Gap(6),
+                        Text(
+                          item.description!,
+                          style: TextStyle(
+                            color: AppColors.primary.withValues(alpha: 0.6),
+                            fontSize: 12,
+                            height: 1.3,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
+                      ],
                     ],
                   ),
-                  if (item.description != null &&
-                      item.description!.isNotEmpty) ...[
-                    const Gap(6),
-                    Text(
-                      item.description!,
-                      style: TextStyle(
-                        color: AppColors.primary.withValues(alpha: 0.6),
-                        fontSize: 12,
-                        height: 1.3,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const Gap(12),
+                ),
+                const Gap(12),
 
-            // Montant et libellé
-            Expanded(
-              flex: 4,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "${isEntree ? '+' : '-'} ${item.montant?.toAmount(unit: 'F') ?? '0 F'}",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 15,
-                        color: color,
-                        letterSpacing: -0.2,
+                // Montant et libellé
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "${isEntree ? '+' : '-'} ${item.montant?.toAmount(unit: 'F') ?? '0 F'}",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 15,
+                            color: color,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                const Gap(4),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.04),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    item.sensLibelle ?? "",
-                    style: TextStyle(
-                      fontSize: 9.5,
-                      color: AppColors.primary.withValues(alpha: 0.5),
-                      fontWeight: FontWeight.w700,
-                    ),
+                      const Gap(4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.04),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          item.sensLibelle ?? "",
+                          style: TextStyle(
+                            fontSize: 9.5,
+                            color: AppColors.primary.withValues(alpha: 0.5),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            ),
+            ..._details(isEntree, color),
           ],
         ),
       ),
     );
+  }
+
+  /// Caisses touchées par le mouvement et auteur : d'où l'argent est sorti, où il est entré.
+  List<Widget> _details(bool isEntree, Color color) {
+    final lignes =
+        (item.lignes ?? const [])
+            .where((l) => (l.caisseLibelle ?? '').isNotEmpty)
+            .toList();
+    if (lignes.isEmpty && item.createdBy == null) return const [];
+
+    return [
+      const Gap(10),
+      Divider(height: 1, color: color.withValues(alpha: 0.15)),
+      const Gap(10),
+      if (lignes.isNotEmpty) ...[
+        Text(
+          isEntree ? "Entré dans" : "Sorti de",
+          style: TextStyle(
+            fontSize: 10.5,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.3,
+            color: AppColors.primary.withValues(alpha: 0.5),
+          ),
+        ),
+        const Gap(6),
+        for (final l in lignes)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.account_balance_wallet_outlined,
+                  size: 15,
+                  color: color,
+                ),
+                const Gap(8),
+                Expanded(
+                  child: Text(
+                    l.caisseLibelle!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF0F231F),
+                    ),
+                  ),
+                ),
+                const Gap(8),
+                if (l.montant != null)
+                  Text(
+                    l.montant!.toAmount(unit: 'F'),
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w800,
+                      color: color,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+      ],
+      if (item.createdBy != null)
+        Row(
+          children: [
+            Icon(
+              Icons.person_outline_rounded,
+              size: 14,
+              color: AppColors.primary.withValues(alpha: 0.4),
+            ),
+            const Gap(6),
+            Expanded(
+              child: Text(
+                "Par ${item.createdBy}",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary.withValues(alpha: 0.5),
+                ),
+              ),
+            ),
+          ],
+        ),
+    ];
   }
 }

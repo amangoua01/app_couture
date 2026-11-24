@@ -19,6 +19,7 @@ import 'package:ateliya/tools/widgets/stats/charts/stats_card.dart';
 import 'package:ateliya/tools/widgets/stats/charts/stats_hero.dart';
 import 'package:ateliya/tools/widgets/stats/charts/stats_style.dart';
 import 'package:ateliya/views/controllers/home/statistique_entreprise_page_vctl.dart';
+import 'package:ateliya/tools/widgets/top_loading_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -47,7 +48,17 @@ class StatistiqueEntreprisePage extends StatelessWidget {
               ),
             ],
           ),
-          body: ctl.periodIndex > 2 ? _PlageLibre(ctl: ctl) : _Onglets(ctl: ctl),
+          body: Stack(
+            children: [
+              ctl.periodIndex > 2 ? _PlageLibre(ctl: ctl) : _Onglets(ctl: ctl),
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: TopLoadingBar(visible: ctl.isLoadingAny),
+              ),
+            ],
+          ),
         );
       },
     );

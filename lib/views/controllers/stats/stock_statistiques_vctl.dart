@@ -10,6 +10,10 @@ class StockStatistiquesVctl extends AuthViewController {
   StockStatistiques? data;
   bool isLoading = true;
 
+  /// Vrai pendant tout appel réseau, y compris quand d'anciens chiffres sont
+  /// déjà affichés : l'écran le signale par un filet de chargement.
+  bool isRefreshing = false;
+
   /// Message renvoyé par le serveur quand le chargement échoue (abonnement
   /// requis, boutique introuvable…) : sans lui, la page affichait des zéros
   /// trompeurs.
@@ -41,6 +45,7 @@ class StockStatistiquesVctl extends AuthViewController {
     }
 
     isLoading = cached == null;
+    isRefreshing = true;
     update();
 
     final res = await _api.getStockStatistiques(entite.id!, params);
@@ -52,6 +57,7 @@ class StockStatistiquesVctl extends AuthViewController {
     }
 
     isLoading = false;
+    isRefreshing = false;
     update();
   }
 
@@ -60,6 +66,7 @@ class StockStatistiquesVctl extends AuthViewController {
     params.dateDebut = debut;
     params.dateFin = fin;
     periodIndex = PeriodStat.values.indexOf(filtre);
+    update();
     fetchData();
   }
 }

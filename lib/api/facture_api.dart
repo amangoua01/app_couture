@@ -116,6 +116,34 @@ class FactureApi extends CrudWebController<Facture> {
     }
   }
 
+  /// Nombre total de commandes d'un onglet (`NONTERMINEE`, `TERMINEE`, `LIVREE`…),
+  /// lu dans `pagination.totalItems` : une page d'un seul élément suffit, on ne
+  /// télécharge pas la liste. L'accueil ne renvoie que les 10 dernières commandes,
+  /// donc impossible d'y compter les travaux terminés.
+  Future<int?> countByType(int succursaleId, String type) async {
+    try {
+      final response = await client.post(
+        urlBuilder(
+          api: "advanced/$succursaleId",
+          params: {
+            "with_pagination": "true",
+            "page": "1",
+            "limit": "1",
+            "type": type,
+          },
+        ),
+        headers: authHeaders,
+        body: jsonEncode(<String, dynamic>{}),
+      );
+      if (response.statusCode != 200) return null;
+      final json = jsonDecode(response.body);
+      final total = (json['pagination'] ?? {})['totalItems'];
+      return total is int ? total : int.tryParse('$total');
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<DataResponse<PaginatedFactures>> getFacturesEntreprisePaginated(
     int succursaleId, {
     int page = 1,
