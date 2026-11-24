@@ -1,6 +1,8 @@
 /// Nom lisible des outils de Sika (pour dire à l'utilisateur d'où viennent les chiffres).
 const Map<String, String> assistantToolLabels = {
   'get_activity_summary': "Activité et finances",
+  'get_branches_ranking': "Classement des boutiques",
+  'get_branch_report': "Bilan d'une boutique ou d'un atelier",
   'get_clients_summary': "Clients",
   'get_stock_status': "État du stock",
   'get_expenses_summary': "Dépenses et caisses",

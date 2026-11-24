@@ -9,6 +9,7 @@ class MouvementCaisse extends ModelJson<MouvementCaisse> {
   int? sens;
   String? sensLibelle;
   String? createdAt;
+  String? createdBy;
   List<LigneMouvementCaisse>? lignes;
 
   MouvementCaisse({
@@ -19,6 +20,7 @@ class MouvementCaisse extends ModelJson<MouvementCaisse> {
     this.sens,
     this.sensLibelle,
     this.createdAt,
+    this.createdBy,
     this.lignes,
   });
 
@@ -33,6 +35,8 @@ class MouvementCaisse extends ModelJson<MouvementCaisse> {
     sens = json['sens'];
     sensLibelle = json['sensLibelle'];
     createdAt = json['createdAt'];
+    final auteur = (json['createdBy'] ?? '').toString().trim();
+    createdBy = auteur.isEmpty || auteur == 'null' ? null : auteur;
     if (json['lignes'] != null) {
       lignes = <LigneMouvementCaisse>[];
       json['lignes'].forEach((v) {
@@ -51,6 +55,7 @@ class MouvementCaisse extends ModelJson<MouvementCaisse> {
     data['sens'] = sens;
     data['sensLibelle'] = sensLibelle;
     data['createdAt'] = createdAt;
+    data['createdBy'] = createdBy;
     if (lignes != null) {
       data['lignes'] = lignes!.map((v) => v.toJson()).toList();
     }

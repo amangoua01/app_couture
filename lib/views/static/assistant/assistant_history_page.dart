@@ -1,4 +1,5 @@
 import 'package:ateliya/tools/constants/app_colors.dart';
+import 'package:ateliya/data/models/assistant/assistant_conversation.dart';
 import 'package:ateliya/views/controllers/assistant/assistant_history_page_vctl.dart';
 import 'package:ateliya/views/static/assistant/assistant_format.dart';
 import 'package:flutter/material.dart';
@@ -6,12 +7,14 @@ import 'package:get/get.dart';
 
 /// Liste des conversations passées. Renvoie l'identifiant de celle choisie.
 class AssistantHistoryPage extends StatelessWidget {
-  const AssistantHistoryPage({super.key});
+  /// Appelé quand une conversation est supprimée (pour réinitialiser le chat si c'était la sienne).
+  final void Function(int id)? onDeleted;
+  const AssistantHistoryPage({super.key, this.onDeleted});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AssistantHistoryPageVctl>(
-      init: AssistantHistoryPageVctl(),
+      init: AssistantHistoryPageVctl(onDeleted: onDeleted),
       builder: (ctl) {
         return Scaffold(
           backgroundColor: AppColors.scaffoldBg,
@@ -87,14 +90,40 @@ class AssistantHistoryPage extends StatelessWidget {
                           if (c.misAJourLe != null) ...[
                             const SizedBox(height: 3),
                             Text(
-                              formatDate(c.misAJourLe!),
+                              "Modifiée le ${formatDateTime(c.misAJourLe!)}",
                               style: const TextStyle(fontSize: 11.5, color: AppColors.textMuted),
                             ),
                           ],
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
+                    PopupMenuButton<String>(
+                      tooltip: "Options",
+                      icon: const Icon(Icons.more_vert_rounded, color: AppColors.textMuted),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      onSelected: (v) {
+                        if (v == 'rename') _rename(ctl, c);
+                        if (v == 'delete') _confirmDelete(ctl, c);
+                      },
+                      itemBuilder: (_) => const [
+                        PopupMenuItem(
+                          value: 'rename',
+                          child: Row(children: [
+                            Icon(Icons.edit_outlined, size: 18),
+                            SizedBox(width: 10),
+                            Text("Renommer"),
+                          ]),
+                        ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Row(children: [
+                            Icon(Icons.delete_outline_rounded, size: 18, color: AppColors.danger),
+                            SizedBox(width: 10),
+                            Text("Supprimer", style: TextStyle(color: AppColors.danger)),
+                          ]),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -103,5 +132,56 @@ class AssistantHistoryPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _rename(AssistantHistoryPageVctl ctl, AssistantConversation c) async {
+    final input = TextEditingController(text: c.titre);
+    final titre = await Get.dialog<String>(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text("Renommer la conversation", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+        content: TextField(
+          controller: input,
+          autofocus: true,
+          maxLength: 150,
+          textCapitalization: TextCapitalization.sentences,
+          decoration: const InputDecoration(hintText: "Nom de la conversation"),
+          onSubmitted: (v) => Get.back(result: v),
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text("Annuler")),
+          TextButton(
+            onPressed: () => Get.back(result: input.text),
+            child: const Text("Enregistrer", style: TextStyle(fontWeight: FontWeight.w800)),
+          ),
+        ],
+      ),
+    );
+    // Pas de dispose() ici : le champ est encore affiché pendant l'animation de fermeture.
+    if (titre == null || titre.trim().isEmpty || titre.trim() == c.titre) return;
+    await ctl.rename(c, titre);
+  }
+
+  Future<void> _confirmDelete(AssistantHistoryPageVctl ctl, AssistantConversation c) async {
+    final ok = await Get.dialog<bool>(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text("Supprimer la conversation ?", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+        content: Text(
+          "« ${c.titre} » et tous ses messages seront supprimés. Les tokens déjà utilisés ne sont pas remboursés.",
+          style: const TextStyle(height: 1.4),
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(result: false), child: const Text("Annuler")),
+          TextButton(
+            onPressed: () => Get.back(result: true),
+            child: const Text("Supprimer", style: TextStyle(color: AppColors.danger, fontWeight: FontWeight.w800)),
+          ),
+        ],
+      ),
+    );
+    if (ok == true) await ctl.remove(c);
   }
 }

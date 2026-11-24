@@ -14,3 +14,10 @@ String formatDate(DateTime date) {
   String two(int n) => n.toString().padLeft(2, '0');
   return '${two(d.day)}/${two(d.month)}/${d.year}';
 }
+
+/// « 23/11/2026 à 14:54 ».
+String formatDateTime(DateTime date) {
+  final d = date.toLocal();
+  String two(int n) => n.toString().padLeft(2, '0');
+  return '${formatDate(d)} à ${two(d.hour)}:${two(d.minute)}';
+}

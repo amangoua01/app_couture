@@ -99,7 +99,6 @@ class FormDepense extends StatelessWidget {
             ),
             const Gap(8),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "Couverture paiement",
@@ -109,8 +108,13 @@ class FormDepense extends StatelessWidget {
                     color: Colors.grey[600],
                   ),
                 ),
-                Text(
+                const Gap(8),
+                Expanded(
+                  child: Text(
                   "${ctl.totalLignes.toInt()} / ${ctl.totalMontant.toInt()} FCFA (${(ctl.progress * 100).toStringAsFixed(1)}%)",
+                  textAlign: TextAlign.end,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -118,6 +122,7 @@ class FormDepense extends StatelessWidget {
                         ctl.progress == 1.0
                             ? AppColors.primary
                             : AppColors.secondary,
+                  ),
                   ),
                 ),
               ],

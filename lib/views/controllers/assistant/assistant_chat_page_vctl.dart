@@ -25,6 +25,10 @@ class AssistantChatPageVctl extends AuthViewController {
   final api = AssistantApi();
   final inputCtl = TextEditingController();
   final scrollCtl = ScrollController();
+  final inputFocus = FocusNode();
+
+  /// Messages arrivés pendant cette session d'écran : seuls eux sont animés (pas l'historique rechargé).
+  final Set<AssistantMessage> fresh = Set.identity();
 
   final List<AssistantMessage> messages = [];
   AssistantBalance balance = const AssistantBalance();
@@ -63,6 +67,12 @@ class AssistantChatPageVctl extends AuthViewController {
 
   @override
   void onReady() {
+    // Le clavier réduit la zone visible : on ramène le dernier message en vue une fois ouvert.
+    inputFocus.addListener(() {
+      if (inputFocus.hasFocus) {
+        Future.delayed(const Duration(milliseconds: 280), () => _scrollToEnd());
+      }
+    });
     loadBalance();
     if (conversationId != null) {
       openConversation(conversationId!);
@@ -88,6 +98,7 @@ class AssistantChatPageVctl extends AuthViewController {
     isLoadingHistory = true;
     conversationId = id;
     messages.clear();
+    fresh.clear();
     failure = null;
     update();
 
@@ -102,12 +113,18 @@ class AssistantChatPageVctl extends AuthViewController {
     _scrollToEnd(jump: true);
   }
 
+  /// La conversation affichée vient d'être supprimée depuis l'historique : on repart de zéro.
+  void onConversationDeleted(int id) {
+    if (id == conversationId && !isSending) newConversation();
+  }
+
   void newConversation() {
     if (isSending) return;
     _stopSpeaking();
     _stopListening();
     conversationId = null;
     messages.clear();
+    fresh.clear();
     failure = null;
     _pendingQuestion = null;
     inputCtl.clear();
@@ -125,7 +142,9 @@ class AssistantChatPageVctl extends AuthViewController {
 
     failure = null;
     _pendingQuestion = question;
-    messages.add(AssistantMessage(fromUser: true, contenu: question));
+    final asked = AssistantMessage(fromUser: true, contenu: question);
+    fresh.add(asked);
+    messages.add(asked);
     inputCtl.clear();
     isSending = true;
     update();
@@ -140,6 +159,7 @@ class AssistantChatPageVctl extends AuthViewController {
     if (res.status) {
       final reply = res.data!;
       conversationId = reply.conversationId;
+      fresh.add(reply.message);
       messages.add(reply.message);
       balance = balance.copyWithTotals(
         soldeForfait: reply.soldeForfait,
@@ -290,6 +310,15 @@ class AssistantChatPageVctl extends AuthViewController {
     await _voice.stop();
   }
 
+  /// Pendant que la réponse s'écrit : suit le bas du fil, sauf si l'utilisateur a remonté.
+  void followScroll() {
+    if (!scrollCtl.hasClients) return;
+    final pos = scrollCtl.position;
+    if (pos.maxScrollExtent - pos.pixels < 160) {
+      scrollCtl.jumpTo(pos.maxScrollExtent);
+    }
+  }
+
   void _scrollToEnd({bool jump = false}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!scrollCtl.hasClients) return;
@@ -311,6 +340,7 @@ class AssistantChatPageVctl extends AuthViewController {
     _voice.stop();
     _speech.stop();
     inputCtl.dispose();
+    inputFocus.dispose();
     scrollCtl.dispose();
     super.onClose();
   }

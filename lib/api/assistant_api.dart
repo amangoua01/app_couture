@@ -88,6 +88,24 @@ class AssistantApi extends WebController {
     );
   }
 
+  Future<DataResponse<AssistantConversation>> renameConversation(int id, String titre) {
+    return _call(
+      () => client.patch(
+        urlBuilder(api: "conversations/$id"),
+        headers: authHeaders,
+        body: jsonEncode({"titre": titre}),
+      ),
+      (data) => AssistantConversation.fromJson(data as Map<String, dynamic>),
+    );
+  }
+
+  Future<DataResponse<bool>> deleteConversation(int id) {
+    return _call(
+      () => client.delete(urlBuilder(api: "conversations/$id"), headers: authHeaders),
+      (_) => true,
+    );
+  }
+
   Future<DataResponse<List<AssistantMessage>>> messages(int conversationId) {
     return _call(
       () => client.get(

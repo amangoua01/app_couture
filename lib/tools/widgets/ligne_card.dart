@@ -26,6 +26,8 @@ class LigneCard extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       title: Text(
         title,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
       ),
       subtitle: Text(

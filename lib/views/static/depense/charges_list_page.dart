@@ -288,11 +288,14 @@ class ChargesListPage extends StatelessWidget {
     Get.bottomSheet(
       StatefulBuilder(
         builder: (sheetContext, setSheetState) {
-          final keyboardHeight = MediaQuery.of(sheetContext).viewInsets.bottom;
+          // Get.bottomSheet remonte déjà la feuille au-dessus du clavier : ne pas
+          // ajouter la hauteur du clavier une seconde fois (sinon bande blanche).
+          final media = MediaQuery.of(sheetContext);
+          final maxSheetHeight = (media.size.height - media.viewInsets.bottom) * 0.9;
 
           return Container(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(sheetContext).size.height * 0.85,
+              maxHeight: maxSheetHeight,
             ),
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -301,8 +304,9 @@ class ChargesListPage extends StatelessWidget {
             child: SafeArea(
               top: false,
               child: Padding(
-                padding: EdgeInsets.only(bottom: keyboardHeight),
+                padding: EdgeInsets.zero,
                 child: SingleChildScrollView(
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.fromLTRB(22, 12, 22, 24),
                   child: Column(
@@ -356,7 +360,7 @@ class ChargesListPage extends StatelessWidget {
                       // Champ Libellé
                       CTextFormField(
                         controller: libelleCtl,
-                        externalLabel: "Libellé*",
+                        externalLabel: "Libellé",
                         hintText: "Ex: Salaire Konaté",
                         require: true,
                       ),
@@ -364,7 +368,7 @@ class ChargesListPage extends StatelessWidget {
                       // Champ Montant
                       CTextFormField(
                         controller: montantCtl,
-                        externalLabel: "Montant*",
+                        externalLabel: "Montant",
                         keyboardType: TextInputType.number,
                         require: true,
                         suffix: const Padding(
@@ -391,13 +395,48 @@ class ChargesListPage extends StatelessWidget {
                       // Pour un ouvrier payé au salaire fixe (pas à la
                       // pièce) : cette charge remonte alors dans son bilan
                       // de paie, au même titre que ses pièces produites.
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5, bottom: 2),
+                        child: Row(
+                          children: [
+                            const Expanded(
+                              child: Text(
+                                "Lier à un ouvrier (optionnel)",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF0F2620),
+                                ),
+                              ),
+                            ),
+                            TextButton.icon(
+                              style: TextButton.styleFrom(
+                                visualDensity: VisualDensity.compact,
+                                foregroundColor: AppColors.primary,
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                              ),
+                              icon: const Icon(Icons.person_add_alt_1_rounded, size: 18),
+                              label: const Text(
+                                "Ajouter",
+                                style: TextStyle(fontWeight: FontWeight.w800),
+                              ),
+                              onPressed: () async {
+                                final created = await _quickAddEmploye(ctl);
+                                if (created != null) {
+                                  setSheetState(() => employe = created);
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                       CDropDownFormField<Employe>(
                         selectedItem: employe,
                         onChanged: (e) => setSheetState(() => employe = e),
                         items: (p0, p1) => ctl.getEmployes(),
                         itemAsString:
                             (p0) => p0.nomComplet ?? p0.nom ?? "",
-                        externalLabel: "Lier à un ouvrier (optionnel)",
+                        compareFn: (a, b) => a.id == b.id,
                         hintText: "Ex: salaire fixe d'un ouvrier",
                         margin: const EdgeInsets.only(bottom: 24),
                       ),
@@ -453,5 +492,104 @@ class ChargesListPage extends StatelessWidget {
       backgroundColor: Colors.transparent,
       enableDrag: true,
     );
+  }
+
+  /// Petite fenêtre pour créer un ouvrier sans quitter le formulaire de charge.
+  Future<Employe?> _quickAddEmploye(ChargesListVctl ctl) async {
+    final nomCtl = TextEditingController();
+    final prenomsCtl = TextEditingController();
+    final telCtl = TextEditingController();
+    final posteCtl = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    final created = await Get.dialog<Employe>(
+      Dialog(
+        backgroundColor: Colors.white,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Nouvel ouvrier",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF0F2620),
+                  ),
+                ),
+                const Gap(4),
+                Text(
+                  "Le reste de sa fiche pourra être complété plus tard.",
+                  style: TextStyle(fontSize: 12.5, color: Colors.grey.shade600),
+                ),
+                const Gap(16),
+                CTextFormField(
+                  controller: nomCtl,
+                  externalLabel: "Nom",
+                  require: true,
+                  textCapitalization: TextCapitalization.words,
+                ),
+                CTextFormField(
+                  controller: prenomsCtl,
+                  externalLabel: "Prénom(s)",
+                  textCapitalization: TextCapitalization.words,
+                ),
+                CTextFormField(
+                  controller: telCtl,
+                  externalLabel: "Téléphone",
+                  keyboardType: TextInputType.phone,
+                ),
+                CTextFormField(
+                  controller: posteCtl,
+                  externalLabel: "Poste",
+                  hintText: "Ex: Tailleur, Brodeur...",
+                  margin: const EdgeInsets.only(bottom: 16),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Get.back(),
+                        child: const Text("Annuler"),
+                      ),
+                    ),
+                    const Gap(8),
+                    Expanded(
+                      flex: 2,
+                      child: CButton(
+                        title: "Ajouter l'ouvrier",
+                        radius: 14,
+                        height: 46,
+                        fontWeight: FontWeight.w800,
+                        onPressed: () async {
+                          if (!(formKey.currentState?.validate() ?? false)) return;
+                          final e = await ctl.quickCreateEmploye(
+                            nom: nomCtl.text,
+                            prenoms: prenomsCtl.text,
+                            telephone: telCtl.text,
+                            poste: posteCtl.text,
+                          );
+                          if (e != null) Get.back(result: e);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Pas de dispose() : les champs sont encore affichés pendant l'animation de fermeture.
+    return created;
   }
 }

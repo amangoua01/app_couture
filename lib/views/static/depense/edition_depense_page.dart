@@ -21,7 +21,7 @@ class EditionDepensePage extends StatelessWidget {
       init: EditionDepensePageVctl(initialData: initialData),
       builder: (ctl) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.scaffoldBg,
           appBar: AppBar(
             title: const Text("Nouvelle dépense"),
             elevation: 0,
@@ -53,7 +53,10 @@ class EditionDepensePage extends StatelessWidget {
                 ),
             ],
           ),
-          floatingActionButton: FloatingActionButton(
+          // Le bouton + gêne la saisie quand le clavier est ouvert.
+          floatingActionButton: MediaQuery.viewInsetsOf(context).bottom > 0
+              ? null
+              : FloatingActionButton(
             onPressed: () => BottomSheetDepense.show(context, ctl),
             elevation: 4,
             backgroundColor: AppColors.secondary,
@@ -91,6 +94,9 @@ class EditionDepensePage extends StatelessWidget {
               key: ctl.formKey,
               child: ListView(
                 physics: const BouncingScrollPhysics(),
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                // Marge basse : le bouton + ne doit pas masquer le dernier règlement.
+                padding: const EdgeInsets.only(bottom: 80),
                 children: [
                   if (ctl.isAiPrefilled) ...[
                     Container(
@@ -128,7 +134,8 @@ class EditionDepensePage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
+                      Flexible(
+                        child: Row(
                         children: [
                           const Icon(
                             Icons.payments_outlined,
@@ -136,16 +143,21 @@ class EditionDepensePage extends StatelessWidget {
                             color: AppColors.primary,
                           ),
                           const Gap(8),
-                          Text(
+                          Flexible(
+                            child: Text(
                             "Modes de règlement",
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                               color: AppColors.primary.withValues(alpha: 0.8),
                             ),
                           ),
+                          ),
                         ],
                       ),
+                      ),
+                      const Gap(8),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -187,7 +199,6 @@ class EditionDepensePage extends StatelessWidget {
                     ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: ctl.ligneRows.length,
                       separatorBuilder: (context, index) => const Gap(12),
                       itemBuilder: (context, index) {

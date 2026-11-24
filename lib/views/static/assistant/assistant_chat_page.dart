@@ -5,6 +5,7 @@ import 'package:ateliya/views/static/assistant/assistant_format.dart';
 import 'package:ateliya/views/static/assistant/assistant_history_page.dart';
 import 'package:ateliya/views/static/assistant/assistant_packs_page.dart';
 import 'package:ateliya/views/static/assistant/widgets/assistant_bubbles.dart';
+import 'package:ateliya/views/static/assistant/widgets/assistant_voice_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -78,7 +79,9 @@ class AssistantChatPage extends StatelessWidget {
           tooltip: "Historique",
           icon: const Icon(AppIcons.clockCounterClockwise),
           onPressed: () async {
-            final id = await Get.to<int>(() => const AssistantHistoryPage());
+            final id = await Get.to<int>(
+              () => AssistantHistoryPage(onDeleted: ctl.onConversationDeleted),
+            );
             if (id != null) ctl.openConversation(id);
           },
         ),
@@ -143,8 +146,17 @@ class AssistantChatPage extends StatelessWidget {
         final message = ctl.messages[i];
         return AssistantBubble(
           message,
+          animate: ctl.fresh.contains(message),
+          onGrow: ctl.followScroll,
           isSpeaking: ctl.speakingIndex == i,
           onSpeak: message.fromUser ? null : () => ctl.toggleSpeak(i),
+          onVoiceSettings: message.fromUser
+              ? null
+              : () => Get.bottomSheet(
+                    const AssistantVoiceSheet(),
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                  ),
         );
       },
     );
@@ -290,7 +302,15 @@ class AssistantChatPage extends StatelessWidget {
     );
   }
 
+  /// Reconstruit seulement le bas de page quand on tape (pas toute la conversation).
   Widget _composer(AssistantChatPageVctl ctl) {
+    return ListenableBuilder(
+      listenable: ctl.inputCtl,
+      builder: (_, __) => _composerBody(ctl),
+    );
+  }
+
+  Widget _composerBody(AssistantChatPageVctl ctl) {
     final hint = ctl.balanceLoaded
         ? "${ctl.balance.coutParMessage} tokens par message, ${ctl.balance.messagesRestants} message${ctl.balance.messagesRestants > 1 ? 's' : ''} restant${ctl.balance.messagesRestants > 1 ? 's' : ''}"
         : "";
@@ -306,11 +326,11 @@ class AssistantChatPage extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: ctl.inputCtl,
+                  focusNode: ctl.inputFocus,
                   minLines: 1,
                   maxLines: 5,
                   maxLength: AssistantChatPageVctl.maxLength,
                   textCapitalization: TextCapitalization.sentences,
-                  onChanged: (_) => ctl.update(),
                   decoration: InputDecoration(
                     hintText: ctl.isListening ? "Je vous écoute..." : "Posez votre question",
                     counterText: "",
